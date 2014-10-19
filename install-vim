@@ -1,5 +1,5 @@
 #!/bin/bash
-# Thansk to : Junegunn
+# Thanks to : Junegunn
 
 cd $(dirname $BASE_SOURCE)
 BASE=$(pwd)
