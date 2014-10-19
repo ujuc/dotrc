@@ -38,6 +38,7 @@ else
     grep -v reattach-to-user-namespace tmux.conf > ~/.tmux.conf
 fi
 
+git clone https://github.com/erikw/tmux-powerline.git ~/.vim/tmux-powerline
 tmux source-file ~/.tmux.conf
 
 ./install-vim
