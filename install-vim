@@ -1,7 +1,6 @@
 #!/bin/bash
 # Thanks to : Junegunn
 
-cd $(dirname $BASE_SOURCE)
 BASE=$(pwd)
 
 export GIT_SSL_NO_VERIFY=true
