@@ -1,6 +1,8 @@
 " Plugin
 call plug#begin('~/.vim/plugged')
 
-
+Plug 'whatyouhide/vim-gotham'
 
 call plug#end()
+
+colorscheme gotham
