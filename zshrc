@@ -45,12 +45,16 @@ ZSH_THEME="bullet-train"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-flow)
+plugins=(git zsh-syntax-highlighting git-flow git-extras)
 
 # User configuration
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 # export MANPATH="/usr/local/man:$MANPATH"
+# Go Path
+export GOROOT="/usr/local/opt/go"
+export GOPATH="$HOME/Documents/program/go"
+export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -86,3 +90,10 @@ alias uremove="sudo apt-get purge -y"
 alias uclean="sudo apt-get autoremove -y"
 alias uaddrepo="sudo add-apt-repository"
 alias urmreop="sudo add-apt-repository -r"
+
+# OS X
+alias install="brew install"
+alias search="brew search"
+alias info="brew info"
+alias blist="brew list"
+alias update="brew update; brew upgrade"

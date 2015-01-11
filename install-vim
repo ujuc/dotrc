@@ -10,5 +10,6 @@ curl --insecure -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vi
 # vimrc
 mv -v ~/.vimrc ~/.vimrc.old 2> /dev/null
 ln -sf $BASE/vimrc ~/.vimrc
+ln -sf $BASE/kang-vimrc ~/.kang-vimrc
 
 vim +PlugInstall +qall
