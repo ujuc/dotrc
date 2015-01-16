@@ -26,24 +26,24 @@ function settingTmux() {
     printMessage "\nSetting tmux"
     ln -sf $BASE/tmux.conf ~/.tmux.conf
     git clone https://github.com/erikw/tmux-powerline.git ~/.vim/tmux-powerline
-    tmux soure-file ~/.tmux.conf
+    tmux source-file ~/.tmux.conf
 }
 
 function settingZsh() {
     printMessage "\nSetting zsh"
 
     # zshrc setting
-    git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
+    git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
     ln -sf $BASE/zshrc ~/.zshrc
     chsh -s /bin/zsh
 
     # bullet-train theme setting
-    git clone git@github.com:caiogondim/bullet-train-oh-my-zsh-theme.git ~/base_git/bullet-train
+    git clone https://github.com/caiogondim/bullet-train-oh-my-zsh-theme.git ~/base_git/bullet-train
     ln -sf ~/base_git/bullet-train/bullet-train.zsh-theme ~/.oh-my-zsh/themes/bullet-train.zsh-theme
 
     # zsh-syntax-highlighting setting
     mkdir ~/.oh-my-zsh/custom/plugins
-    git clone git://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 
     source ~/.zshrc
 }
