@@ -97,3 +97,22 @@ alias search="brew search"
 alias info="brew info"
 alias blist="brew list"
 alias update="brew update; brew upgrade"
+
+# help
+help_command="""
+$fg_bold[white]# Ubuntu
+$fg_bold[red]* uupdate: $fg_bold[white]sudo apt-get update; sudo apt-get dist-upgrade
+$fg_bold[red]* uinstall: $fg_bold[white]sudo apt-get install -y
+$fg_bold[red]* uremove: $fg_bold[white]sudo apt-get purge -y
+$fg_bold[red]* uclean: $fg_bold[white]sudo apt-get autoremove -y
+$fg_bold[red]* uaddrepo: $fg_bold[white]sudo add-apt-repository
+$fg_bold[red]* urmrepo: $fg_bold[white]sudo add-apt-repository -r
+
+$fg_bold[white]# OS X
+$fg_bold[red]* install: $fg_bold[white]brew install
+$fg_bold[red]* search: $fg_bold[white]brew search
+$fg_bold[red]* info: $fg_bold[white]brew info
+$fg_bold[red]* blist: $fg_bold[white]brew list
+$fg_bold[red]* update: $fg_bold[white]brew update; brew upgrade
+"""
+alias ujuc_help="echo ${help_command}"
