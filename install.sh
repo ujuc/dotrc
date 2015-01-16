@@ -38,6 +38,7 @@ function settingZsh() {
     chsh -s /bin/zsh
 
     # bullet-train theme setting
+    printMessage "\nbullet-train"
     git clone https://github.com/caiogondim/bullet-train-oh-my-zsh-theme.git ~/base_git/bullet-train
     ln -sf ~/base_git/bullet-train/bullet-train.zsh-theme ~/.oh-my-zsh/themes/bullet-train.zsh-theme
 
@@ -54,7 +55,8 @@ function settingVim() {
     curl --insecure -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim
 
     #vim setting
-    git clone git:github.com/amix/vimrc.git ~/.vim_runtime
+    printMessage "vimrc"
+    git clone https://github.com/amix/vimrc.git ~/.vim_runtime
     sh ~/.vim_runtime/install_awesome_vimrc.sh
 
     ln -sf $BASE/vimrc ~/.vimrc
