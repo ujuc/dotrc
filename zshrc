@@ -115,4 +115,4 @@ $fg_bold[red]* info: $fg_bold[white]brew info
 $fg_bold[red]* blist: $fg_bold[white]brew list
 $fg_bold[red]* update: $fg_bold[white]brew update; brew upgrade
 """
-alias ujuc_help="echo ${help_command}"
+alias ujuc_help='echo ${help_command}'
