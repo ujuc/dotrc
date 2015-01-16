@@ -58,7 +58,7 @@ function settingVim() {
     sh ~/.vim_runtime/install_awesome_vimrc.sh
 
     ln -sf $BASE/vimrc ~/.vimrc
-    ln -sf $BASE/kang-vimrc ~/.kang_vimrc
+    ln -sf $BASE/kang_vimrc ~/.kang_vimrc
 
     vim +PlugInstall +qall
 }
