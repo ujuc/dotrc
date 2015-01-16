@@ -43,7 +43,7 @@ function settingZsh() {
     ln -sf ~/base_git/bullet-train/bullet-train.zsh-theme ~/.oh-my-zsh/themes/bullet-train.zsh-theme
 
     # zsh-syntax-highlighting setting
-    mkdir ~/.oh-my-zsh/custom/plugins
+    mkdir -p ~/.oh-my-zsh/custom/plugins
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 
     source ~/.zshrc
