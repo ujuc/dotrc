@@ -17,3 +17,6 @@ let g:quickrun_config.marked = {
     \ 'args'        : 'Marked\ 2',
     \ 'exec'        : '%c %o %a %s',
     \ }
+
+" Time Stamp
+iab kdate <c-r>=strftime("%Y/%m/%d %H%Mi")<cr>
