@@ -51,10 +51,16 @@ plugins=(git zsh-syntax-highlighting git-flow git-extras)
 
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 # export MANPATH="/usr/local/man:$MANPATH"
+
+exec `go env`
+go_path=$?
+
+if [[ $go_path == 0 ]]; then
 # Go Path
 export GOROOT=`go env GOROOT`
 export GOPATH="$HOME/Documents/program/go"
 export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
+fi
 
 source $ZSH/oh-my-zsh.sh
 
