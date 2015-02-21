@@ -52,7 +52,7 @@ plugins=(git zsh-syntax-highlighting git-flow git-extras)
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 # export MANPATH="/usr/local/man:$MANPATH"
 
-exec `go env`
+go env
 go_path=$?
 
 if [[ $go_path == 0 ]]; then
