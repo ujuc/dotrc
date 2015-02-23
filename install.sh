@@ -50,19 +50,14 @@ function settingZsh() {
 }
 
 function settingVim() {
-    export GIT_SSL_NO_VERIFY=true
-    mkdir -p ~/.vim/autoload
-    curl --insecure -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim
+    curl -L \
+    https://raw.github.com/liangxianzhe/oh-my-vim/master/tools/prepare_mac.sh |\
+    sh
 
-    #vim setting
-    printMessage "vimrc"
-    git clone https://github.com/amix/vimrc.git ~/.vim_runtime
-    sh ~/.vim_runtime/install_awesome_vimrc.sh
+    curl -L \
+    https://raw.github.com/liangxianzhe/oh-my-vim/master/tools/install.sh | sh
 
-    ln -sf $BASE/vimrc ~/.vimrc
-    ln -sf $BASE/kang_vimrc ~/.kang_vimrc
-
-    vim +PlugInstall +qall
+    echo "Plugin install molokai256 (NeoBundleInstall)"
 }
 
 installSystemPackage
