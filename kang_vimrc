@@ -20,3 +20,4 @@ let g:quickrun_config.marked = {
 
 " Time Stamp
 iab kdate <c-r>=strftime("%Y/%m/%d %H%Mi")<cr>
+
