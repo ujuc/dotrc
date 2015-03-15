@@ -15,10 +15,10 @@
 4. `bash install.sh`
 
 ## vim
-* plugin [vim-plug](https://github.com/junegunn/vim-plug)
-* vimrc using [amix/vimrc](https://github.com/amix/vimrc)
+* [liangxianzhe/oh-my-vim](https://github.com/liangxianzhe/oh-my-vim)
 
 ### Ref. Thanks
+* [liangxianzhe/oh-my-vim](https://github.com/liangxianzhe/oh-my-vim)
 * [amix/vimrc](https://github.com/amix/vimrc)
 * [junegunn/dotfiles](https://github.com/junegunn/dotfiles)
 * [sstrato/vim](https://github.com/sstrato/vim)
