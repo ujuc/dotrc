@@ -103,7 +103,7 @@ alias uninstall="brew uninstall"
 alias search="brew search"
 alias info="brew info"
 alias blist="brew list"
-alias update="brew update; brew upgrade"
+alias update="brew update; brew upgrade; brew cask update"
 
 # help
 help_command="""
