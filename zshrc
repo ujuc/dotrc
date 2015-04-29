@@ -103,7 +103,7 @@ alias uninstall="brew uninstall"
 alias search="brew search"
 alias info="brew info"
 alias blist="brew list"
-alias update="brew update; brew upgrade; brew cask update"
+alias update="brew update; brew upgrade; brew cask update; bash $HOME/ivim/setup.sh -n"
 
 # help
 help_command="""
