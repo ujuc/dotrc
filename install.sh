@@ -17,7 +17,8 @@ function installSystemPackage() {
     if [ $(uname -s) = "Darwin" ]; then
         [ -z "$(which brew)" ] && ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         [ -z "$(which brew-cask)" ] && brew install caskroom/cask/brew-cask
-        brew install ctags git vim tig tmux zsh python python3 curl
+        brew install ctags git tig tmux zsh python python3 curl
+        brew install vim --with-cscope --with-lua --override-system-vim
     elif [ $(uname -s) = "Linux" ]; then
         sudo apt-get -y install ctags vim tig tmux zsh python python3 curl
     fi
