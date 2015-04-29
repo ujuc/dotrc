@@ -52,14 +52,7 @@ function settingZsh() {
 }
 
 function settingVim() {
-    curl -L \
-    https://raw.github.com/liangxianzhe/oh-my-vim/master/tools/prepare_mac.sh |\
-    sh
-
-    curl -L \
-    https://raw.github.com/liangxianzhe/oh-my-vim/master/tools/install.sh | sh
-
-    echo "Plugin install molokai256 (NeoBundleInstall)"
+    bash <(curl -L https://raw.githubusercontent.com/kepbod/ivim/master/setup.sh) -i
 }
 
 installSystemPackage
