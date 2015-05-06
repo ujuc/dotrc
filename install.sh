@@ -53,6 +53,9 @@ function settingZsh() {
 
 function settingVim() {
     bash <(curl -L https://raw.githubusercontent.com/kepbod/ivim/master/setup.sh) -i
+
+    # Bundle
+    ln -sf $BASE/vimrc.bundles.local ~/.vimrc.bundles.local
 }
 
 installSystemPackage
