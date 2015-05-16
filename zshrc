@@ -99,11 +99,11 @@ alias urmreop="sudo add-apt-repository -r"
 
 # OS X
 alias install="brew install"
-alias uninstall="brew uninstall"
+alias uninstall="brew uninstall --force"
 alias search="brew search"
 alias info="brew info"
 alias blist="brew list"
-alias update="brew update; brew upgrade; brew cask update; cd $HOME/ivim; bash $HOME/ivim/setup.sh -n; cd $HOME"
+alias update="brew update; brew upgrade; brew cask update; echo update-vim"
 
 # help
 help_command="""
@@ -117,10 +117,13 @@ $fg_bold[red]* urmrepo: $fg_bold[white]sudo add-apt-repository -r
 
 $fg_bold[white]# OS X
 $fg_bold[red]* install: $fg_bold[white]brew install
-$fg_bold[red]* uninstall: $fg_bold[white]brew uninstall
+$fg_bold[red]* uninstall: $fg_bold[white]brew uninstall --force
 $fg_bold[red]* search: $fg_bold[white]brew search
 $fg_bold[red]* info: $fg_bold[white]brew info
 $fg_bold[red]* blist: $fg_bold[white]brew list
 $fg_bold[red]* update: $fg_bold[white]brew update; brew upgrade
 """
 alias ujuc_help='echo ${help_command}'
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
