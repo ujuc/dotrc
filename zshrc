@@ -103,7 +103,7 @@ alias uninstall="brew uninstall --force"
 alias search="brew search"
 alias info="brew info"
 alias blist="brew list"
-alias update="brew update; brew upgrade; brew cask update; echo update-vim"
+alias update="brew update; brew upgrade; brew cask update; gem update --system; echo update-vim"
 
 # help
 help_command="""
