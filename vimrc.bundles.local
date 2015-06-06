@@ -1,1 +1,2 @@
 NeoBundle 'Rykka/riv.vim'
+NeoBundle 'nvie/vim-flake8'

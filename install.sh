@@ -56,6 +56,8 @@ function settingVim() {
 
     # Bundle
     ln -sf $BASE/vimrc.bundles.local ~/.vimrc.bundles.local
+
+    sudo pip install flake8 flake8-docstings
 }
 
 installSystemPackage
