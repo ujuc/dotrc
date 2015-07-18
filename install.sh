@@ -63,4 +63,3 @@ function settingVim() {
 installSystemPackage
 settingTmux
 settingZsh
-settingVim
