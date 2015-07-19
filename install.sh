@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #############################
 #   System Setting          #
@@ -6,6 +6,7 @@
 #############################
 
 BASE=$(pwd)
+FUNC=$1
 
 function printMessage() {
     echo -e "\e[1;37m# $1\033[0m"
@@ -52,14 +53,23 @@ function settingZsh() {
 }
 
 function settingVim() {
-    bash <(curl -L https://raw.githubusercontent.com/kepbod/ivim/master/setup.sh) -i
+	# Link plug
+	mkdir ~/.vim/autoload
+	ln -sf $BASE/vim-plug/plug.vim ~/.vim/autoload/plug.vim
 
     # Bundle
-    ln -sf $BASE/vimrc.bundles.local ~/.vimrc.bundles.local
+    #sudo pip install flake8 flake8-docstings
+	ln -sf $BASE/vimrc ~/.vimrc
 
-    sudo pip install flake8 flake8-docstings
+	vim +PlugInstall +qall
 }
 
-installSystemPackage
-settingTmux
-settingZsh
+if [ $FUNC =  "all" ]; then
+    installSystemPackage
+	settingTmux
+	settingZsh
+else if [ $func = "vim" ]; then
+	settingVim
+fi
+
+/* vim: noai:ts=4:sw=4
