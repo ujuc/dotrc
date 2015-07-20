@@ -199,17 +199,6 @@ set autoindent
 set lbr
 set tw=500
 
-set list
-set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮
-set linebreak
-set showbreak=↪
-set fillchars=diff:⣿,vert:│
-augroup trailing
-    autocmd!
-    autocmd InsertEnter * :set listchars-=trail:⌴
-    autocmd InsertLeave * :set listchars+=trail:⌴
-augroup END
-
 "
 " Search
 "
