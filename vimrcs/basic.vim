@@ -139,8 +139,6 @@ set sidescrolloff=10
 set showmatch
 set matchtime=2
 
-set nu
-
 " Ignore case when searching
 set ignorecase
 
