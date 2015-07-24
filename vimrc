@@ -1,3 +1,5 @@
-source vimrcs/basic.vim
-source vimrcs/plugins.vim
-source vimrcs/plugins_config.vim
+set runtimepath+=~/base_git
+
+source ~/base_git/vimrcs/basic.vim
+source ~/base_git/vimrcs/plugins.vim
+source ~/base_git/vimrcs/plugins_config.vim
