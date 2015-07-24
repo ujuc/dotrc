@@ -64,7 +64,12 @@ function settingVim() {
     ln -sf $BASE/vimrcs ~/.vim/vimrcs
 	ln -sf $BASE/vimrc ~/.vimrc
 
+    # Install Plugins
 	vi +PlugInstall +qall
+
+    # color setting
+    mkdir -p ~/.vim/colors
+    ln -sf ~/.vim/plugged/vim-colors-solarized/colors/solarized.vim ~/.vim/colors/solarized.vim
 }
 
 if [ $FUNC =  "all" ]; then

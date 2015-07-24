@@ -173,7 +173,8 @@ augroup trailing " Only show trailing whitespace when not in insert mode
 augroup END
 
 syntax enable
-"colorscheme 
+colorscheme solarized
+set background=dark
 
 " Use Unix as the standard file type
 set ffs=unix,dos,mac

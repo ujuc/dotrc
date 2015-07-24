@@ -19,6 +19,9 @@ Plug 'junegunn/goyo.vim'
 " Hyperfocus-writing
 Plug 'junegunn/limelight.vim'
 
+" solarized
+Plug 'altercation/vim-colors-solarized'
+
 """"""""
 " Document
 """"""""
@@ -165,5 +168,7 @@ Plug 'tpope/vim-rails'
 " Language Support
 Plug 'sheerun/vim-polyglot'
 
+" Python
+Plug 'davidhalter/jedi-vim'
 
 call plug#end()
