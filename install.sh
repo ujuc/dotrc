@@ -55,6 +55,8 @@ function settingZsh() {
 function settingVim() {
 	# Link plug
 	mkdir ~/.vim/autoload
+	git submodule init
+	git submodule update
 	ln -sf $BASE/vim-plug/plug.vim ~/.vim/autoload/plug.vim
 
     # Bundle
