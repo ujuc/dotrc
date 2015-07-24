@@ -54,24 +54,29 @@ function settingZsh() {
 
 function settingVim() {
 	# Link plug
-	mkdir ~/.vim/autoload
+	mkdir -p ~/.vim/autoload
 	git submodule init
 	git submodule update
 	ln -sf $BASE/vim-plug/plug.vim ~/.vim/autoload/plug.vim
 
     # Bundle
     #sudo pip install flake8 flake8-docstings
+    ln -sf $BASE/vimrcs ~/.vim/vimrcs
 	ln -sf $BASE/vimrc ~/.vimrc
 
-	vim +PlugInstall +qall
+	vi +PlugInstall +qall
 }
 
 if [ $FUNC =  "all" ]; then
     installSystemPackage
 	settingTmux
 	settingZsh
-else if [ $func = "vim" ]; then
-	settingVim
+    exit
+else
+    if [ $FUNC = "vim" ]; then
+	   settingVim
+       exit
+    fi
 fi
 
 /* vim: noai:ts=4:sw=4
