@@ -355,7 +355,8 @@ map <leader>s? z=
 "
 
 " Source the vimrc file after saving it
-autocmd BufWritePost $MYVIMRC source $MYVIMRC
+"autocmd BufWritePost $MYVIMRC source $MYVIMRC
+autocmd BufWritePost %MYVIMRC source ~/.vim/vimrcs/basic.vim
 autocmd BufWritePost $MYVIMRC PlugClean
 
 " Fast edit the .vimrc file using ,x

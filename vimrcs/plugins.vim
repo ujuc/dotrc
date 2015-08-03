@@ -171,4 +171,10 @@ Plug 'sheerun/vim-polyglot'
 " Python
 Plug 'davidhalter/jedi-vim'
 
+" Presenting
+Plug 'sotte/presenting.vim'
+
+" Markdown runtime files
+Plug 'tpope/vim-markdown'
+
 call plug#end()

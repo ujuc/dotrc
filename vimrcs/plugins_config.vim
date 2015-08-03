@@ -155,3 +155,8 @@ func! ChoosePythonCompiler()
 endfunc
 autocmd filetype python nnoremap <buffer> <leader>r :call ChoosePythonCompiler()<cr>
 
+
+"""""""""
+" Markdown 
+"""""""""
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
