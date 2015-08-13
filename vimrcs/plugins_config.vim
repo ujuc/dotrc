@@ -79,19 +79,19 @@ let g:unite_source_history_yank_enable = 1
 let g:unite_source_rec_max_cache_files = 100
 let g:unite_prompt='» '
 
-if executable('ag')
-    let g:unite_source_grep_command = 'ag'
-    let g:unite_source_grep_default_opts = '--line-numbers --nocolor --nogroup --hidden'
-    let g:unite_source_grep_recursive_opt = ''
-elseif executeable('ack-grep')
-    let g:unite_source_grep_command = 'ack-grep'
-    let g:unite_source_grep_defualt_opts = '--no-heading --nocolor -a -H'
-    let g:unite_source_grep_recursive_opt = ''
-elseif executable('ack')
-    let g:unite_source_grep_command = 'ack'
-    let g:unite_source_grep_default_opts = '--no-heading --no-color -a -H'
-    let g:unite_source_grep_recursive_opt = ''
-endif
+"if executable('ag')
+"    let g:unite_source_grep_command = 'ag'
+"    let g:unite_source_grep_default_opts = '--line-numbers --nocolor --nogroup --hidden'
+"    let g:unite_source_grep_recursive_opt = ''
+"elseif executeable('ack-grep')
+"    let g:unite_source_grep_command = 'ack-grep'
+"    let g:unite_source_grep_defualt_opts = '--no-heading --nocolor -a -H'
+"    let g:unite_source_grep_recursive_opt = ''
+"elseif executable('ack')
+"    let g:unite_source_grep_command = 'ack'
+"    let g:unite_source_grep_default_opts = '--no-heading --no-color -a -H'
+"    let g:unite_source_grep_recursive_opt = ''
+"endif
 
 " Use ESC to exit, and use C-J and C-K to move
 func! s:unite_sttings()
