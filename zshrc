@@ -59,6 +59,7 @@ if [[ $go_path == 0 ]]; then
 # Go Path
 export GOROOT=`go env GOROOT`
 export GOPATH="$HOME/Documents/program/go"
+export PATH=$PATH:/usr/local/opt/go/libexec/bin
 export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
 fi
 
