@@ -90,21 +90,32 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Ubuntu Linux
-alias uupdate="sudo apt-get update; sudo apt-get dist-upgrade"
-alias uinstall="sudo apt-get install -y"
-alias uremove="sudo apt-get purge -y"
-alias uclean="sudo apt-get autoremove -y"
-alias uaddrepo="sudo add-apt-repository"
-alias urmreop="sudo add-apt-repository -r"
-
-# OS X
-alias install="brew install"
-alias uninstall="brew uninstall --force"
-alias search="brew search"
-alias info="brew info"
-alias blist="brew list"
-alias update="brew update; brew upgrade; brew cask update; gem update --system; echo update-vim"
+if [ $(uname -s) = "Darwin" ]; then
+    # OS X
+    alias install="brew install"
+    alias uninstall="brew uninstall --force"
+    alias search="brew search"
+    alias info="brew info"
+    alias blist="brew list"
+    alias update="brew update; brew upgrade; brew cask update; gem update --system; echo update-vim"
+elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Manjaro" ]; then
+    # Manjaro
+    alias install="yaourt -S"
+    alias uninstall="pacman -Rns"
+    alias search="pacman -Ss"
+    alias info="pacman -Si"
+    alias update="pacman -Syu"
+elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Ubuntu" ]; then
+    # Ubuntu
+    alias update="sudo apt-get update; sudo apt-get dist-upgrade"
+    alias install="sudo apt-get install -y"
+    alias uninstall="sudo apt-get purge -y"
+    alias clean="sudo apt-get autoremove -y"
+    alias add_repo="sudo add-apt-repository"
+    alias rm_reop="sudo add-apt-repository -r"
+    alias search="sudo apt-cache search"
+    alias info="sudo apt-cahce show"
+if
 
 # help
 help_command="""
@@ -128,3 +139,4 @@ alias ujuc_help='echo ${help_command}'
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
+
