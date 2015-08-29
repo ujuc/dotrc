@@ -25,7 +25,7 @@ ZSH_THEME="bullet-train"
 # Uncomment the following line to enable command auto-correction.
 # ENABLE_CORRECTION="true"
 
-# Uncomment the following line to display red dots whilst waiting for completion.
+# Uncomment the following line to display red dots whilst waiting for completionZ
 # COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
@@ -48,7 +48,6 @@ ZSH_THEME="bullet-train"
 plugins=(git zsh-syntax-highlighting git-flow git-extras)
 
 # User configuration
-
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -56,11 +55,11 @@ which go
 go_path=$?
 
 if [[ $go_path == 0 ]]; then
-# Go Path
-export GOROOT=`go env GOROOT`
-export GOPATH="$HOME/Documents/repos/go"
-export PATH=$PATH:/usr/local/opt/go/libexec/bin
-export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
+    # Go Path
+    export GOROOT=`go env GOROOT`
+    export GOPATH="$HOME/Documents/repos/go"
+    export PATH=$PATH:/usr/local/opt/go/libexec/bin
+    export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
 fi
 
 source $ZSH/oh-my-zsh.sh
@@ -107,15 +106,15 @@ elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Manjaro" ]; th
     alias update="pacman -Syu"
 elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Ubuntu" ]; then
     # Ubuntu
-    alias update="sudo apt-get update; sudo apt-get dist-upgrade"
     alias install="sudo apt-get install -y"
     alias uninstall="sudo apt-get purge -y"
+    alias search="sudo apt-cache search"
+    alias info="sudo apt-cahce show"
+    alias update="sudo apt-get update; sudo apt-get dist-upgrade"
     alias clean="sudo apt-get autoremove -y"
     alias add_repo="sudo add-apt-repository"
     alias rm_reop="sudo add-apt-repository -r"
-    alias search="sudo apt-cache search"
-    alias info="sudo apt-cahce show"
-if
+fi
 
 # help
 help_command="""
@@ -139,4 +138,3 @@ alias ujuc_help='echo ${help_command}'
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-
