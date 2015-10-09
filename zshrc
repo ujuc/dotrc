@@ -57,7 +57,7 @@ go_path=$?
 if [[ $go_path == 0 ]]; then
     # Go Path
     export GOROOT=`go env GOROOT`
-    export GOPATH="$HOME/Documents/repos/go"
+    export GOPATH="$HOME/repos/go"
     export PATH=$PATH:/usr/local/opt/go/libexec/bin
     export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
 fi
@@ -88,6 +88,9 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# vi path setting
+alias vi="nvim"
 
 if [ $(uname -s) = "Darwin" ]; then
     # OS X
