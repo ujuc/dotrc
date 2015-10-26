@@ -104,8 +104,6 @@ autocmd WinLeave * set nocursorline
 autocmd WinEnter * set cursorline
 autocmd InsertEnter * set nocursorline
 autocmd InsertLeave * set cursorline
-set wildmenu
-set wildmode=list:longest,full
 
 " Always show current position
 set ru
@@ -264,13 +262,6 @@ nnoremap <Leader><Space> :set hlsearch!<CR>
 map j gj
 map k gk
 
-" Map <space> to / (search) add Ctrl-<Space> to ?
-map <space> /
-map <c-space> ?
-
-" Disable highlight when <leader>cr> is pressed
-map <silent> <leader><cr> :noh<cr>
-
 " Smart way to move between windows
 map <C-j> <C-W>j
 map <C-k> <C-W>k
@@ -361,4 +352,9 @@ autocmd BufWritePost $MYVIMRC PlugClean
 
 " Fast edit the .vimrc file using ,x
 nnoremap <leader>x :tabedit $MYVIMRC<CR>
+
+
+" 80 length limt
+let &colorcolumn=join(range(81,999),",")
+highlight ColorColumn ctermbg=235 guibg=#2c2d27
 
