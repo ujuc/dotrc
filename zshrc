@@ -100,7 +100,8 @@ if [ $(uname -s) = "Darwin" ]; then
     alias search="brew search"
     alias info="brew info"
     alias blist="brew list"
-    alias update="brew update; brew upgrade; brew cask update; gem update --system; echo update-vim"
+    alias cask="brew cask"
+    alias update="brew update; brew upgrade; brew cask update"
 elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Manjaro" ]; then
     # Manjaro
     alias install="yaourt -S"
