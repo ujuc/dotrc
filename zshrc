@@ -143,3 +143,6 @@ alias ujuc_help='echo ${help_command}'
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
+
+# rbenv
+export RBENV_ROOT=/usr/local/var/rbenv
