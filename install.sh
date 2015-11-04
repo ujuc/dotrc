@@ -77,17 +77,20 @@ function settingVim() {
 	vi +PlugInstall +qall
 }
 
-if [ $FUNC =  "all" ]; then
-    installSystemPackage
-	settingTmux
-	settingZsh
-	settingVim
-    exit
-else
-    if [ $FUNC = "vim" ]; then
-	   settingVim
-       exit
-    fi
-fi
+
+case $FUNC in 
+    "all")
+        installSystemPackage
+        settingTmux
+        settingZsh
+        settingVim
+        ;;
+    "vim")
+        settingVim
+        ;;
+    * )
+    	exit
+    	;;
+esac
 
 /* vim: noai:ts=4:sw=4
