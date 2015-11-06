@@ -146,3 +146,5 @@ export LANG=en_US.UTF-8
 
 # rbenv
 export RBENV_ROOT=/usr/local/var/rbenv
+eval "$(rbenv init -)"
+
