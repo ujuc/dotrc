@@ -51,8 +51,7 @@ plugins=(git zsh-syntax-highlighting git-flow git-extras)
 export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
 # export MANPATH="/usr/local/man:$MANPATH"
 
-which go
-go_path=$?
+go_path=`which go`
 
 if [[ $go_path == 0 ]]; then
     # Go Path
@@ -60,6 +59,12 @@ if [[ $go_path == 0 ]]; then
     export GOPATH="$HOME/repos/go"
     export PATH=$PATH:/usr/local/opt/go/libexec/bin
     export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
+fi
+#
+# rbenv
+if [[ `which rbenv` == 0 ]]; then
+    export RBENV_ROOT=/usr/local/var/rbenv
+    eval "$(rbenv init -)"
 fi
 
 source $ZSH/oh-my-zsh.sh
@@ -144,7 +149,4 @@ alias ujuc_help='echo ${help_command}'
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-# rbenv
-export RBENV_ROOT=/usr/local/var/rbenv
-eval "$(rbenv init -)"
 
