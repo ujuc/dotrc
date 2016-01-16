@@ -69,12 +69,12 @@ function settingVim() {
     ln -s ~/.vim ~/.nvim
     ln -s ~/.vimrc ~/.vimrc
 
-    # color setting
-    mkdir -p ~/.vim/colors
-    ln -sf ~/.vim/plugged/vim-colors-solarized/colors/solarized.vim ~/.vim/colors/solarized.vim
-
     # Install Plugins
 	vi +PlugInstall +qall
+
+    # linked theme
+    mkdir -p ~/.vim/colors
+    ln -sf ~/.vim/plugged/vim-gotham/colors/gotham.vim ~/.vim/colors/gotham.vim
 }
 
 

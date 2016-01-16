@@ -13,9 +13,8 @@ Plug 'nathanaelkane/vim-indent-guides'
 Plug 'junegunn/goyo.vim'
 " Hyperfocus-writing
 Plug 'junegunn/limelight.vim'
-" solarized
-Plug 'altercation/vim-colors-solarized'
-
+" vim-gotham
+Plug 'whatyouhide/vim-gotham'
 
 """"""""
 " Document

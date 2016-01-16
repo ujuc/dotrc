@@ -189,7 +189,7 @@ augroup trailing " Only show trailing whitespace when not in insert mode
 augroup END
 
 syntax enable
-colorscheme solarized
+colorscheme gotham
 set background=dark
 
 " Use Unix as the standard file type
