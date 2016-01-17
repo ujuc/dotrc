@@ -48,12 +48,12 @@ ZSH_THEME="bullet-train"
 plugins=(git zsh-syntax-highlighting git-flow git-extras)
 
 # User configuration
-export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 go_path=`which go`
 
-if [[ $go_path == 0 ]]; then
+if [[ $go_path != '' ]]; then
     # Go Path
     export GOROOT=`go env GOROOT`
     export GOPATH="$HOME/repos/go"
