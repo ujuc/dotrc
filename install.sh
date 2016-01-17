@@ -68,6 +68,7 @@ function settingVim() {
     # Neovim setting
     ln -s ~/.vim ~/.nvim
     ln -s ~/.vimrc ~/.vimrc
+    ln -sf /usr/local/bin/vim /usr/local/bin/vi
 
     # Install Plugins
 	vi +PlugInstall +qall
