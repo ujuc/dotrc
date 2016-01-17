@@ -51,9 +51,7 @@ plugins=(git zsh-syntax-highlighting git-flow git-extras)
 export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 
-go_path=`which go`
-
-if [[ $go_path != '' ]]; then
+if [[ `which go` != '' ]]; then
     # Go Path
     export GOROOT=`go env GOROOT`
     export GOPATH="$HOME/repos/go"
@@ -62,7 +60,7 @@ if [[ $go_path != '' ]]; then
 fi
 #
 # rbenv
-if [[ `which rbenv` == 0 ]]; then
+if [[ `which rbenv` != '' ]]; then
     export RBENV_ROOT=/usr/local/var/rbenv
     eval "$(rbenv init -)"
 fi
