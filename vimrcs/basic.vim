@@ -3,25 +3,26 @@
 "
 
 " Get out of vi compatible mode
-set nocompatible 
+set nocompatible
 
 " Enable filetype
-filetype plugin indent on 
+filetype plugin indent on
 
 " Increase the lines of history
-set history=1000 
+set history=1000
 
 " Turn on modeline
-set modeline 
+set modeline
 
 " Set autoread when a file is changed from the outside
-set autoread 
+set autoread
 
 " Wirte on make/shell commands
 set autowrite
 
 " Set nobackup
 set nobackup
+set noundofile
 
 " Set undo
 set undofile
