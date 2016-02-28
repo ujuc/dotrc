@@ -61,6 +61,7 @@ function settingZsh() {
 function settingVim() {
 	# Link plug
 	mkdir -p ~/.vim/autoload
+    mkdir ~/.vim/vimundo
 	ln -sf $BASE/vim-plug/plug.vim ~/.vim/autoload/plug.vim
 
     # Bundle

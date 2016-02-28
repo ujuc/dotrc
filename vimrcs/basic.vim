@@ -24,7 +24,7 @@ set autowrite
 set nobackup
 
 " Set undo
-set noundofile
+set undofile
 set nowb
 set noswapfile
 
