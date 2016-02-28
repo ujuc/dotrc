@@ -59,7 +59,7 @@ function which_check() {
     fi
 }
 
-if [[ `which_check go` == 'True' ]]; then
+if [ -z $(which_check go) ]; then
     # Go Path
     export GOROOT=`go env GOROOT`
     export GOPATH="$HOME/repos/go"
@@ -69,7 +69,7 @@ fi
 
 #
 # rbenv
-if [[ `which_check rbenv` == 'True' ]]; then
+if [ -z $(which_check rbenv) ]; then
     export RBENV_ROOT=/usr/local/var/rbenv
     eval "$(rbenv init -)"
 fi
@@ -155,7 +155,5 @@ alias ujuc_help='echo ${help_command}'
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-
-
 
 test -e ${HOME}/.iterm2_shell_integration.zsh && source ${HOME}/.iterm2_shell_integration.zsh
