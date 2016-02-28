@@ -22,10 +22,9 @@ set autowrite
 
 " Set nobackup
 set nobackup
-set noundofile
 
 " Set undo
-set undofile
+set noundofile
 set nowb
 set noswapfile
 
