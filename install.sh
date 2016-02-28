@@ -30,8 +30,12 @@ function installSystemPackage() {
 function settingTmux() {
     printMessage "\nSetting tmux"
     ln -sf $BASE/tmux.conf ~/.tmux.conf
-    git clone https://github.com/erikw/tmux-powerline.git ~/.vim/tmux-powerline
     tmux source-file ~/.tmux.conf
+}
+
+function settingSubmodule () {
+    git submodule init
+    git submodule update
 }
 
 function settingZsh() {
@@ -57,8 +61,6 @@ function settingZsh() {
 function settingVim() {
 	# Link plug
 	mkdir -p ~/.vim/autoload
-	git submodule init
-	git submodule update
 	ln -sf $BASE/vim-plug/plug.vim ~/.vim/autoload/plug.vim
 
     # Bundle
@@ -82,11 +84,13 @@ function settingVim() {
 case $FUNC in 
     "all")
         installSystemPackage
+        settingSubmodule
         settingTmux
         settingZsh
         settingVim
         ;;
     "vim")
+        settingSubmodule
         settingVim
         ;;
     * )
