@@ -25,6 +25,7 @@ set nobackup
 
 " Set undo
 set undofile
+set undodir=$HOME/.vim/vimundo
 set nowb
 set noswapfile
 
