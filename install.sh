@@ -51,6 +51,11 @@ function settingZsh() {
     git clone https://github.com/caiogondim/bullet-train-oh-my-zsh-theme.git ~/base_git/bullet-train
     ln -sf ~/base_git/bullet-train/bullet-train.zsh-theme ~/.oh-my-zsh/themes/bullet-train.zsh-theme
 
+    # Setting powerline font
+    printMessage "\nPowerline Font"
+    git clone git@github.com:powerline/fonts.git ~/base_git/powerline_font
+    bash ~/base_git/powerline_font/install.sh
+
     # zsh-syntax-highlighting setting
     mkdir -p ~/.oh-my-zsh/custom/plugins
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
