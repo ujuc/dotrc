@@ -74,6 +74,13 @@ if [ -z $(which_check rbenv) ]; then
     eval "$(rbenv init -)"
 fi
 
+#
+# NVM
+if [ -e ~/.nvm/nvm.sh ]; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
+fi
+
 source $ZSH/oh-my-zsh.sh
 
 # You may need to manually set your language environment
