@@ -15,6 +15,8 @@ Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 " vim-gotham
 Plug 'whatyouhide/vim-gotham'
+" seoul256
+Plug 'junegunn/seoul256.vim'
 
 """"""""
 " Document
