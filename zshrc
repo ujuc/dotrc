@@ -51,15 +51,7 @@ plugins=(git zsh-syntax-highlighting git-flow git-extras)
 export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 
-function which_check() {
-    if [[ `which "$1"` =~ 'not' ]]; then
-        echo False
-    else
-        echo True
-    fi
-}
-
-if [ -z $(which_check go) ]; then
+if type go > /dev/null; then
     # Go Path
     export GOROOT=`go env GOROOT`
     export GOPATH="$HOME/repos/go"
@@ -69,14 +61,14 @@ fi
 
 #
 # rbenv
-if [ -z $(which_check rbenv) ]; then
+if type rbenv > /dev/null; then
     export RBENV_ROOT=/usr/local/var/rbenv
     eval "$(rbenv init -)"
 fi
 
 #
 # NVM
-if [ -e ~/.nvm/nvm.sh ]; then
+if type nvm > /dev/null; then
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 fi
