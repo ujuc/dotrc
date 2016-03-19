@@ -13,10 +13,8 @@ Plug 'nathanaelkane/vim-indent-guides'
 Plug 'junegunn/goyo.vim'
 " Hyperfocus-writing
 Plug 'junegunn/limelight.vim'
-" vim-gotham
-Plug 'whatyouhide/vim-gotham'
-" seoul256
-Plug 'junegunn/seoul256.vim'
+" sourcerer
+Plug 'xero/sourcerer.vim'
 
 """"""""
 " Document

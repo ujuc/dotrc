@@ -83,7 +83,7 @@ function settingVim() {
 
     # linked theme
     mkdir -p ~/.vim/colors
-    ln -sf ~/.vim/plugged/vim-gotham/colors/gotham.vim ~/.vim/colors/gotham.vim
+    ln -sf ~/.vim/plugged/sourcerer.vim/colors/sourcerer.vim ~/.vim/colors/sourcerer.vim
 }
 
 
