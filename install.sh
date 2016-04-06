@@ -22,6 +22,7 @@ function installSystemPackage() {
         brew install vim --with-cscope --with-lua --override-system-vim
         #brew tap neovim/neovim
         #brew install --HEAD neovim
+        brew cask install caskroom/fonts/font-hack
     elif [ $(uname -s) = "Linux" ]; then
         sudo apt-get -y install ctags vim tig tmux zsh python python3 curl
     fi
