@@ -102,6 +102,7 @@ source $ZSH/oh-my-zsh.sh
 
 # vi path setting
 #alias vi="nvim"
+alias vi="vim"
 
 if [ $(uname -s) = "Darwin" ]; then
     # OS X
