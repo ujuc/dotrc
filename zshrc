@@ -101,8 +101,8 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # vi path setting
-#alias vi="nvim"
-alias vi="vim"
+alias vi="nvim"
+#alias vi="vim"
 
 if [ $(uname -s) = "Darwin" ]; then
     # OS X
@@ -161,3 +161,8 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 test -e ${HOME}/.iterm2_shell_integration.zsh && source ${HOME}/.iterm2_shell_integration.zsh
+
+# Bind key settings
+bindkey "ee[D" backward-word
+bindkey "ee[C" forward-word
+
