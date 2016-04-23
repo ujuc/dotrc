@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/usr/bin/bash -x
 
 #############################
 #   System Setting          #
@@ -15,6 +15,8 @@ function printMessage() {
 function installSystemPackage() {
     printMessage "\nInstall defualt"
 
+    linux=`cat /etc/*-release | grep '_ID'`
+
     if [ $(uname -s) = "Darwin" ]; then
         [ -z "$(which brew)" ] && ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         [ -z "$(which brew-cask)" ] && brew install caskroom/cask/brew-cask
@@ -24,7 +26,11 @@ function installSystemPackage() {
         #brew install --HEAD neovim
         brew cask install caskroom/fonts/font-hack
     elif [ $(uname -s) = "Linux" ]; then
-        sudo apt-get -y install ctags vim tig tmux zsh python python3 curl
+        if [[ $linux == *ManjaroLinux* ]]; then
+            yaourt -S vim tig tmux zsh openssh
+        elif [[ $linux == *Ubuntu* ]]; then
+            sudo apt install -y vim tig tmux zsh python openssh curl
+        fi
     fi
 }
 
@@ -87,6 +93,17 @@ function settingVim() {
     ln -sf ~/.vim/plugged/sourcerer.vim/colors/sourcerer.vim ~/.vim/colors/sourcerer.vim
 }
 
+function settingTest() {
+    linux=`cat /etc/*-release | grep '_ID'`
+    
+    if [ $(uname -s) = "Darwin" ]; then
+        echo 'test'
+    elif [ $(uname -s) = "Linux" ]; then
+        if [[ $linux == *ManjaroLinux* ]]; then
+            echo 'manjaro'
+        fi
+    fi
+}
 
 case $FUNC in 
     "all")
@@ -100,9 +117,12 @@ case $FUNC in
         settingSubmodule
         settingVim
         ;;
+    "test")
+        settingTest
+        ;;
     * )
     	exit
     	;;
 esac
 
-/* vim: noai:ts=4:sw=4
+#/* vim: noai:ts=4:sw=4
