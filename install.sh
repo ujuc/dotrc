@@ -72,6 +72,7 @@ function settingVim() {
 
     # Bundle
     #sudo pip install flake8 flake8-docstings
+    #sudo gem install reek
     ln -sf $BASE/vimrcs ~/.vim/vimrcs
 	ln -sf $BASE/vimrc ~/.vimrc
     # Neovim setting
