@@ -113,6 +113,15 @@ case $FUNC in
         settingZsh
         settingVim
         ;;
+	"install")
+		installSystemPackage
+		;;
+	"submodule")
+		settingSubmodule
+		;;
+	"zsh")
+		settingZsh
+		;;
     "vim")
         settingSubmodule
         settingVim
