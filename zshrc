@@ -101,7 +101,6 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # vi path setting
-#alias vi="nvim"
 alias vi="vim"
 
 if [ $(uname -s) = "Darwin" ]; then
