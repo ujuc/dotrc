@@ -30,6 +30,8 @@ Plug 'Rykka/riv.vim'
 Plug 'nvie/vim-flake8'
 " Simple, easy-to-use VIM alignment
 Plug 'junegunn/vim-easy-align'
+" ruby reek for vim
+Plug 'rainerborene/vim-reek'
 
 
 """""""""

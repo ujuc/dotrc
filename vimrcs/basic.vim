@@ -356,8 +356,8 @@ nnoremap <leader>x :tabedit $MYVIMRC<CR>
 
 
 " 80 length limt
-let &colorcolumn=join(range(81,999),",")
-highlight ColorColumn ctermbg=235 guibg=#2c2d27
+let &colorcolumn="53,73,81,121"
+highlight ColorColumn ctermbg=17 guibg=NavyBlue
 
 " git commit length
 au FileType gitcommit set tw=72
