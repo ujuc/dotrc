@@ -81,9 +81,6 @@ function settingVim() {
     #sudo gem install reek
     ln -sf $BASE/vimrcs ~/.vim/vimrcs
 	ln -sf $BASE/vimrc ~/.vimrc
-    # Neovim setting
-    ln -s ~/.vim ~/.nvim
-    ln -s ~/.vimrc ~/.vimrc
     ln -sf /usr/local/bin/vim /usr/local/bin/vi
 
     # Install Plugins
@@ -114,6 +111,15 @@ case $FUNC in
         settingZsh
         settingVim
         ;;
+	"install")
+		installSystemPackage
+		;;
+	"submodule")
+		settingSubmodule
+		;;
+	"zsh")
+		settingZsh
+		;;
     "vim")
         settingSubmodule
         settingVim
