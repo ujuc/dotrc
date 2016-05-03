@@ -213,6 +213,8 @@ set shiftround
 set cindent
 set autoindent
 
+autocmd Filetype ruby setlocal ts=2 sts=2 sw=2
+
 " Linebreak on 500 characters
 set lbr
 set tw=500
