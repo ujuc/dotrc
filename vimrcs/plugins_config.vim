@@ -160,3 +160,13 @@ autocmd filetype python nnoremap <buffer> <leader>r :call ChoosePythonCompiler()
 " Markdown 
 """""""""
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+
+
+"""""""""""
+" Golang
+"""""""""""
+au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef"<CR>
+au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
+au Filetype go nnoremap <leader>t :tab split <CR>:exe "GoDef"<CR>
+au Filetype go nnoremap <leader>r :GoRun %<CR>
+

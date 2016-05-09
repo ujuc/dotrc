@@ -73,6 +73,7 @@ function settingZsh() {
 function settingVim() {
 	# Link plug
 	mkdir -p ~/.vim/autoload
+    mkdir ~/.vim/bundle
     mkdir ~/.vim/vimundo
 	ln -sf $BASE/vim-plug/plug.vim ~/.vim/autoload/plug.vim
 
@@ -89,6 +90,12 @@ function settingVim() {
     # linked theme
     mkdir -p ~/.vim/colors
     ln -sf ~/.vim/plugged/sourcerer.vim/colors/sourcerer.vim ~/.vim/colors/sourcerer.vim
+
+    # Install YCM
+    git clone https://github.com/Valloric/YouCompleteMe.git ~/.vim/bundle/YouCompleteMe
+    cd ~/.vim/bundle
+    git submodule update --init --recursive
+    ~/.vim/bundle/YouCompleteMe/install.py --all
 }
 
 function settingTest() {
