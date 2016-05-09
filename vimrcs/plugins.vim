@@ -137,5 +137,4 @@ Plug 'sotte/presenting.vim'
 " Markdown runtime files
 Plug 'tpope/vim-markdown'
 
-
 call plug#end()
