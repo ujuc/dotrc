@@ -1,4 +1,4 @@
-#!/usr/bin/bash -x
+#!/usr/bin/env bash
 
 #############################
 #   System Setting          #
@@ -22,14 +22,12 @@ function installSystemPackage() {
         [ -z "$(which brew-cask)" ] && brew install caskroom/cask/brew-cask
         brew install tig tmux python python3 zsh
         brew install vim --with-cscope --with-lua --override-system-vim
-        #brew tap neovim/neovim
-        #brew install --HEAD neovim
         brew cask install caskroom/fonts/font-hack
     elif [ $(uname -s) = "Linux" ]; then
         if [[ $linux == *ManjaroLinux* ]]; then
             yaourt -S vim tig tmux zsh openssh
         elif [[ $linux == *Ubuntu* ]]; then
-            sudo apt install -y vim tig tmux zsh python openssh curl
+            sudo apt install -y vim tig tmux zsh
         fi
     fi
 }
@@ -71,43 +69,30 @@ function settingZsh() {
 }
 
 function settingVim() {
-	# Link plug
-	mkdir -p ~/.vim/autoload
+    # Link plug
+    mkdir -p ~/.vim/autoload
     mkdir ~/.vim/bundle
     mkdir ~/.vim/vimundo
-	ln -sf $BASE/vim-plug/plug.vim ~/.vim/autoload/plug.vim
+    ln -sf $BASE/vim-plug/plug.vim ~/.vim/autoload/plug.vim
 
     # Bundle
     #sudo pip install flake8 flake8-docstings
     #sudo gem install reek
     ln -sf $BASE/vimrcs ~/.vim/vimrcs
-	ln -sf $BASE/vimrc ~/.vimrc
-    ln -sf /usr/local/bin/vim /usr/local/bin/vi
-
-    # Install Plugins
-	vi +PlugInstall +qall
+    ln -sf $BASE/vimrc ~/.vimrc
+    #ln -sf /usr/local/bin/vim /usr/local/bin/vi
 
     # linked theme
     mkdir -p ~/.vim/colors
     ln -sf ~/.vim/plugged/sourcerer.vim/colors/sourcerer.vim ~/.vim/colors/sourcerer.vim
-
     # Install YCM
     git clone https://github.com/Valloric/YouCompleteMe.git ~/.vim/bundle/YouCompleteMe
     cd ~/.vim/bundle
     git submodule update --init --recursive
     ~/.vim/bundle/YouCompleteMe/install.py --all
-}
 
-function settingTest() {
-    linux=`cat /etc/*-release | grep '_ID'`
-    
-    if [ $(uname -s) = "Darwin" ]; then
-        echo 'test'
-    elif [ $(uname -s) = "Linux" ]; then
-        if [[ $linux == *ManjaroLinux* ]]; then
-            echo 'manjaro'
-        fi
-    fi
+    # Install Plugins
+    vi +PlugInstall +qall
 }
 
 case $FUNC in 
@@ -118,25 +103,21 @@ case $FUNC in
         settingZsh
         settingVim
         ;;
-	"install")
-		installSystemPackage
-		;;
-	"submodule")
-		settingSubmodule
-		;;
-	"zsh")
-		settingZsh
-		;;
-    "vim")
+    "install")
+        installSystemPackage
+        ;;
+    "submodule")
         settingSubmodule
+        ;;
+    "zsh")
+        settingZsh
+        ;;
+    "vim")
         settingVim
         ;;
-    "test")
-        settingTest
+   * )
+        exit
         ;;
-    * )
-    	exit
-    	;;
 esac
 
 #/* vim: noai:ts=4:sw=4
