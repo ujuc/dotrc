@@ -165,3 +165,4 @@ test -e ${HOME}/.iterm2_shell_integration.zsh && source ${HOME}/.iterm2_shell_in
 bindkey "ee[D" backward-word
 bindkey "ee[C" forward-word
 
+TERM=xterm-256color
