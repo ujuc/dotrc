@@ -366,3 +366,8 @@ highlight ColorColumn ctermbg=17 guibg=navyblue
 
 " git commit length
 au FileType gitcommit set tw=72
+
+if has("gui_vimr")
+    " VimR specific stuff
+    set guifont=D2Coding:h14
+endif
