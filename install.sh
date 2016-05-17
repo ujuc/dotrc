@@ -115,6 +115,9 @@ case $FUNC in
     "vim")
         settingVim
         ;;
+    "tmux")
+        settingTmux
+        ;;
    * )
         exit
         ;;
