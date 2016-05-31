@@ -83,6 +83,10 @@ function settingVim() {
     # linked theme
     mkdir -p ~/.vim/colors
     ln -sf ~/.vim/plugged/sourcerer.vim/colors/sourcerer.vim ~/.vim/colors/sourcerer.vim
+
+    # Install vim theme
+    ln -sf $BASE/vim/autoload/airline ~/.vim/autoload
+    ln -sf $BASE/vim/colors/dracula.vim ~/.vim/colors
     # Install YCM
     git clone https://github.com/Valloric/YouCompleteMe.git ~/.vim/bundle/YouCompleteMe
     cd ~/.vim/bundle
