@@ -4,9 +4,6 @@
 [submodule "tmux-powerline"]
 	path = tmux-powerline
 	url = https://github.com/erikw/tmux-powerline.git
-[submodule "dracula-theme"]
-	path = dracula-theme
-	url = https://github.com/zenorocha/dracula-theme.git
 [submodule "bullet-train-oh-my-zsh-theme"]
 	path = bullet-train-oh-my-zsh-theme
 	url = https://github.com/caiogondim/bullet-train-oh-my-zsh-theme.git
