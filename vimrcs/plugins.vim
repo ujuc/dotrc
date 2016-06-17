@@ -140,5 +140,7 @@ Plug 'tpope/vim-markdown'
 Plug 'sourcegraph/sourcegraph-vim', {'for': ['go']}
 " sort python imports
 Plug 'fisadev/vim-isort'
+" Typescript
+Plug 'leafgarland/typescript-vim'
 
 call plug#end()
