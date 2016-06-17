@@ -57,7 +57,7 @@ function settingZsh() {
 
     # Setting powerline font
     printMessage "\nPowerline Font"
-    bash ~/base_git/dotrc/powerline_font/install.sh
+    bash ~/base_git/dotrc/fonts/install.sh
 
     # zsh-syntax-highlighting setting
     mkdir -p ~/.oh-my-zsh/custom/plugins
