@@ -20,7 +20,7 @@ function installSystemPackage() {
     if [ $(uname -s) = "Darwin" ]; then
         [ -z "$(which brew)" ] && ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         [ -z "$(which brew-cask)" ] && brew install caskroom/cask/brew-cask
-        brew install tig tmux python python3 zsh
+        brew install tig tmux python python3 zsh git
         brew install vim --with-cscope --with-lua --override-system-vim
         brew cask install caskroom/fonts/font-hack
     elif [ $(uname -s) = "Linux" ]; then
