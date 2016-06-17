@@ -136,5 +136,9 @@ Plug 'davidhalter/jedi-vim'
 Plug 'sotte/presenting.vim'
 " Markdown runtime files
 Plug 'tpope/vim-markdown'
+" sorcegraph - yet go
+Plug 'sourcegraph/sourcegraph-vim', {'for': ['go']}
+" sort python imports
+Plug 'fisadev/vim-isort'
 
 call plug#end()
