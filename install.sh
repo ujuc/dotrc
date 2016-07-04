@@ -53,11 +53,11 @@ function settingZsh() {
 
     # bullet-train theme setting
     printMessage "\nbullet-train"
-    ln -sf ~/base_git/dotrc/bullet-train/bullet-train.zsh-theme ~/.oh-my-zsh/themes/bullet-train.zsh-theme
+    ln -sf $BASE/bullet-train/bullet-train.zsh-theme ~/.oh-my-zsh/themes/bullet-train.zsh-theme
 
     # Setting powerline font
     printMessage "\nPowerline Font"
-    bash ~/base_git/dotrc/fonts/install.sh
+    bash $BASE/fonts/install.sh
 
     # zsh-syntax-highlighting setting
     mkdir -p ~/.oh-my-zsh/custom/plugins
