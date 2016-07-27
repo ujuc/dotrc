@@ -1,17 +1,9 @@
 # Dotrc 
 
 ## Install
-### OS X
-1. `mkdir ~/base_git`
-2. Download [master.zip](https://github.com/ujuc/dotrc/archive/master.zip)
-3. `unzip master.zip ~/base_git/dotrc` 
-4. `cd ~/base_git/dotrc`
-5. `bash install.sh`
-
-### Linux
 1. install git
-2. repo clone in `~/base_git/dotrc`
-3. `cd ~/base_git/dotrc`
+2. repo clone in `~/dotrc`
+3. `cd ~/dotrc`
 4. `bash install.sh`
 
 ## vim
