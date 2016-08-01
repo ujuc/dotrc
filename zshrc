@@ -166,3 +166,11 @@ bindkey "ee[D" backward-word
 bindkey "ee[C" forward-word
 
 TERM=xterm-256color
+
+# Linux brew
+if [ $(uname -s) = "Linux" ]; then
+    export PATH="$HOME/.linuxbrew/bin:$PATH"
+    export MANPATH="$MONE/.linuxbrew/share/man:$MANPATH"
+    export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
+fi
+
