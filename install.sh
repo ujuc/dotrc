@@ -47,13 +47,15 @@ function settingZsh() {
     printMessage "\nSetting zsh"
 
     # zshrc setting
-    git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
-    ln -sf $BASE/zshrc ~/.zshrc
-    chsh -s /bin/zsh
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
     # bullet-train theme setting
     printMessage "\nbullet-train"
+
     ln -sf $BASE/bullet-train/bullet-train.zsh-theme ~/.oh-my-zsh/themes/bullet-train.zsh-theme
+
+    ln -sf $BASE/zshrc ~/.zshrc
+    #chsh -s /bin/zsh
 
     # Setting powerline font
     printMessage "\nPowerline Font"
