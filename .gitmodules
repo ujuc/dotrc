@@ -4,9 +4,6 @@
 [submodule "tmux-powerline"]
 	path = tmux-powerline
 	url = https://github.com/erikw/tmux-powerline.git
-[submodule "bullet-train-oh-my-zsh-theme"]
-	path = bullet-train-oh-my-zsh-theme
-	url = https://github.com/caiogondim/bullet-train-oh-my-zsh-theme.git
 [submodule "fonts"]
 	path = fonts
 	url = https://github.com/powerline/fonts.git
@@ -16,3 +13,6 @@
 [submodule "dracula-vim"]
 	path = vim
 	url = https://github.com/dracula/vim.git
+[submodule "spaceship-zsh-theme"]
+	path = spaceship-zsh-theme
+	url = https://github.com/denysdovhan/spaceship-zsh-theme.git
