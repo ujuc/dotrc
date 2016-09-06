@@ -360,7 +360,7 @@ nnoremap <leader>x :tabedit $MYVIMRC<CR>
 
 
 " 80 length limt
-set cc=51,81
+set cc=51,80
 highlight ColorColumn ctermbg=72 guibg=#5faf87 " CadetBlue
 
 " git commit length
