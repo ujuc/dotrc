@@ -174,3 +174,6 @@ bindkey "ee[C" forward-word
 
 TERM=xterm-256color
 
+source $HOME/.pyenv
+if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
+
