@@ -6,6 +6,11 @@
 3. `cd ~/dotrc`
 4. `bash install.sh`
 
+
+## Note.
+* only MacOS
+* Ubuntu is text broken.
+
 ## vim
 * [liangxianzhe/oh-my-vim](https://github.com/liangxianzhe/oh-my-vim)
 
