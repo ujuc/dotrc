@@ -17,6 +17,9 @@ func! GoyoAfter()
 endfunc
 let g:goyo_callbacks = [function('GoyoBefore'), function('GoyoAfter')]
 
+" Airline
+let g:airline_powerline_fonts = 1
+
 """""""""
 " Enhancement
 """""""""
