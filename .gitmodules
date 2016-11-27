@@ -13,3 +13,6 @@
 [submodule "spaceship-zsh-theme"]
 	path = spaceship-zsh-theme
 	url = https://github.com/denysdovhan/spaceship-zsh-theme.git
+[submodule "ivim"]
+	path = ivim
+	url = https://github.com/kepbod/ivim.git
