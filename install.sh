@@ -74,6 +74,10 @@ function settingVim() {
     mkdir ~/.vim/vimundo
     ln -sf $BASE/vim-plug/plug.vim ~/.vim/autoload/plug.vim
 
+    # install amix/vimrc
+    git clone https://github.com/amix/vimrc.git ~/.vim_runtime
+    sh ~/.vim_runtime/install_awesome_vimrc.sh
+
     # Bundle
     #sudo pip install flake8 flake8-docstings
     #sudo gem install reek
@@ -88,6 +92,7 @@ function settingVim() {
     # Install vim theme
     ln -sf $BASE/vim/autoload/airline ~/.vim/autoload
     git clone https://github.com/kristijanhusak/vim-hybrid-material.git $HOME/.vim/bundle/vim-hybrid-material
+
     # Install YCM
     git clone https://github.com/Valloric/YouCompleteMe.git ~/.vim/bundle/YouCompleteMe
     cd ~/.vim/bundle
