@@ -87,7 +87,7 @@ function settingVim() {
 
     # Install vim theme
     ln -sf $BASE/vim/autoload/airline ~/.vim/autoload
-    ln -sf $BASE/vim/colors/dracula.vim ~/.vim/colors
+    git clone https://github.com/kristijanhusak/vim-hybrid-material.git $HOME/.vim/bundle/vim-hybrid-material
     # Install YCM
     git clone https://github.com/Valloric/YouCompleteMe.git ~/.vim/bundle/YouCompleteMe
     cd ~/.vim/bundle
