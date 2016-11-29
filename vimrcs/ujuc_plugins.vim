@@ -9,8 +9,6 @@ Plug 'bling/vim-airline'
 Plug 'bling/vim-bufferline'
 " Indent guides
 Plug 'nathanaelkane/vim-indent-guides'
-" Distraction-free
-Plug 'junegunn/goyo.vim'
 " Hyperfocus-writing
 Plug 'junegunn/limelight.vim'
 " sourcerer
@@ -26,8 +24,6 @@ Plug 'Rykka/riv.vim'
 """""""""
 " Lint
 """""""""
-" Flake8 plugin for Vim
-Plug 'nvie/vim-flake8'
 " Simple, easy-to-use VIM alignment
 Plug 'junegunn/vim-easy-align'
 " ruby reek for vim
@@ -47,12 +43,8 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-abolish'
 " Speed dating
 Plug 'tpope/vim-speeddating'
-" Repeat
-Plug 'tpope/vim-repeat'
 " Unod tree
 Plug 'mbbill/undotree'
-" Surround
-Plug 'tpope/vim-surround'
 " Tabular
 Plug 'godlygeek/tabular'
 " Splitjoin
@@ -93,8 +85,6 @@ Plug 'Shougo/unite-outline'
 """""""""
 " Navigation
 """""""""
-" NERD tree
-Plug 'scrooloose/nerdtree'
 " NERD tree tabs
 Plug 'jistr/vim-nerdtree-tabs'
 " Tmux panes
@@ -104,8 +94,6 @@ Plug 'mhinz/vim-tmuxify'
 """""""""
 " Compile
 """""""""
-" Syntax checking
-Plug 'scrooloose/syntastic'
 " Single compile
 Plug 'xuhdev/SingleCompile'
 
@@ -113,19 +101,12 @@ Plug 'xuhdev/SingleCompile'
 """""""""
 " Git
 """""""""
-" Git wrapper
-Plug 'tpope/vim-fugitive'
 " Gitk clone
 Plug 'gregsexton/gitv'
-" Git diff sign
-Plug 'airblade/vim-gitgutter'
-
 
 """""""""
 " Language
 """""""""
-" Golang
-Plug 'fatih/vim-go'
 " Rails
 Plug 'tpope/vim-rails'
 " Language Support
@@ -134,8 +115,6 @@ Plug 'sheerun/vim-polyglot'
 Plug 'davidhalter/jedi-vim'
 " Presenting
 Plug 'sotte/presenting.vim'
-" Markdown runtime files
-Plug 'tpope/vim-markdown'
 " sort python imports
 Plug 'fisadev/vim-isort'
 " Typescript

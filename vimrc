@@ -8,6 +8,9 @@ source ~/.vim_runtime/vimrcs/extended.vim
 "source ~/.vim/vimrcs/basic.vim
 "source ~/.vim/vimrcs/plugins.vim
 "source ~/.vim/vimrcs/plugins_config.vim
+source ~/.vim/vimrcs/ujuc.vim
+source ~/.vim/vimrcs/ujuc_filetypes.vim
+source ~/.vim/vimrcs/ujuc_plugins.vim
 
 try
 source ~/.vim_runtime/my_configs.vim
