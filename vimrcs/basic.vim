@@ -1,92 +1,46 @@
-" Set up tab labels
-set guitablabel=%m%N:%t[%{tabpagewinnr(v:lnum)}]
-set tabline=%!MyTabLine()
-func! MyTabLine()
-    let s = ''
-    let t = tabpagenr()
-    let i = 1
-    while i<=tabpagenr('$')
-        let buflist = tabpagebuflist(i)
-        let winnr = tabpagewinnr(i)
-        let s.=(i==t ? '%#TabLineSel#' : '%#TabLine#')
-        let s.='%'.i.'T'
-        let s.=' '
-        let bufnr = buflist[winnr-1]
-        let file = bufname(bufnr)
-        let buftype = getbufvar(bufnr, 'buftype')
-        let m = ''
-        if getbufvar(bufnr, '&modified')
-            let m = '[+]'
-        endif
-        if buftype == 'nofile'
-            if file =~ '\/.'
-                let file = substitute(file, '.*\/\ze.', '', '')
-            endif
-        else
-            let file = fnamemodify(file, ':p:t')
-        endif
-        if file == ''
-            let file='[No Nmae]'
-        endif
-        let s.=m
-        let s.=i.':'
-        let s.=file
-        let s.='['.winnr.']'
-        let s.=' '
-        let i = i+1
-    endwhile
-    let s.='%T%#TabLineFile#%='
-    let s.=(tabpagenr('$')>1 ? '%999XX' : 'X')
-    return s
-endfunc
+" General
 
-" Only have cursorline in current window and in normal window
-autocmd WinLeave * set nocursorline
-autocmd WinEnter * set cursorline
-autocmd InsertEnter * set nocursorline
-autocmd InsertLeave * set cursorline
+" Get out of vi compatible mode
+set nocompatible
 
+" Turn on modeline
+set modeline
 
-" Set UI
-set list " Show these tabs and spaces and so on
-set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮ " Change listchars
-set linebreak " Wrap long lines at a blank
-set showbreak=↪  " Change wrap line break
-set fillchars=diff:⣿,vert:│ " Change fillchars
-augroup trailing " Only show trailing whitespace when not in insert mode
-    autocmd!
-    autocmd InsertEnter * :set listchars-=trail:⌴
-    autocmd InsertLeave * :set listchars+=trail:⌴
-augroup END
+" Wirte on make/shell commands
+set autowrite
 
-colorscheme sourcerer
+" Set undo
+set undofile
+set undodir=$HOME/.vim/vimundo
+set nowb
+set noswapfile
 
-" Use sane regexes
-nnoremap / /\v
-vnoremap / /\v
-cnoremap s/ s/\v
-nnoremap ? ?\v
-vnoremap ? ?\v
-cnoremap s? s?\v
+" Turn on the wild menu
+set wildmode=list:longest,full
 
-" Keep search matches in the middle of the window
-nnoremap n nzzzv
-nnoremap N Nzzzv
-nnoremap * *zzzv
-nnoremap # #zzzv
-nnoremap g* g*zzzv
-nnoremap g# g#zzzv
+" Show tabline
+set showtabline=2
 
-" Visual search mappings
-function! s:VSetSearch()
-    let temp=@@
-    normal! gvy
-    let @/='\V' . substitute(escape(@@, '\'), '\n', '\\n', 'g')
-    let @@=temp
-endfunction
-vnoremap * :<C-U>call <SID>VSetSearch()<CR>//<CR>
-vnoremap # :<C-U>call <SID>VSetSearch()<CR>??<CR>
+" Show cmd
+set showcmd
 
-" Use ,Space to toggle the highlight search
-nnoremap <Leader><Space> :set hlsearch!<CR>
+" Tab
+set softtabstop=4
+set shiftround
+set cindent
+set autoindent
+
+" Linebreak on 500 char
+set lbr
+set tw=500
+
+" Treat long lines as break
+map j gj
+map k gk
+
+" Source the vimrc file after saving it
+autocmd BufWritePost $MYVIMRC PlugClean
+
+let &colorcolumn="51,80,".join(range(120,999),",")
+highlight ColorColumn ctermbg=235 guibg=#2c2d27
 
