@@ -75,7 +75,7 @@ Plug 'bkad/CamelCaseMotion'
 " Tag bar
 Plug 'majutsushi/tagbar'
 " Match it
-Plug 'edsono/vim-matchit'
+Plug 'tmhedberg/matchit'
 " Search engine
 Plug 'Shougo/unite.vim'
 " Unite outline
