@@ -118,7 +118,7 @@ if [ $(uname -s) = "Darwin" ]; then
     alias info="brew info"
     alias blist="brew list"
     alias cask="brew cask"
-    alias update="brew update; brew upgrade; brew cask update"
+    alias update="brew update; brew upgrade"
     alias upip="pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U"
 elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Manjaro" ]; then
     # Manjaro
