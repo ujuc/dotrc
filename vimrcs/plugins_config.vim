@@ -60,7 +60,6 @@ let g:undotree_SetFocusWhenToggle = 1
 " investingate.vim
 nnoremap K :call investigate#Investigate()<cr>
 
-
 """""""""
 " Move
 """""""""
@@ -71,16 +70,6 @@ let g:tagbar_autofocus = 1
 let g:tagbar_expand = 1
 let g:tagbar_foldlevel = 2
 let g:tagbar_autoshowtag = 1
-
-" Matchit
-nmap <Tab> %
-vmap <Tab> %
-
-" Unite
-let g:unite_data_directory = $HOME . '/.vim/cache/unite'
-let g:unite_source_history_yank_enable = 1
-let g:unite_source_rec_max_cache_files = 100
-let g:unite_prompt='» '
 
 " Use ESC to exit, and use C-J and C-K to move
 func! s:unite_sttings()
@@ -113,43 +102,9 @@ let NERDTreeDirArrows = 1
 let g:nerdtree_tabs_open_on_gui_startup = 0
 
 """""""""
-" Compile
-"""""""""
-
-" Syntastic
-let g:syntastic_check_on_open = 1
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_auto_jump = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_error_symbol = '✗'
-let g:syntastic_style_error_symbol = '✠'
-let g:syntastic_warning_symbol = '∆'
-let g:syntastic_style_warning_symbol = '≈'
-
-" Singlecompile
-nnoremap <leader>r :SingleCompileRun<cr>
-let g:SingleCompile_showquickfixiferror = 1
-func! ChoosePythonCompiler()
-    echo 'Please choose python compiler:\n'
-    echo '1. Python2+\n'
-    echo '2. Python3+\n'
-    let flag = getchar()
-    if flag == 49
-        call SingleCompile#ChooseCompiler('python', 'python')
-        execute 'SingleCompileRun'
-    elseif flag == 50
-        call SingleCompile#ChooseCompiler('python', 'python3')
-        execute 'SingleCompileRun'
-    endif
-endfunc
-autocmd filetype python nnoremap <buffer> <leader>r :call ChoosePythonCompiler()<cr>
-
-
-"""""""""
 " Markdown 
 """""""""
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-
 
 """""""""""
 " Golang

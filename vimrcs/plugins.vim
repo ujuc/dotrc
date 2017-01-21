@@ -62,25 +62,15 @@ Plug 'roman/golden-ratio'
 " Create better diffs
 Plug 'chrisbra/vim-diff-enhanced'
 
-
 """""""""
 " Moving
 """""""""
-" Pairs of mappings
-Plug 'tpope/vim-unimpaired'
 " Easy motion
 Plug 'Lokaltog/vim-easymotion'
-" Camel case motion
-Plug 'bkad/CamelCaseMotion'
 " Tag bar
 Plug 'majutsushi/tagbar'
-" Match it
-Plug 'tmhedberg/matchit'
 " Search engine
-Plug 'Shougo/unite.vim'
-" Unite outline
-Plug 'Shougo/unite-outline'
-
+Plug 'Shougo/denite.nvim'
 
 """""""""
 " Navigation
@@ -89,14 +79,6 @@ Plug 'Shougo/unite-outline'
 Plug 'jistr/vim-nerdtree-tabs'
 " Tmux panes
 Plug 'mhinz/vim-tmuxify'
-
-
-"""""""""
-" Compile
-"""""""""
-" Single compile
-Plug 'xuhdev/SingleCompile'
-
 
 """""""""
 " Git
