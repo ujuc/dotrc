@@ -21,7 +21,7 @@ function installSystemPackage() {
         [ -z "$(which brew)" ] && ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         [ -z "$(which brew-cask)" ] && brew install caskroom/cask/brew-cask
         brew install tig tmux python python3 zsh git
-        brew install vim --with-cscope --with-lua --override-system-vim
+        brew install vim --with-python3 --with-override-system-vi
         brew cask install caskroom/fonts/font-hack
     elif [ $(uname -s) = "Linux" ]; then
         if [[ $linux == *ManjaroLinux* ]]; then
