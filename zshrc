@@ -107,9 +107,9 @@ bindkey "ee[C" forward-word
 
 TERM=xterm-256color
 
-source $HOME/.pyenv
+source $HOME/.pyenv > /dev/null
 if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
-source $HOME/.rbenv
+source $HOME/.rbenv > /dev/null
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
 # Autoenv
