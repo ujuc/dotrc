@@ -44,3 +44,18 @@ autocmd BufWritePost $MYVIMRC PlugClean
 let &colorcolumn="51,80,".join(range(120,999),",")
 highlight ColorColumn ctermbg=235 guibg=#2c2d27
 
+" Use ESC to exit, and use C-J and C-K to move
+func! s:unite_sttings()
+    nmap <buffer> <ESC> <plug>(unite_exit)
+    imap <buffer> <ESC> <plug>(unite_exit)
+    imap <buffer> <C-J> <Plug>(unite_select_next_line)
+    imap <buffer> <C-K> <Plug>(unite_select_previous_line)
+endfunc
+autocmd filetype unite call s:unite_settings()
+nnoremap <silent> <Space>f :<C-U>Unite -start-insert -auto-resize -buffer-name=files file_rec/async<cr><C-U>
+nnoremap <silent> <Space>y :<C-U>Unite -start-insert -buffer-name=yanks history/yank<cr>
+nnoremap <silent> <Space>l :<C-U>Unite -start-insert -auto-resize -buffer-name=line line<cr>
+nnoremap <silent> <Space>o :<C-U>Unite -auto-resize -buffer-name=outline outline<cr>
+nnoremap <silent> <Space>b :<C-U>Unite -quick-match buffer<cr>
+nnoremap <silent> <Space>t :<C-U>Unite -quick-match tab<cr>
+nnoremap <silent> <Space>/ :<C-U>Unite -auto-resize -buffer-name-search grep:.<cr>
