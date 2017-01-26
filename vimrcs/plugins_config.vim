@@ -60,9 +60,6 @@ if has("persistent_undo")
     set undofile
 endif
 
-" Hard mode
-autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
-
 " investingate.vim
 nnoremap K :call investigate#Investigate()<cr>
 

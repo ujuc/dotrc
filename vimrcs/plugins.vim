@@ -59,9 +59,6 @@ Plug 'godlygeek/tabular'
 " Splitjoin
 Plug 'AndrewRadev/splitjoin.vim'
 
-" Hard mode
-Plug 'wikitopian/hardmode'
-
 " Text object
 " Todo: leaning
 Plug 'wellle/targets.vim'
