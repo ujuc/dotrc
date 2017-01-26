@@ -1,14 +1,19 @@
-"""""""""
-" UI Plugin
-"""""""""
+""""""
+" UI
+""""""
 
-" Indent Guides
-let g:indent_guides_enable_on_vim_startup = 1
-"let g:indent_guides_guide_size = 1
+" Airline
+let g:airline_powerline_fonts = 1
+let g:airline_theme='wombat'
+
+" Indnet guide
+let g:indent_guides_enalbe_on_vim_startup = 1
 let g:indent_guides_default_mapping = 0
-let g:indent_guides_exclude_filetypes = ['help', 'nerdtree', 'markdown']
+let g:indent_guides_exclude_filetypes = ['hlep', 'nerdtree', 'markdown']
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
 
-" Goyo & Limelight
+" Goyo limelight
 func! GoyoBefore()
     Limelight
 endfunc
@@ -17,17 +22,10 @@ func! GoyoAfter()
 endfunc
 let g:goyo_callbacks = [function('GoyoBefore'), function('GoyoAfter')]
 
-" Airline
-let g:airline_powerline_fonts = 1
 
-"""""""""
-" Enhancement
-"""""""""
-
-" DelimiMate
-let delimitMate_expand_cr = 1
-let delimitMate_expand_space = 1
-let delimitMate_balance_matchpairs = 1
+"""""
+" enhancement
+"""""
 
 " NERD Commenter
 let NERDCommentWholetLinesInVMode = 2
@@ -57,12 +55,21 @@ nnoremap <silent> <LocalLeader><Space> :call IsWhiteLine()<cr>
 nnoremap <leader>u :UndotreeToggle<cr>
 let g:undotree_SetFocusWhenToggle = 1
 
+if has("persistent_undo")
+    set undodir=~/.undodir/
+    set undofile
+endif
+
+" Hard mode
+autocmd VimEnter,BufNewFile,BufReadPost * silent! call HardMode()
+
 " investingate.vim
 nnoremap K :call investigate#Investigate()<cr>
 
-"""""""""
-" Move
-"""""""""
+
+"""""
+" Navigation
+"""""
 
 " Tag bar
 nnoremap <leader>t :TagbarToggle<cr>
@@ -71,46 +78,20 @@ let g:tagbar_expand = 1
 let g:tagbar_foldlevel = 2
 let g:tagbar_autoshowtag = 1
 
-" Use ESC to exit, and use C-J and C-K to move
-func! s:unite_sttings()
-    nmap <buffer> <ESC> <plug>(unite_exit)
-    imap <buffer> <ESC> <plug>(unite_exit)
-    imap <buffer> <C-J> <Plug>(unite_select_next_line)
-    imap <buffer> <C-K> <Plug>(unite_select_previous_line)
-endfunc
-autocmd filetype unite call s:unite_settings()
-nnoremap <silent> <Space>f :<C-U>Unite -start-insert -auto-resize -buffer-name=files file_rec/async<cr><C-U>
-nnoremap <silent> <Space>y :<C-U>Unite -start-insert -buffer-name=yanks history/yank<cr>
-nnoremap <silent> <Space>l :<C-U>Unite -start-insert -auto-resize -buffer-name=line line<cr>
-nnoremap <silent> <Space>o :<C-U>Unite -auto-resize -buffer-name=outline outline<cr>
-nnoremap <silent> <Space>b :<C-U>Unite -quick-match buffer<cr>
-nnoremap <silent> <Space>t :<C-U>Unite -quick-match tab<cr>
-nnoremap <silent> <Space>/ :<C-U>Unite -auto-resize -buffer-name-search grep:.<cr>
+" NERDTreeTab
+nnoremap <leader>nt :NERDTreeTabsToggle<cr>
+"nnoremap <leader>f :NERDTreeFind<cr>
+"let NERDTreeChDirMode = 2
+"let NERDTreeShowBookmarks = 1
+"let NERDTreeShowHidden = 1
+"let NERDTreeShowLineNumbers = 1
+"let NERDTreeDirArrows = 1
+"let g:nerdtree_tabs_open_on_gui_startup = 0
 
-"""""""""
-" Navigate
-"""""""""
 
-" NERD Tree
-nnoremap <leader>d :NERDTreeTabsToggle<cr>
-nnoremap <leader>f :NERDTreeFind<cr>
-let NERDTreeChDirMode = 2
-let NERDTreeShowBookmarks = 1
-let NERDTreeShowHidden = 1
-let NERDTreeShowLineNumbers = 1
-let NERDTreeDirArrows = 1
-let g:nerdtree_tabs_open_on_gui_startup = 0
+"""""
+" Language
+"""""
 
-"""""""""
-" Markdown 
-"""""""""
-autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-
-"""""""""""
-" Golang
-"""""""""""
-au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef"<CR>
-au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
-au Filetype go nnoremap <leader>t :tab split <CR>:exe "GoDef"<CR>
-au Filetype go nnoremap <leader>r :GoRun %<CR>
-
+" isort
+let g:vim_isort_map = '<C-i>'
