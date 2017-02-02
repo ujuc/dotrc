@@ -69,6 +69,8 @@ Plug 'roman/golden-ratio'
 " Create better diffs
 Plug 'chrisbra/vim-diff-enhanced'
 
+" Auto pairs
+Plug 'jiangmiao/auto-pairs'
 
 """""""""
 " Moving
