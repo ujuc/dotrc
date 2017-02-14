@@ -116,6 +116,8 @@ Plug 'gregsexton/gitv'
 
 " Language Support
 Plug 'sheerun/vim-polyglot'
+Plug 'Chiel92/vim-autoformat'
+Plug 'w0rp/ale'
 
 " Rails
 Plug 'tpope/vim-rails'
@@ -142,8 +144,5 @@ Plug 'sotte/presenting.vim'
 
 " Helper (Dash)
 Plug 'Keithbsmiley/investigate.vim'
-
-
-
 
 call plug#end()
