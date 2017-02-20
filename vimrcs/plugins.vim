@@ -98,16 +98,16 @@ Plug 'jistr/vim-nerdtree-tabs'
 " Tmux panes
 Plug 'mhinz/vim-tmuxify'
 
+" File explorer
+Plug 'Shougo/vimfiler.vim'
+
 
 """""
 " Git
 """""
 
-" Git 
-Plug 'tpope/vim-fugitive'
-
-" vim-fugitive extention
-Plug 'gregsexton/gitv'
+" Gita
+Plug 'lambdalisue/vim-gita'
 
 
 """""
