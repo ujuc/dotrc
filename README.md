@@ -1,11 +1,28 @@
 # Dotrc 
 
 ## Install
+
 1. install git
 2. repo clone in `~/dotrc`
 3. `cd ~/dotrc`
-4. `bash install.sh`
+4. `bash install.sh all`
 
+### option
+
+* Install system package
+`bash install.sh install`
+
+* Pull submodule
+`bash install.sh submodule`
+
+* Setting zsh
+`bash install.sh zsh`
+
+* Setting vim
+`bash install.sh vim`
+
+* Setting tmux
+`bash install.sh tmux`
 
 ## Note.
 * only MacOS
