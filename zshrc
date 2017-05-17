@@ -119,3 +119,4 @@ if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 # Autoenv
 source $(brew --prefix autoenv)/activate.sh
 
+eval $(/usr/libexec/path_helper -s)
