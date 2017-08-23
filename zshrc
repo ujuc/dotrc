@@ -59,10 +59,10 @@ if [ $(uname -s) = "Darwin" ]; then
 elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Manjaro" ]; then
     # Manjaro
     alias install="yaourt -S"
-    alias uninstall="pacman -Rns"
-    alias search="pacman -Ss"
-    alias info="pacman -Si"
-    alias update="pacman -Syu"
+    alias uninstall="yaourt -Rns"
+    alias search="yaourt -Ss"
+    alias info="yaourt -Si"
+    alias update="yaourt -Syu"
 elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Ubuntu" ]; then
     # Ubuntu
     alias install="sudo apt-get install -y"
