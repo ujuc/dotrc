@@ -10,7 +10,6 @@ ZSH_THEME="spaceship"
 # Theme settings
 SPACESHIP_TIME_SHOW=true
 
-
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
@@ -116,7 +115,8 @@ if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
 source $HOME/.rbenv 2> /dev/null
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 
-# Autoenv
-source $(brew --prefix autoenv)/activate.sh
-
-eval $(/usr/libexec/path_helper -s)
+if [ $(uname -s) != "Linux" ]; then
+    # Autoenv
+    source $(brew --prefix autoenv)/activate.sh
+    eval $(/usr/libexec/path_helper -s)
+fi
