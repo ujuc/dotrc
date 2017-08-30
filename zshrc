@@ -23,9 +23,9 @@ export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
 if type go > /dev/null; then
     # Go Path
     export GOROOT=`go env GOROOT`
-    export GOPATH="$HOME/repos/go"
+    export GOPATH=$HOME/repos/go
     export PATH=$PATH:/usr/local/opt/go/libexec/bin
-    export PATH="$PATH:$GOROOT/bin:$GOPATH/bin"
+    export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 fi
 
 # NVM
