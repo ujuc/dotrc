@@ -110,13 +110,19 @@ bindkey "ee[C" forward-word
 
 TERM=xterm-256color
 
-source $HOME/.pyenv 2> /dev/null
-if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi
-source $HOME/.rbenv 2> /dev/null
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)" 
+
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)" 
 
 if [ $(uname -s) != "Linux" ]; then
     # Autoenv
     source $(brew --prefix autoenv)/activate.sh
     eval $(/usr/libexec/path_helper -s)
+
+if [ -f ~/.config/exercism/exercism_completion.zsh ]; then
+  . ~/.config/exercism/exercism_completion.zsh
 fi
+
