@@ -121,8 +121,8 @@ if [ $(uname -s) != "Linux" ]; then
     # Autoenv
     source $(brew --prefix autoenv)/activate.sh
     eval $(/usr/libexec/path_helper -s)
-
-if [ -f ~/.config/exercism/exercism_completion.zsh ]; then
-  . ~/.config/exercism/exercism_completion.zsh
 fi
 
+if [ -f ~/.config/exercism/exercism_completion.zsh ]; then
+    . ~/.config/exercism/exercism_completion.zsh
+fi
