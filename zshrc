@@ -5,7 +5,7 @@ export ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="spaceship"
+ZSH_THEME="powerlevel9k"
 
 # Theme settings
 SPACESHIP_TIME_SHOW=true
@@ -126,3 +126,7 @@ fi
 if [ -f ~/.config/exercism/exercism_completion.zsh ]; then
     . ~/.config/exercism/exercism_completion.zsh
 fi
+
+# powerlevel9k setting
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(time os_icon context dir virtualenv vcs)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time root_indicator background_jobs battery go_version node_version pyenv rbenv)

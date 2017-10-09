@@ -51,7 +51,10 @@ function settingZsh() {
 
     mkdir -p ~/.oh-my-zsh/custom/themes
     # custom zshrc themes
-    ln -sf $BASE/spaceship-zsh-theme/spaceship.zsh ~/.oh-my-zsh/custom/themes/spaceship.zsh-theme
+    # spaceship theme
+    #ln -sf $BASE/spaceship-zsh-theme/spaceship.zsh ~/.oh-my-zsh/custom/themes/spaceship.zsh-theme
+    # Plowerleve 9k
+    ln -sf $BASE/powerlevel9k/powerlevel9k.zsh-theme ~/.oh-my-zsh/custom/themes/powerlevel9k.zsh-theme
 
     ln -sf $BASE/zshrc ~/.zshrc
     #chsh -s /bin/zsh
