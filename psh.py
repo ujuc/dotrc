@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""System Settings
+
+Sungjin (ujuc@ujuc.kr)
+"""
 
 import inspect
 import logging
