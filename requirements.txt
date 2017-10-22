@@ -3,5 +3,9 @@ vim-vint
 
 # python lint
 flake8
-flake8-docstring
 yapf
+
+# Python
+cmd2
+ipython
+coloredlogs
