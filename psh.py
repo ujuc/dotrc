@@ -177,7 +177,42 @@ class InitShell(Cmd):
 
     def do_vim(self):
         """Configure vim"""
-        pass
+        path_vim = f"{self.path_home}/.vim"
+        os.mkdir(path_vim)
+        os.mkdir(f"{path_vim}/bundle")
+        os.mkdir(f"{path_vim}/vimundo")
+        os.mkdir(f"{path_vim}/colors")
+
+        logging.info("install vim-plug")
+        work_vim_plug = subprocess.run([
+            "git", "clone", "https://github.com/junegunn/vim-plug.git",
+            f"{path_vim}/autoload/plug.vim"
+        ], stdout=subprocess.PIPE, encoding='utf-8')
+        logging.debug(work_vim_plug)
+        logging.info("installed vim-plug")
+
+        logging.info("install amix/vimrc")
+        subprocess.run([
+            "git", "clone", "https://github.com/amix/vimrc.git",
+            f"{self.path_home}/.vim_runtime"
+        ], stdout=subprocess.PIPE, encoding='utf-8')
+        work_vimrc = subprocess.run([
+            "sh", f"{self.path_home}/.vim_runtime/install_awesome_vimrc.sh"
+        ], stdout=subprocess.PIPE, encoding='utf-8')
+        logging.debug(work_vimrc)
+        logging.info("installed amix/vimrc")
+
+        logging.info("configure custom vimrc")
+        os.symlink(f"{self.path_pwd}/vimrcs", f"{self.path_home}/.vim/vimrcs")
+        os.symlink(f"{self.path_pwd}/vimrc", f"{self.path_home}/.vimrc")
+
+        # todo: YCM 추가 필요
+        # https://github.com/Valloric/YouCompleteMe.git
+
+        subprocess.run([
+            "vi", "+PlugInstall", "+qall"
+        ])
+        logging.info("configured custom vimrc")
 
     # todo: Git 부분을 shell 로 불러오지 안도록 하자.
     def do_git(self):

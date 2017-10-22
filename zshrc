@@ -64,7 +64,7 @@ if [ $(uname -s) = "Darwin" ]; then
     alias info="brew info"
     alias blist="brew list"
     alias cask="brew cask"
-    alias update="brew update; brew upgrade; zplug update"
+    alias update="brew update; brew upgrade"
     alias upip="pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U"
 elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Manjaro" ]; then
     # Manjaro
@@ -72,18 +72,20 @@ elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Manjaro" ]; th
     alias uninstall="yaourt -Rns"
     alias search="yaourt -Ss"
     alias info="yaourt -Si"
-    alias update="yaourt -Syu; zplug update"
+    alias update="yaourt -Syu"
 elif [ $(lsb_release -a | grep Description | awk '{print $2}') = "Ubuntu" ]; then
     # Ubuntu
     alias install="sudo apt-get install -y"
     alias uninstall="sudo apt-get purge -y"
     alias search="sudo apt-cache search"
     alias info="sudo apt-cahce show"
-    alias update="sudo apt-get update; sudo apt-get dist-upgrade; zplug upate"
+    alias update="sudo apt-get update; sudo apt-get dist-upgrade"
     alias clean="sudo apt-get autoremove -y"
     alias add_repo="sudo add-apt-repository"
     alias rm_reop="sudo add-apt-repository -r"
 fi
+
+alias custom_update="zplug update; cd ~/.vim_runtime; git pull --rebase; vi +PlugUpdate +qall; vim +PlugUpgrade +qall"
 
 # help
 help_command="""

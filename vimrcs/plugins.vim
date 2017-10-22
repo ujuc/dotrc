@@ -10,6 +10,9 @@ Plug 'vim-airline/vim-airline'
 " Airline theme
 Plug 'vim-airline/vim-airline-themes'
 
+" Hybrid-material
+Plug 'kristijanhusak/vim-hybrid-material'
+
 " Hyperfocus writing
 Plug 'junegunn/limelight.vim'
 
