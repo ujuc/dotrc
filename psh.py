@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import inspect
 import logging
 import os
 import platform
@@ -20,8 +21,12 @@ coloredlogs.install(level='DEBUG')
 class InitShell(Cmd):
     """Ujuc computes init"""
 
-    prompt = "install>>>"
+    prompt = "psh >>"
     intro = "Welllllllllll...."
+
+    path_home = os.environ['HOME']
+    path_pwd = os.path.dirname(os.path.abspath(inspect.getfile(
+        inspect.currentframe())))
 
     def __init__(self):
         # 무조건 cmd 로 접근하여 작업을 하려면 해당 내용을 사용한다
@@ -99,42 +104,74 @@ class InitShell(Cmd):
         make_option('--tmux', action="store_true", default=False),
         make_option('--tig', action="store_true", default=False),
     ])
-    def do_link_dotrc(self, arg, opts=None):
+    def do_link_dotrc(self, opts=None):
         """
         Linked *rc file without vimrc
         """
         logging.info("Start linking dotrc")
-        
-        def symlink_rc(file_name):
-            path_home = os.environ['HOME']
-            path_pwd = os.getcwd()
-
-            try:
-                os.lstat(f"{path_home}/.{file_name}")
-                os.remove(f"{path_home}/.{file_name}")
-
-                logging.info(f"Remove {file_name}")
-            except FileNotFoundError:
-                pass
-
-            os.symlink(f"{path_pwd}/{file_name}", f"{path_home}/.{file_name}")
-
-            logging.info(f"Linked {file_name}")
 
         if not opts.tmux and not opts.tig:
-            symlink_rc("tmux.conf")
-            symlink_rc("tigrc")
+            self.symlink_rc("tmux.conf")
+            self.symlink_rc("tigrc")
         elif opts.tmux:
-            symlink_rc("tmux.conf")
+            self.symlink_rc("tmux.conf")
         elif opts.tig:
-            symlink_rc("tigrc")
+            self.symlink_rc("tigrc")
 
-    # todo: install zsh
-    def do_zsh(self):
-        pass
+    @options([
+        make_option('--zsh', action="store_true", default=False),
+        make_option('--zplug', action="store_true", default=False),
+        make_option('--config', action="store_true", default=False),
+    ])
+    def do_zsh(self, opts=None):
+        """Install and configure zsh"""
 
-    # todo: configure vim
+        def install_zsh():
+            logging.info("install zsh")
+
+            work_zsh = subprocess.run([
+                "sh", "-c", "\"$(curl -fsSL https://gist.githubusercontent.com/ujuc"
+                            "/0a27fd5c81a5f277f391e75683c469e8/raw/"
+                            "5c1b52db9362c36df5c9bae15921dbf8b5239866/"
+                            "install_oh-my-zsh.sh)\""
+            ], stdout=subprocess.PIPE, encoding='utf-8')
+            logging.debug(work_zsh)
+
+            self.symlink_rc("zshrc")
+
+            logging.info("installed oh-my-zsh")
+
+        def install_zplug():
+            logging.info("install zplug")
+
+            work_zplug = subprocess.run([
+                "git", "clone", "https://github.com/zplug/zplug",
+                f"{self.path_home}/.zplug"
+            ], stdout=subprocess.PIPE, encoding='utf-8')
+
+            logging.debug(work_zplug)
+            logging.info("installed zplug")
+
+        def config_zsh():
+            logging.info("configure zsh")
+
+            subprocess.run(["source", f"{self.path_home}/.zshrc"])
+            subprocess.run(["zplug", "install"])
+            subprocess.run(["source", f"{self.path_home}/.zshrc"])
+
+        if not opts.zsh and not opts.zplug and not opts.config:
+            install_zsh()
+            install_zplug()
+            config_zsh()
+        elif opts.zsh:
+            install_zsh()
+        elif opts.zplug:
+            install_zplug()
+        elif opts.config:
+            config_zsh()
+
     def do_vim(self):
+        """Configure vim"""
         pass
 
     # todo: Git 부분을 shell 로 불러오지 안도록 하자.
@@ -145,6 +182,20 @@ class InitShell(Cmd):
         print("\n")
         logger.info("bye bye")
         return self._STOP_AND_EXIT
+
+    def symlink_rc(self, file_name):
+        try:
+            os.lstat(f"{self.path_home}/.{file_name}")
+            os.remove(f"{self.path_home}/.{file_name}")
+
+            logging.info(f"Remove {file_name}")
+        except FileNotFoundError:
+            pass
+
+        os.symlink(f"{self.path_pwd}/{file_name}",
+                   f"{self.path_home}/.{file_name}")
+
+        logging.info(f"Linked {file_name}")
 
 
 if __name__ == '__main__':
