@@ -42,6 +42,9 @@ class InitShell(Cmd):
         logging.info("install pkg")
 
         if sysname == "Darwin":
+            subprocess.run(["xcode-select", "--install"])
+            subprocess.run(["sudo", "xcodebuild", "-license"])
+            
             output = subprocess.run(
                 ["which", "brew"],
                 stdout=subprocess.PIPE, encoding='utf-8')
