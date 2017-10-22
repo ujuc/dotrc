@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
 import logging
+import os
 import platform
 import subprocess
 
 import coloredlogs
-from cmd2 import Cmd
+from cmd2 import Cmd, make_option, options
 
 try:
     import distro
@@ -94,9 +95,39 @@ class InitShell(Cmd):
 
             # todo: arch 용은 따로 만들어야될듯... (언젠가)
 
-    # todo: linked *rc file without vimrc
-    def do_link_dotrc(self):
-        pass
+    @options([
+        make_option('--tmux', action="store_true", default=False),
+        make_option('--tig', action="store_true", default=False),
+    ])
+    def do_link_dotrc(self, arg, opts=None):
+        """
+        Linked *rc file without vimrc
+        """
+        logging.info("Start linking dotrc")
+        
+        def symlink_rc(file_name):
+            path_home = os.environ['HOME']
+            path_pwd = os.getcwd()
+
+            try:
+                os.lstat(f"{path_home}/.{file_name}")
+                os.remove(f"{path_home}/.{file_name}")
+
+                logging.info(f"Remove {file_name}")
+            except FileNotFoundError:
+                pass
+
+            os.symlink(f"{path_pwd}/{file_name}", f"{path_home}/.{file_name}")
+
+            logging.info(f"Linked {file_name}")
+
+        if not opts.tmux and not opts.tig:
+            symlink_rc("tmux.conf")
+            symlink_rc("tigrc")
+        elif opts.tmux:
+            symlink_rc("tmux.conf")
+        elif opts.tig:
+            symlink_rc("tigrc")
 
     # todo: install zsh
     def do_zsh(self):
