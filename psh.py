@@ -14,6 +14,8 @@ try:
 except ImportError:
     pass
 
+__version__ = '1.0-rc'
+
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG')
 
@@ -44,7 +46,7 @@ class InitShell(Cmd):
         if sysname == "Darwin":
             subprocess.run(["xcode-select", "--install"])
             subprocess.run(["sudo", "xcodebuild", "-license"])
-            
+
             output = subprocess.run(
                 ["which", "brew"],
                 stdout=subprocess.PIPE, encoding='utf-8')
