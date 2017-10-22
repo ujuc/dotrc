@@ -170,6 +170,11 @@ class InitShell(Cmd):
         elif opts.config:
             config_zsh()
 
+    def do_powerline_font(self):
+        """install powerline font"""
+        logging.info("install powerline font")
+        subprocess.run(["bash", f"{self.path_pwd}/fonts/install.sh"])
+
     def do_vim(self):
         """Configure vim"""
         pass
