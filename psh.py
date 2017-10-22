@@ -5,8 +5,12 @@ import platform
 import subprocess
 
 import coloredlogs
-import distro
 from cmd2 import Cmd
+
+try:
+    import distro
+except ImportError:
+    pass
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level='DEBUG')
