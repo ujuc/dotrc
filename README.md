@@ -3,41 +3,28 @@
 ## Install
 
 1. install git
-2. repo clone in `~/dotrc`
-3. `cd ~/dotrc`
-4. `bash install.sh all`
-
-### option
-
-* Install system package
-`bash install.sh install`
-
-* Pull submodule
-`bash install.sh submodule`
-
-* Setting zsh
-`bash install.sh zsh`
-
-* Setting vim
-`bash install.sh vim`
-
-* Setting tmux
-`bash install.sh tmux`
+1. clone `~/dotrc`
+1. `cd ~/dotrc`
+1. `pip install -r requirements.txt`
+1. `./psh.py`
 
 ## Note.
-* only MacOS
-* Ubuntu is text broken.
+* Change python script
 
-## vim
+## Using repos
+
+* todo: adding !!!
+
+### vim
 * [liangxianzhe/oh-my-vim](https://github.com/liangxianzhe/oh-my-vim)
 
-### Ref. Thanks
+### zsh
+* zshrc base [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
+* zsh syntax highlighting [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
+* zsh theme [bullet-train-oh-my-zsh-theme](https://github.com/caiogondim/bullet-train-oh-my-zsh-theme)
+
+## Ref. Thanks
 * [liangxianzhe/oh-my-vim](https://github.com/liangxianzhe/oh-my-vim)
 * [amix/vimrc](https://github.com/amix/vimrc)
 * [junegunn/dotfiles](https://github.com/junegunn/dotfiles)
 * [sstrato/vim](https://github.com/sstrato/vim)
-
-## zsh
-* zshrc base [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
-* zsh syntax highlighting [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-* zsh theme [bullet-train-oh-my-zsh-theme](https://github.com/caiogondim/bullet-train-oh-my-zsh-theme)

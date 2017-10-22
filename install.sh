@@ -36,6 +36,7 @@ function settingTmux() {
     printMessage "\nSetting tmux"
     ln -sf $BASE/tmux.conf ~/.tmux.conf
     tmux source-file ~/.tmux.conf
+    ln -sf $BASE/tigrc ~/.tigrc
 }
 
 function settingSubmodule () {
