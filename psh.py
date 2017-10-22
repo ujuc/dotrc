@@ -29,7 +29,7 @@ class InitShell(Cmd):
 
     def do_system_pkg(self):
         """
-        OS에 따라 필요한 Package를 설치한다.
+        install system package
         """
         sysname = platform.uname()
         logging.debug(f"system is {sysname}")
