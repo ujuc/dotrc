@@ -2,7 +2,7 @@
 
 ## Install
 
-1. install git
+1. install git, curl, python3-pip, python3
 1. clone `~/dotrc`
 1. `cd ~/dotrc`
 1. `pip install -r requirements.txt`

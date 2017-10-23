@@ -39,11 +39,11 @@ class InitShell(Cmd):
         # self.allow_cli_args = False
         Cmd.__init__(self, use_ipython=True)
 
-    def do_system_pkg(self):
+    def do_system_pkg(self, arg):
         """
         install system package
         """
-        sysname = platform.uname()
+        sysname = platform.uname().system
         logging.debug(f"system is {sysname}")
         logging.info("install pkg")
 
@@ -113,7 +113,7 @@ class InitShell(Cmd):
         make_option('--tmux', action="store_true", default=False),
         make_option('--tig', action="store_true", default=False),
     ])
-    def do_link_dotrc(self, opts=None):
+    def do_link_dotrc(self, arg, opts=None):
         """
         Linked *rc file without vimrc
         """
@@ -132,17 +132,21 @@ class InitShell(Cmd):
         make_option('--zplug', action="store_true", default=False),
         make_option('--config', action="store_true", default=False),
     ])
-    def do_zsh(self, opts=None):
+    def do_zsh(self, arg, opts=None):
         """Install and configure zsh"""
 
         def install_zsh():
             logging.info("install zsh")
 
+            subprocess.run([
+                "curl", "-o", "/tmp/install.sh",
+                "https://gist.githubusercontent.com/ujuc/"
+                "0a27fd5c81a5f277f391e75683c469e8/raw/"
+                "5c1b52db9362c36df5c9bae15921dbf8b5239866/install_oh-my-zsh.sh"
+            ], stdout=subprocess.PIPE, encoding='utf-8')
+
             work_zsh = subprocess.run([
-                "sh", "-c", "\"$(curl -fsSL https://gist.githubusercontent.com/ujuc"
-                            "/0a27fd5c81a5f277f391e75683c469e8/raw/"
-                            "5c1b52db9362c36df5c9bae15921dbf8b5239866/"
-                            "install_oh-my-zsh.sh)\""
+                "bash", f"/tmp/install.sh"
             ], stdout=subprocess.PIPE, encoding='utf-8')
             logging.debug(work_zsh)
 
@@ -153,9 +157,14 @@ class InitShell(Cmd):
         def install_zplug():
             logging.info("install zplug")
 
+            subprocess.run([
+                "curl", "-o", "/tmp/install.zsh",
+                "https://raw.githubusercontent.com/zplug/installer/"
+                "master/installer.zsh"
+            ], stdout=subprocess.PIPE, encoding='utf-8')
+
             work_zplug = subprocess.run([
-                "git", "clone", "https://github.com/zplug/zplug",
-                f"{self.path_home}/.zplug"
+                "zsh", f"/tmp/install.zsh"
             ], stdout=subprocess.PIPE, encoding='utf-8')
 
             logging.debug(work_zplug)
@@ -164,9 +173,9 @@ class InitShell(Cmd):
         def config_zsh():
             logging.info("configure zsh")
 
-            subprocess.run(["source", f"{self.path_home}/.zshrc"])
+            subprocess.run(f"source {self.path_home}/.zshrc", shell=True)
             subprocess.run(["zplug", "install"])
-            subprocess.run(["source", f"{self.path_home}/.zshrc"])
+            subprocess.run(f"source {self.path_home}/.zshrc", shell=True)
 
         if not opts.zsh and not opts.zplug and not opts.config:
             install_zsh()
@@ -179,12 +188,12 @@ class InitShell(Cmd):
         elif opts.config:
             config_zsh()
 
-    def do_powerline_font(self):
+    def do_powerline_font(self, arg):
         """install powerline font"""
         logging.info("install powerline font")
         subprocess.run(["bash", f"{self.path_pwd}/fonts/install.sh"])
 
-    def do_vim(self):
+    def do_vim(self, arg):
         """Configure vim"""
         path_vim = f"{self.path_home}/.vim"
         os.mkdir(path_vim)
@@ -195,7 +204,7 @@ class InitShell(Cmd):
         logging.info("install vim-plug")
         work_vim_plug = subprocess.run([
             "git", "clone", "https://github.com/junegunn/vim-plug.git",
-            f"{path_vim}/autoload/plug.vim"
+            f"{path_vim}/autoload/"
         ], stdout=subprocess.PIPE, encoding='utf-8')
         logging.debug(work_vim_plug)
         logging.info("installed vim-plug")
@@ -213,18 +222,16 @@ class InitShell(Cmd):
 
         logging.info("configure custom vimrc")
         os.symlink(f"{self.path_pwd}/vimrcs", f"{self.path_home}/.vim/vimrcs")
-        os.symlink(f"{self.path_pwd}/vimrc", f"{self.path_home}/.vimrc")
+        self.symlink_rc("vimrc")
 
         # todo: YCM 추가 필요
         # https://github.com/Valloric/YouCompleteMe.git
 
-        subprocess.run([
-            "vi", "+PlugInstall", "+qall"
-        ])
+        subprocess.run(["vi", "+PlugInstall", "+qall"])
         logging.info("configured custom vimrc")
 
     # todo: Git 부분을 shell 로 불러오지 안도록 하자.
-    def do_git(self):
+    def do_git(self, arg):
         subprocess.run(["git", "submodule", "init"])
         subprocess.run(["git", "submodule", "update"])
 
