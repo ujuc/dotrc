@@ -157,25 +157,18 @@ class InitShell(Cmd):
         def install_zplug():
             logging.info("install zplug")
 
-            subprocess.run([
-                "curl", "-o", "/tmp/install.zsh",
-                "https://raw.githubusercontent.com/zplug/installer/"
-                "master/installer.zsh"
-            ], stdout=subprocess.PIPE, encoding='utf-8')
-
             work_zplug = subprocess.run([
-                "zsh", f"/tmp/install.zsh"
+                "git", "clone", "https://github.com/zplug/zplug",
+                f"{self.path_home}/.zplug"
             ], stdout=subprocess.PIPE, encoding='utf-8')
 
             logging.debug(work_zplug)
             logging.info("installed zplug")
 
         def config_zsh():
-            logging.info("configure zsh")
-
-            subprocess.run(f"source {self.path_home}/.zshrc", shell=True)
-            subprocess.run(["zplug", "install"])
-            subprocess.run(f"source {self.path_home}/.zshrc", shell=True)
+            # todo: zsh 를 실행시키고 해당 값을 변경해줘야된다.
+            logging.info("todo: configure zsh")
+            logging.info("exit > zsh > zplug install > source ~/.zshrc")
 
         if not opts.zsh and not opts.zplug and not opts.config:
             install_zsh()
