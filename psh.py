@@ -225,6 +225,7 @@ class InitShell(Cmd):
 
     # todo: Git 부분을 shell 로 불러오지 안도록 하자.
     def do_git(self, arg):
+        # todo: git config 부분 추가
         subprocess.run(["git", "submodule", "init"])
         subprocess.run(["git", "submodule", "update"])
 
