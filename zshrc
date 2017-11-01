@@ -1,15 +1,12 @@
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
+export RC_ZSH=$HOME/dotrc/zsh
 
-# zplug
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+TERM=xterm-256color
 
-source ~/.zplug/init.zsh
-
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
-#zplug "denysdovhan/spaceship-zsh-theme", use:spaceship.zsh, from:github, as:theme
-zplug "bhilburn/powerlevel9k", use:powerlevel9k.zsh-theme, as:theme
-
-zplug load
+source $RC_ZSH/zplug.zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -17,8 +14,7 @@ zplug load
 # time that oh-my-zsh is loaded.
 #ZSH_THEME="powerlevel9k"
 
-# Theme settings
-SPACESHIP_TIME_SHOW=true
+source $RC_ZSH/theme.zsh
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
@@ -30,116 +26,11 @@ plugins=(git zsh-syntax-highlighting git-flow git-extras)
 export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 
-if type go > /dev/null; then
-    # Go Path
-    export GOROOT=`go env GOROOT`
-    export GOPATH=$HOME/repos/go
-    export PATH=$PATH:/usr/local/opt/go/libexec/bin
-    export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-fi
-
-# NVM
-if type nvm > /dev/null; then
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-fi
-
-# Linux brew
-if [ $(uname -s) = "Linux" ]; then
-    export PATH="$HOME/.linuxbrew/bin:$PATH"
-    export MANPATH="$MONE/.linuxbrew/share/man:$MANPATH"
-    export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
-fi
-
 source $ZSH/oh-my-zsh.sh
-
-# vi path setting
-alias vi="vim"
-
-DISTRO_ID=$(python -c "import distro; print(distro.id())")
-
-if [ $(uname -s) = "Darwin" ]; then
-    # OS X
-    alias install="brew install"
-    alias uninstall="brew uninstall --force"
-    alias search="brew search"
-    alias info="brew info"
-    alias blist="brew list"
-    alias cask="brew cask"
-    alias update="brew update; brew upgrade"
-    alias upip="pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U"
-elif [ $DISTRO_ID = "ubuntu" ]; then
-    alias install="sudo apt install -y"
-    alias uninstall="sudo apt purge -y"
-    alias search="sudo apt search"
-    alias info="sudo apt show"
-    alias update="sudo apt update; sudo apt full-upgrade"
-    alias clean="sudo apt autoremove -y"
-    alias add_repo="sudo add-apt-repository"
-    alias rm_reop="sudo add-apt-repository -r"
-elif [ $DISTRO_ID = "manjaro" ]; then
-    # Manjaro
-    alias install="yaourt -S"
-    alias uninstall="yaourt -Rns"
-    alias search="yaourt -Ss"
-    alias info="yaourt -Si"
-    alias update="yaourt -Syu"
-fi
-
-alias custom_update="zplug update; cd ~/.vim_runtime; git pull --rebase; vi +PlugUpdate +qall; vim +PlugUpgrade +qall"
-
-# help
-help_command="""
-$fg_bold[white]# OS X
-$fg_bold[red]* install: $fg_bold[white]brew install
-$fg_bold[red]* uninstall: $fg_bold[white]brew uninstall --force
-$fg_bold[red]* search: $fg_bold[white]brew search
-$fg_bold[red]* info: $fg_bold[white]brew info
-$fg_bold[red]* blist: $fg_bold[white]brew list
-$fg_bold[red]* update: $fg_bold[white]brew update; brew upgrade
-$fg_bold[red]* upip: $fg_bold[white]pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U
-
-$fg_bold[white]# Ubuntu
-$fg_bold[red]* uupdate: $fg_bold[white]sudo apt-get update; sudo apt-get dist-upgrade
-$fg_bold[red]* install: $fg_bold[white]sudo apt-get install -y
-$fg_bold[red]* uninstall: $fg_bold[white]sudo apt-get purge -y
-$fg_bold[red]* search: $fg_bold[white]sudo apt-cache search
-$fg_bold[red]* info: $fg_bold[white]sudo apt-cahce show
-$fg_bold[red]* clean: $fg_bold[white]sudo apt-get autoremove -y
-$fg_bold[red]* update: $fg_bold[white]sudo apt-get update; sudo apt-get dist-upgrade
-$fg_bold[red]* add_repo: $fg_bold[white]sudo add-apt-repository
-$fg_bold[red]* rm_reop: $fg_bold[white]sudo add-apt-repository -r
-"""
-alias ujuc_help='echo ${help_command}'
-
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-
-test -e ${HOME}/.iterm2_shell_integration.zsh && source ${HOME}/.iterm2_shell_integration.zsh
+source $RC_ZSH/env.zsh
 
 # Bind key settings
 bindkey "ee[D" backward-word
 bindkey "ee[C" forward-word
 
-TERM=xterm-256color
-
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)" 
-
-export PATH="$HOME/.rbenv/bin:$PATH"
-eval "$(rbenv init -)" 
-
-if [ $(uname -s) != "Linux" ]; then
-    # Autoenv
-    source $(brew --prefix autoenv)/activate.sh
-    eval $(/usr/libexec/path_helper -s)
-fi
-
-if [ -f ~/.config/exercism/exercism_completion.zsh ]; then
-    . ~/.config/exercism/exercism_completion.zsh
-fi
-
-# powerlevel9k setting
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(time context dir virtualenv vcs)
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time root_indicator background_jobs go_version node_version pyenv rbenv)
+source $RC_ZSH/aliass.zsh
