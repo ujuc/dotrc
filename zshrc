@@ -20,7 +20,19 @@ source $RC_ZSH/theme.zsh
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-syntax-highlighting git-flow git-extras)
+plugins=(
+    git 
+    zsh-syntax-highlighting 
+    git-flow 
+    git-extras
+    tmux
+    tig
+    docker
+    python
+    pyenv
+    rbenv
+    golang
+)
 
 # User configuration
 export PATH="/usr/local/sbin:/usr/local/bin:$PATH"
