@@ -63,12 +63,18 @@ class InitShell(Cmd):
                     "\"$(curl -fsSL https://raw.githubusercontent.com/Homebrew"
                     "/install/master/install)\""
                 ], stdout=subprocess.PIPE, encoding='utf-8')
+
                 install_cask = subprocess.run([
                     "brew", "tap", "caskroom/cask"
                 ], stdout=subprocess.PIPE, encoding='utf-8')
 
+                install_cask_font = subprocess.run([
+                    "brew", "tap", "caskroom/fonts"
+                ], stdout=subprocess.PIPE, encoding='utf-8')
+
                 logging.debug(install_brew)
                 logging.debug(install_cask)
+                logging.debug(install_cask_font)
 
             install_pkg = subprocess.run([
                 "brew", "install", "tmux", "tig", "zsh"
@@ -85,7 +91,8 @@ class InitShell(Cmd):
 
             install_font_hack = subprocess.run([
                 "brew", "cask", "install",
-                "font-hack", "font-hack-nerd-font-mono"
+                "font-hack", "font-hack-nerd-font-mono",
+                "font-fira-code", "font-iosevka"
             ], stdout=subprocess.PIPE, encoding='utf-8')
 
             logging.debug(install_font_hack)
@@ -184,6 +191,9 @@ class InitShell(Cmd):
     def do_powerline_font(self, arg):
         """install powerline font"""
         logging.info("install powerline font")
+        subprocess.run(["git", "clone",
+                        "https://github.com/powerline/fonts.git",
+                        f"{self.path_pwd}/fonts"])
         subprocess.run(["bash", f"{self.path_pwd}/fonts/install.sh"])
 
     def do_vim(self, arg):
