@@ -91,8 +91,9 @@ class InitShell(Cmd):
 
             install_font_hack = subprocess.run([
                 "brew", "cask", "install",
-                "font-hack", "font-hack-nerd-font-mono",
-                "font-fira-code", "font-iosevka"
+                "font-hack-nerd-font", "font-hack-nerd-font-mono",
+                "font-firacode-nerd-font", "ont-firacode-nerd-font-mono",
+                "font-iosevka-nerd-font", "font-iosevka-nerd-font-mono"
             ], stdout=subprocess.PIPE, encoding='utf-8')
 
             logging.debug(install_font_hack)
