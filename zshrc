@@ -46,3 +46,6 @@ bindkey "ee[D" backward-word
 bindkey "ee[C" forward-word
 
 source $RC_ZSH/aliass.zsh
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
