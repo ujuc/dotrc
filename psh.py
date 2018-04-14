@@ -4,6 +4,7 @@
 Sungjin (ujuc@ujuc.kr)
 """
 
+import argparse
 import inspect
 import logging
 import os
@@ -11,7 +12,7 @@ import platform
 import subprocess
 
 import coloredlogs
-from cmd2 import Cmd, make_option, options
+from cmd2 import Cmd, with_argparser
 
 try:
     import distro
@@ -33,6 +34,16 @@ class InitShell(Cmd):
     path_home = os.environ['HOME']
     path_pwd = os.path.dirname(os.path.abspath(inspect.getfile(
         inspect.currentframe())))
+
+    # args
+    flinker_arg = argparse.ArgumentParser()
+    flinker_arg.add_argument('--tmux', action='store_true', default=False)
+    flinker_arg.add_argument('--tig', action='store_true', default=False)
+
+    zsh_arg = argparse.ArgumentParser()
+    zsh_arg.add_argument('--zsh', action='store_true', default=False)
+    zsh_arg.add_argument('--zplug', action='store_true', default=False)
+    zsh_arg.add_argument('--config', action='store_true', default=False)
 
     def __init__(self):
         # 무조건 cmd 로 접근하여 작업을 하려면 해당 내용을 사용한다
@@ -117,10 +128,7 @@ class InitShell(Cmd):
 
             # todo: arch 용은 따로 만들어야될듯... (언젠가)
 
-    @options([
-        make_option('--tmux', action="store_true", default=False),
-        make_option('--tig', action="store_true", default=False),
-    ])
+    @with_argparser(flinker_arg)
     def do_link_dotrc(self, arg, opts=None):
         """
         Linked *rc file without vimrc
@@ -135,11 +143,7 @@ class InitShell(Cmd):
         elif opts.tig:
             self.symlink_rc("tigrc")
 
-    @options([
-        make_option('--zsh', action="store_true", default=False),
-        make_option('--zplug', action="store_true", default=False),
-        make_option('--config', action="store_true", default=False),
-    ])
+    @with_argparser(zsh_arg)
     def do_zsh(self, arg, opts=None):
         """Install and configure zsh"""
 
