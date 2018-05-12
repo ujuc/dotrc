@@ -1,3 +1,4 @@
 .idea/
 !.gitkeep
 /.DS_Store
+.venv/*

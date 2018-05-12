@@ -37,3 +37,6 @@ fi
 if [ -f $HOME/.config/exercism/exercism_completion.zsh ]; then
     . $HOME/.config/exercism/exercism_completion.zsh
 fi
+
+# pipenv
+export PIPENV_VENV_IN_PROJECT=true
