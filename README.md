@@ -11,9 +11,9 @@
 ## Note.
 * Change python script
 
-## Using repos
-
-* todo: adding !!!
+## Todo
+* [ ] ummm....
+* [ ] pkg?????????
 
 ### vim
 * [liangxianzhe/oh-my-vim](https://github.com/liangxianzhe/oh-my-vim)
