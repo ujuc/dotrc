@@ -23,6 +23,9 @@
 * zsh syntax highlighting [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
 * zsh theme [bullet-train-oh-my-zsh-theme](https://github.com/caiogondim/bullet-train-oh-my-zsh-theme)
 
+### iTerm2 Color Schemes
+* [iTerm2 Color Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes)
+
 ## Ref. Thanks
 * [liangxianzhe/oh-my-vim](https://github.com/liangxianzhe/oh-my-vim)
 * [amix/vimrc](https://github.com/amix/vimrc)
