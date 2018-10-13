@@ -6,12 +6,6 @@ if type go > /dev/null; then
     export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 fi
 
-# NVM
-if type nvm > /dev/null; then
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-fi
-
 # Linux brew
 if [[ $(uname -s) == "Linux" ]]; then
     export PATH="$HOME/.linuxbrew/bin:$PATH"
@@ -19,12 +13,14 @@ if [[ $(uname -s) == "Linux" ]]; then
     export INFOPATH="$HOME/.linuxbrew/share/info:$INFOPATH"
 fi
 
+# pyenv
 if [ -d $HOME/.pyenv ]; then
     export PYENV_ROOT="$HOME/.pyenv"
     export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)" 
 fi
 
+# rbenv
 if [ -d $HOME/.rbenv ]; then
     export PATH="$HOME/.rbenv/bin:$PATH"
     eval "$(rbenv init -)" 
@@ -41,7 +37,6 @@ fi
 # pipenv
 export PIPENV_VENV_IN_PROJECT=true
 eval "$(pipenv --completion)"
-
 
 # zlib setup
 export CPPFLAGS="-I/usr/local/opt/zlib/include"

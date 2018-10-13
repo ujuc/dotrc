@@ -12,12 +12,8 @@ import platform
 import subprocess
 
 import coloredlogs
+import distro
 from cmd2 import Cmd, with_argparser
-
-try:
-    import distro
-except ImportError:
-    pass
 
 __version__ = '1.0'
 
@@ -149,10 +145,9 @@ class InitShell(Cmd):
             logging.info("install zsh")
 
             subprocess.run([
-                "curl", "-o", "/tmp/install.sh",
-                "https://gist.githubusercontent.com/ujuc/"
-                "0a27fd5c81a5f277f391e75683c469e8/raw/"
-                "5c1b52db9362c36df5c9bae15921dbf8b5239866/install_oh-my-zsh.sh"
+                "curl", "-o", "/tmp/install.sh", "-fsSL",
+                "https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/"
+                "master/tools/install.sh"
             ], stdout=subprocess.PIPE, encoding='utf-8')
 
             work_zsh = subprocess.run([
@@ -256,7 +251,7 @@ class InitShell(Cmd):
         except FileNotFoundError:
             pass
 
-        os.symlink(f"{self.path_pwd}/{file_name}",
+        os.symlink(f"{self.path_pwd}/templates/{file_name}",
                    f"{self.path_home}/.{file_name}")
 
         logging.info(f"Linked {file_name}")
