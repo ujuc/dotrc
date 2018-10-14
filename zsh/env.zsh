@@ -35,9 +35,12 @@ if [ -f $HOME/.config/exercism/exercism_completion.zsh ]; then
 fi
 
 # pipenv
-export PIPENV_VENV_IN_PROJECT=true
-eval "$(pipenv --completion)"
+if type pipenv > /dev/null; then
+    export PIPENV_VENV_IN_PROJECT=true
+    eval "$(pipenv --completion)"
+fi
 
 # zlib setup
-export CPPFLAGS="-I/usr/local/opt/zlib/include"
-
+if [[ $(uname -s) == "Darwin" ]]; then
+    export CPPFLAGS="-I/usr/local/opt/zlib/include"
+fi
