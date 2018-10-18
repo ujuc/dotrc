@@ -30,8 +30,10 @@ plugins=(
     docker
     python
     pyenv
-    rbenv
     golang
+    vscode
+    sbt
+    history
 )
 
 # User configuration
