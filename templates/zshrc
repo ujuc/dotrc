@@ -48,3 +48,5 @@ bindkey "ee[C" forward-word
 
 source $RC_ZSH/aliass.zsh
 
+# gpg tty Settings
+export GPG_TTY=$(tty)
