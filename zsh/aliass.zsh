@@ -11,7 +11,7 @@ if [[ $(uname -s) == "Darwin" ]]; then
     alias info="brew info"
     alias list="brew list"
     alias cask="brew cask"
-    alias update="brew update; brew upgrade; zplug update; cd ~/.vim_runtime; git pull --rebase; vi +PlugUpdate +qall; vim +PlugUpgrade +qall"
+    alias update="brew update; brew upgrade; zplug update; cd ~/.vim_runtime; git pull --rebase; vi +PlugUpdate +qall; vim +PlugUpgrade +qall; cd ~/"
     alias cleanup="brew cleanup"
 else
     DISTRO_ID=$(python -c "import distro; print(distro.id())")
