@@ -23,6 +23,7 @@ source $RC_ZSH/theme.zsh
 plugins=(
     git 
     zsh-syntax-highlighting 
+    zsh-autosuggestions
     git-flow 
     git-extras
     tmux
@@ -50,3 +51,8 @@ source $RC_ZSH/aliass.zsh
 
 # gpg tty Settings
 export GPG_TTY=$(tty)
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
