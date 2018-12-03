@@ -6,7 +6,19 @@
 #   Version : 2.0           #
 #############################
 
-BASE=$(pwd)
+BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+function symlink_rc() {
+    ln -sf $BASE/templates/$1 $HOME/.$1
+}
+
+function install_zsh() {
+    brew install zsh zplug
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    symlink_rc zshrc
+    zplug install
+    source ~/.zshrc
+}
 
 function setting_mac() {
     # configure xcode
@@ -27,6 +39,9 @@ function setting_mac() {
         font-fira-code font-firacode-nerd-fonnt font-firacode-nerd-font-mono \
         font-noto-sans-cjk font-noto-sans font-noto-serif font-not-serif-cjk \
         font-noto-mono
+
+    # install zsh
+    install_zsh
 }
 
 function setting_ubuntu() {
