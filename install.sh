@@ -20,6 +20,13 @@ function setting_mac() {
 
     # install vim
     brew install vim
+
+    # install font
+    brew cask install font-hack font-hack-nerd-font font-hack-nerd-font-mono \
+        font-iosevka font-iosevka-nerd-font font-iosevka-nerd-font-mono \
+        font-fira-code font-firacode-nerd-fonnt font-firacode-nerd-font-mono \
+        font-noto-sans-cjk font-noto-sans font-noto-serif font-not-serif-cjk \
+        font-noto-mono
 }
 
 function setting_ubuntu() {
