@@ -20,6 +20,32 @@ function install_zsh() {
     source ~/.zshrc
 }
 
+function install_vim() {
+    brew install vim
+
+    mkdir -p $HOME/.vim/bundle
+    mkdir -p $HOME/.vim/vimundo
+    midir -p $HOME/.vim/colors
+    
+    # vim plug
+    curl -fLo $HOME/.vim/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    
+    # amix/vimrc
+    git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
+    sh ~/.vim_runtime/install_awesome_vimrc.sh
+
+    ln -sf $BASE/vimrcs $HOME/.vim/vimrcs
+    symlink_rc vimrc
+
+    # TODO: remove all plugins settings for YCM
+    # ycm
+    # https://github.com/Valloric/YouCompleteMe#full-installation-guide
+
+    # install vim plugins
+    vi +PlugInstall +qall
+}
+
 function setting_mac() {
     # configure xcode
     xcode-select --install
@@ -30,9 +56,6 @@ function setting_mac() {
         /usr/bin/ruby -e \
         "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
-    # install vim
-    brew install vim
-
     # install font
     brew cask install font-hack font-hack-nerd-font font-hack-nerd-font-mono \
         font-iosevka font-iosevka-nerd-font font-iosevka-nerd-font-mono \
@@ -42,6 +65,9 @@ function setting_mac() {
 
     # install zsh
     install_zsh
+
+    # install vim
+    install_vim
 }
 
 function setting_ubuntu() {
