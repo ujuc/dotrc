@@ -9,6 +9,14 @@
 BASE=$(pwd)
 
 function setting_mac() {
+    # configure xcode
+    xcode-select --install
+    sudo xcodebuild -license
+
+    # install brew
+    [ -z "$(witch brew)" ] && \
+        /usr/bin/ruby -e \
+        "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 }
 
