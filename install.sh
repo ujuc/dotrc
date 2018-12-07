@@ -55,6 +55,38 @@ function install_tmux() {
     $HOME/.tmux/plugins/tpm/bin/install_plugins
 }
 
+function install_git() {
+    brew install git
+
+    # git config 
+    git config --global user.email "ujuc@ujuc.kr"
+    git config --global user.name "Thomas Sungjin Kang"
+    
+    git config --global core.editor "vim"
+    git config --global core.autocrlf "input"
+
+    git config --global gitreview.username "sungjin"
+
+    # gpgkey settings
+    brew install gpg
+    brew cask intall keybase gpg-suite
+
+    keybase pgp export | gpg --import
+    keybase pgp export --secret | gpg --allow-secret-key-import --import
+
+    keyid=`gpg --list-secret-keys --keyid-format LONG | grep sec | aws '{print $2}' | awk -F "[/]" '{print $2}'`
+    git config --global user.signingkey $keyid
+    git config --global commit.gpgsign true
+    echo no-tty >> ~/.gnupg/gpg.conf
+    git config --global gpg.program ${which gpg}
+
+    set_git_alias
+}
+
+function set_git_alias() {
+    
+}
+
 function setting_mac() {
     # configure xcode
     xcode-select --install
@@ -80,6 +112,9 @@ function setting_mac() {
 
     # install tmux
     install_tmux
+
+    # install git
+    install_git
 
 }
 
