@@ -46,6 +46,15 @@ function install_vim() {
     vi +PlugInstall +qall
 }
 
+function install_tmux() {
+    brew install tmux
+    symlink_rc tmux.conf
+
+    # TPM
+    git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
+    $HOME/.tmux/plugins/tpm/bin/install_plugins
+}
+
 function setting_mac() {
     # configure xcode
     xcode-select --install
@@ -68,6 +77,10 @@ function setting_mac() {
 
     # install vim
     install_vim
+
+    # install tmux
+    install_tmux
+
 }
 
 function setting_ubuntu() {
