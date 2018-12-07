@@ -42,6 +42,9 @@ function install_vim() {
     # ycm
     # https://github.com/Valloric/YouCompleteMe#full-installation-guide
 
+    # install fzf
+    install_fzf
+
     # install vim plugins
     vi +PlugInstall +qall
 }
@@ -90,6 +93,14 @@ function set_git_alias() {
 function install_tig() {
     brew install tig
     symlink_rc tigrc
+}
+
+function install_fzf() {
+    brew install fzf
+    $(brew --prefix)/opt/fzf/install --all --no-bash --no-fish
+    source $HOME/.zshrc
+
+    gem install rouge
 }
 
 function setting_mac() {

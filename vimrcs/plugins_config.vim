@@ -85,6 +85,8 @@ nnoremap <leader>nt :NERDTreeTabsToggle<cr>
 "let NERDTreeDirArrows = 1
 "let g:nerdtree_tabs_open_on_gui_startup = 0
 
+" Fzf
+" https://github.com/junegunn/fzf.vim#customization
 
 """""
 " Language

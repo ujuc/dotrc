@@ -104,6 +104,9 @@ Plug 'mhinz/vim-tmuxify'
 " File explorer
 Plug 'Shougo/vimfiler.vim'
 
+" fzf
+Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf.vim'
 
 """""
 " Git
