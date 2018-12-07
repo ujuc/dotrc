@@ -87,6 +87,11 @@ function set_git_alias() {
     
 }
 
+function install_tig() {
+    brew install tig
+    symlink_rc tigrc
+}
+
 function setting_mac() {
     # configure xcode
     xcode-select --install
@@ -115,6 +120,9 @@ function setting_mac() {
 
     # install git
     install_git
+
+    # install tig
+    install_tig
 
 }
 
