@@ -112,6 +112,10 @@ function install_python() {
     brew install pipenv
 }
 
+function install_go() {
+    brew install go
+}
+
 }
 
 function setting_mac() {
@@ -148,6 +152,9 @@ function setting_mac() {
 
     # install python
     install_python
+
+    # install go
+    install_go
 
 }
 
