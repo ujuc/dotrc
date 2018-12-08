@@ -1,87 +1,91 @@
 set vertical-split = no
 
-##################################################################
-# Desert-style color scheme from https://github.com/cbertoldi/dotfiles/blob/master/tigrc.symlink
+# theme
+# https://github.com/jonas/tig/blob/master/contrib/chocolate.theme.tigrc
+color diff-stat			95	default
+color date			172	default
+color "Merge: "			cyan	default
+color graph-commit		red	default
+color id			167	default
+color "author "			95	default
+color "Commit: "		90	default
+color cursor			white	101	bold
 
-# vim: set expandtab sw=4 tabstop=4:
-# *color* 'area' 'fgcolor' 'bgcolor' '[attributes]'
+color palette-0			93	default
+color palette-1			95	default
+color palette-2			124	default
+color palette-7			90	default bold
 
-# general
-color   default                 15      235
-color   cursor                  15      241
-color   title-focus             242     221
-color   title-blur              242     221
-color   delimiter               213     default
-color   author                  156     default
-color   date                    81      default
-color   line-number             221     default
-color   mode                    255     default
+color delimiter			90	default
+color main-tracked		99	default	bold
 
-# main
-color   main-tag                213     default     bold
-color   main-local-tag          213     default
-color   main-remote             221     default
-color   main-replace            81      default
-color   main-tracked            221     default     bold
-color   main-ref                81      default
-color   main-head               213     default     bold
-color   graph-commit            226     default
+# Vim-style keybindings for Tig
+# https://github.com/jonas/tig/blob/master/contrib/vim.tigrc
+bind generic h scroll-left
+bind generic j move-down
+bind generic k move-up
+bind generic l scroll-right
 
-# status
-#color  stat-head       81      default
+bind generic g  none
+bind generic gg move-first-line
+bind generic gj next
+bind generic gk previous
+bind generic gp parent
+bind generic gP back
+bind generic gn view-next
 
-# Diff   colors
-color   diff_add                10      default
-color   diff_add2               10      default
-color   diff_del                196     default
-color   diff_del2               196     default
-color   diff-header             221     default
-color   diff-index              81      default
-color   diff-chunk              213     default
-color   diff_oldmode            221     default
-color   diff_newmode            221     default
-color   'deleted file mode'     221     default
-color   'copy from'             223     default
-color   'copy to'               221     default
-color   'rename from'           221     default
-color   'rename to'             221     default
-color   diff_similarity         221     default
-color   'dissimilarity'         221     default
-color   'diff_tree'             81      default
-color   diff-stat               81      default
-color   "Reported-by:"          156     default
+bind main    G move-last-line
+bind generic G move-last-line
 
-color   'Author:'               156     default
-color   'Commit:'               213     default
-color   'AuthorDate:'           221     default
-color   'CommitDate:'           221     default
-color   'Date:'                 81      default
-color   pp_refs                 213     default
-color   palette-0               226     default
-color   palette-1               213     default
-color   palette-2               118     default
-color   palette-3               51      default
-color   palette-4               196     default
-color   palette-5               219     default
-color   palette-6               190     default
+bind generic <C-f> move-page-down
+bind generic <C-b> move-page-up
 
-# status
-color   status.header           221     default
-color   status.section          81      default
-color   stat_staged             213     default
-color   stat_unstaged           213     default
-color   stat_untracked          213     default
+bind generic v  none
+bind generic vm view-main
+bind generic vd view-diff
+bind generic vl view-log
+bind generic vt view-tree
+bind generic vb view-blob
+bind generic vx view-blame
+bind generic vr view-refs
+bind generic vs view-status
+bind generic vu view-stage
+bind generic vy view-stash
+bind generic vg view-grep
+bind generic vp view-pager
+bind generic vh view-help
 
-# raw commit header
-color   commit                  156     default
-color   committer               213     default
+bind generic o  none
+bind generic oo :toggle sort-order
+bind generic os :toggle sort-field
+bind generic on :toggle line-number
+bind generic od :toggle date
+bind generic oa :toggle author
+bind generic og :toggle line-graphics
+bind generic of :toggle file-name
+bind generic op :toggle ignore-space
+bind generic oi :toggle id
+bind generic ot :toggle commit-title-overflow
+bind generic oF :toggle file-filter
+bind generic or :toggle commit-title-refs
 
-# commit message
-color   'Signed-off-by'         221     default
-color   'Acked-by'              221     default
-color   'Tested-by'             221     default
-color   'Reviewed-by'           221     default
+bind generic @  none
+bind generic @j :/^@@
+bind generic @k :?^@@
+bind generic @- :toggle diff-context -1
+bind generic @+ :toggle diff-context +1
 
-# tree
-color   tree.directory         221     default
+bind status  u  none
+bind stage   u  none
+bind generic uu status-update
+bind generic ur status-revert
+bind generic um status-merge
+bind generic ul stage-update-line
+bind generic us stage-split-chunk
 
+bind generic c  none
+bind generic cc !git commit
+bind generic ca !?@git commit --amend --no-edit
+
+bind generic K view-help
+bind generic <C-w><C-w> view-next
