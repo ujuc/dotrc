@@ -92,7 +92,7 @@ function install_git() {
 }
 
 function set_git_alias() {
-    
+
 }
 
 function install_tig() {
@@ -182,11 +182,15 @@ function setting_mac() {
 }
 
 function setting_ubuntu() {
-
+    # install linux brew
+    sudo apt-get install build-essential curl file git
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 }
 
 function setting_redhat() {
-
+    # install linux brew
+    sudo yum groupinstall 'Development Tools' && sudo yum install curl file git
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 }
 
 function setting_arch() {
