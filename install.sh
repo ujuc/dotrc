@@ -103,6 +103,17 @@ function install_fzf() {
     gem install rouge
 }
 
+function install_python() {
+    # pyenv
+    brew install pyenv
+    source $HOME/.zshrc
+
+    # pipenv
+    brew install pipenv
+}
+
+}
+
 function setting_mac() {
     # configure xcode
     xcode-select --install
@@ -134,6 +145,9 @@ function setting_mac() {
 
     # install tig
     install_tig
+
+    # install python
+    install_python
 
 }
 
