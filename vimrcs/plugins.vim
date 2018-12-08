@@ -135,6 +135,14 @@ Plug 'davidhalter/jedi-vim'
 " Need isort 
 Plug 'fisadev/vim-isort'
 
+
+"""""
+" File type
+"""""
+
+" csv
+Plug 'chrisbra/csv.vim'
+
 """""
 " Present
 """""
@@ -147,8 +155,5 @@ Plug 'sotte/presenting.vim'
 " No Settup
 """""
 " This category is need settings
-
-" Helper (Dash)
-Plug 'Keithbsmiley/investigate.vim'
 
 call plug#end()
