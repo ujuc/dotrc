@@ -77,13 +77,6 @@ let g:tagbar_autoshowtag = 1
 
 " NERDTreeTab
 nnoremap <leader>nt :NERDTreeTabsToggle<cr>
-"nnoremap <leader>f :NERDTreeFind<cr>
-"let NERDTreeChDirMode = 2
-"let NERDTreeShowBookmarks = 1
-"let NERDTreeShowHidden = 1
-"let NERDTreeShowLineNumbers = 1
-"let NERDTreeDirArrows = 1
-"let g:nerdtree_tabs_open_on_gui_startup = 0
 
 " Fzf
 " https://github.com/junegunn/fzf.vim#customization
