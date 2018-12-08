@@ -65,10 +65,15 @@ function install_git() {
     git config --global user.email "ujuc@ujuc.kr"
     git config --global user.name "Thomas Sungjin Kang"
     
-    git config --global core.editor "vim"
-    git config --global core.autocrlf "input"
+    git config --global core.editor vim
+    git config --global core.autocrlf input
+    git config --global core.whitespace fix, -indent-with-non-tab,trailing-space,cr-at-eol
 
-    git config --global gitreview.username "sungjin"
+    git config --global color.ui auto
+    git config --global diff.tool vimdiff
+    git config --global difftool.prompt false
+
+    git config --global gitreview.username sungjin
 
     # gpgkey settings
     brew install gpg
