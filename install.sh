@@ -52,10 +52,6 @@ function install_vim() {
 function install_tmux() {
     brew install tmux
     symlink_rc tmux.conf
-
-    # TPM
-    git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
-    $HOME/.tmux/plugins/tpm/bin/install_plugins
 }
 
 function install_git() {
