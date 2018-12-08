@@ -116,6 +116,22 @@ function install_go() {
     brew install go
 }
 
+function install_mac_app() {
+    brew cask install google-chrome google-drive-file-stream
+    brew cask install iterm2 alfred
+    brew cask install jetbrains-toolbox
+    brew cask install visual-studio-code
+    brew cask install 1password
+    brew cask install tower
+    brew cask install paw
+    brew cask install slack notion
+
+    # docker desktop
+    open https://store.docker.com/editions/community/docker-ce-desktop-mac
+    # Snapscan Home
+    open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
+    # istate
+    open https://bjango.com/mac/istatmenus/
 }
 
 function setting_mac() {
@@ -156,6 +172,8 @@ function setting_mac() {
     # install go
     install_go
 
+    # install mac app
+    install_mac_app
 }
 
 function setting_ubuntu() {
