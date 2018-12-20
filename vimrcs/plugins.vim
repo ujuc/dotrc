@@ -31,7 +31,7 @@ Plug 'nathanaelkane/vim-indent-guides'
 """""
 " Lint
 """""
-
+ 
 " Simple, easy-to-use VIM alignment
 Plug 'junegunn/vim-easy-align'
 
@@ -123,6 +123,7 @@ Plug 'airblade/vim-gitgutter'
 """""
 
 " Language Support
+Plug 'scrooloose/syntastic'
 Plug 'sheerun/vim-polyglot'
 Plug 'Chiel92/vim-autoformat'
 Plug 'w0rp/ale'
