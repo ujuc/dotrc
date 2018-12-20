@@ -115,6 +115,8 @@ Plug 'junegunn/fzf.vim'
 " Gita
 Plug 'lambdalisue/vim-gita'
 
+" vim-gitgutter
+Plug 'airblade/vim-gitgutter'
 
 """""
 " Language
