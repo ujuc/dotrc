@@ -1,5 +1,8 @@
 " General
 
+syntax on
+colorscheme dracula
+
 " Get out of vi compatible mode
 set nocompatible
 

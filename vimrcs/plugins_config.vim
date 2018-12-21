@@ -4,8 +4,7 @@
 
 " Airline
 let g:airline_powerline_fonts = 1
-let g:airline_theme = 'minimalist'
-let g:airline#extenstions#tabline#enabled = 1
+let g:airline_theme = 'dracula'
 let g:airline#extenstions#tabline#formatter = 'unique_tail_improved'
 
 " Indnet guide

@@ -16,6 +16,9 @@ Plug 'kristijanhusak/vim-hybrid-material'
 " Hyperfocus writing
 Plug 'junegunn/limelight.vim'
 
+" dracula theme
+Plug 'dracula/vim'
+
 
 """""""""
 " Status
