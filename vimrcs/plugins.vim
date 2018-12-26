@@ -17,7 +17,7 @@ Plug 'kristijanhusak/vim-hybrid-material'
 Plug 'junegunn/limelight.vim'
 
 " dracula theme
-Plug 'dracula/vim'
+Plug 'dracula/vim',{'as':'dracula'}
 
 
 """""""""

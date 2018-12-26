@@ -25,12 +25,12 @@ function install_vim() {
 
     mkdir -p $HOME/.vim/bundle
     mkdir -p $HOME/.vim/vimundo
-    midir -p $HOME/.vim/colors
-    
+    mkdir -p $HOME/.vim/colors
+
     # vim plug
     curl -fLo $HOME/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    
+
     # amix/vimrc
     git clone --depth=1 https://github.com/amix/vimrc.git ~/.vim_runtime
     sh ~/.vim_runtime/install_awesome_vimrc.sh
@@ -47,6 +47,9 @@ function install_vim() {
 
     # install vim plugins
     vi +PlugInstall +qall
+
+    # vim theme
+    ln -sf $HOME/.vim/plugged/dracula/colors/dracula.vim $HOME/.vim/colors/
 }
 
 function install_tmux() {
@@ -57,10 +60,10 @@ function install_tmux() {
 function install_git() {
     brew install git
 
-    # git config 
+    # git config
     git config --global user.email "ujuc@ujuc.kr"
     git config --global user.name "Thomas Sungjin Kang"
-    
+
     git config --global core.editor vim
     git config --global core.autocrlf input
     git config --global core.whitespace fix, -indent-with-non-tab,trailing-space,cr-at-eol
