@@ -30,6 +30,7 @@ Plug 'AndrewRadev/splitjoin.vim'
 " Text object
 Plug 'wellle/targets.vim'
 
+Plug 'tpope/vim-sensible'
 
 " Create better diffs
 Plug 'chrisbra/vim-diff-enhanced'
