@@ -1,16 +1,6 @@
 """""
 " enhancement
 """""
-
-" Undo tree
-nnoremap <leader>u :UndotreeToggle<cr>
-let g:undotree_SetFocusWhenToggle = 1
-
-if has("persistent_undo")
-    set undodir=~/.undodir/
-    set undofile
-endif
-
 " investingate.vim
 nnoremap K :call investigate#Investigate()<cr>
 
