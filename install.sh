@@ -45,7 +45,7 @@ function install_vim() {
     vi +PlugInstall +qall
 
     # vim theme
-    ln -sf $HOME/.vim/plugged/dracula/colors/dracula.vim $HOME/.vim/colors/
+	ln -sf $HOME/.vim/plugged/seoul256.vim/colors/seoul256.vim $HOME/.vim/colors
 }
 
 function install_tmux() {

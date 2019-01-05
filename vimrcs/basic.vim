@@ -1,7 +1,8 @@
 " General
-
 syntax on
-colorscheme dracula
+
+set background=dark
+colo seoul256
 
 " Get out of vi compatible mode
 set nocompatible

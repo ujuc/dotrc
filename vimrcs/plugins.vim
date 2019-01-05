@@ -10,15 +10,11 @@ Plug 'vim-airline/vim-airline'
 " Airline theme
 Plug 'vim-airline/vim-airline-themes'
 
-" Hybrid-material
-Plug 'kristijanhusak/vim-hybrid-material'
+" seoul256
+Plug 'junegunn/seoul256.vim'
 
 " Hyperfocus writing
 Plug 'junegunn/limelight.vim'
-
-" dracula theme
-Plug 'dracula/vim',{'as':'dracula'}
-
 
 """""""""
 " Status
