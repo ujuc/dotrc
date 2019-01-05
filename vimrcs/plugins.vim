@@ -18,35 +18,18 @@ Plug 'junegunn/goyo.vim'
 """""""""
 " enhancement
 """""""""
-
-" Enhance integration with the terminal
-" This plugin mouse mode on
-Plug 'wincent/terminus'
-
 " NERD commenter
 Plug 'scrooloose/nerdcommenter'
 
-" Abolish
-Plug 'tpope/vim-abolish'
-
-" Speed dating
-Plug 'tpope/vim-speeddating'
-
 " Unod tree
 Plug 'mbbill/undotree'
-
-" Tabular
-Plug 'godlygeek/tabular'
 
 " Splitjoin
 Plug 'AndrewRadev/splitjoin.vim'
 
 " Text object
-" Todo: leaning
 Plug 'wellle/targets.vim'
 
-" Resize windows
-Plug 'roman/golden-ratio'
 
 " Create better diffs
 Plug 'chrisbra/vim-diff-enhanced'
