@@ -2,11 +2,6 @@
 " UI
 """"""
 
-" Airline
-let g:airline_powerline_fonts = 1
-let g:airline_theme = 'dracula'
-let g:airline#extenstions#tabline#formatter = 'unique_tail_improved'
-
 " Indnet guide
 let g:indent_guides_enalbe_on_vim_startup = 1
 let g:indent_guides_default_mapping = 0
