@@ -1,14 +1,3 @@
-""""""
-" UI
-""""""
-
-" Indnet guide
-let g:indent_guides_enalbe_on_vim_startup = 1
-let g:indent_guides_default_mapping = 0
-let g:indent_guides_exclude_filetypes = ['hlep', 'nerdtree', 'markdown']
-let g:indent_guides_start_level = 2
-let g:indent_guides_guide_size = 1
-
 """""
 " enhancement
 """""

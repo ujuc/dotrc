@@ -15,14 +15,6 @@ Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'junegunn/goyo.vim'
 
-"""""""""
-" Status
-"""""""""
-
-" Indent guide
-Plug 'nathanaelkane/vim-indent-guides'
-
-
 """""
 " Lint
 """""
