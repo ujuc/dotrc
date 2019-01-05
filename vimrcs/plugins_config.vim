@@ -2,30 +2,6 @@
 " enhancement
 """""
 
-" NERD Commenter
-let NERDCommentWholetLinesInVMode = 2
-let NERDSpaceDelims = 1
-let NERDRemoveExtraSpaces = 1
-" Mpa \<Space> to commenting
-func! IsWhiteLine()
-    if (getline('.')=~'^$')
-        let oldlinenumber = line('.')
-        call NERDComment('n', 'sexy')
-        if (line('.') == oldlinenumber)
-            call NERDComment('n', 'append')
-            normal! x
-        else
-            normal! k
-            startinsert!
-        endif
-    else
-        normal! A
-        call NERDComment('n', 'append')
-        normal! x
-    endif
-endfunc
-nnoremap <silent> <LocalLeader><Space> :call IsWhiteLine()<cr>
-
 " Undo tree
 nnoremap <leader>u :UndotreeToggle<cr>
 let g:undotree_SetFocusWhenToggle = 1
