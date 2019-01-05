@@ -128,7 +128,8 @@ function install_mac_app() {
     brew cask install 1password
     brew cask install tower
     brew cask install paw
-    brew cask install slack notion
+    brew cask install slack notion timing
+
 
     # docker desktop
     open https://store.docker.com/editions/community/docker-ce-desktop-mac
@@ -153,7 +154,7 @@ function setting_mac() {
         font-iosevka font-iosevka-nerd-font font-iosevka-nerd-font-mono \
         font-fira-code font-firacode-nerd-fonnt font-firacode-nerd-font-mono \
         font-noto-sans-cjk font-noto-sans font-noto-serif font-not-serif-cjk \
-        font-noto-mono
+        font-noto-mono font-ibm-plex font-inter-ui
 
     # install zsh
     install_zsh
