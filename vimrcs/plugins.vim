@@ -6,8 +6,6 @@ call plug#begin('~/.vim/plugged')
 
 " Airline
 Plug 'vim-airline/vim-airline'
-
-" Airline theme
 Plug 'vim-airline/vim-airline-themes'
 
 " seoul256
