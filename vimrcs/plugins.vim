@@ -15,14 +15,6 @@ Plug 'junegunn/seoul256.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'junegunn/goyo.vim'
 
-"""""
-" Lint
-"""""
- 
-" Simple, easy-to-use VIM alignment
-Plug 'junegunn/vim-easy-align'
-
-
 """""""""
 " enhancement
 """""""""
