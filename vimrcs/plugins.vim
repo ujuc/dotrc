@@ -21,7 +21,7 @@ Plug 'junegunn/goyo.vim'
 
 " Enhance integration with the terminal
 " This plugin mouse mode on
-"Plug 'wincent/terminus'
+Plug 'wincent/terminus'
 
 " NERD commenter
 Plug 'scrooloose/nerdcommenter'
