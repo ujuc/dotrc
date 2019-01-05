@@ -15,6 +15,7 @@ Plug 'junegunn/seoul256.vim'
 
 " Hyperfocus writing
 Plug 'junegunn/limelight.vim'
+Plug 'junegunn/goyo.vim'
 
 """""""""
 " Status

@@ -9,16 +9,6 @@ let g:indent_guides_exclude_filetypes = ['hlep', 'nerdtree', 'markdown']
 let g:indent_guides_start_level = 2
 let g:indent_guides_guide_size = 1
 
-" Goyo limelight
-func! GoyoBefore()
-    Limelight
-endfunc
-func! GoyoAfter()
-    Limlight!
-endfunc
-let g:goyo_callbacks = [function('GoyoBefore'), function('GoyoAfter')]
-
-
 """""
 " enhancement
 """""
