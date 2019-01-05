@@ -19,9 +19,6 @@ Plug 'junegunn/goyo.vim'
 " Status
 """""""""
 
-" Bufferline
-Plug 'bling/vim-bufferline'
-
 " Indent guide
 Plug 'nathanaelkane/vim-indent-guides'
 
