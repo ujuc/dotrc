@@ -103,10 +103,8 @@ Plug 'chrisbra/csv.vim'
 " Presenting
 Plug 'sotte/presenting.vim'
 
-
-"""""
-" No Settup
-"""""
-" This category is need settings
+" dev icons
+" Need nerd font
+Plug 'ryanoasis/vim-devicons'
 
 call plug#end()
