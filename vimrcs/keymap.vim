@@ -1,3 +1,13 @@
+" 기본 값 들 변경
+
+nnoremap j gj
+nnoremap k gk
+
+inoremap ej <Esc>
+
+" fzf
+
+"
 nnoremap <leader>u :UndotreeToggle<cr>
 nnoremap <leader>n :NERDTree<cr>
 

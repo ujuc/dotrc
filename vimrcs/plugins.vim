@@ -35,6 +35,8 @@ Plug 'tpope/vim-sensible'
 " Create better diffs
 Plug 'chrisbra/vim-diff-enhanced'
 
+Plug 'terryma/vim-multiple-cursors'
+
 """""
 " Navigation
 """""
@@ -59,9 +61,7 @@ Plug 'junegunn/fzf.vim'
 """""
 " Git
 """""
-
-" Gita
-Plug 'lambdalisue/vim-gita'
+Plug 'tpope/vim-fugitive'
 
 " vim-gitgutter
 Plug 'airblade/vim-gitgutter'
@@ -75,22 +75,23 @@ Plug 'sheerun/vim-polyglot'
 Plug 'Chiel92/vim-autoformat'
 Plug 'w0rp/ale'
 
-" Rails
-Plug 'tpope/vim-rails'
-
 " Python
 Plug 'davidhalter/jedi-vim'
 
-"""""
-" File type
-"""""
+" Go
+Plug 'fatih/vim-go'
+
+" Markdown
+Plug 'plasticboy/vim-markdown'
+
+" JSON
+Plug 'elzr/vim-json'
+
+" Docker
+Plug 'ekalinin/dockerfile.vim'
 
 " csv
 Plug 'chrisbra/csv.vim'
-
-"""""
-" Present
-"""""
 
 " Presenting
 Plug 'sotte/presenting.vim'

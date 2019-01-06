@@ -1,14 +1,28 @@
 " General
 syntax on
 
-" Get out of vi compatible mode
-set nocompatible
+let mapleader="," " 기본 설정 단축키 
+set encoding=utf-8
 
-" Turn on modeline
-set modeline
+set autoread
+
+" 5줄 남겨두고 움직이기
+set so=5
+
+" 검색
+set smartcase	" 대문자가 검색어 문자열에 포함될때는 noignorecase
+set ignorecase	" 검색시 대소문자 무시
+set hlsearch	" 검색시 하이라이트
+set incsearch	" 검색 키워드 입력시 점진 검색
 
 " Wirte on make/shell commands
 set autowrite
+
+" 매크로 실행중엔 새롭개 그리지 않음
+set lazyredraw
+
+" 규식이형 마술!
+set magic
 
 " Set undo
 set undofile
@@ -17,7 +31,9 @@ set nowb
 set noswapfile
 
 " Turn on the wild menu
-set wildmode=list:longest,full
+set wildmode=full
+set wildmenu
+set wildignorecase
 
 " Show tabline
 set showtabline=2
@@ -26,30 +42,31 @@ set showtabline=2
 set showcmd
 
 " Tab
+" 탭 대신 공백 사용
+set expandtab
+set smarttab
+set shiftwidth=4
+set tabstop=4
 set softtabstop=4
+
 set shiftround
 set cindent
 set autoindent
+set smartindent
+set wrap
+
+" 한글 입력기 관련
+set noimd
 
 " Linebreak on 500 char
 set lbr
 set tw=500
 
-" Treat long lines as break
-map j gj
-map k gk
+set spell
 
 " Source the vimrc file after saving it
 autocmd BufWritePost $MYVIMRC PlugClean
 
 let &colorcolumn="51,80,120,".join(range(150,999),",")
 highlight ColorColumn ctermbg=235 guibg=#2c2d27
-
-" Use ESC to exit, and use C-J and C-K to move
-func! s:unite_sttings()
-    nmap <buffer> <ESC> <plug>(unite_exit)
-    imap <buffer> <ESC> <plug>(unite_exit)
-    imap <buffer> <C-J> <Plug>(unite_select_next_line)
-    imap <buffer> <C-K> <Plug>(unite_select_previous_line)
-endfunc
 
