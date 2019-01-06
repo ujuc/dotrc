@@ -70,7 +70,7 @@ Plug 'airblade/vim-gitgutter'
 " Language
 """""
 " Language Support
-Plug 'scrooloose/syntastic'
+Plug 'vim-syntastic/syntastic'
 Plug 'sheerun/vim-polyglot'
 Plug 'Chiel92/vim-autoformat'
 Plug 'w0rp/ale'
@@ -80,11 +80,6 @@ Plug 'tpope/vim-rails'
 
 " Python
 Plug 'davidhalter/jedi-vim'
-
-" sort python imports
-" Need isort 
-Plug 'fisadev/vim-isort'
-
 
 """""
 " File type
