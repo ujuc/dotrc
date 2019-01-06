@@ -53,12 +53,3 @@ func! s:unite_sttings()
     imap <buffer> <C-K> <Plug>(unite_select_previous_line)
 endfunc
 
-autocmd filetype unite call s:unite_settings()
-nnoremap <silent> <Space>f :<C-U>Unite -start-insert -auto-resize -buffer-name=files file_rec/async<cr><C-U>
-nnoremap <silent> <Space>y :<C-U>Unite -start-insert -buffer-name=yanks history/yank<cr>
-nnoremap <silent> <Space>l :<C-U>Unite -start-insert -auto-resize -buffer-name=line line<cr>
-nnoremap <silent> <Space>o :<C-U>Unite -auto-resize -buffer-name=outline outline<cr>
-nnoremap <silent> <Space>b :<C-U>Unite -quick-match buffer<cr>
-nnoremap <silent> <Space>t :<C-U>Unite -quick-match tab<cr>
-nnoremap <silent> <Space>/ :<C-U>Unite -auto-resize -buffer-name-search grep:.<cr>
-
