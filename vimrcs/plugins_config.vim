@@ -1,17 +1,6 @@
-" Fzf
-" https://github.com/junegunn/fzf.vim#customization
-
 """""
 " Language
 """""
-
-" isort
-let g:vim_isort_map = '<C-i>'
-
-" autoformat
-noremap <F3> :Autoformat<CR>
-let g:formatter_yapf_style = 'flake8'
-
 " Asynchronus Lint Engine
 let g:ale_emit_conflict_warnings = 0
 let g:ale_linters = {'python': ['flake8'], 'vim': ['vint']}
