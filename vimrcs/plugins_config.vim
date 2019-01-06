@@ -1,24 +1,3 @@
-"""""
-" enhancement
-"""""
-" investingate.vim
-nnoremap K :call investigate#Investigate()<cr>
-
-
-"""""
-" Navigation
-"""""
-
-" Tag bar
-nnoremap <leader>t :TagbarToggle<cr>
-let g:tagbar_autofocus = 1
-let g:tagbar_expand = 1
-let g:tagbar_foldlevel = 2
-let g:tagbar_autoshowtag = 1
-
-" NERDTreeTab
-nnoremap <leader>nt :NERDTreeTabsToggle<cr>
-
 " Fzf
 " https://github.com/junegunn/fzf.vim#customization
 

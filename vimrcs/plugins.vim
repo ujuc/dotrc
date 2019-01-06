@@ -35,17 +35,6 @@ Plug 'tpope/vim-sensible'
 " Create better diffs
 Plug 'chrisbra/vim-diff-enhanced'
 
-" Auto pairs
-Plug 'jiangmiao/auto-pairs'
-
-"""""""""
-" Moving
-"""""""""
-
-" Easy motion
-Plug 'Lokaltog/vim-easymotion'
-
-
 """""
 " Navigation
 """""
@@ -55,10 +44,10 @@ Plug 'Lokaltog/vim-easymotion'
 Plug 'majutsushi/tagbar'
 
 " Search engine
-" Need python3
 Plug 'Shougo/denite.nvim'
 
-" NERD tree tabs
+" NERD tree
+Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
 
 " Tmux panes
@@ -84,7 +73,6 @@ Plug 'airblade/vim-gitgutter'
 """""
 " Language
 """""
-
 " Language Support
 Plug 'scrooloose/syntastic'
 Plug 'sheerun/vim-polyglot'
