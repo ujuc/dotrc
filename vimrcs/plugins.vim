@@ -50,8 +50,7 @@ Plug 'Shougo/denite.nvim'
 Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
 
-" Tmux panes
-Plug 'mhinz/vim-tmuxify'
+Plug 'christoomey/vim-tmux-navigator'
 
 " File explorer
 Plug 'Shougo/vimfiler.vim'
