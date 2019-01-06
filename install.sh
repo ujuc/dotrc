@@ -22,6 +22,7 @@ function install_zsh() {
 
 function install_vim() {
     brew install vim
+	brew install ctags
 
     mkdir -p $HOME/.vim/bundle
     mkdir -p $HOME/.vim/vimundo
@@ -125,7 +126,6 @@ function install_mac_app() {
     brew cask install tower
     brew cask install paw
     brew cask install slack notion timing
-
 
     # docker desktop
     open https://store.docker.com/editions/community/docker-ce-desktop-mac
