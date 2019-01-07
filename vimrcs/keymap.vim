@@ -3,8 +3,6 @@
 nnoremap j gj
 nnoremap k gk
 
-inoremap ej <Esc>
-
 " fzf
 
 "

@@ -70,7 +70,6 @@ Plug 'airblade/vim-gitgutter'
 " Language
 """""
 " Language Support
-Plug 'vim-syntastic/syntastic'
 Plug 'sheerun/vim-polyglot'
 Plug 'Chiel92/vim-autoformat'
 Plug 'w0rp/ale'
