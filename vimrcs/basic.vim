@@ -70,3 +70,6 @@ autocmd BufWritePost $MYVIMRC PlugClean
 let &colorcolumn="51,80,120,".join(range(150,999),",")
 highlight ColorColumn ctermbg=235 guibg=#2c2d27
 
+" space를 닷으로 구분한다.
+set list listchars=tab:·\ ,trail:·,extends:>,precedes:<
+
