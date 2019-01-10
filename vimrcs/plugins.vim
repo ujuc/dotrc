@@ -92,6 +92,9 @@ Plug 'ekalinin/dockerfile.vim'
 " csv
 Plug 'chrisbra/csv.vim'
 
+" YCM
+Plug 'Valloric/YouCompleteMe', { 'do': './install.sh --all' }
+
 " Presenting
 Plug 'sotte/presenting.vim'
 
