@@ -74,9 +74,6 @@ Plug 'sheerun/vim-polyglot'
 Plug 'Chiel92/vim-autoformat'
 Plug 'w0rp/ale'
 
-" Python
-Plug 'davidhalter/jedi-vim'
-
 " Go
 Plug 'fatih/vim-go'
 
@@ -93,7 +90,7 @@ Plug 'ekalinin/dockerfile.vim'
 Plug 'chrisbra/csv.vim'
 
 " YCM
-Plug 'Valloric/YouCompleteMe', { 'do': './install.sh --all' }
+Plug 'Valloric/YouCompleteMe', { 'do': 'python3 ./install.py --go-completer --ts-completer --clang-completer' }
 
 " Presenting
 Plug 'sotte/presenting.vim'

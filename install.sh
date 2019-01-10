@@ -23,6 +23,7 @@ function install_zsh() {
 function install_vim() {
     brew install vim
 	brew install ctags
+    brew install cmake
 
     mkdir -p $HOME/.vim/bundle
     mkdir -p $HOME/.vim/vimundo
@@ -34,10 +35,6 @@ function install_vim() {
 
     ln -sf $BASE/vimrcs $HOME/.vim/vimrcs
     symlink_rc vimrc
-
-    # TODO: remove all plugins settings for YCM
-    # ycm
-    # https://github.com/Valloric/YouCompleteMe#full-installation-guide
 
     # install fzf
     install_fzf
