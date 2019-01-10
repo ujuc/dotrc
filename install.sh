@@ -149,6 +149,9 @@ function setting_mac() {
         font-noto-sans-cjk font-noto-sans font-noto-serif font-not-serif-cjk \
         font-noto-mono font-ibm-plex font-inter-ui
 
+    # Add package
+    brew install bat fd
+
     # install zsh
     install_zsh
 
