@@ -107,7 +107,7 @@ function install_python() {
     source $HOME/.zshrc
 
     # pipenv
-    brew install pipenv
+    #brew install pipenv
 }
 
 function install_go() {
