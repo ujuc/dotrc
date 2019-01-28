@@ -25,7 +25,6 @@ function install_vim() {
 	brew install ctags
     brew install cmake
 
-    mkdir -p $HOME/.vim/bundle
     mkdir -p $HOME/.vim/vimundo
     mkdir -p $HOME/.vim/colors
 
