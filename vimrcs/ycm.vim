@@ -1,1 +1,1 @@
-let g:ycm_server_python_interpreter = '$HOME/.pyenv/shims/python'
+let g:ycm_server_python_interpreter = '/Users/ujuc/.pyenv/shims/python'
