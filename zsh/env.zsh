@@ -44,3 +44,7 @@ fi
 if [[ $(uname -s) == "Darwin" ]]; then
     export CPPFLAGS="-I/usr/local/opt/zlib/include"
 fi
+
+
+# phpbrew
+[[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
