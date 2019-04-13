@@ -32,9 +32,6 @@ plugins=(
     python
     pyenv
     golang
-    vscode
-    sbt
-    history
 )
 
 # User configuration

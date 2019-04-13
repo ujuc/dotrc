@@ -11,6 +11,9 @@ Plug 'vim-airline/vim-airline-themes'
 " seoul256
 Plug 'junegunn/seoul256.vim'
 
+" Grov box
+Plug 'morhetz/gruvbox'
+
 " Hyperfocus writing
 Plug 'junegunn/limelight.vim'
 Plug 'junegunn/goyo.vim'
