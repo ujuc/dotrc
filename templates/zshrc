@@ -22,8 +22,6 @@ source $RC_ZSH/theme.zsh
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git 
-    zsh-syntax-highlighting 
-    zsh-autosuggestions
     git-flow 
     git-extras
     tmux
