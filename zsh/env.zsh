@@ -1,9 +1,7 @@
 if type go > /dev/null; then
     # Go Path
     export GOROOT=`go env GOROOT`
-    export GOPATH=$HOME/repos/go
-    export PATH=$PATH:/usr/local/opt/go/libexec/bin
-    export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+    export PATH=$PATH:$GOROOT/bin
 fi
 
 # Linux brew
