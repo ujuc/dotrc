@@ -92,9 +92,6 @@ Plug 'ekalinin/dockerfile.vim'
 " csv
 Plug 'chrisbra/csv.vim'
 
-" YCM
-Plug 'Valloric/YouCompleteMe', { 'do': 'python3 ./install.py --go-completer --ts-completer --clang-completer' }
-
 " Presenting
 Plug 'sotte/presenting.vim'
 
