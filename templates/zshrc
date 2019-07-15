@@ -30,6 +30,7 @@ plugins=(
     python
     pyenv
     golang
+    poetry
 )
 
 # User configuration
