@@ -99,4 +99,7 @@ Plug 'sotte/presenting.vim'
 " Need nerd font
 Plug 'ryanoasis/vim-devicons'
 
+" neo coc.nvim
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
 call plug#end()

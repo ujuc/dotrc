@@ -22,8 +22,6 @@ function install_zsh() {
 
 function install_vim() {
     brew install vim
-	brew install ctags
-    brew install cmake
 
     mkdir -p $HOME/.vim/vimundo
     mkdir -p $HOME/.vim/colors
