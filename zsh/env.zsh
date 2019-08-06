@@ -56,3 +56,8 @@ export NVM_DIR="$HOME/.nvm"
 if [ -d $HOME/.poetry ]; then
     source $HOME/.poetry/env
 fi
+
+
+if [ -d $HOME/.cargo ]; then
+    source $HOME/.cargo/env
+fi
