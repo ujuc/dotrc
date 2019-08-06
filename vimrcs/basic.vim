@@ -15,7 +15,7 @@ set ignorecase	" 검색시 대소문자 무시
 set hlsearch	" 검색시 하이라이트
 set incsearch	" 검색 키워드 입력시 점진 검색
 
-" Wirte on make/shell commands
+" Write on make/shell commands
 set autowrite
 
 " 매크로 실행중엔 새롭개 그리지 않음
@@ -35,7 +35,7 @@ set wildmode=full
 set wildmenu
 set wildignorecase
 
-" Show tabline
+" Show tab line
 set showtabline=2
 
 " Show cmd
@@ -55,14 +55,12 @@ set autoindent
 set smartindent
 set wrap
 
-" 한글 입력기 관련
-set noimd
-
 " Linebreak on 500 char
 set lbr
 set tw=500
 
-set spell
+set spell spelllang=en_us
+set complete+=kspell
 
 " Source the vimrc file after saving it
 autocmd BufWritePost $MYVIMRC PlugClean

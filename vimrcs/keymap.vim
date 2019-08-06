@@ -1,7 +1,7 @@
 " 기본 값 들 변경
 
-nnoremap j gj
-nnoremap k gk
+nnoremap <expr> j (v:count == 0 ? 'gj' : 'j')
+nnoremap <expr> k (v:count == 0 ? 'gk' : 'k')
 
 " fzf
 

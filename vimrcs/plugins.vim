@@ -27,26 +27,15 @@ Plug 'scrooloose/nerdcommenter'
 " Unod tree
 Plug 'mbbill/undotree'
 
-" Splitjoin
-Plug 'AndrewRadev/splitjoin.vim'
-
-" Text object
-Plug 'wellle/targets.vim'
-
-Plug 'tpope/vim-sensible'
-
 " Create better diffs
 Plug 'chrisbra/vim-diff-enhanced'
 
+" Multiple line select
 Plug 'terryma/vim-multiple-cursors'
 
 """""
 " Navigation
 """""
-
-" Tag bar
-" Need ctag
-Plug 'majutsushi/tagbar'
 
 " Search engine
 Plug 'Shougo/denite.nvim'
@@ -75,7 +64,7 @@ Plug 'airblade/vim-gitgutter'
 " Language Support
 Plug 'sheerun/vim-polyglot'
 Plug 'Chiel92/vim-autoformat'
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 
 " Go
 Plug 'fatih/vim-go'
@@ -83,11 +72,9 @@ Plug 'fatih/vim-go'
 " Markdown
 Plug 'plasticboy/vim-markdown'
 
-" JSON
-Plug 'elzr/vim-json'
-
 " Docker
 Plug 'ekalinin/dockerfile.vim'
+Plug 'docker/docker'
 
 " csv
 Plug 'chrisbra/csv.vim'
@@ -101,5 +88,8 @@ Plug 'ryanoasis/vim-devicons'
 
 " neo coc.nvim
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" PHP
+Plug 'stanangeloff/php.vim'
 
 call plug#end()
