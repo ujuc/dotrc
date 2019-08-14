@@ -6,8 +6,11 @@ set encoding=utf-8
 
 set autoread
 
-" 5줄 남겨두고 움직이기
-set so=5
+" backspace
+set backspace=indent,eol,start
+
+" 7줄 남겨두고 움직이기
+set so=7
 
 " 검색
 set smartcase	" 대문자가 검색어 문자열에 포함될때는 noignorecase
