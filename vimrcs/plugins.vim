@@ -92,4 +92,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " PHP
 Plug 'stanangeloff/php.vim'
 
+" auto pairs
+Plug 'jiangmiao/auto-pairs'
+
 call plug#end()
