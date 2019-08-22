@@ -22,7 +22,7 @@ source $RC_ZSH/theme.zsh
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git 
-    git-flow 
+    git-flow-avh
     git-extras
     tmux
     tig
@@ -30,7 +30,6 @@ plugins=(
     python
     pyenv
     golang
-    poetry
 )
 
 # User configuration

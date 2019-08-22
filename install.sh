@@ -49,7 +49,7 @@ function install_tmux() {
 }
 
 function install_git() {
-    brew install git
+    brew install git git-flow-avh
 
     # git config
     git config --global user.email "ujuc@ujuc.kr"
@@ -103,8 +103,9 @@ function install_python() {
     brew install pyenv
     source $HOME/.zshrc
 
-    # pipenv
-    #brew install pipenv
+    # poetry
+    curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+
 }
 
 function install_go() {
