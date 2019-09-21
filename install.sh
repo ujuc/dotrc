@@ -13,7 +13,7 @@ function symlink_rc() {
 }
 
 function install_zsh() {
-    brew install zsh zplug
+    brew install zsh zplug starship
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     symlink_rc zshrc
     zplug install
