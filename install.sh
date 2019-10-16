@@ -141,11 +141,10 @@ function setting_mac() {
         "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
     # install font
-    brew cask install font-hack font-hack-nerd-font font-hack-nerd-font-mono \
-        font-iosevka font-iosevka-nerd-font font-iosevka-nerd-font-mono \
-        font-fira-code font-firacode-nerd-fonnt font-firacode-nerd-font-mono \
-        font-noto-sans-cjk font-noto-sans font-noto-serif font-not-serif-cjk \
-        font-noto-mono font-ibm-plex font-inter-ui
+    brew cask install font-iosevka font-iosevka-nerd-font \
+        font-fira-code font-firacode-nerd-fonnt \
+        font-noto-sans-cjk font-noto-sans font-noto-serif font-noto-serif-cjk \
+        font-noto-mono font-ibm-plex
 
     # Add package
     brew install bat fd
