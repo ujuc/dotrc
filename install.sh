@@ -12,8 +12,9 @@ function symlink_rc() {
     ln -sf $BASE/templates/$1 $HOME/.$1
 }
 
-function install_zsh() {
-    brew install zsh zplug starship
+function install_shell() {
+    brew install zplug starship
+    # Todo: delete oh-my-zsh
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     symlink_rc zshrc
     zplug install
@@ -147,10 +148,10 @@ function setting_mac() {
         font-noto-mono font-ibm-plex
 
     # Add package
-    brew install bat fd
+    brew install fd
 
-    # install zsh
-    install_zsh
+    # install shell program
+    install_shell
 
     # install vim
     install_vim
