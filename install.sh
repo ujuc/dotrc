@@ -175,37 +175,33 @@ function setting_mac() {
     install_mac_app
 }
 
+# Todo: Settings snap
 function setting_ubuntu() {
-    # install linux brew
-    sudo apt-get install build-essential curl file git
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 }
 
+# Todo: ???
 function setting_redhat() {
-    # install linux brew
-    sudo yum groupinstall 'Development Tools' && sudo yum install curl file git
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
 }
 
+# Todo: Settings Jguer/yay
 function setting_arch() {
-
 }
 
 function bootstrap() {
     # os check
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        setting_mac
-    elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-        name=`cat /etc/*-release | grep '_ID'`
+    #if [[ "$OSTYPE" == "darwin"* ]]; then
+    setting_mac
+    #elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+    #    name=`cat /etc/*-release | grep '_ID'`
 
-        if [[ "$name" == *"Ubuntu"* ]]; then
-            setting_ubuntu
-        else
-            echo "Not checked"
-        fi
-    else
-        echo "Not checked"
-    fi
+    #    if [[ "$name" == *"Ubuntu"* ]]; then
+    #        setting_ubuntu
+    #    else
+    #        echo "Not checked"
+    #    fi
+    #else
+    #    echo "Not checked"
+    #fi
 }
 
 bootstrap
