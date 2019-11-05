@@ -68,7 +68,7 @@ function install_git() {
 
     # gpgkey settings
     brew install gpg
-    brew cask intall keybase gpg-suite
+    brew cask install keybase gpg-suite
 
     keybase pgp export | gpg --import
     keybase pgp export --secret | gpg --allow-secret-key-import --import
