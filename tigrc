@@ -2,22 +2,22 @@ set vertical-split = no
 
 # theme
 # https://github.com/jonas/tig/blob/master/contrib/chocolate.theme.tigrc
-color diff-stat			95	default
-color date			172	default
-color "Merge: "			cyan	default
-color graph-commit		red	default
-color id			167	default
-color "author "			95	default
-color "Commit: "		90	default
-color cursor			white	101	bold
+color diff-stat	        95	    default
+color date              172     default
+color "Merge: "	        cyan    default
+color graph-commit      red	    default
+color id                167	    default
+color "author "         95	    default
+color "Commit: "        90	    default
+color cursor            white   101 bold
 
-color palette-0			93	default
-color palette-1			95	default
-color palette-2			124	default
-color palette-7			90	default bold
+color palette-0         93  default
+color palette-1         95  default
+color palette-2         124 default
+color palette-7         90  default bold
 
-color delimiter			90	default
-color main-tracked		99	default	bold
+color delimiter         90  default
+color main-tracked      99  default bold
 
 # Vim-style keybindings for Tig
 # https://github.com/jonas/tig/blob/master/contrib/vim.tigrc
@@ -33,6 +33,8 @@ bind generic gk previous
 bind generic gp parent
 bind generic gP back
 bind generic gn view-next
+bind generic gc !git commit
+bind generic ga !?@git commit --amend --no-edit
 
 bind main    G move-last-line
 bind generic G move-last-line
@@ -84,8 +86,6 @@ bind generic ul stage-update-line
 bind generic us stage-split-chunk
 
 bind generic c  none
-bind generic cc !git commit
-bind generic ca !?@git commit --amend --no-edit
 
 bind generic K view-help
 bind generic <C-w><C-w> view-next
