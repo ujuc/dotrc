@@ -73,17 +73,14 @@ function install_git() {
     keybase pgp export | gpg --import
     keybase pgp export --secret | gpg --allow-secret-key-import --import
 
-    keyid=`gpg --list-secret-keys --keyid-format LONG | grep sec | aws '{print $2}' | awk -F "[/]" '{print $2}'`
+    keyid=`gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | awk -F "[/]" '{print $2}'`
     git config --global user.signingkey $keyid
     git config --global commit.gpgsign true
+    git config --global gpg.program gpg2
+
+    # Register Tower
     echo no-tty >> ~/.gnupg/gpg.conf
     git config --global gpg.program ${which gpg}
-
-    set_git_alias
-}
-
-function set_git_alias() {
-
 }
 
 function install_tig() {
@@ -205,4 +202,3 @@ function bootstrap() {
 
 bootstrap
 
-#/* vim: noai:ts=4:sw=4
