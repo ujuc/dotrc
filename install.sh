@@ -16,7 +16,6 @@ function install_shell() {
     brew install zplug starship
     symlink_rc zshrc
     zplug install
-    source ~/.zshrc
 }
 
 function install_vim() {
@@ -85,18 +84,17 @@ function install_fzf() {
     brew install fzf
     $(brew --prefix)/opt/fzf/install --all --no-bash --no-fish
     source $HOME/.zshrc
-
-    gem install rouge
 }
 
 function install_python() {
     # pyenv
     brew install pyenv
-    source $HOME/.zshrc
+    pyenv install 3.8.0
+    pyenv global 3.8.0
 
     # poetry
-    curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
-
+    pip install poetry
+    poetry completions zsh > ~/.zfunc/_poetry
 }
 
 function install_go() {
