@@ -42,11 +42,6 @@ function install_vim() {
 	ln -sf $HOME/.vim/plugged/seoul256.vim/colors/seoul256.vim $HOME/.vim/colors
 }
 
-function install_tmux() {
-    brew install tmux
-    symlink_rc tmux.conf
-}
-
 function install_git() {
     brew install git git-flow-avh
 
@@ -109,17 +104,10 @@ function install_go() {
 }
 
 function install_mac_app() {
-    brew cask install google-chrome google-drive-file-stream
-    brew cask install iterm2 alfred
-    brew cask install jetbrains-toolbox
-    brew cask install visual-studio-code
-    brew cask install 1password
-    brew cask install tower
-    brew cask install paw
-    brew cask install slack notion timing
+    brew cask install google-chrome google-drive-file-stream iterm2 alfred \
+        jetbrains-toolbox visual-studio-code 1password tower paw slack notion \
+        docker
 
-    # docker desktop
-    open https://store.docker.com/editions/community/docker-ce-desktop-mac
     # Snapscan Home
     open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
     # istate
@@ -141,17 +129,11 @@ function setting_mac() {
     brew cask install font-iosevka font-fira-code font-noto-sans-cjk font-noto-serif-cjk \
         font-ibm-plex
 
-    # Add package
-    brew install fd
-
     # install shell program
     install_shell
 
     # install vim
     install_vim
-
-    # install tmux
-    install_tmux
 
     # install git
     install_git
