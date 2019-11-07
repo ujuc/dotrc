@@ -22,7 +22,7 @@ if [[ $(uname -s) == "Darwin" ]]; then
     alias info="brew info"
     alias list="brew list"
     alias cask="brew cask"
-    alias update="brew update; brew upgrade; brew cask upgrade; zplug update; vi +PlugUpdate +qall; vim +PlugUpgrade +qall; cd ~"
+    alias update="brew update; brew upgrade; brew cask upgrade; zplug update; rustup update; vi +PlugUpdate +qall; vim +PlugUpgrade +qall; cd ~"
     alias cleanup="brew cleanup"
 fi
 

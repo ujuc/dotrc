@@ -3,7 +3,7 @@
 #############################
 #   System Setting          #
 #   Sungjin (ujuc@ujuc.kr)  #
-#   Version : 2.0           #
+#   Version : 3.0           #
 #############################
 
 BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,6 +16,7 @@ function install_shell() {
     brew install zplug starship
     symlink_rc zshrc
     zplug install
+    mkdir $HOME/.zfunc
 }
 
 function install_vim() {
@@ -30,9 +31,6 @@ function install_vim() {
 
     ln -sf $BASE/vimrcs $HOME/.vim/vimrcs
     symlink_rc vimrc
-
-    # install fzf
-    install_fzf
 
     # install vim plugins
     vi +PlugInstall +qall
@@ -93,12 +91,20 @@ function install_python() {
     pyenv global 3.8.0
 
     # poetry
-    pip install poetry
+    curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+    source $HOME/.poetry/env
     poetry completions zsh > ~/.zfunc/_poetry
 }
 
 function install_go() {
     brew install go
+}
+
+function install_rust() {
+    # https://github.com/rust-lang/rustup.rs/blob/master/README.md
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    source $HOME/.cargo/env
+    rustup completions zsh > ~/.zfunc/_rustup
 }
 
 function install_mac_app() {
@@ -127,25 +133,14 @@ function setting_mac() {
     brew cask install font-iosevka font-fira-code font-noto-sans-cjk font-noto-serif-cjk \
         font-ibm-plex
 
-    # install shell program
     install_shell
-
-    # install vim
+    install_fzf
     install_vim
-
-    # install git
     install_git
-
-    # install tig
     install_tig
-
-    # install python
     install_python
-
-    # install go
     install_go
-
-    # install mac app
+    install_rust
     install_mac_app
 }
 
