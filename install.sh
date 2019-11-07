@@ -9,13 +9,11 @@
 BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 function symlink_rc() {
-    ln -sf $BASE/templates/$1 $HOME/.$1
+    ln -sf $BASE/$1 $HOME/.$1
 }
 
 function install_shell() {
     brew install zplug starship
-    # Todo: delete oh-my-zsh
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     symlink_rc zshrc
     zplug install
     source ~/.zshrc
