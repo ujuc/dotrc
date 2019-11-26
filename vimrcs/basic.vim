@@ -68,7 +68,7 @@ set complete+=kspell
 " Source the vimrc file after saving it
 autocmd BufWritePost $MYVIMRC PlugClean
 
-let &colorcolumn="51,80,120,".join(range(150,999),",")
+let &colorcolumn="51,72,80,120,".join(range(150,999),",")
 highlight ColorColumn ctermbg=235 guibg=#2c2d27
 
 " space를 닷으로 구분한다.
