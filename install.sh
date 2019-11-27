@@ -110,7 +110,7 @@ function install_rust() {
 function install_mac_app() {
     brew cask install google-chrome google-drive-file-stream iterm2 alfred \
         jetbrains-toolbox visual-studio-code 1password tower paw slack notion \
-        docker
+        docker adoptopenjdk
 
     # Snapscan Home
     open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
