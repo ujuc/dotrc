@@ -1,3 +1,14 @@
+" vim: set foldmethod=marker foldlevel=0 nomodeline:
+" ----------------------------------------------------------------------
+" Basic
+" ----------------------------------------------------------------------
+
+" Vim 8 defaults
+unlet! skip_defaults_vim
+silent! source $VIMRUNTIME/defaults.vim
+
+let s:darwin = has('mac')
+
 " General
 syntax on
 
@@ -14,6 +25,7 @@ set cursorline
 set cursorcolumn
 set nocp
 set tw=500
+set mouse-=a
 
 " 한국어 매핑
 set langmap=ㅁㅠㅊㅇㄷㄹㅎㅗㅑㅓㅏㅣㅡㅜㅐㅔㅂㄱㄴㅅㅕㅍㅈㅌㅛㅋ;abcdefghijklmnopqrstuvwxyz
@@ -73,5 +85,40 @@ highlight ColorColumn ctermbg=8
 autocmd BufWritePost $MYVIMRC PlugClean
 
 " ----------------------------------------------------------------------
+" Plugin using vim-plug
+" ----------------------------------------------------------------------
+call plug#begin('$HOME/.vim/plugged')
 
+Plug 'morhetz/gruvbox'
+
+" Airline
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" fzf
+Plug 'junegunn/fzf.vim'
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+Plug 'jiangmiao/auto-pairs'
+
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+Plug 'chrisbra/vim-diff-enhanced'
+
+call plug#end()
+
+" ----------------------------------------------------------------------
+" Theme
+" ----------------------------------------------------------------------
+set background=dark
+colorscheme gruvbox
+
+" ----------------------------------------------------------------------
+" Airline
+" ----------------------------------------------------------------------
+let g:airline#extenstions#tabline#formatter = 'unique_tail_improved'
+let g:airline_theme = 'gruvbox'
+let g:airline_powerline_fonts = 1
 

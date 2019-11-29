@@ -35,8 +35,8 @@ function install_vim() {
     # install vim plugins
     vi +PlugInstall +qall
 
-    # vim theme
-	ln -sf $HOME/.vim/plugged/seoul256.vim/colors/seoul256.vim $HOME/.vim/colors
+    vim -c 'CocInstall -sync coc-marketplace coc-sh coc-sql coc-gitignore coc-emoji coc-docker coc-go coc-json coc-phpls coc-rls coc-yaml coc-python coc-highlight coc-emmet coc-snippets coc-lists coc-git coc-vimlsp coc-xml coc-makrdownlint|q'
+
 }
 
 function install_git() {
@@ -135,6 +135,8 @@ function setting_mac() {
     brew tap homebrew/cask-fonts
     brew cask install font-iosevka font-fira-code font-noto-sans-cjk font-noto-serif-cjk \
         font-ibm-plex
+
+    brew install node
 
     install_shell
     install_fzf
