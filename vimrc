@@ -1,11 +1,36 @@
 " vim: set foldmethod=marker foldlevel=0 nomodeline:
 " ----------------------------------------------------------------------
+" Plugin using vim-plug
+" ----------------------------------------------------------------------
+call plug#begin('$HOME/.vim/plugged')
+
+Plug 'morhetz/gruvbox'
+
+" Airline
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" fzf
+Plug 'junegunn/fzf.vim'
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+Plug 'jiangmiao/auto-pairs'
+
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+Plug 'chrisbra/vim-diff-enhanced'
+
+Plug 'rust-lang/rust.vim'
+Plug 'racer-rust/vim-racer'
+Plug 'mhinz/vim-startify'
+
+call plug#end()
+
+" ----------------------------------------------------------------------
 " Basic
 " ----------------------------------------------------------------------
-
-" Vim 8 defaults
-unlet! skip_defaults_vim
-silent! source $VIMRUNTIME/defaults.vim
 
 let s:darwin = has('mac')
 
@@ -83,31 +108,6 @@ highlight ColorColumn ctermbg=8
 
 " Source the vimrc file after saving it
 autocmd BufWritePost $MYVIMRC PlugClean
-
-" ----------------------------------------------------------------------
-" Plugin using vim-plug
-" ----------------------------------------------------------------------
-call plug#begin('$HOME/.vim/plugged')
-
-Plug 'morhetz/gruvbox'
-
-" Airline
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-
-" fzf
-Plug 'junegunn/fzf.vim'
-
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-Plug 'jiangmiao/auto-pairs'
-
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
-
-Plug 'chrisbra/vim-diff-enhanced'
-
-call plug#end()
 
 " ----------------------------------------------------------------------
 " Theme
