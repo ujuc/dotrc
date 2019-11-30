@@ -132,3 +132,8 @@ autocmd FileType markdown setlocal ts=2 sts=2 sw=2
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 autocmd FileType gitcommit set tw=72
 
+" ----------------------------------------------------------------------
+" Key map
+" ----------------------------------------------------------------------
+nnoremap <expr> j (v:count == 0 ? 'gj' : 'j')
+nnoremap <expr> k (v:count == 0 ? 'gk' : 'k')
