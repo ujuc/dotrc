@@ -35,7 +35,7 @@ function install_vim() {
     # install vim plugins
     vi +PlugInstall +qall
 
-    vim -c 'CocInstall -sync coc-marketplace coc-sh coc-sql coc-gitignore coc-emoji coc-docker coc-go coc-json coc-phpls coc-rls coc-yaml coc-python coc-highlight coc-emmet coc-snippets coc-lists coc-git coc-vimlsp coc-xml coc-makrdownlint|q'
+    vim -c 'CocInstall -sync coc-marketplace coc-sh coc-sql coc-gitignore coc-emoji coc-docker coc-go coc-json coc-phpls coc-rls coc-yaml coc-python coc-highlight coc-emmet coc-snippets coc-lists coc-git coc-vimlsp coc-xml coc-makrdownlint coc-tsserver|q'
 
 }
 
