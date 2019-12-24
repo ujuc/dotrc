@@ -111,8 +111,8 @@ function install_rust() {
 }
 
 function install_mac_app() {
-    brew cask install google-chrome google-drive-file-stream iterm2 alfred \
-        jetbrains-toolbox visual-studio-code 1password tower paw slack notion \
+    brew cask install google-drive-file-stream iterm2 alfred \
+        jetbrains-toolbox visual-studio-code tower paw slack notion \
         docker adoptopenjdk
 
     # Snapscan Home
