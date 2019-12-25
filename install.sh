@@ -15,6 +15,7 @@ function symlink_rc() {
 function install_shell() {
     brew install zplug starship
     symlink_rc zshrc
+    source $HOME/.zshrc
     zplug install
     mkdir $HOME/.zfunc
 }
@@ -35,8 +36,8 @@ function install_vim() {
     # install vim plugins
     vi +PlugInstall +qall
 
+    brew install node
     vim -c 'CocInstall -sync coc-marketplace coc-sh coc-sql coc-gitignore coc-emoji coc-docker coc-go coc-json coc-phpls coc-rls coc-yaml coc-python coc-highlight coc-emmet coc-snippets coc-lists coc-git coc-vimlsp coc-xml coc-makrdownlint coc-tsserver|q'
-
 }
 
 function install_git() {
@@ -48,7 +49,7 @@ function install_git() {
 
     git config --global core.editor vim
     git config --global core.autocrlf input
-    git config --global core.whitespace fix, -indent-with-non-tab,trailing-space,cr-at-eol
+    git config --global core.whitespace fix,-indent-with-non-tab,trailing-space,cr-at-eol
 
     git config --global color.ui auto
     git config --global diff.tool vimdiff
@@ -59,18 +60,17 @@ function install_git() {
     # gpgkey settings
     brew install gpg
     brew cask install keybase gpg-suite
+}
 
+function set_gpgkey() {
     keybase pgp export | gpg --import
     keybase pgp export --secret | gpg --allow-secret-key-import --import
 
     keyid=`gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | awk -F "[/]" '{print $2}'`
     git config --global user.signingkey $keyid
     git config --global commit.gpgsign true
-    git config --global gpg.program gpg2
-
-    # Register Tower
     echo no-tty >> ~/.gnupg/gpg.conf
-    git config --global gpg.program ${which gpg}
+    git config --global gpg.program gpg2
 }
 
 function install_tig() {
@@ -87,7 +87,7 @@ function install_fzf() {
 function install_python() {
     # pyenv
     curl https://pyenv.run | bash
-    exec $SHELL
+    source $HOME/.zshrc
 
     # python
     pyenv install 3.8.0
@@ -127,8 +127,7 @@ function setting_mac() {
     sudo xcodebuild -license
 
     # install brew
-    [ -z "$(witch brew)" ] && \
-        /usr/bin/ruby -e \
+    /usr/bin/ruby -e \
         "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
     # install font
@@ -136,46 +135,19 @@ function setting_mac() {
     brew cask install font-iosevka font-fira-code font-noto-sans-cjk font-noto-serif-cjk \
         font-ibm-plex
 
-    brew install node
-
-    install_shell
-    install_fzf
     install_vim
     install_git
     install_tig
     install_python
     install_go
     install_rust
+    install_shell
+    install_fzf
     install_mac_app
 }
 
-# Todo: Settings snap
-function setting_ubuntu() {
-}
-
-# Todo: ???
-function setting_redhat() {
-}
-
-# Todo: Settings Jguer/yay
-function setting_arch() {
-}
-
 function bootstrap() {
-    # os check
-    #if [[ "$OSTYPE" == "darwin"* ]]; then
     setting_mac
-    #elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-    #    name=`cat /etc/*-release | grep '_ID'`
-
-    #    if [[ "$name" == *"Ubuntu"* ]]; then
-    #        setting_ubuntu
-    #    else
-    #        echo "Not checked"
-    #    fi
-    #else
-    #    echo "Not checked"
-    #fi
 }
 
 bootstrap

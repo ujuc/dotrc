@@ -45,10 +45,12 @@ export PATH="/usr/local/sbin:$PATH"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # pyenv
-source ~/.poetry/env
+export PATH="/Users/ujuc/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
 # poetry
+source ~/.poetry/env
 fpath+=~/.zfunc
 
 # iterm2 shell intergration
