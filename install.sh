@@ -108,6 +108,8 @@ function install_rust() {
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
     source $HOME/.cargo/env
     rustup completions zsh > ~/.zfunc/_rustup
+
+    cargo install xsv
 }
 
 function install_mac_app() {
