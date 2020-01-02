@@ -26,6 +26,8 @@ Plug 'rust-lang/rust.vim'
 Plug 'racer-rust/vim-racer'
 Plug 'mhinz/vim-startify'
 
+Plug 'wakatime/vim-wakatime'
+
 call plug#end()
 
 " ----------------------------------------------------------------------
