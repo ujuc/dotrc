@@ -14,7 +14,9 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/fzf.vim'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'davidhalter/jedi-vim'
 
+" 괄호, 따옴표들을 이중으로 묶어주는 플러그인
 Plug 'jiangmiao/auto-pairs'
 
 Plug 'tpope/vim-fugitive'
@@ -26,6 +28,7 @@ Plug 'rust-lang/rust.vim'
 Plug 'racer-rust/vim-racer'
 Plug 'mhinz/vim-startify'
 
+" wakatime
 Plug 'wakatime/vim-wakatime'
 
 call plug#end()
@@ -53,9 +56,6 @@ set cursorcolumn
 set nocp
 set tw=500
 set mouse-=a
-
-" 한국어 매핑
-set langmap=ㅁㅠㅊㅇㄷㄹㅎㅗㅑㅓㅏㅣㅡㅜㅐㅔㅂㄱㄴㅅㅕㅍㅈㅌㅛㅋ;abcdefghijklmnopqrstuvwxyz
 
 " 움직이는 방향으로 7줄 남겨두고 움직이도록
 set so=7
@@ -139,3 +139,9 @@ autocmd FileType gitcommit set tw=72
 " ----------------------------------------------------------------------
 nnoremap <expr> j (v:count == 0 ? 'gj' : 'j')
 nnoremap <expr> k (v:count == 0 ? 'gk' : 'k')
+
+" ----------------------------------------------------------------------
+" Plugin Option
+" ----------------------------------------------------------------------
+let g:AutoPairsMapBS = 0
+
