@@ -130,6 +130,8 @@ let g:airline_powerline_fonts = 1
 autocmd FileType ruby setlocal ts=2 sts=2 sw=2
 autocmd FileType html setlocal ts=4 sts=4 sw=4
 autocmd FileType javascript setlocal ts=2 sts=2 sw=2
+autocmd BufNewFile,BufReadPost *.ts set filetype=javascript
+autocmd FileType json setlocal ts=2 sts=2 sw=2
 autocmd FileType markdown setlocal ts=2 sts=2 sw=2
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 autocmd FileType gitcommit set tw=72

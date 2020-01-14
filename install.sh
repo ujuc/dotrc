@@ -37,7 +37,7 @@ function install_vim() {
     vi +PlugInstall +qall
 
     brew install node
-    vim -c 'CocInstall -sync coc-marketplace coc-sh coc-sql coc-gitignore coc-emoji coc-docker coc-go coc-json coc-phpls coc-rls coc-yaml coc-python coc-highlight coc-emmet coc-snippets coc-lists coc-git coc-vimlsp coc-xml coc-makrdownlint coc-tsserver|q'
+    vim -c 'CocInstall -sync coc-marketplace coc-sh coc-sql coc-gitignore coc-emoji coc-docker coc-go coc-json coc-phpls coc-rls coc-yaml coc-python coc-typescript coc-highlight coc-emmet coc-snippets coc-lists coc-git coc-vimlsp coc-xml coc-makrdownlint coc-tsserver|q'
 }
 
 function install_git() {
