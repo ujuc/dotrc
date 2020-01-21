@@ -13,7 +13,7 @@ Plug 'vim-airline/vim-airline-themes'
 " fzf
 Plug 'junegunn/fzf.vim'
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': { -> coc#util#install() }}
 Plug 'davidhalter/jedi-vim'
 
 " 괄호, 따옴표들을 이중으로 묶어주는 플러그인
