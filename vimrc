@@ -28,6 +28,9 @@ Plug 'rust-lang/rust.vim'
 Plug 'racer-rust/vim-racer'
 Plug 'mhinz/vim-startify'
 
+" font
+Plug 'ryanoasis/vim-devicons'
+
 " wakatime
 Plug 'wakatime/vim-wakatime'
 
