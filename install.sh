@@ -85,29 +85,41 @@ function install_fzf() {
 }
 
 function install_python() {
-    # pyenv
-    curl https://pyenv.run | bash
-    source $HOME/.zshrc
+    asdf plugin-add python
+    asdf install python latest
 
-    # python
-    pyenv install 3.8.0
-    pyenv global 3.8.0
-
+    asdf_python_version=`asdf latest python`
+    asdf global python $asdf_python_version
+    
     # poetry
     curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
     source $HOME/.poetry/env
     poetry completions zsh > ~/.zfunc/_poetry
 }
 
+function install_node() {
+    asdf plugin-add nodejs
+    bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+    asdf install node latest
+
+    asdf_node_version=`asdf latest nodejs`
+    asdf global nodejs $asdf_node_version
+}
+
 function install_go() {
-    brew install go
+    asdf plugin-add golang
+    asdf install golang latest
+
+    asdf_go_version=`asdf latest golang`
+    asdf global golang $asdf_go_version
 }
 
 function install_rust() {
-    # https://github.com/rust-lang/rustup.rs/blob/master/README.md
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-    source $HOME/.cargo/env
-    rustup completions zsh > ~/.zfunc/_rustup
+    asdf plugin-add rust
+    asdf install rust latest
+
+    asdf_rust_version=`asdf latest rust`
+    asdf global rust $asdf_rust_version    
 
     cargo install xsv
 }
@@ -121,6 +133,13 @@ function install_mac_app() {
     open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
     # istate
     open https://bjango.com/mac/istatmenus/
+}
+
+function instll_asdf() {
+    brew install asdf \
+        coreutils automake autoconfig openssl \
+        libyaml readline libxslt libtool unixodbc \
+        unzip curl
 }
 
 function setting_mac() {
@@ -137,13 +156,19 @@ function setting_mac() {
     brew cask install font-iosevka font-fira-code font-noto-sans-cjk font-noto-serif-cjk \
         font-ibm-plex
 
-    install_vim
     install_git
     install_tig
+
+    install_asdf
+    install_shell
+
+    # Program language env
     install_python
+    install_node
     install_go
     install_rust
-    install_shell
+
+    install_vim
     install_fzf
     install_mac_app
 }

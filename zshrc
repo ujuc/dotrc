@@ -41,13 +41,12 @@ alias l='ls -lah'
 # brew
 export PATH="/usr/local/sbin:$PATH"
 
+# asdf
+source $(brew --prefix asdf)/asdf.sh
+source $(brew --prefix asdf)/etc/bash_completion.d/asdf.bash
+
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# pyenv
-export PATH="/Users/ujuc/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
 
 # poetry
 source ~/.poetry/env
