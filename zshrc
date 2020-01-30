@@ -52,6 +52,11 @@ source $(brew --prefix asdf)/etc/bash_completion.d/asdf.bash
 source ~/.poetry/env
 fpath+=~/.zfunc
 
+# python
+if [[ -e $(brew --prefix asdf) ]]; then;
+    export PATH="`asdf where python`/bin:$PATH"
+fi
+
 # iterm2 shell intergration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
