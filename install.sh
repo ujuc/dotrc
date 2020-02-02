@@ -51,11 +51,15 @@ function install_git() {
     git config --global core.autocrlf input
     git config --global core.whitespace fix,-indent-with-non-tab,trailing-space,cr-at-eol
 
+    git config --global commit.template ~/.gitmessage
+
     git config --global color.ui auto
     git config --global diff.tool vimdiff
     git config --global difftool.prompt false
 
     git config --global gitreview.username sungjin
+
+    symlink_rc gitmessage
 
     # gpgkey settings
     brew install gpg

@@ -108,7 +108,7 @@ set list listchars=tab:»\ ,trail:·,extends:>,precedes:<
 set spell spelllang=en_us
 
 " column check
-set colorcolumn=51,73,81,121
+set colorcolumn=49,71,79,119
 highlight ColorColumn ctermbg=8
 
 " Source the vimrc file after saving it
