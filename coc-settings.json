@@ -8,6 +8,7 @@
   "yaml.format.enable": true,
   "highlight.docment.enable": true,
   "highlight.colors.enagle": true,
+  "emmet.excludeLanguages": ["markdown", "yaml", "json"],
   "languageserver": {
     "bash": {
       "command": "bash-language-server",
