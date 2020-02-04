@@ -9,6 +9,9 @@
   "highlight.docment.enable": true,
   "highlight.colors.enagle": true,
   "emmet.excludeLanguages": ["markdown", "yaml", "json"],
+  "snippets.extends": {
+    "typescript": ["javascript"]
+  },
   "languageserver": {
     "bash": {
       "command": "bash-language-server",
