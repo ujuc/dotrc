@@ -1,4 +1,6 @@
 {
+  "python.jediEnabled": false,
+  "python.linting.enabled": false,
   "python.formatting.provider": "black",
   "python.formatting.blackArgs": ["-l", "80"]
 }
