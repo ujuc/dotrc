@@ -6,6 +6,8 @@
   "sh.enable": true,
   "docker.enagle": true,
   "yaml.format.enable": true,
+  "highlight.docment.enable": true,
+  "highlight.colors.enagle": true,
   "languageserver": {
     "bash": {
       "command": "bash-language-server",

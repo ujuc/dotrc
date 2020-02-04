@@ -36,6 +36,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': { -> coc#util#install() }}
 Plug 'neoclide/coc-python'
 Plug 'neoclide/coc-json'
 Plug 'neoclide/coc-yaml'
+Plug 'neoclide/coc-highlight'
 
 Plug 'josa42/coc-sh'
 Plug 'josa42/coc-docker'
@@ -156,3 +157,7 @@ nnoremap <expr> k (v:count == 0 ? 'gk' : 'k')
 " ----------------------------------------------------------------------
 let g:AutoPairsMapBS = 0
 
+" ----------------------------------------------------------------------
+" coc.nvim
+" ----------------------------------------------------------------------
+autocmd CursorHold * silent call CocActionAsync('highlight')
