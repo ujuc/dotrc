@@ -40,6 +40,7 @@ Plug 'neoclide/coc-highlight'
 Plug 'neoclide/coc-emmet'
 Plug 'neoclide/coc-snippets'
 Plug 'neoclide/coc-lists'
+Plug 'neoclide/coc-git'
 
 Plug 'josa42/coc-sh'
 Plug 'josa42/coc-docker'
