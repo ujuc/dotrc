@@ -34,6 +34,7 @@ Plug 'wakatime/vim-wakatime'
 " coc.nvim
 Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': { -> coc#util#install() }}
 Plug 'neoclide/coc-python'
+Plug 'neoclide/coc-json'
 
 call plug#end()
 
