@@ -5,6 +5,7 @@
   "python.formatting.blackArgs": ["-l", "80"],
   "sh.enable": true,
   "docker.enagle": true,
+  "yaml.format.enable": true,
   "languageserver": {
     "bash": {
       "command": "bash-language-server",
