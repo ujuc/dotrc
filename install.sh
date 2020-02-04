@@ -43,7 +43,7 @@ function install_vim() {
             dockerfile-language-server-nodejs
 
     # coc.nvim install
-    vim -c 'CocInstall -sync coc-emoji coc-go coc-rls coc-typescript coc-lists coc-git coc-vimlsp coc-xml coc-makrdownlint coc-tsserver|q'
+    vim -c 'CocInstall -sync coc-emoji coc-go coc-rls coc-typescript coc-git coc-vimlsp coc-xml coc-makrdownlint coc-tsserver|q'
 }
 
 function install_git() {
