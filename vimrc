@@ -13,9 +13,6 @@ Plug 'vim-airline/vim-airline-themes'
 " fzf
 Plug 'junegunn/fzf.vim'
 
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': { -> coc#util#install() }}
-Plug 'davidhalter/jedi-vim'
-
 " 괄호, 따옴표들을 이중으로 묶어주는 플러그인
 Plug 'jiangmiao/auto-pairs'
 
@@ -33,6 +30,10 @@ Plug 'ryanoasis/vim-devicons'
 
 " wakatime
 Plug 'wakatime/vim-wakatime'
+
+" coc.nvim
+Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': { -> coc#util#install() }}
+Plug 'neoclide/coc-python'
 
 call plug#end()
 
