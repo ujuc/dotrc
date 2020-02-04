@@ -39,9 +39,11 @@ function install_vim() {
     # coc plugins
     brew install ctags
     
-    npm i -g bash-language-server
+    npm i -g bash-language-server \
+            dockerfile-language-server-nodejs
+
     # coc.nvim install
-    vim -c 'CocInstall -sync coc-emoji coc-docker coc-go coc-rls coc-yaml coc-typescript coc-highlight coc-emmet coc-snippets coc-lists coc-git coc-vimlsp coc-xml coc-makrdownlint coc-tsserver|q'
+    vim -c 'CocInstall -sync coc-emoji coc-go coc-rls coc-yaml coc-typescript coc-highlight coc-emmet coc-snippets coc-lists coc-git coc-vimlsp coc-xml coc-makrdownlint coc-tsserver|q'
 }
 
 function install_git() {

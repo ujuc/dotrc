@@ -4,12 +4,18 @@
   "python.formatting.provider": "black",
   "python.formatting.blackArgs": ["-l", "80"],
   "sh.enable": true,
+  "docker.enagle": true,
   "languageserver": {
     "bash": {
       "command": "bash-language-server",
       "args": ["start"],
       "filetypes": ["sh"],
       "ignoredRootPaths": ["~"]
+    },
+    "dockerfile": {
+      "command": "docker-langserver",
+      "filetypes": ["dockerfile"],
+      "args": ["--stdio"]
     }
   }
 }

@@ -37,6 +37,7 @@ Plug 'neoclide/coc-python'
 Plug 'neoclide/coc-json'
 
 Plug 'josa42/coc-sh'
+Plug 'josa42/coc-docker'
 
 call plug#end()
 
