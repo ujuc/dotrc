@@ -36,6 +36,8 @@ Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': { -> coc#util#install() }}
 Plug 'neoclide/coc-python'
 Plug 'neoclide/coc-json'
 
+Plug 'josa42/coc-sh'
+
 call plug#end()
 
 " ----------------------------------------------------------------------

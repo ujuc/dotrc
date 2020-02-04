@@ -2,5 +2,14 @@
   "python.jediEnabled": false,
   "python.linting.enabled": false,
   "python.formatting.provider": "black",
-  "python.formatting.blackArgs": ["-l", "80"]
+  "python.formatting.blackArgs": ["-l", "80"],
+  "sh.enable": true,
+  "languageserver": {
+    "bash": {
+      "command": "bash-language-server",
+      "args": ["start"],
+      "filetypes": ["sh"],
+      "ignoredRootPaths": ["~"]
+    }
+  }
 }
