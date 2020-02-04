@@ -1,14 +1,35 @@
-########50 characters############################
-# Subject
+# <type>: <subject>
+##### Subject 50 characters ################# -> |
 
 
-########72 characters##################################################
-Problem
-# Problem, Task, Reason for Commit
+# Body Message
+######## Body 72 characters ####################################### -> |
 
-Solution
-# Solution or List of Changes
+# Issue Tracker Number or URL
 
-Note
-# Special instructions, testing steps, rake, etc
-
+# --- COMMIT END ---
+# Type can be
+#   feat    : new feature
+#   fix     : bug fix
+#   refactor: refactoring production code
+#   style   : formatting, missing semi colons, etc; no code change
+#   docs    : changes to documentation
+#   test    : adding or refactoring tests
+#             no productin code change
+#   chore   : updating grunt tasks etc
+#             no production code change
+# ------------------
+# Remember me ~
+#   Capitalize the subject line
+#     제목줄은 대문자로 시작한다.
+#   Use the imperative mood in the subject line
+#     제목줄은 명령어로 작성한다.
+#   Do not end the subject line with a period
+#     제목줄은 마침표로 끝내지 않는다.
+#   Separate subject from body with a blank line
+#     본문과 제목에는 빈줄을 넣어서 구분한다.
+#   Use the body to explain what and why vs. how
+#     본문에는 "어떻게" 보다는 "왜"와 "무엇을" 설명한다.
+#   Can use multiple lines with "-" for bullet points in body
+#     본문에 목록을 나타낼때는 "-"로 시작한다.
+# ------------------
