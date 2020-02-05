@@ -46,6 +46,7 @@ Plug 'neoclide/coc-rls', {'do': 'yarn install'}
 
 Plug 'josa42/coc-sh', {'do': 'yarn install'}
 Plug 'josa42/coc-docker', {'do': 'yarn install'}
+Plug 'josa42/coc-go', {'do': 'yarn install'}
 Plug 'fannheyward/coc-markdownlint', {'do': 'yarn install'}
 
 call plug#end()

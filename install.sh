@@ -43,9 +43,10 @@ function install_vim() {
             dockerfile-language-server-nodejs \
             markdownlint
     go get github.com/mattn/efm-langserver
+    go get golang.org/x/tools/gopls
 
     # coc.nvim install
-    vim -c 'CocInstall -sync coc-emoji coc-go|q'
+    vim -c 'CocInstall -sync coc-emoji|q'
 }
 
 function install_git() {

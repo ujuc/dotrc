@@ -40,6 +40,11 @@
       "command": "efm-langserver",
       "args": ["-c", "~/dotrc/efm-langserver-config.yaml"],
       "filetypes": ["markdown"]
+    },
+    "golang": {
+      "command": "gopls",
+      "rootPatterns": ["go.mod"],
+      "filetypes": ["go"]
     }
   }
 }
