@@ -17,6 +17,9 @@
   "git.removedSign.hlGroup": "GitGutterDelete",
   "git.topRemovedSign.hlGroup": "GitGutterDelete",
   "git.changeRemovedSign.hlGroup": "GitGutterChangeDelete",
+  "markdownlint.confg": {
+    "default": true
+  },
   "languageserver": {
     "bash": {
       "command": "bash-language-server",
@@ -28,6 +31,11 @@
       "command": "docker-langserver",
       "filetypes": ["dockerfile"],
       "args": ["--stdio"]
+    },
+    "efm": {
+      "command": "efm-langserver",
+      "args": ["-c", "~/dotrc/efm-langserver-config.yaml"],
+      "filetypes": ["markdown"]
     }
   }
 }

@@ -40,10 +40,12 @@ function install_vim() {
     brew install ctags
     
     npm i -g bash-language-server \
-            dockerfile-language-server-nodejs
+            dockerfile-language-server-nodejs \
+            markdownlint
+    go get github.com/mattn/efm-langserver
 
     # coc.nvim install
-    vim -c 'CocInstall -sync coc-emoji coc-go coc-rls coc-typescript coc-xml coc-makrdownlint coc-tsserver|q'
+    vim -c 'CocInstall -sync coc-emoji coc-go coc-rls coc-typescript coc-xml coc-tsserver|q'
 }
 
 function install_git() {

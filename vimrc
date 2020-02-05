@@ -33,17 +33,18 @@ Plug 'wakatime/vim-wakatime'
 
 " coc.nvim
 Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': { -> coc#util#install() }}
-Plug 'neoclide/coc-python'
-Plug 'neoclide/coc-json'
-Plug 'neoclide/coc-yaml'
-Plug 'neoclide/coc-highlight'
-Plug 'neoclide/coc-emmet'
-Plug 'neoclide/coc-snippets'
-Plug 'neoclide/coc-lists'
-Plug 'neoclide/coc-git'
+Plug 'neoclide/coc-python', {'do': 'yarn install --pure-lockfile'}
+Plug 'neoclide/coc-json', {'do': 'yarn install --pure-lockfile'}
+Plug 'neoclide/coc-yaml', {'do': 'yarn install --pure-lockfile'}
+Plug 'neoclide/coc-highlight', {'do': 'yarn install --pure-lockfile'}
+Plug 'neoclide/coc-emmet', {'do': 'yarn install --pure-lockfile'}
+Plug 'neoclide/coc-snippets', {'do': 'yarn install --pure-lockfile'}
+Plug 'neoclide/coc-lists', {'do': 'yarn install --pure-lockfile'}
+Plug 'neoclide/coc-git', {'do': 'yarn install --pure-lockfile'}
 
-Plug 'josa42/coc-sh'
-Plug 'josa42/coc-docker'
+Plug 'josa42/coc-sh', {'do': 'yarn install --pure-lockfile'}
+Plug 'josa42/coc-docker', {'do': 'yarn install --pure-lockfile'}
+Plug 'fannheyward/coc-markdownlint', {'do': 'yarn install --pure-lockfile'}
 
 call plug#end()
 
