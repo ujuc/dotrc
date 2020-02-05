@@ -42,6 +42,7 @@ Plug 'neoclide/coc-snippets', {'do': 'yarn install'}
 Plug 'neoclide/coc-lists', {'do': 'yarn install'}
 Plug 'neoclide/coc-git', {'do': 'yarn install'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install'}
+Plug 'neoclide/coc-rls', {'do': 'yarn install'}
 
 Plug 'josa42/coc-sh', {'do': 'yarn install'}
 Plug 'josa42/coc-docker', {'do': 'yarn install'}

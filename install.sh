@@ -45,7 +45,7 @@ function install_vim() {
     go get github.com/mattn/efm-langserver
 
     # coc.nvim install
-    vim -c 'CocInstall -sync coc-emoji coc-go coc-rls|q'
+    vim -c 'CocInstall -sync coc-emoji coc-go|q'
 }
 
 function install_git() {

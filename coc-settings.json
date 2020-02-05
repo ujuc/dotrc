@@ -1,6 +1,7 @@
 {
   "coc.preferences.formatOnSaveFiletypes": [
-    "css", "Markdown", "javascript", "typescript", "json", "graphql"
+    "css", "Markdown", "javascript", "typescript", "json", "graphql",
+    "rust"
   ],
   "python.jediEnabled": false,
   "python.linting.enabled": false,
