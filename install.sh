@@ -45,7 +45,7 @@ function install_vim() {
     go get github.com/mattn/efm-langserver
 
     # coc.nvim install
-    vim -c 'CocInstall -sync coc-emoji coc-go coc-rls coc-typescript coc-tsserver|q'
+    vim -c 'CocInstall -sync coc-emoji coc-go coc-rls|q'
 }
 
 function install_git() {
@@ -116,6 +116,8 @@ function install_node() {
 
     asdf_node_version=`asdf latest nodejs`
     asdf global nodejs $asdf_node_version
+
+    npm i -g yarn@berry
 }
 
 function install_go() {
