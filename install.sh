@@ -157,6 +157,11 @@ function instll_asdf() {
         unzip curl
 }
 
+function install_hammerspoon() {
+    brew cask install hammerspoon
+    symlink_rc hammerspon
+}
+
 function setting_mac() {
     # configure xcode
     xcode-select --install
@@ -186,6 +191,7 @@ function setting_mac() {
     install_vim
     install_fzf
     install_mac_app
+    install_hammerspoon
 }
 
 function bootstrap() {
