@@ -150,11 +150,9 @@ function install_mac_app() {
     open https://bjango.com/mac/istatmenus/
 }
 
-function instll_asdf() {
+function install_asdf() {
     brew install asdf \
-        coreutils automake autoconfig openssl \
-        libyaml readline libxslt libtool unixodbc \
-        unzip curl
+        readline libxslt unzip curl
 }
 
 function install_hammerspoon() {
@@ -165,7 +163,6 @@ function install_hammerspoon() {
 function setting_mac() {
     # configure xcode
     xcode-select --install
-    sudo xcodebuild -license
 
     # install brew
     /usr/bin/ruby -e \
@@ -174,7 +171,7 @@ function setting_mac() {
     # install font
     brew tap homebrew/cask-fonts
     brew cask install font-iosevka font-fira-code font-noto-sans-cjk font-noto-serif-cjk \
-        font-ibm-plex
+        font-ibm-plex font-jetbrains-mono
 
     install_git
     install_tig
