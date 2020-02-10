@@ -56,6 +56,7 @@ fpath+=~/.zfunc
 if [[ -e $(brew --prefix asdf) ]]; then;
     export PATH="`asdf where python`/bin:$PATH"
     export PATH="`asdf where golang`/packages/bin:$PATH"
+    export PATH="`asdf where nodejs`/bin:$PATH"
 fi
 
 # iterm2 shell intergration
