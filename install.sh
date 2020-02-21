@@ -60,7 +60,7 @@ function install_git() {
     git config --global core.autocrlf input
     git config --global core.whitespace fix,-indent-with-non-tab,trailing-space,cr-at-eol
 
-    git config --global commit.template ~/.gitmessage
+    git config --global commit.template $BASE/gitmessage
 
     git config --global color.ui auto
     git config --global diff.tool vimdiff
@@ -134,7 +134,7 @@ function install_rust() {
     asdf install rust latest
 
     asdf_rust_version=`asdf latest rust`
-    asdf global rust $asdf_rust_version    
+    asdf global rust $asdf_rust_version
 
     cargo install xsv
 }
