@@ -135,14 +135,12 @@ function install_rust() {
 
     asdf_rust_version=`asdf latest rust`
     asdf global rust $asdf_rust_version
-
-    cargo install xsv
 }
 
 function install_mac_app() {
     brew cask install google-drive-file-stream iterm2 alfred \
         jetbrains-toolbox visual-studio-code tower paw slack notion \
-        docker adoptopenjdk
+        docker adoptopenjdk xsv exa bat
 
     # Snapscan Home
     open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html

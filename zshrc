@@ -26,15 +26,14 @@ if [[ $(uname -s) == "Darwin" ]]; then
     alias cleanup="brew cleanup"
 fi
 
-alias ls='ls -G'
+alias ls='exa -l --icons'
+alias l='exa -Tl --icons'
 alias grep='grep --color=auto'
 
 ## dir
 setopt auto_pushd
 setopt pushd_ignore_dups
 setopt pushdminus
-
-alias l='ls -lah'
 
 ### Env below
 
