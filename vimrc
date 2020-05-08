@@ -49,6 +49,8 @@ Plug 'josa42/coc-docker', {'do': 'yarn up'}
 Plug 'josa42/coc-go', {'do': 'yarn up'}
 Plug 'fannheyward/coc-markdownlint', {'do': 'yarn up'}
 
+Plug 'editorconfig/editorconfig-vim'
+
 call plug#end()
 
 " ----------------------------------------------------------------------
