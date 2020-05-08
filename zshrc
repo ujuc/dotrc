@@ -26,8 +26,7 @@ if [[ $(uname -s) == "Darwin" ]]; then
     alias cleanup="brew cleanup"
 fi
 
-alias ls='exa -l --icons'
-alias l='exa -Tl --icons'
+alias ls='ls -G'
 alias grep='grep --color=auto'
 
 ## dir
