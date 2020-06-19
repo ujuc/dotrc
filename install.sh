@@ -38,7 +38,7 @@ function install_vim() {
 
     # coc plugins
     brew install ctags
-    
+
     npm i -g bash-language-server \
             dockerfile-language-server-nodejs \
             markdownlint
@@ -64,7 +64,7 @@ function install_git() {
 
     git config --global color.ui auto
     git config --global diff.tool diff-code
-    git config --global difftool.diff-code.cmd 'code --wait --diff $LOCAL $REMOTE'    
+    git config --global difftool.diff-code.cmd 'code --wait --diff $LOCAL $REMOTE'
 
     git config --global gitreview.username sungjin
 
@@ -103,7 +103,7 @@ function install_python() {
 
     asdf_python_version=`asdf latest python`
     asdf global python $asdf_python_version
-    
+
     # poetry
     curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
     source $HOME/.poetry/env
@@ -139,8 +139,8 @@ function install_rust() {
 
 function install_mac_app() {
     brew cask install google-drive-file-stream iterm2 alfred \
-        jetbrains-toolbox visual-studio-code tower paw slack notion \
-        docker adoptopenjdk xsv exa bat
+        jetbrains-toolbox visual-studio-code slack notion \
+        docker corretto
 
     # Snapscan Home
     open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
