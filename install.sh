@@ -168,8 +168,8 @@ function setting_mac() {
 
     # install font
     brew tap homebrew/cask-fonts
-    brew cask install font-iosevka font-fira-code font-noto-sans-cjk font-noto-serif-cjk \
-        font-ibm-plex font-jetbrains-mono
+    brew cask install font-iosevka font-noto-sans-cjk font-noto-serif-cjk \
+        font-ibm-plex font-jetbrains-mono font-blexmono-nerd-font
 
     install_git
     install_tig
