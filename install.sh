@@ -118,7 +118,7 @@ function install_node() {
     asdf_node_version=`asdf latest nodejs`
     asdf global nodejs $asdf_node_version
 
-    npm i -g yarn@berry
+    npm i -g yarn
 }
 
 function install_go() {
