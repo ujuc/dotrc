@@ -32,22 +32,22 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'wakatime/vim-wakatime'
 
 " coc.nvim
-Plug 'neoclide/coc.nvim', {'branch': 'release', 'do': { -> coc#util#install() }}
-Plug 'neoclide/coc-python', {'do': 'yar install --frozen-lockfile'}
-Plug 'neoclide/coc-json', {'do': 'yar install --frozen-lockfile'}
-Plug 'neoclide/coc-yaml', {'do': 'yar install --frozen-lockfile'}
-Plug 'neoclide/coc-highlight', {'do': 'yar install --frozen-lockfile'}
-Plug 'neoclide/coc-emmet', {'do': 'yar install --frozen-lockfile'}
-Plug 'neoclide/coc-snippets', {'do': 'yar install --frozen-lockfile'}
-Plug 'neoclide/coc-lists', {'do': 'yar install --frozen-lockfile'}
-Plug 'neoclide/coc-git', {'do': 'yar install --frozen-lockfile'}
-Plug 'neoclide/coc-tsserver', {'do': 'yar install --frozen-lockfile'}
-Plug 'neoclide/coc-rls', {'do': 'yar install --frozen-lockfile'}
+Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile' }
+Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-yaml', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-emmet', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-snippets', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-lists', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-git', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-rls', {'do': 'yarn install --frozen-lockfile'}
 
-Plug 'josa42/coc-sh', {'do': 'yar install --frozen-lockfile'}
-Plug 'josa42/coc-docker', {'do': 'yar install --frozen-lockfile'}
-Plug 'josa42/coc-go', {'do': 'yar install --frozen-lockfile'}
-Plug 'fannheyward/coc-markdownlint', {'do': 'yar install --frozen-lockfile'}
+Plug 'josa42/coc-sh', {'do': 'yarn install --frozen-lockfile'}
+Plug 'josa42/coc-docker', {'do': 'yarn install --frozen-lockfile'}
+Plug 'josa42/coc-go', {'do': 'yarn install --frozen-lockfile'}
+Plug 'fannheyward/coc-markdownlint', {'do': 'yarn install --frozen-lockfile'}
 
 Plug 'editorconfig/editorconfig-vim'
 
