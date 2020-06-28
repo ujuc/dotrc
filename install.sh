@@ -30,7 +30,6 @@ function install_vim() {
     curl -fLo $HOME/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-    ln -sf $BASE/vimrcs $HOME/.vim/vimrcs
     symlink_rc vimrc
 
     # install vim plugins
@@ -44,19 +43,16 @@ function install_vim() {
             markdownlint
     go get github.com/mattn/efm-langserver
     go get golang.org/x/tools/gopls
-
-    # coc.nvim install
-    vim -c 'CocInstall -sync coc-emoji|q'
 }
 
 function install_git() {
     brew install git git-flow-avh
 
     # git config
-    git config --global user.email "ujuc@ujuc.kr"
+    git config --global user.email "ujuc@ujuc.me"
     git config --global user.name "Thomas Sungjin Kang"
 
-    git config --global core.editor "code --wait"
+    git config --global core.editor vi
     git config --global core.autocrlf input
     git config --global core.whitespace fix,-indent-with-non-tab,trailing-space,cr-at-eol
 
