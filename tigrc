@@ -33,6 +33,7 @@ bind generic gk previous
 bind generic gp parent
 bind generic gP back
 bind generic gn view-next
+bind generic gp !git pull --autostash
 bind generic gc !git commit
 bind generic ga !?@git commit --amend --no-edit
 
