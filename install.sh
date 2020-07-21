@@ -12,6 +12,14 @@ function symlink_rc() {
     ln -sf $BASE/$1 $HOME/.$1
 }
 
+function install_lang() {
+    asdf plugin-add $1
+    asdf install $1 latest
+
+    asdf_plugin_version=`asdf lastest $1`
+    asdf global $1 $asdf_plugin_version
+}
+
 function install_shell() {
     brew install zplug starship
     symlink_rc zshrc
@@ -93,14 +101,7 @@ function install_fzf() {
     source $HOME/.zshrc
 }
 
-function install_python() {
-    asdf plugin-add python
-    asdf install python latest
-
-    asdf_python_version=`asdf latest python`
-    asdf global python $asdf_python_version
-
-    # poetry
+function install_poetry() {
     curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
     source $HOME/.poetry/env
     poetry completions zsh > ~/.zfunc/_poetry
@@ -117,25 +118,10 @@ function install_node() {
     npm i -g yarn
 }
 
-function install_go() {
-    asdf plugin-add golang
-    asdf install golang latest
-
-    asdf_go_version=`asdf latest golang`
-    asdf global golang $asdf_go_version
-}
-
-function install_rust() {
-    asdf plugin-add rust
-    asdf install rust latest
-
-    asdf_rust_version=`asdf latest rust`
-    asdf global rust $asdf_rust_version
-}
-
 function install_mac_app() {
+    brew tap homebrew/cask-versions
     brew cask install google-drive-file-stream iterm2 alfred \
-        jetbrains-toolbox visual-studio-code slack notion \
+        jetbrains-toolbox visual-studio-code-insiders slack \
         docker corretto
 
     # Snapscan Home
@@ -174,10 +160,11 @@ function setting_mac() {
     install_shell
 
     # Program language env
-    install_python
+    install_lang python
+    install_poetry
     install_node
-    install_go
-    install_rust
+    install_lang golang
+    install_lang rust
 
     install_vim
     install_fzf
