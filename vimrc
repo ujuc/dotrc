@@ -4,7 +4,7 @@
 " ----------------------------------------------------------------------
 call plug#begin('$HOME/.vim/plugged')
 
-Plug 'morhetz/gruvbox'
+Plug 'dracula/vim', {'as':'dracula'}
 
 " Airline
 Plug 'vim-airline/vim-airline'
@@ -137,7 +137,7 @@ autocmd BufWritePost $MYVIMRC PlugClean
 " Theme
 " ----------------------------------------------------------------------
 set background=dark
-colorscheme gruvbox
+colorscheme dracula
 
 " ----------------------------------------------------------------------
 " Airline
