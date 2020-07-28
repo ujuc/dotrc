@@ -123,9 +123,6 @@ set showbreak=+++\
 " 공간 구분
 set list listchars=tab:»\ ,trail:·,extends:>,precedes:<
 
-" 영어 단어 체크
-set spell spelllang=en_us
-
 " column check
 set colorcolumn=49,71,79,119
 highlight ColorColumn ctermbg=8
@@ -136,14 +133,13 @@ autocmd BufWritePost $MYVIMRC PlugClean
 " ----------------------------------------------------------------------
 " Theme
 " ----------------------------------------------------------------------
-set background=dark
 colorscheme dracula
 
 " ----------------------------------------------------------------------
 " Airline
 " ----------------------------------------------------------------------
 let g:airline#extenstions#tabline#formatter = 'unique_tail_improved'
-let g:airline_theme = 'gruvbox'
+let g:airline_theme = 'dracula'
 let g:airline_powerline_fonts = 1
 
 " ----------------------------------------------------------------------
