@@ -15,7 +15,7 @@
 #   style   : formatting, missing semi colons, etc; no code change
 #   docs    : changes to documentation
 #   test    : adding or refactoring tests
-#             no productin code change
+#             no production code change
 #   chore   : updating grunt tasks etc
 #             no production code change
 # ------------------
