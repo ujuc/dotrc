@@ -28,6 +28,7 @@ fi
 
 alias ls='ls -G'
 alias grep='grep --color=auto'
+alias vi='nvim'
 
 ## dir
 setopt auto_pushd

@@ -29,28 +29,14 @@ function install_shell() {
 }
 
 function install_vim() {
-    brew install vim
+    brew install neovim
 
-    mkdir -p $HOME/.vim/vimundo
-    mkdir -p $HOME/.vim/colors
+    curl -sLf https://spacevim.org/install.sh | bash
+    synlink_rc SpaceVim.d/init.toml
 
-    # vim plug
-    curl -fLo $HOME/.vim/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-    symlink_rc vimrc
-
-    # install vim plugins
-    vi +PlugInstall +qall
-
-    # coc plugins
-    brew install ctags
-
-    npm i -g bash-language-server \
-            dockerfile-language-server-nodejs \
-            markdownlint
-    go get github.com/mattn/efm-langserver
-    go get golang.org/x/tools/gopls
+    npm install --global vscode-html-languageserver-bin
+    npm -g install remark remark-cli remark-stringify remark-frontmatter wcwidth \
+        prettier
 }
 
 function install_git() {
@@ -140,6 +126,12 @@ function install_hammerspoon() {
     symlink_rc hammerspon
 }
 
+function install_spacemacs() {
+    brew install emacs
+    synlink_rc spacemacs
+    git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
+}
+
 function setting_mac() {
     # configure xcode
     xcode-select --install
@@ -167,6 +159,7 @@ function setting_mac() {
     install_lang rust
 
     install_vim
+    install_spacemacs
     install_fzf
     install_mac_app
     install_hammerspoon
