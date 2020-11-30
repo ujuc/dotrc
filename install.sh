@@ -22,6 +22,7 @@ function install_lang() {
 
 function install_shell() {
     brew install zplug starship
+    symlink_rc zshenv
     symlink_rc zshrc
     source $HOME/.zshrc
     zplug install
