@@ -43,7 +43,7 @@ function install_vim() {
 function config_git() {
     brew install git-flow-avh
 
-    cargo install delta
+    cargo install git-delta
 
     # git config
     git config --global user.email "ujuc@ujuc.me"
