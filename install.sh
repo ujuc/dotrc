@@ -40,8 +40,10 @@ function install_vim() {
         prettier
 }
 
-function install_git() {
-    brew install git git-flow-avh
+function config_git() {
+    brew install git-flow-avh
+
+    cargo install delta
 
     # git config
     git config --global user.email "ujuc@ujuc.me"
@@ -50,12 +52,18 @@ function install_git() {
     git config --global core.editor vi
     git config --global core.autocrlf input
     git config --global core.whitespace fix,-indent-with-non-tab,trailing-space,cr-at-eol
+    git conifg --global core.pager delta
 
     git config --global commit.template $BASE/gitmessage
 
     git config --global color.ui auto
-    git config --global diff.tool diff-code
-    git config --global difftool.diff-code.cmd 'code --wait --diff $LOCAL $REMOTE'
+
+    git config --global interactive.diffFilter 'delta --color-only'
+    git config --global delta.features 'side-by-side line-numbers decorations'
+    git config --global delta.whitespace-error-style '22 reverse'
+    git config --global delta.decorations.commit-decoration-style 'bold yellow box ul'
+    git config --global delta.decorations.file-style 'bold yellow ul',
+    git config --global delta.decorations.file-decoration-style none
 
     git config --global gitreview.username sungjin
 
@@ -133,6 +141,13 @@ function install_spacemacs() {
     git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 }
 
+function install_rust() {
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+}
+function install_golang() {
+    brew install go
+}
+
 function setting_mac() {
     # configure xcode
     xcode-select --install
@@ -143,10 +158,9 @@ function setting_mac() {
 
     # install font
     brew tap homebrew/cask-fonts
-    brew cask install font-iosevka font-noto-sans-cjk font-noto-serif-cjk \
-        font-ibm-plex font-jetbrains-mono font-blexmono-nerd-font
+    brew cask install font-noto-sans-cjk font-noto-serif-cjk \
+        font-ibm-plex font-blexmono-nerd-font
 
-    install_git
     install_tig
 
     install_asdf
@@ -156,8 +170,10 @@ function setting_mac() {
     install_lang python
     install_poetry
     install_node
-    install_lang golang
-    install_lang rust
+    install_golang
+    install_rust
+
+    config_git
 
     install_vim
     install_spacemacs
