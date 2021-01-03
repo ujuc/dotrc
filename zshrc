@@ -27,7 +27,7 @@ fi
 
 alias ls='ls -G'
 alias grep='grep --color=auto'
-alias vi='nvim'
+alias vi='code'
 
 ## dir
 setopt auto_pushd
