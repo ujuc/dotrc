@@ -65,8 +65,6 @@ function config_git() {
     git config --global delta.decorations.file-style 'bold yellow ul',
     git config --global delta.decorations.file-decoration-style none
 
-    git config --global gitreview.username sungjin
-
     symlink_rc gitmessage
 
     # gpgkey settings
@@ -121,8 +119,6 @@ function install_mac_app() {
 
     # Snapscan Home
     open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
-    # istate
-    open https://bjango.com/mac/istatmenus/
 }
 
 function install_asdf() {
@@ -133,12 +129,6 @@ function install_asdf() {
 function install_hammerspoon() {
     brew cask install hammerspoon
     symlink_rc hammerspon
-}
-
-function install_spacemacs() {
-    brew install emacs
-    synlink_rc spacemacs
-    git clone https://github.com/syl20bnr/spacemacs ~/.emacs.d
 }
 
 function install_rust() {
@@ -176,7 +166,6 @@ function setting_mac() {
     config_git
 
     install_vim
-    install_spacemacs
     install_fzf
     install_mac_app
     install_hammerspoon
@@ -187,4 +176,3 @@ function bootstrap() {
 }
 
 bootstrap
-
