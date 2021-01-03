@@ -43,13 +43,14 @@ export PATH="/usr/local/sbin:$PATH"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # poetry
-source ~/.poetry/env
-fpath+=~/.zfunc
+if [[ -e $(brew --prefix poetry) ]]; then;
+    source ~/.poetry/env
+    fpath+=~/.zfunc
+fi
 
 # asdf settup
-# TODO: 명령이 없는 경우 작동하지 않도록 설정
-source $(brew --prefix asdf)/asdf.sh
 if [[ -e $(brew --prefix asdf) ]]; then;
+    source $(brew --prefix asdf)/asdf.sh
     export PATH="`asdf where python`/bin:$PATH"
     export PATH="`asdf where nodejs`/bin:$PATH"
 fi
