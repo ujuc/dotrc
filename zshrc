@@ -44,6 +44,7 @@ export PATH="/usr/local/sbin:$PATH"
 
 # poetry
 if [[ -e $(brew --prefix poetry) ]]; then;
+    export PATH="$HOME/.poetry/bin:$PATH"
     source ~/.poetry/env
     fpath+=~/.zfunc
 fi
