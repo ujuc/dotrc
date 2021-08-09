@@ -60,3 +60,6 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 # TODO: 회사에서 만 사용하는 위치. 어서 빨리 2.0으로 올리고 수정하도록 한다.
 export PATH="/usr/local/opt/awscli@1/bin:$PATH"
+
+# zoxide
+eval "$(zoxide init zsh)"
