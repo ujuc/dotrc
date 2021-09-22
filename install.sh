@@ -126,11 +126,6 @@ function install_asdf() {
         readline libxslt unzip curl
 }
 
-function install_hammerspoon() {
-    brew cask install hammerspoon
-    symlink_rc hammerspon
-}
-
 function install_rust() {
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
@@ -168,7 +163,6 @@ function setting_mac() {
     install_vim
     install_fzf
     install_mac_app
-    install_hammerspoon
 }
 
 function bootstrap() {
