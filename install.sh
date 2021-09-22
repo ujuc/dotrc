@@ -114,8 +114,8 @@ function install_node() {
 function install_mac_app() {
     brew tap homebrew/cask-versions
     brew cask install google-drive-file-stream iterm2 alfred \
-        jetbrains-toolbox visual-studio-code slack \
-        docker corretto zoxide
+        visual-studio-code slack \
+        docker corretto zoxide raycast
 
     # Snapscan Home
     open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
