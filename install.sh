@@ -114,7 +114,7 @@ function install_node() {
 function install_mac_app() {
     brew tap homebrew/cask-versions
     brew cask install google-drive-file-stream iterm2 alfred \
-        visual-studio-code slack \
+        visual-studio-code slack dozer \
         docker corretto zoxide raycast
 
     # Snapscan Home
