@@ -53,6 +53,7 @@ function config_git() {
     git config --global core.autocrlf input
     git config --global core.whitespace fix,-indent-with-non-tab,trailing-space,cr-at-eol
     git conifg --global core.pager delta
+    git config --global init.defaultBranch main
 
     git config --global commit.template $BASE/gitmessage
 
