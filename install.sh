@@ -1,173 +1,172 @@
 #!/usr/bin/env bash
 
-#############################
-#   System Setting          #
-#   Sungjin (ujuc@ujuc.kr)  #
-#   Version : 3.0           #
-#############################
-
+# 전역 변수
 BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-function symlink_rc() {
-    ln -sf $BASE/$1 $HOME/.$1
-}
+# install xcode cli tools
+xcode-select --install
 
-function install_lang() {
-    asdf plugin-add $1
-    asdf install $1 latest
+# install brew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-    asdf_plugin_version=`asdf lastest $1`
-    asdf global $1 $asdf_plugin_version
-}
+# install fzf
+brew install fzf
+# To install useful key bindings and fuzzy completion:
+$(brew --prefix)/opt/fzf/install --no-bash --no-fish
 
-function install_shell() {
-    brew install zplug starship
-    symlink_rc zshenv
-    symlink_rc zshrc
-    source $HOME/.zshrc
-    zplug install
-    mkdir $HOME/.zfunc
-}
+# install applications
+brew install --cask google-drive-file-stream dozer raycast logitech-options \
+    firefox visual-studio-code iterm2-beta
 
-function install_vim() {
-    brew install neovim
+# home mac
+## Snapscan Home
+# open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
 
-    curl -sLf https://spacevim.org/install.sh | bash
-    synlink_rc SpaceVim.d/init.toml
 
-    npm install --global vscode-html-languageserver-bin
-    npm -g install remark remark-cli remark-stringify remark-frontmatter wcwidth \
-        prettier
-}
+# function symlink_rc() {
+#     ln -sf $BASE/$1 $HOME/.$1
+# }
 
-function config_git() {
-    brew install git-flow-avh
+# function install_lang() {
+#     asdf plugin-add $1
+#     asdf install $1 latest
 
-    cargo install git-delta
+#     asdf_plugin_version=`asdf lastest $1`
+#     asdf global $1 $asdf_plugin_version
+# }
 
-    # git config
-    git config --global user.email "ujuc@ujuc.me"
-    git config --global user.name "Thomas Sungjin Kang"
+# function install_shell() {
+#     brew install zplug starship
+#     symlink_rc zshenv
+#     symlink_rc zshrc
+#     source $HOME/.zshrc
+#     zplug install
+#     mkdir $HOME/.zfunc
+# }
 
-    git config --global core.editor vi
-    git config --global core.autocrlf input
-    git config --global core.whitespace fix,-indent-with-non-tab,trailing-space,cr-at-eol
-    git conifg --global core.pager delta
-    git config --global init.defaultBranch main
+# function install_vim() {
+#     brew install neovim
 
-    git config --global commit.template $BASE/gitmessage
+#     curl -sLf https://spacevim.org/install.sh | bash
+#     synlink_rc SpaceVim.d/init.toml
 
-    git config --global color.ui auto
+#     npm install --global vscode-html-languageserver-bin
+#     npm -g install remark remark-cli remark-stringify remark-frontmatter wcwidth \
+#         prettier
+# }
 
-    git config --global interactive.diffFilter 'delta --color-only'
-    git config --global delta.features 'side-by-side line-numbers decorations'
-    git config --global delta.whitespace-error-style '22 reverse'
-    git config --global delta.decorations.commit-decoration-style 'bold yellow box ul'
-    git config --global delta.decorations.file-style 'bold yellow ul',
-    git config --global delta.decorations.file-decoration-style none
+# function config_git() {
+#     brew install git-flow-avh
 
-    symlink_rc gitmessage
+#     cargo install git-delta
 
-    # gpgkey settings
-    brew install gpg
-    brew cask install keybase gpg-suite
-}
+#     # git config
+#     git config --global user.email "ujuc@ujuc.me"
+#     git config --global user.name "Thomas Sungjin Kang"
 
-function set_gpgkey() {
-    keybase pgp export | gpg --import
-    keybase pgp export --secret | gpg --allow-secret-key-import --import
+#     git config --global core.editor vi
+#     git config --global core.autocrlf input
+#     git config --global core.whitespace fix,-indent-with-non-tab,trailing-space,cr-at-eol
+#     git conifg --global core.pager delta
+#     git config --global init.defaultBranch main
 
-    keyid=`gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | awk -F "[/]" '{print $2}'`
-    git config --global user.signingkey $keyid
-    git config --global commit.gpgsign true
-    echo no-tty >> ~/.gnupg/gpg.conf
-    git config --global gpg.program gpg2
-}
+#     git config --global commit.template $BASE/gitmessage
 
-function install_tig() {
-    brew install tig
-    symlink_rc tigrc
-}
+#     git config --global color.ui auto
 
-function install_fzf() {
-    brew install fzf
-    $(brew --prefix)/opt/fzf/install --all --no-bash --no-fish
-    source $HOME/.zshrc
-}
+#     git config --global interactive.diffFilter 'delta --color-only'
+#     git config --global delta.features 'side-by-side line-numbers decorations'
+#     git config --global delta.whitespace-error-style '22 reverse'
+#     git config --global delta.decorations.commit-decoration-style 'bold yellow box ul'
+#     git config --global delta.decorations.file-style 'bold yellow ul',
+#     git config --global delta.decorations.file-decoration-style none
 
-function install_poetry() {
-    curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
-    source $HOME/.poetry/env
-    poetry completions zsh > ~/.zfunc/_poetry
-}
+#     symlink_rc gitmessage
 
-function install_node() {
-    asdf plugin-add nodejs
-    bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
-    asdf install node latest
+#     # gpgkey settings
+#     brew install gpg
+#     brew cask install keybase gpg-suite
+# }
 
-    asdf_node_version=`asdf latest nodejs`
-    asdf global nodejs $asdf_node_version
+# function set_gpgkey() {
+#     keybase pgp export | gpg --import
+#     keybase pgp export --secret | gpg --allow-secret-key-import --import
 
-    npm i -g yarn
-}
+#     keyid=`gpg --list-secret-keys --keyid-format LONG | grep sec | awk '{print $2}' | awk -F "[/]" '{print $2}'`
+#     git config --global user.signingkey $keyid
+#     git config --global commit.gpgsign true
+#     echo no-tty >> ~/.gnupg/gpg.conf
+#     git config --global gpg.program gpg2
+# }
 
-function install_mac_app() {
-    brew tap homebrew/cask-versions
-    brew cask install google-drive-file-stream iterm2 alfred \
-        visual-studio-code slack dozer \
-        docker corretto zoxide raycast
+# function install_tig() {
+#     brew install tig
+#     symlink_rc tigrc
+# }
 
-    # Snapscan Home
-    open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
-}
+# function install_poetry() {
+#     curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+#     source $HOME/.poetry/env
+#     poetry completions zsh > ~/.zfunc/_poetry
+# }
 
-function install_asdf() {
-    brew install asdf \
-        readline libxslt unzip curl
-}
+# function install_node() {
+#     asdf plugin-add nodejs
+#     bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+#     asdf install node latest
 
-function install_rust() {
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-}
-function install_golang() {
-    brew install go
-}
+#     asdf_node_version=`asdf latest nodejs`
+#     asdf global nodejs $asdf_node_version
 
-function setting_mac() {
-    # configure xcode
-    xcode-select --install
+#     npm i -g yarn
+# }
 
-    # install brew
-    /usr/bin/ruby -e \
-        "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# function install_mac_app() {
 
-    # install font
-    brew tap homebrew/cask-fonts
-    brew cask install font-noto-sans-cjk font-noto-serif-cjk \
-        font-ibm-plex font-blexmono-nerd-font
 
-    install_tig
+# }
 
-    install_asdf
-    install_shell
+# function install_asdf() {
+#     brew install asdf \
+#         readline libxslt unzip curl
+# }
 
-    # Program language env
-    install_lang python
-    install_poetry
-    install_node
-    install_golang
-    install_rust
+# function install_rust() {
+#     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# }
+# function install_golang() {
+#     brew install go
+# }
 
-    config_git
+# function setting_mac() {
+    
 
-    install_vim
-    install_fzf
-    install_mac_app
-}
+#     # install font
+#     brew tap homebrew/cask-fonts
+#     brew cask install font-noto-sans-cjk font-noto-serif-cjk \
+#         font-ibm-plex font-blexmono-nerd-font
 
-function bootstrap() {
-    setting_mac
-}
+#     install_tig
 
-bootstrap
+#     install_asdf
+#     install_shell
+
+#     # Program language env
+#     install_lang python
+#     install_poetry
+#     install_node
+#     install_golang
+#     install_rust
+
+#     config_git
+
+#     install_vim
+#     install_fzf
+#     install_mac_app
+# }
+
+# function bootstrap() {
+#     setting_mac
+# }
+
+# bootstrap
