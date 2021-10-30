@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
 # 전역 변수
-BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BASE="${0:A:h}"
+
+function reload_zsh() {
+    # reload zsh
+    env zsh -l
+}
 
 # install xcode cli tools
 xcode-select --install
@@ -19,8 +24,22 @@ brew install --cask google-drive-file-stream dozer raycast logitech-options \
     firefox visual-studio-code iterm2-beta
 
 # home mac
-## Snapscan Home
+# Snapscan Home
 # open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
+
+# Setup shell
+# install oh my zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# insall zplug
+brew install zplug
+
+ln -sf $BASE/zshrc ~/.zshrc
+reload_zsh
+
+zplug install
+reload_zsh
+
 
 
 # function symlink_rc() {
@@ -33,15 +52,6 @@ brew install --cask google-drive-file-stream dozer raycast logitech-options \
 
 #     asdf_plugin_version=`asdf lastest $1`
 #     asdf global $1 $asdf_plugin_version
-# }
-
-# function install_shell() {
-#     brew install zplug starship
-#     symlink_rc zshenv
-#     symlink_rc zshrc
-#     source $HOME/.zshrc
-#     zplug install
-#     mkdir $HOME/.zfunc
 # }
 
 # function install_vim() {
@@ -119,11 +129,6 @@ brew install --cask google-drive-file-stream dozer raycast logitech-options \
 #     asdf global nodejs $asdf_node_version
 
 #     npm i -g yarn
-# }
-
-# function install_mac_app() {
-
-
 # }
 
 # function install_asdf() {
