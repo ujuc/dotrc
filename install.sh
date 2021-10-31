@@ -47,6 +47,11 @@ brew install neovim
 curl -sLf https://spacevim.org/install.sh | bash
 ln -sf $BASE/spacevim $HOME/.SpaceVim.d
 
+# Install fonts
+brew tap homebrew/cask-fonts
+brew install font-fira-code font-ibm-plex font-noto-sans-cjk font-noto-seif-cjk \
+    font-pt-mono font-hack-nerd-font font-inconsolata-nerd-font
+
 # function symlink_rc() {
 #     ln -sf $BASE/$1 $HOME/.$1
 # }
