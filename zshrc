@@ -1,5 +1,6 @@
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/ujuc/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
+export DOTRC_ZSH="$HOME/dotrc/zsh"
 
 # Theme
 ZSH_THEME="alien"
@@ -64,10 +65,6 @@ plugins=()
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-source $HOME/dotrc/zplug.zsh
-
-# Locale
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-
-alias bupdate="brew update; brew upgrade; zplug update"
+source $DOTRC_ZSH/zplug.zsh
+source $DOTRC_ZSH/aliases.zsh
+source $DOTRC_ZSH/env.zsh
