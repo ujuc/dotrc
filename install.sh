@@ -34,13 +34,18 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 # insall zplug
 brew install zplug
 
-ln -sf $BASE/zshrc ~/.zshrc
+ln -sf $BASE/zshrc $HOME/.zshrc
 reload_zsh
 
 zplug install
 reload_zsh
 
+# Setup nevim
+brew install neovim
 
+# Install spacevim
+curl -sLf https://spacevim.org/install.sh | bash
+ln -sf $BASE/spacevim $HOME/.SpaceVim.d
 
 # function symlink_rc() {
 #     ln -sf $BASE/$1 $HOME/.$1
