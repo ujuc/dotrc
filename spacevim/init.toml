@@ -1,6 +1,6 @@
 # All SpaceVim option below [option] section
 [options]
-  colorscheme = "seoul256"
+  colorscheme = "gruvbox"
   colorscheme_bg = "dark"
 
   enable_guicolors = true
