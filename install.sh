@@ -40,6 +40,9 @@ reload_zsh
 zplug install
 reload_zsh
 
+# install shell plugins
+brew install lsd bat
+
 # Setup nevim
 brew install neovim
 
