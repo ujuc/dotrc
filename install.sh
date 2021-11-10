@@ -31,8 +31,8 @@ brew install --cask google-drive-file-stream dozer raycast logitech-options \
 # install oh my zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# insall zplug
-brew install zplug
+# insall zplug amd starship
+brew install zplug starship
 
 ln -sf $BASE/zshrc $HOME/.zshrc
 reload_zsh

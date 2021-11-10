@@ -3,8 +3,8 @@ export ZSH="$HOME/.oh-my-zsh"
 export DOTRC_ZSH="$HOME/dotrc/zsh"
 
 # Theme
-ZSH_THEME="alien"
-export ALIEN_THEME="green"
+#ZSH_THEME=spaceship-prompt/spaceship-prompt"alien"
+#export ALIEN_THEME="green"
 
 # Uncomment the following line to use case-sensitive completion.
 CASE_SENSITIVE="true"
@@ -60,7 +60,10 @@ ZSH_COMPDUMP="$ZSH_CACHE_DIR/.zcompdump"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=()
+plugins=(
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -68,3 +71,5 @@ source $ZSH/oh-my-zsh.sh
 source $DOTRC_ZSH/zplug.zsh
 source $DOTRC_ZSH/aliases.zsh
 source $DOTRC_ZSH/env.zsh
+
+eval "$(starship init zsh)"
