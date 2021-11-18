@@ -1,4 +1,6 @@
-# my Dotrcs
+# MyDotrc
+
+뭐없음...
 
 ## License
 
