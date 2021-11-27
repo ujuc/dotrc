@@ -7,3 +7,7 @@ export PATH="/usr/local/sbin:$PATH"
 
 # starship
 export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
+
+# asdf
+. $(brew --prefix asdf)/libexec/asdf.sh
+

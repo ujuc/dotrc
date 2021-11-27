@@ -60,3 +60,6 @@
 [[layers]]
   name = "lang#typescript"
 
+[[custom_plugins]]
+  name = 'github/copilot.vim'
+
