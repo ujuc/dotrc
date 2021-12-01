@@ -28,9 +28,6 @@ brew install --cask google-drive-file-stream dozer raycast logitech-options \
 # open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
 
 # Setup shell
-# install oh my zsh
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-
 # insall zplug amd starship
 brew install zplug starship
 
