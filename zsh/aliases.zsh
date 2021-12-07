@@ -7,4 +7,3 @@ alias cat="bat"
 
 # work
 alias tf="terraform"
-

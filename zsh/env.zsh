@@ -10,4 +10,3 @@ export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
 
 # asdf
 . $(brew --prefix asdf)/libexec/asdf.sh
-

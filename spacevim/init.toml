@@ -62,4 +62,3 @@
 
 [[custom_plugins]]
   name = 'github/copilot.vim'
-
