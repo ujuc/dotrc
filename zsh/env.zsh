@@ -10,3 +10,8 @@ export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
 
 # asdf
 . $(brew --prefix asdf)/libexec/asdf.sh
+
+# saml2aws
+if (( $+commands[saml2aws] )); then
+  eval "$(saml2aws --completion-script-zsh)"
+fi
