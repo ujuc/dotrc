@@ -14,6 +14,8 @@ xcode-select --install
 # install brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+brew bundle
+
 # install fzf
 brew install fzf
 # To install useful key bindings and fuzzy completion:
