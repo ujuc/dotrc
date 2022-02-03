@@ -11,7 +11,9 @@ export PATH="/usr/local/sbin:$PATH"
 export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
 
 # asdf
-. $(brew --prefix asdf)/libexec/asdf.sh
+if (( $+commands[asdf] )); then
+  . $(brew --prefix asdf)/libexec/asdf.sh
+fi
 
 # saml2aws
 if (( $+commands[saml2aws] )); then

@@ -3,6 +3,9 @@ export DOTRC_ZSH="$HOME/dotrc/zsh"
 eval "$(starship init zsh)"
 
 # User configuration
-source $DOTRC_ZSH/zplug.zsh
+if (( $+commands[zplug] )); then
+  source $DOTRC_ZSH/zplug.zsh
+fi
+
 source $DOTRC_ZSH/aliases.zsh
 source $DOTRC_ZSH/env.zsh
