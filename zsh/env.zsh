@@ -8,7 +8,8 @@ REPOS=$HOME/repos
 export PATH="/usr/local/sbin:$PATH"
 
 # starship
-export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
+export DOTRC_STARSHIP="${DOTRC}/starship"
+export STARSHIP_CONFIG="${DOTRC_STARSHIP}/config.toml"
 
 # asdf
 if (( $+commands[asdf] )); then

@@ -1,1 +1,14 @@
 command_timeout = 1000
+
+[kubernetes]
+disabled = false
+
+[memory_usage]
+disabled = false
+threshold = -1
+
+[status]
+disabled = false
+
+[terraform]
+format = "[🏎💨 $workspace]($style) "

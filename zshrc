@@ -1,4 +1,6 @@
-export DOTRC_ZSH="$HOME/dotrc/zsh"
+export DOTRC="${HOME}/dotrc"
+export DOTRC_ZSH="${DOTRC}/zsh"
+
 
 eval "$(starship init zsh)"
 
