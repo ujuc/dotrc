@@ -8,107 +8,73 @@ function reload_zsh() {
     env zsh -l
 }
 
+function symlink_rc() {
+    ln -sf $BASE/$1 $HOME/.$1
+}
+
 # install xcode cli tools
 xcode-select --install
 
 # install brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-brew bundle
+brew install mas
+brew bundle --fil${PWD}/Brewfile
 
 # install fzf
-brew install fzf
 # To install useful key bindings and fuzzy completion:
 $(brew --prefix)/opt/fzf/install --no-bash --no-fish
-
-# install applications
-brew install --cask google-drive-file-stream dozer raycast logitech-options \
-    firefox visual-studio-code iterm2-beta
 
 # home mac
 # Snapscan Home
 # open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
 
 # Setup shell
-# insall zplug amd starship
-brew install zplug starship
-
 ln -sf $BASE/zshrc $HOME/.zshrc
 reload_zsh
 
 zplug install
 reload_zsh
 
-# install shell plugins
-brew install lsd bat
-
-# Setup nevim
-brew install neovim
-
 # Install spacevim
 curl -sLf https://spacevim.org/install.sh | bash
 ln -sf $BASE/spacevim $HOME/.SpaceVim.d
 
-# Install fonts
-brew tap homebrew/cask-fonts
-brew install font-fira-code font-ibm-plex font-noto-sans-cjk font-noto-seif-cjk \
-    font-pt-mono font-hack-nerd-font font-inconsolata-nerd-font
+# git setup
+git config --global user.email "ujuc@ujuc.me"
+git config --global user.name "Sungjin Kang"
 
-# function symlink_rc() {
-#     ln -sf $BASE/$1 $HOME/.$1
-# }
+git config --global core.editor vi
+git config --global core.autocrlf input
+git config --global core.whitespace fix,-indent-with-non-tab,trailing-space,cr-at-eol
+git conifg --global core.pager delta
+git config --global init.defaultBranch main
 
-# function install_lang() {
-#     asdf plugin-add $1
-#     asdf install $1 latest
+git config --global commit.template $BASE/gitmessage
 
-#     asdf_plugin_version=`asdf lastest $1`
-#     asdf global $1 $asdf_plugin_version
-# }
+git config --global color.ui auto
 
-# function install_vim() {
-#     brew install neovim
+git config --global interactive.diffFilter 'delta --color-only'
+git config --global delta.features 'side-by-side line-numbers decorations'
+git config --global delta.whitespace-error-style '22 reverse'
+git config --global delta.decorations.commit-decoration-style 'bold yellow box ul'
+git config --global delta.decorations.file-style 'bold yellow ul',
+git config --global delta.decorations.file-decoration-style none
 
-#     curl -sLf https://spacevim.org/install.sh | bash
-#     synlink_rc SpaceVim.d/init.toml
+# tig setup
+symlink_rc tigrc
 
-#     npm install --global vscode-html-languageserver-bin
-#     npm -g install remark remark-cli remark-stringify remark-frontmatter wcwidth \
-#         prettier
-# }
+# poetry setup
+source $HOME/.poetry/env
+poetry completions zsh > ~/.zfunc/_poetry
 
-# function config_git() {
-#     brew install git-flow-avh
-
-#     cargo install git-delta
-
-#     # git config
-#     git config --global user.email "ujuc@ujuc.me"
-#     git config --global user.name "Thomas Sungjin Kang"
-
-#     git config --global core.editor vi
-#     git config --global core.autocrlf input
-#     git config --global core.whitespace fix,-indent-with-non-tab,trailing-space,cr-at-eol
-#     git conifg --global core.pager delta
-#     git config --global init.defaultBranch main
-
-#     git config --global commit.template $BASE/gitmessage
-
-#     git config --global color.ui auto
-
-#     git config --global interactive.diffFilter 'delta --color-only'
-#     git config --global delta.features 'side-by-side line-numbers decorations'
-#     git config --global delta.whitespace-error-style '22 reverse'
-#     git config --global delta.decorations.commit-decoration-style 'bold yellow box ul'
-#     git config --global delta.decorations.file-style 'bold yellow ul',
-#     git config --global delta.decorations.file-decoration-style none
-
-#     symlink_rc gitmessage
-
-#     # gpgkey settings
-#     brew install gpg
-#     brew cask install keybase gpg-suite
-# }
+# language setup
+langs=("nodejs" "rust" "golnag" "deno" "python")
+for lang in "${langs[@]}"; do
+    asdf plugin add $lang
+    asdf install $lang latest
+    asdf global $lang latest
+done
 
 # function set_gpgkey() {
 #     keybase pgp export | gpg --import
@@ -120,70 +86,3 @@ brew install font-fira-code font-ibm-plex font-noto-sans-cjk font-noto-seif-cjk 
 #     echo no-tty >> ~/.gnupg/gpg.conf
 #     git config --global gpg.program gpg2
 # }
-
-# function install_tig() {
-#     brew install tig
-#     symlink_rc tigrc
-# }
-
-# function install_poetry() {
-#     curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
-#     source $HOME/.poetry/env
-#     poetry completions zsh > ~/.zfunc/_poetry
-# }
-
-# function install_node() {
-#     asdf plugin-add nodejs
-#     bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
-#     asdf install node latest
-
-#     asdf_node_version=`asdf latest nodejs`
-#     asdf global nodejs $asdf_node_version
-
-#     npm i -g yarn
-# }
-
-# function install_asdf() {
-#     brew install asdf \
-#         readline libxslt unzip curl
-# }
-
-# function install_rust() {
-#     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-# }
-# function install_golang() {
-#     brew install go
-# }
-
-# function setting_mac() {
-    
-
-#     # install font
-#     brew tap homebrew/cask-fonts
-#     brew cask install font-noto-sans-cjk font-noto-serif-cjk \
-#         font-ibm-plex font-blexmono-nerd-font
-
-#     install_tig
-
-#     install_asdf
-#     install_shell
-
-#     # Program language env
-#     install_lang python
-#     install_poetry
-#     install_node
-#     install_golang
-#     install_rust
-
-#     config_git
-
-#     install_vim
-#     install_fzf
-#     install_mac_app
-# }
-
-# function bootstrap() {
-#     setting_mac
-# }
-
-# bootstrap
