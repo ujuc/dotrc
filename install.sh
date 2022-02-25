@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # 전역 변수
-BASE="${0:A:h}"
+#BASE="${0:A:h}"
+BASE=${HOME}/dotrc
 
 function reload_zsh() {
     # reload zsh
@@ -12,27 +13,21 @@ function symlink_rc() {
     ln -sf $BASE/$1 $HOME/.$1
 }
 
-# install xcode cli tools
-xcode-select --install
-
 # install brew
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew bundle --fil${PWD}/Brewfile
-
-# install fzf
-# To install useful key bindings and fuzzy completion:
-$(brew --prefix)/opt/fzf/install --no-bash --no-fish
+brew bundle
 
 # home mac
 # Snapscan Home
 # open http://scansnap.fujitsu.com/global/dl/mac-1014-ix500.html
 
 # Setup shell
-ln -sf $BASE/zshrc $HOME/.zshrc
-reload_zsh
-
+symlink_rc zshrc
 zplug install
-reload_zsh
+
+# install fzf
+# To install useful key bindings and fuzzy completion:
+$(brew --prefix)/opt/fzf/install --no-bash --no-fish
 
 # Install spacevim
 curl -sLf https://spacevim.org/install.sh | bash
@@ -40,7 +35,7 @@ ln -sf $BASE/spacevim $HOME/.SpaceVim.d
 
 # git setup
 git config --global user.email "ujuc@ujuc.me"
-git config --global user.name "Sungjin Kang"
+git config --global user.name "sungjin.kang"
 
 git config --global core.editor vi
 git config --global core.autocrlf input
@@ -67,7 +62,7 @@ source $HOME/.poetry/env
 poetry completions zsh > ~/.zfunc/_poetry
 
 # language setup
-langs=("nodejs" "rust" "golnag" "deno" "python")
+langs=("deno" "golang" "nodejs" "python" "rust")
 for lang in "${langs[@]}"; do
     asdf plugin add $lang
     asdf install $lang latest
