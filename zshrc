@@ -1,3 +1,6 @@
+# Fig pre block. Keep at the top of this file.
+[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && . "$HOME/.fig/shell/zshrc.pre.zsh"
+
 export DOTRC="${HOME}/dotrc"
 export DOTRC_ZSH="${DOTRC}/zsh"
 
@@ -13,3 +16,6 @@ source $DOTRC_ZSH/env.zsh
 if [ -f ~/.zshrc.kurly ]; then
   . ~/.zshrc.kurly
 fi
+
+# Fig post block. Keep at the bottom of this file.
+[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && . "$HOME/.fig/shell/zshrc.post.zsh"
