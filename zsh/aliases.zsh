@@ -1,4 +1,4 @@
-alias update="brew update; brew upgrade; zplug update"
+alias update="brew update; zplug update"
 
 alias ls="lsd"
 alias ll="lsd -l"

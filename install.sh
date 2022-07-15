@@ -29,10 +29,6 @@ zplug install
 # To install useful key bindings and fuzzy completion:
 $(brew --prefix)/opt/fzf/install --no-bash --no-fish
 
-# Install spacevim
-curl -sLf https://spacevim.org/install.sh | bash
-ln -sf $BASE/spacevim $HOME/.SpaceVim.d
-
 # git setup
 git config --global user.email "ujuc@ujuc.me"
 git config --global user.name "sungjin.kang"
@@ -62,7 +58,9 @@ source $HOME/.poetry/env
 poetry completions zsh > ~/.zfunc/_poetry
 
 # language setup
-langs=("deno" "golang" "nodejs" "python" "rust")
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+langs=("deno" "golang" "python")
 for lang in "${langs[@]}"; do
     asdf plugin add $lang
     asdf install $lang latest
