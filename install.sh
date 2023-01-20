@@ -31,7 +31,7 @@ $(brew --prefix)/opt/fzf/install --no-bash --no-fish
 
 # git setup
 git config --global user.email "ujuc@ujuc.me"
-git config --global user.name "sungjin.kang"
+git config --global user.name "강성진 sungjin.kang"
 
 git config --global core.editor vi
 git config --global core.autocrlf input
