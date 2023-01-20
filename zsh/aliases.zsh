@@ -4,7 +4,7 @@ alias ls="lsd"
 alias ll="lsd -l"
 alias lt="lsd --tree"
 alias cat="bat"
-alias vi="nvim"
+alias vi="vim"
 
 # work
 alias tf="terraform"
