@@ -16,7 +16,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 eval "$(starship init zsh)"
-export STARSHIP_CONFIG="$HOME/starship/config.toml"
+export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
