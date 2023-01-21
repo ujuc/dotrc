@@ -1,21 +1,43 @@
 # Fig pre block. Keep at the top of this file.
 [[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
 
-export DOTRC="${HOME}/dotrc"
-export DOTRC_ZSH="${DOTRC}/zsh"
+# Zplug
+if (( $+commands[zplug] )); then
+    source $(brew --prefix zplug)/init.zsh
+
+    zplug "zsh-users/zsh-syntax-highlighting", defer:2, as:plugin
+    zplug "zsh-users/zsh-autosuggestions", as:plugin
+
+    zplug load
+fi
+
+## ENV
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 eval "$(starship init zsh)"
-
-# User configuration
-source $DOTRC_ZSH/zplug.zsh
-source $DOTRC_ZSH/aliases.zsh
-source $DOTRC_ZSH/env.zsh
+export STARSHIP_CONFIG="$HOME/starship/config.toml"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Get the aliases and functions for Kurly Kubernetes Config
-[[ ! -f ~/.zshrc.kurly ]] || source ~/.zshrc.kurly
+# asdf
+if (( $+commands[asdf] )); then
+    . $(brew --prefix asdf)/libexec/asdf.sh
+fi
 
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /Users/122d6405/.asdf/installs/terraform/1.3.7/bin/terraform terraform
+## Aliases
+alias bwu="brew update; brew upgrade; zplug update"
+alias bws="brew search"
+alias bwi="brew install"
 
+alias ls="lsd"
+alias ll="lsd -l"
+alias lt="lsd --tree"
+alias cat="bat"
+alias vi="vim"
+
+# work
+alias tf="terraform"
+
+# Fig post block. Keep at the bottom of this file.
+[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
