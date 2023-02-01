@@ -2,14 +2,12 @@
 [[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
 
 # Zplug
-if (( $+commands[zplug] )); then
-    source $(brew --prefix zplug)/init.zsh
+source $(brew --prefix zplug)/init.zsh
 
-    zplug "zsh-users/zsh-syntax-highlighting", defer:2, as:plugin
-    zplug "zsh-users/zsh-autosuggestions", as:plugin
+zplug "zsh-users/zsh-syntax-highlighting", defer:2, as:plugin
+zplug "zsh-users/zsh-autosuggestions", as:plugin
 
-    zplug load
-fi
+zplug load
 
 ## ENV
 export LC_ALL=en_US.UTF-8
