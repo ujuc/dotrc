@@ -23,7 +23,12 @@ if (( $+commands[asdf] )); then
     . $(brew --prefix asdf)/libexec/asdf.sh
 fi
 
-## Aliases
+## JAVA_HOME 설정
+if (( $+commands[java] )); then
+    . $HOME/.asdf/plugins/java/set-java-home.zsh
+fi
+
+# Aliases
 alias bwu="brew update; brew upgrade; zplug update"
 alias bws="brew search"
 alias bwi="brew install"
