@@ -20,8 +20,15 @@ if (( $+commands[asdf] )); then
     . $(brew --prefix asdf)/libexec/asdf.sh
 fi
 
+function update_system() {
+    brew update
+    brew upgrade
+    zplug update
+    gh ext upgrade --all
+}
+
 # Aliases
-alias bwu="brew update; brew upgrade; zplug update"
+alias update=update_system
 alias bws="brew search"
 alias bwi="brew install"
 
@@ -30,6 +37,3 @@ alias ll="lsd -l"
 alias lt="lsd --tree"
 alias cat="bat"
 alias vi="vim"
-
-# work
-alias tf="terraform"
