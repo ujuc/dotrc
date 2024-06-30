@@ -74,7 +74,7 @@ brew install git-delta
 ```shell
 brew install tig
 
-ln -sf $HOME/dotrc/tigrc $HOME/.tigrc
+mkdir -p .config/tig && ln -sf $HOME/dotrc/tigrc $HOME/.config/tig/config
 ```
 
 ## Apps
