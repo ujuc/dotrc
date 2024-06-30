@@ -20,8 +20,8 @@ if (( $+commands[asdf] )); then
     . $(brew --prefix asdf)/libexec/asdf.sh
 fi
 
-# Kurly
-[ -f ~/.zshrc.kurly ] && source ~/.zshrc.kurly
+# work
+[ -f ~/.zshrc.work ] && source ~/.zshrc.work
 
 function update_system() {
     brew update
