@@ -1,23 +1,16 @@
+"$schema" = 'https://starship.rs/schema/v1/config.toml'
+
 command_timeout = 10000
 
-[kubernetes]
+[status]
+disabled = false
+
+[sudo]
+disabled = false
+
+[time]
 disabled = false
 
 [memory_usage]
 disabled = false
 threshold = -1
-
-[status]
-disabled = false
-
-[cmd_duration]
-style = "bold #f1fa8c"
-
-[directory]
-style = "bold #50fa7b"
-
-[git_branch]
-style = "bold #ff79c6"
-
-[git_status]
-style = "bold #ff5555"
