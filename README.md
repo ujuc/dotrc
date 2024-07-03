@@ -42,6 +42,8 @@ brew install vim
 
 ```shell
 brew install bat
+
+mkdir -p .config/bat && ln -sf $HOME/dotrc/batrc $HOME/.config/bat/config
 ```
 
 ### [lsd](https://github.com/lsd-rs/lsd)
