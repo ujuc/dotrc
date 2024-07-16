@@ -149,7 +149,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### Deno
 
 ```shell
-curl -fsSL https://deno.land/install.sh | sh
+brew install deno
 ```
 
 ## Config
