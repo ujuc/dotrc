@@ -15,6 +15,12 @@ export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# deno
+if [ -f "$HOME/.deno/bin/deno" ]; then
+    export DENO_INSTALL="$HOME/.deno"
+    export PATH="$DENO_INSTALL/bin:$PATH"
+fi
+
 # asdf
 if (( $+commands[asdf] )); then
     . $(brew --prefix asdf)/libexec/asdf.sh

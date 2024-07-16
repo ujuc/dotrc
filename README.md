@@ -146,6 +146,12 @@ font-d2coding-nerd-font
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
+### Deno
+
+```shell
+curl -fsSL https://deno.land/install.sh | sh
+```
+
 ## Config
 
 ### Zsh
