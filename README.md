@@ -115,6 +115,14 @@ brew install --cask arc
 
 ## Terminal
 
+### [Ghostty](https://ghostty.org)
+
+```shell
+brew install ghostty
+
+mkdir -p $HOME/.config/ghostty && ln -sf $HOME/dotrc/ghosttyrc $HOME/.config/ghostty/config
+```
+
 ### [warp](https://www.warp.dev/)
 
 ```shell

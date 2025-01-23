@@ -1,0 +1,5 @@
+theme = catppuccin-mocha
+window-theme = ghostty
+font-family = "Hack Nerd Font Mono, D2CodingLigature Nerd Font Mono"
+font-size = 12
+auto-update = download
