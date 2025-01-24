@@ -157,7 +157,9 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### Deno
 
 ```shell
-brew install deno
+asdf plugin add deno
+asdf install deno latest
+asdf global deno latest
 ```
 
 ## Config
