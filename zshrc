@@ -15,11 +15,6 @@ export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# asdf
-if (( $+commands[asdf] )); then
-    . $(brew --prefix asdf)/libexec/asdf.sh
-fi
-
 # work
 [ -f ~/.zshrc.work ] && source ~/.zshrc.work
 
