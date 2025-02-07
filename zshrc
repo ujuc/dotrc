@@ -13,6 +13,12 @@ export LANG=en_US.UTF-8
 eval "$(starship init zsh)"
 export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
 
+# asdf
+if (( $+commands[asdf] )); then
+    export ASDF_DATA_DIR=$HOME/.asdf
+    export PATH="${ASDF_DATA_DIR}/shims:${PATH}"
+fi
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # work
