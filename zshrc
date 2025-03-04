@@ -14,7 +14,7 @@ eval "$(starship init zsh)"
 export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
 
 # asdf
-if (( $+commands[asdf] )); then
+if (($ + commands[asdf])); then
     export ASDF_DATA_DIR=$HOME/.asdf
     export PATH="${ASDF_DATA_DIR}/shims:${PATH}"
 fi
@@ -29,6 +29,11 @@ function update_system() {
     brew upgrade
     zplug update
     gh ext upgrade --all
+    brew cleanup
+
+    if (($ + commands[asdf])); then
+        asdf plugin update --all
+    fi
 }
 
 # Aliases
