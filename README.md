@@ -61,7 +61,15 @@ brew install gh
 gh ext install github/gh-copilot
 ```
 
-### Git Plugins
+### Git
+
+#### Git
+
+- 따로 설치하지 않으면 xcode 에서 제공하는 git을 사용하게됨.
+
+```shell
+brew install git
+```
 
 #### [git-delta](https://github.com/dandavison/delta)
 
@@ -97,16 +105,16 @@ brew install --cask 1password 1password-cli
 brew install --cask raycast
 ```
 
+### [Zed](https://zed.dev/)
+
+```shell
+brew install --cask zed
+```
+
 ### [Visual Studio Code](https://code.visualstudio.com/)
 
 ```shell
 brew install --cask visual-studio-code
-```
-
-### [Arc Browser](https://arc.net/)
-
-```shell
-brew install --cask arc
 ```
 
 ### SnapScan
@@ -171,6 +179,12 @@ ln -sf $HOME/dotrc/zshrc $HOME/.zshrc
 ```
 
 - 업무용은 `zshrc.work` 파일을 이용
+
+### Zed
+
+```shell
+ln -sf $HOME/dotrc/zed/settings.json $HOME/.config/zed/settings.json
+```
 
 ### Git
 
