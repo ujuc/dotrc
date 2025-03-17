@@ -1,0 +1,83 @@
+{
+  "autosave": "on_focus_change",
+  "restore_on_startup": "none",
+  "base_keymap": "VSCode",
+
+  "buffer_font_family": "Cascadia Code",
+  "buffer_font_fallbacks": ["D2Coding"],
+  "buffer_font_size": 14,
+
+  "tabs": {
+    "file_icons": true,
+    "git_status": true
+  },
+
+  "ensure_final_newline_on_save": true,
+  "format_on_save": "on",
+  "use_autoclose": true,
+
+  "file_scan_exclusions": ["**/.git", "**/.DS_Store", "**/Thumbs.db"],
+
+  "git": {
+    "git_gutter": "tracked_files",
+    "inline_blame": {
+      "enabled": true,
+      "show_commit_summary": true
+    }
+  },
+
+  "indent_guides": {
+    "enabled": true,
+    "coloring": "indent_aware",
+    "background_coloring": "indent_aware"
+  },
+
+  "preferred_line_length": 88,
+  "remove_trailing_whitespace_on_save": true,
+  "use_smartcase_search": true,
+  "show_whitespaces": "all",
+  "show_wrap": "editor_width",
+
+  "terminal": {
+    "alternate_scroll": "on",
+    "copy_on_select": true,
+    "font_family": "Cascadia Code NF",
+    "font_size": 12
+  },
+
+  "theme": {
+    "mode": "light",
+    "light": "Gruvbox Light Hard",
+    "dark": "Gruvbox Dark Hard"
+  },
+
+  "icon_theme": {
+    "dark": "Zed (Default)",
+    "light": "Zed (Default)"
+  },
+
+  "project_panel": {
+    "scrollbar": {
+      "show": "auto"
+    }
+  },
+
+  "assistant": {
+    "version": "2",
+    "default_model": {
+      "provider": "copilot_chat",
+      "model": "claude-3-7-sonnet"
+    },
+    "inline_alternatives": [
+      {
+        "provider": "copilot_chat",
+        "model": "o3-mini"
+      }
+    ]
+  },
+
+  // editor 시스템 설정
+  "cursor_shape": "block",
+  "confirm_quit": false,
+  "auto_update": true
+}
