@@ -19,6 +19,12 @@ if (($+commands[asdf])); then
     export PATH="${ASDF_DATA_DIR}/shims:${PATH}"
 fi
 
+# deno
+if [ -d "$HOME/.deno" ]; then
+    export DENO_INSTALL_ROOT="$HOME/.deno"
+    export PATH="${DENO_INSTALL_ROOT}/bin:$PATH"
+fi
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # work
