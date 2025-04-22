@@ -1,7 +1,7 @@
 {
   "autosave": "on_focus_change",
   "restore_on_startup": "none",
-  "base_keymap": "VSCode",
+  "base_keymap": "JetBrains",
 
   "buffer_font_family": "Cascadia Code",
   "buffer_font_fallbacks": ["D2Coding"],
@@ -46,9 +46,9 @@
   },
 
   "theme": {
-    "mode": "light",
-    "light": "Gruvbox Light Hard",
-    "dark": "Gruvbox Dark Hard"
+    "mode": "dark",
+    "light": "Nordic",
+    "dark": "Nordic"
   },
 
   "icon_theme": {
@@ -65,13 +65,13 @@
   "assistant": {
     "version": "2",
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "claude-3-7-sonnet"
+      "provider": "ollama",
+      "model": "gemma3:latest"
     },
     "inline_alternatives": [
       {
-        "provider": "copilot_chat",
-        "model": "o3-mini"
+        "provider": "ollama",
+        "model": "gemma2"
       }
     ]
   },

@@ -107,8 +107,14 @@ brew install --cask raycast
 
 ### [Zed](https://zed.dev/)
 
+- [Zed config](https://zed.dev/docs/configuring-zed)
+- [Zed themes](https://zed-themes.com/)
+
 ```shell
 brew install --cask zed
+
+ln -sf $HOME/dotrc/zed/settings.json $HOME/.config/zed/settings.json
+ln -sf $HOME/dotrc/zed/nordic.json $HOME/.config/zed/themes/nordic.json
 ```
 
 ### [Visual Studio Code](https://code.visualstudio.com/)
