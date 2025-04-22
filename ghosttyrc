@@ -1,4 +1,4 @@
-theme = catppuccin-mocha
+theme = nord
 window-theme = ghostty
 font-family = "Hack Nerd Font Mono, D2CodingLigature Nerd Font Mono"
 font-size = 12
