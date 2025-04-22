@@ -11,7 +11,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 eval "$(starship init zsh)"
-export STARSHIP_CONFIG="$HOME/dotrc/starship/config.toml"
+export STARSHIP_CONFIG="$HOME/dotrc/starship.toml"
 
 # asdf
 if (($+commands[asdf])); then
