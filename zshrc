@@ -1,10 +1,4 @@
-# Zplug
-source $(brew --prefix zplug)/init.zsh
 
-zplug "zsh-users/zsh-syntax-highlighting", defer:2, as:plugin
-zplug "zsh-users/zsh-autosuggestions", as:plugin
-
-zplug load
 
 ## ENV
 export LC_ALL=en_US.UTF-8

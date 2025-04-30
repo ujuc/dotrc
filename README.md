@@ -26,12 +26,6 @@ xcode-select --install
 brew install starship
 ```
 
-### [zplug](https://github.com/zplug/zplug)
-
-```shell
-brew install zplug
-```
-
 ### [vim](https://www.vim.org/)
 
 ```shell
