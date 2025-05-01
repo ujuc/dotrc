@@ -1,9 +1,36 @@
+# history
+setopt HIST_IGNORE_ALL_DUPS
 
+# zimfw
+ZIM_HOME=${XDG_CONFIG_HOME:-$HOME/.config}/zim
+## 없으면 설치한다
+if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
+    curl -fsSL --create-dirs -o ${ZIM_HOME}/zimfw.zsh https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
+fi
+## init
+if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE:-${ZDOTDIR}/.zimrc} ]]; then
+    source ${ZIM_HOME}/zimfw.zsh init
+fi
+source ${ZIM_HOME}/init.zsh
 
-## ENV
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
+zstyle ':zim:zim:zim' use 'degit'
 
+## zsh-autosuggestions
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+
+## zsh-syntax-highlighting
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+## zsh-history-substring-search
+zmodload -F zsh/terminfo +p:terminfo
+# Bind ^[[A/^[[B manually so up/down works both before and after zle-line-init
+for key ('^[[A' '^P' ${terminfo[kcuu1]}) bindkey ${key} history-substring-search-up
+for key ('^[[B' '^N' ${terminfo[kcud1]}) bindkey ${key} history-substring-search-down
+for key ('k') bindkey -M vicmd ${key} history-substring-search-up
+for key ('j') bindkey -M vicmd ${key} history-substring-search-down
+unset key
+
+# starship
 eval "$(starship init zsh)"
 export STARSHIP_CONFIG="$HOME/dotrc/starship.toml"
 
@@ -27,7 +54,6 @@ fi
 function update_system() {
     brew update
     brew upgrade
-    zplug update
     gh ext upgrade --all
     brew cleanup
 

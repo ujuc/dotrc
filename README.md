@@ -1,29 +1,71 @@
 # MyDotrc
 
-## License
+## 설치전 작업
 
-[MIT](./LICENSE)
+- MacOS
 
-## Pre-install package
-
-### MacOS
-
-```shell
+```sh
 xcode-select --install
 ```
 
-### [Homebrew](https://brew.sh/)
+- [Homebrew](https://brew.sh/)
 
-```shell
+```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-## CLI
+## Auth 환경 구성
 
-### [starship](https://starship.rs/)
+- 1Password
+  - [SSH agent 설정](https://developer.1password.com/docs/ssh/agent/)
 
-```shell
+```sh
+brew install --cask 1password 1password-cli
+```
+
+- [GitHub CLI](https://cli.github.com/manual/)
+
+```sh
+brew install gh
+
+gh auth login
+```
+
+## Repo 환경 작업
+
+```sh
+gh repo clone ujuc/dotrc $HOME/.config/dotrc
+```
+
+- `zshenv` 파일 링크
+
+```sh
+ln -sf $HOME/.config/dotrc/zshenv $HOME/.zshenv
+mkdir -p $HOME/.config/zsh
+```
+
+## 사용하는 cli 패키지 설치하고 설정
+
+- [starship](https://starship.rs/)
+  - CLI 테마
+
+```sh
 brew install starship
+ln -sf $DOTRCDIR/starship $XDG_CONFIG_HOME
+```
+
+- [ZimFW](https://zimfw.sh/)
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
+ln -sf $DOTRCDIR/zimrc $ZDOTDIR/.zimrc
+```
+
+- `zshrc` 파일 링크
+
+```sh
+mkdir -p $XDG_CONFIG_HOME/zsh
+ln -sf $DOTRCDIR/zshrc $ZDOTDIR/.zshrc
 ```
 
 ### [vim](https://www.vim.org/)
@@ -225,3 +267,7 @@ git config --global delta.navigate true
 git config --global delta.diff-so-fancy true
 git config --global delta.hyperlinks true
 ```
+
+## License
+
+[MIT](./LICENSE)
