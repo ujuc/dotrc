@@ -206,6 +206,13 @@ brew install mise
 
 # Autocomplete
 mise use -g usage
+mise use -g uv
+```
+
+### [rust](https://www.rust-lang.org/tools/install)
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
 ## Font
