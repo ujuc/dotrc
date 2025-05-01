@@ -1,6 +1,13 @@
 # history
 setopt HIST_IGNORE_ALL_DUPS
 
+# starship
+eval "$(starship init zsh)"
+
+# Zsh function file dir
+ZFUNCDIR=${ZDOTDIR}/.zfunc
+fpath=(${ZFUNCDIR} $fpath)
+
 # zimfw
 ZIM_HOME=${XDG_CONFIG_HOME:-$HOME/.config}/zim
 ## 없으면 설치한다
@@ -30,13 +37,9 @@ for key ('k') bindkey -M vicmd ${key} history-substring-search-up
 for key ('j') bindkey -M vicmd ${key} history-substring-search-down
 unset key
 
-# starship
-eval "$(starship init zsh)"
-
-# deno
-if [ -d "$HOME/.deno" ]; then
-    export DENO_INSTALL_ROOT="$HOME/.deno"
-    export PATH="${DENO_INSTALL_ROOT}/bin:$PATH"
+# mise
+if (( $+commands[mise] )); then
+    eval "$(mise activate zsh)"
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

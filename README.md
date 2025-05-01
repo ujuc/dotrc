@@ -80,6 +80,7 @@ brew install lsd
 
 ```sh
 mkdir -p $XDG_CONFIG_HOME/zsh
+mkdir -p $XDG_CONFIG_HOME/zsh/.zfunc
 ln -sf $DOTRCDIR/zshrc $ZDOTDIR/.zshrc
 ```
 
@@ -196,6 +197,17 @@ mkdir -p ${XDG_CONFIG_HOME}/ghostty
 ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 ```
 
+## Lang
+
+### [mise-en-place](https://mise.jdx.dev/)
+
+```sh
+brew install mise
+
+# Autocomplete
+mise use -g usage
+```
+
 ## Font
 
 ```sh
@@ -220,8 +232,6 @@ font-nanum-square
 font-nanum-square-neo
 font-nanum-square-round
 ```
-
-## Lang
 
 ## Config
 
