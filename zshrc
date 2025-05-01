@@ -33,12 +33,6 @@ unset key
 # starship
 eval "$(starship init zsh)"
 
-# asdf
-if (($+commands[asdf])); then
-    export ASDF_DATA_DIR=$HOME/.asdf
-    export PATH="${ASDF_DATA_DIR}/shims:${PATH}"
-fi
-
 # deno
 if [ -d "$HOME/.deno" ]; then
     export DENO_INSTALL_ROOT="$HOME/.deno"
@@ -54,12 +48,8 @@ function update_system() {
     brew update
     brew upgrade
     zimfw update && zimfw upgrade
-    gh ext upgrade --all
     brew cleanup
-
-    if (($+commands[asdf])); then
-        asdf plugin update --all
-    fi
+    # gh ext upgrade --all
 }
 
 # Aliases
