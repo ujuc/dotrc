@@ -51,7 +51,7 @@ mkdir -p $HOME/.config/zsh
 
 ```sh
 brew install starship
-ln -sf $DOTRCDIR/starship $XDG_CONFIG_HOME
+ln -sf $DOTRCDIR/starship.toml $XDG_CONFIG_HOME/starship.toml
 ```
 
 - [ZimFW](https://zimfw.sh/)

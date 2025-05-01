@@ -32,7 +32,6 @@ unset key
 
 # starship
 eval "$(starship init zsh)"
-export STARSHIP_CONFIG="$HOME/dotrc/starship.toml"
 
 # asdf
 if (($+commands[asdf])); then
@@ -54,6 +53,7 @@ fi
 function update_system() {
     brew update
     brew upgrade
+    zimfw update && zimfw upgrade
     gh ext upgrade --all
     brew cleanup
 
