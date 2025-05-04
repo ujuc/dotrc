@@ -41,10 +41,16 @@ gh repo clone ujuc/dotrc ${HOME}/.config/dotrc
 
 ```sh
 ln -sf ${HOME}/.config/dotrc/zshenv ${HOME}/.zshenv
-mkdir -p ${HOME}/.config/zsh
 ```
 
 ## 사용하는 cli 패키지 설치하고 설정
+
+### Zsh 사전 작업
+
+```sh
+mkdir -p ${XDG_CONFIG_HOME}/zsh
+mkdir -p ${XDG_CONFIG_HOME}/zsh/.zfunc
+```
 
 ### [starship](https://starship.rs/)
 
@@ -52,14 +58,15 @@ mkdir -p ${HOME}/.config/zsh
 
 ```sh
 brew install starship
-ln -sf ${DOTRCDIR/}starship.toml ${XDG_CONFIG_HOME/}starship.toml
+ln -sf ${DOTRCDIR}/starship.toml ${XDG_CONFIG_HOME}/starship.toml
 ```
 
 ### [ZimFW](https://zimfw.sh/)
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
-ln -sf ${DOTRCDIR/}zimrc ${ZDOTDIR/}.zimrc
+ln -sf ${DOTRCDIR}/zimrc ${ZDOTDIR}/.zimrc
+ln -sf ${DOTRCDIR}/zshrc ${ZDOTDIR}/.zshrc
 ```
 
 ### [bat](https://github.com/sharkdp/bat)
@@ -74,14 +81,6 @@ ln -sf ${DOTRCDIR}/batrc ${XDG_CONFIG_HOME}/bat/config
 
 ```sh
 brew install lsd
-```
-
-### `zshrc` 파일 링크
-
-```sh
-mkdir -p $XDG_CONFIG_HOME/zsh
-mkdir -p $XDG_CONFIG_HOME/zsh/.zfunc
-ln -sf $DOTRCDIR/zshrc $ZDOTDIR/.zshrc
 ```
 
 ### [vim](https://www.vim.org/)
@@ -226,7 +225,8 @@ font-cascadia-code-nf
 font-d2coding-nerd-font
 
 # ibm
-font-ibm-plex
+font-ibm-plex-sans-kr
+font-ibm-plex-serif
 
 # noto
 font-noto-color-emoji
