@@ -41,8 +41,11 @@
   "terminal": {
     "alternate_scroll": "on",
     "copy_on_select": true,
-    "font_family": "Cascadia Code NF",
-    "font_size": 12
+    "font_family": "D2CodingLigature Nerd Font Propo",
+    "font_size": 12,
+    "toolbar": {
+      "breadcrumbs": false
+    }
   },
 
   "theme": {
