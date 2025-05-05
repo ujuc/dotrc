@@ -42,7 +42,7 @@ if (( $+commands[mise] )); then
     eval "$(mise activate zsh)"
 fi
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/.fzf.zsh ] && source <(fzf --zsh)
 
 # work
 [ -f ~/.zshrc.work ] && source ~/.zshrc.work

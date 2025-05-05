@@ -83,6 +83,12 @@ ln -sf ${DOTRCDIR}/batrc ${XDG_CONFIG_HOME}/bat/config
 brew install lsd
 ```
 
+### [fzf](https://github.com/junegunn/fzf)
+
+```sh
+brew install fzf
+```
+
 ### [vim](https://www.vim.org/)
 
 ```sh
