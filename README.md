@@ -169,7 +169,6 @@ brew install --cask raycast
 brew install --cask zed
 
 ln -sf ${DOTRCDIR}/zed/settings.json ${XDG_CONFIG_HOME}/zed/settings.json
-ln -sf ${DOTRCDIR}/zed/nordic.json ${XDG_CONFIG_HOME}/zed/themes/nordic.json
 ```
 
 ### [Visual Studio Code](https://code.visualstudio.com/)
