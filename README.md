@@ -210,8 +210,11 @@ mise use -g uv
 ### [rust](https://www.rust-lang.org/tools/install)
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path
+rustup completions zsh > ${ZDOTDIR}/.zfunc/_rustup
 ```
+
+- `--no-modify-path` 를 설정한건 `.zshenv`를 따로 관리하고 있다보니 엎어 쓰기를 하지 않도록 하기 위해서 구성한 내용임.
 
 ## Font
 

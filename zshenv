@@ -23,6 +23,5 @@ path=(
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-if (( $+commands[rustup] )); then
-    source "$HOME/.cargo/env"
-fi
+# rustup
+[[ -d "$HOME/.rustup" ]] && . "$HOME/.cargo/env"
