@@ -193,7 +193,15 @@ ollama pull qwen3
 
 ## Terminal
 
+### [warp](https://www.warp.dev/)
+
+```sh
+brew install --cask warp
+```
+
 ### [Ghostty](https://ghostty.org)
+
+- 1.0 나오면 보자...
 
 ```sh
 brew install ghostty
