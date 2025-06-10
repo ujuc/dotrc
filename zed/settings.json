@@ -1,11 +1,12 @@
 {
+  "theme": "One light",
   "autosave": "on_focus_change",
   "restore_on_startup": "none",
   "base_keymap": "JetBrains",
 
   "buffer_font_family": "Cascadia Code",
   "buffer_font_fallbacks": ["D2Coding"],
-  "buffer_font_size": 14,
+  "buffer_font_size": 12,
 
   "tabs": {
     "file_icons": true,
@@ -48,35 +49,18 @@
     }
   },
 
-  "theme": {
-    "mode": "dark",
-    "light": "Nordic",
-    "dark": "Catppuccin Macchiato"
-  },
-
-  "icon_theme": {
-    "dark": "Zed (Default)",
-    "light": "Zed (Default)"
-  },
-
   "project_panel": {
     "scrollbar": {
       "show": "auto"
     }
   },
 
-  "assistant": {
+  "agent": {
     "version": "2",
     "default_model": {
-      "provider": "google",
-      "model": "gemini-2.5-pro-preview-03-25"
-    },
-    "inline_alternatives": [
-      {
-        "provider": "google",
-        "model": "gemini-2.5-flash-preview-04-17"
-      }
-    ]
+      "provider": "zed.dev",
+      "model": "gpt-4o"
+    }
   },
 
   // editor 시스템 설정
