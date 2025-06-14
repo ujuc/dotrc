@@ -160,6 +160,19 @@ ln -sf ${DOTRCDIR}/tigrc ${XDG_CONFIG_HOME}/tig/config
 
 ## Apps
 
+### [Claude](https://claude.ai/)
+
+```sh
+brew install --cask claude
+```
+
+### [Claude Code](https://www.anthropic.com/claude-code)
+
+```sh
+npm install -g @anthropic-ai/claude-code
+claude migrate-installer
+```
+
 ### [raycast](https://www.raycast.com/)
 
 ```sh
