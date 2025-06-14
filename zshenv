@@ -25,3 +25,7 @@ export LANG=en_US.UTF-8
 
 # rustup
 [[ -d "$HOME/.rustup" ]] && . "$HOME/.cargo/env"
+
+# Claude
+[[ -d "$HOME/.claude" ]] && export PATH=$HOME/.claude/local:$PATH
+
