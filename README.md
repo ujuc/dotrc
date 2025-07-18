@@ -154,7 +154,7 @@ git config --global delta.hyperlinks true
 
 ```sh
 brew install tig
-mkdir -p .config/tig
+mkdir -p ${XDG_CONFIG_HOME}/tig
 ln -sf ${DOTRCDIR}/tigrc ${XDG_CONFIG_HOME}/tig/config
 ```
 
@@ -164,13 +164,6 @@ ln -sf ${DOTRCDIR}/tigrc ${XDG_CONFIG_HOME}/tig/config
 
 ```sh
 brew install --cask claude
-```
-
-### [Claude Code](https://www.anthropic.com/claude-code)
-
-```sh
-npm install -g @anthropic-ai/claude-code
-claude migrate-installer
 ```
 
 ### [raycast](https://www.raycast.com/)
@@ -232,13 +225,20 @@ brew install mise
 # Autocomplete
 mise use -g usage
 mise use -g uv
+mise use -g node
+```
+
+### [Claude Code](https://www.anthropic.com/claude-code)
+
+```sh
+npm install -g @anthropic-ai/claude-code
 ```
 
 ### [rust](https://www.rust-lang.org/tools/install)
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path
-rustup completions zsh > ${ZDOTDIR}/.zfunc/_rustup
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path \
+rustup completions zsh >> ${ZDOTDIR}/.zfunc/_rustup
 ```
 
 - `--no-modify-path` 를 설정한건 `.zshenv`를 따로 관리하고 있다보니 엎어 쓰기를 하지 않도록 하기 위해서 구성한 내용임.
