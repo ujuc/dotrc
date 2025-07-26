@@ -280,7 +280,9 @@ font-nanum-square-round
 
 ### SnapScan
 
-- https://www.pfu.ricoh.com/global/scanners/scansnap/dl/mac-1014-ix500.html
+```bash
+brew install --cask fujitsu-scansnap-home
+```
 
 ## License
 
