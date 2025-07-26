@@ -292,6 +292,12 @@ brew install --cask fujitsu-scansnap-home
 brew install --cask google-drive
 ```
 
+### Adobe
+
+```bash
+brew install --cask adobe-creative-cloud
+```
+
 ## License
 
 [MIT](./LICENSE)
