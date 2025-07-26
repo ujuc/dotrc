@@ -281,6 +281,8 @@ font-nanum-square-round
 ### SnapScan
 
 ```bash
+sudo softwareupdate --install-rosetta --agree-to-license
+
 brew install --cask fujitsu-scansnap-home
 ```
 
