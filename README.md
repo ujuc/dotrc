@@ -286,6 +286,12 @@ sudo softwareupdate --install-rosetta --agree-to-license
 brew install --cask fujitsu-scansnap-home
 ```
 
+### Google
+
+```bash
+brew install --cask google-drive
+```
+
 ## License
 
 [MIT](./LICENSE)
