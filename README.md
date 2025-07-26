@@ -4,6 +4,8 @@
 
 ### MacOS
 
+- `brew` 에서 설치하는 작업을 진행해서 따로 설치해주지 않아도 된다.
+
 ```sh
 xcode-select --install
 ```
@@ -223,7 +225,6 @@ ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 brew install mise
 
 # Autocomplete
-mise use -g usage
 mise use -g uv
 mise use -g node
 ```
@@ -237,8 +238,8 @@ npm install -g @anthropic-ai/claude-code
 ### [rust](https://www.rust-lang.org/tools/install)
 
 ```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path \
-rustup completions zsh >> ${ZDOTDIR}/.zfunc/_rustup
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path
+rustup completions zsh > ${ZDOTDIR}/.zfunc/_rustup
 ```
 
 - `--no-modify-path` 를 설정한건 `.zshenv`를 따로 관리하고 있다보니 엎어 쓰기를 하지 않도록 하기 위해서 구성한 내용임.
