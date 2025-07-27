@@ -10,16 +10,38 @@
 
 
 # --- COMMIT END ---
-# Type can be
-#   feat    : new feature
-#   fix     : bug fix
-#   refactor: refactoring production code
-#   style   : formatting, missing semi colons, etc; no code change
-#   docs    : changes to documentation
-#   test    : adding or refactoring tests
-#             no production code change
-#   chore   : updating grunt tasks etc
-#             no production code change
+
+# # Context-Aware Commit Messages
+# 변경사항을 기반으로 의미있는 커밋 메시지를 작성한다.
+# ------------------
+# # 커밋 메시지 작성 원칙
+# - **의도 중심**: 단순 변경 내용보다 **왜** 변경했는지 의도를 드러낸다.
+# - **맥락 반영**: 변경하게된 배경과 목적을 포함한다.
+# - **협업 중심**: 다른 개발자와 협업을 할 수 있도록 요구사항과 문제 의식을 반영한다.
+# ------------------
+# # Commit Message Template
+# - <type>: 제목
+#   - 영문 50자 이내로 한국어로 작성한다.
+#	  - 마침표를 사용하지 않는다.
+#   - 타입을 포함한다
+#     - 예: docs: README.md 파일을 수정하다
+#   - 동사로 작성하되, 현재 완료된 형식으로 작성한다
+# - 본문
+#   - 변경의 이유와 맥락에 대한 설명을 "커밋 메시지 작성 원칙"에 따라 작성한다.
+#   - 영문 72자 이내로 작성한다.
+#   - 여러 줄로 작성할 수 있으며, 각 줄은 72자를 넘지 않도록 한다.
+#   - 목록을 작성할 때는 "-"로 시작한다.
+#     - 예: - 변경된 파일 목록
+# - 이슈 트래커 번호나 URL: 관련된 이슈나 PR 링크
+# --------------------
+# # Commit Message Type
+#   feat    : 새로운 기능
+#   fix     : 버그 픽스
+#   refactor: 코드 리팩토링
+#   style   : 코드 수정없는 스타일 변경
+#   docs    : 문서 수정
+#   test    : 테스트 코드를 추가하거나, 리팩토링
+#   chore   : 기타 작업 (빌드, 패키지 매니저 등)
 # ------------------
 # Remember me ~
 #   Capitalize the subject line
