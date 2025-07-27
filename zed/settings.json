@@ -1,10 +1,11 @@
 {
-  "theme": "One light",
+  "icon_theme": "Catppuccin Macchiato",
+  "theme": "Catppuccin Macchiato",
   "autosave": "on_focus_change",
   "restore_on_startup": "none",
-  "base_keymap": "JetBrains",
+  "base_keymap": "VSCode",
 
-  "buffer_font_family": "Cascadia Code",
+  "buffer_font_family": "Zed Plex Mono",
   "buffer_font_fallbacks": ["D2Coding"],
   "buffer_font_size": 12,
 
@@ -37,12 +38,11 @@
   "remove_trailing_whitespace_on_save": true,
   "use_smartcase_search": true,
   "show_whitespaces": "all",
-  "show_wrap": "editor_width",
 
   "terminal": {
     "alternate_scroll": "on",
     "copy_on_select": true,
-    "font_family": "D2CodingLigature Nerd Font Propo",
+    "font_family": "ZedMono Nerd Font Mono",
     "font_size": 12,
     "toolbar": {
       "breadcrumbs": false
@@ -56,10 +56,9 @@
   },
 
   "agent": {
-    "version": "2",
     "default_model": {
-      "provider": "zed.dev",
-      "model": "gpt-4o"
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-latest"
     }
   },
 
