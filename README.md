@@ -79,10 +79,10 @@ mkdir -p ${XDG_CONFIG_HOME}/bat
 ln -sf ${DOTRCDIR}/batrc ${XDG_CONFIG_HOME}/bat/config
 ```
 
-### [lsd](https://github.com/lsd-rs/lsd)
+### [eza](https://github.com/eza-community/eza)
 
 ```sh
-brew install lsd
+brew install eza
 ```
 
 ### [fzf](https://github.com/junegunn/fzf)
