@@ -60,8 +60,8 @@ alias update=update_system
 alias bws="brew search"
 alias bwi="brew install"
 
-alias ls="lsd"
-alias ll="lsd -l"
-alias lt="lsd --tree"
+alias ls="eza --icons=auto --group-directories-first --git"
+alias ll="eza -l --git --icons=auto"
+alias lt="eza -l --tree --icons=auto"
 alias cat="bat"
 alias vi="vim"
