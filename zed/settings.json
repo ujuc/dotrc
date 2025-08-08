@@ -5,7 +5,7 @@
   "restore_on_startup": "none",
   "base_keymap": "VSCode",
 
-  "buffer_font_family": "Zed Plex Mono",
+  "buffer_font_family": "Google Sans Code",
   "buffer_font_fallbacks": ["D2Coding"],
   "buffer_font_size": 12,
 
@@ -56,9 +56,10 @@
   },
 
   "agent": {
+    "use_modifier_to_send": true,
     "default_model": {
-      "provider": "anthropic",
-      "model": "claude-sonnet-4-latest"
+      "provider": "ollama",
+      "model": "qwen3-coder:latest"
     }
   },
 
