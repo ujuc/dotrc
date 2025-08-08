@@ -42,7 +42,13 @@ if (( $+commands[mise] )); then
     eval "$(mise activate zsh)"
 fi
 
+# fzf
 [ -f ~/.fzf.zsh ] && source <(fzf --zsh)
+
+# zoxide
+if (( $+commands[zoxide] )); then
+    eval "$(zoxide init zsh)"
+fi
 
 # work
 [ -f ~/.zshrc.work ] && source ~/.zshrc.work

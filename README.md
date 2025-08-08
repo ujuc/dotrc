@@ -85,6 +85,12 @@ ln -sf ${DOTRCDIR}/batrc ${XDG_CONFIG_HOME}/bat/config
 brew install eza
 ```
 
+### [zoxide](https://github.com/ajeetdsouza/zoxide)
+
+```sh
+brew install zoxide
+```
+
 ### [fzf](https://github.com/junegunn/fzf)
 
 ```sh
