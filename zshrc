@@ -59,6 +59,7 @@ function update_system() {
     zimfw update && zimfw upgrade
     brew cleanup
     # gh ext upgrade --all
+    npm upgrade -g
 }
 
 # Aliases
