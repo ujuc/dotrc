@@ -59,7 +59,7 @@
     "use_modifier_to_send": true,
     "default_model": {
       "provider": "ollama",
-      "model": "qwen3-coder:latest"
+      "model": "gemma3:270m"
     }
   },
 
