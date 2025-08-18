@@ -6,3 +6,4 @@
 
 claude/**/*
 !claude/*.md
+!claude/mcp.json
