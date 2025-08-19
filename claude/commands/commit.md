@@ -59,8 +59,14 @@ STEP 3: Compose conventional commit message
   - Include "This change was needed because:" or similar context
   - For simple changes, at least one sentence explaining why
 
-### Footer (optional but recommended)
+### Footer (REQUIRED for Claude Code commits)
 - Reference related issues, PRs, or tickets (e.g., `Fixes #142`, `Related to INF-24`)
+- **Always include Claude Code attribution**:
+  ```
+  🤖 Generated with [Claude Code](https://claude.ai/code)
+
+  Co-Authored-By: Claude <noreply@anthropic.com>
+  ```
 
 STEP 4: Create the commit
 
@@ -69,6 +75,12 @@ TRY:
 - USE heredoc or -m flag for multi-line messages to ensure proper formatting
 - ENSURE proper line breaks between subject, body, and footer
 - VERIFY body is included (reject commits without body)
+- INCLUDE Claude Code attribution in footer:
+  ```
+  🤖 Generated with [Claude Code](https://claude.ai/code)
+
+  Co-Authored-By: Claude <noreply@anthropic.com>
+  ```
 
 CATCH (commit_failed):
 - ANALYZE error message
@@ -82,6 +94,7 @@ STEP 5: Validate commit result
 - DISPLAY commit hash and message
 - PROVIDE summary of what was committed
 - REMIND about push if needed
+- ENSURE Claude Code attribution is included in footer
 
 ## Example commit messages
 
@@ -97,6 +110,10 @@ This change was needed because:
 - Compliance requirements for data protection
 
 Fixes #142
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ### Bug fix:
@@ -107,6 +124,10 @@ Fix typo in authentication error message that was confusing users.
 This change improves user experience by providing clear error feedback.
 
 Related to #256
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ### Code refactoring:
@@ -117,6 +138,10 @@ Extract connection pooling into separate module to improve
 code maintainability and reduce duplication across services.
 
 Related to INF-24
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ### Documentation update:
@@ -128,6 +153,10 @@ new v2 endpoints. This helps developers integrate with our API
 more effectively.
 
 Closes #89
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
 ## Important Guidelines
@@ -138,6 +167,23 @@ Closes #89
 4. **Use imperative mood** and capitalize after type prefix
 5. **Reference issues/tickets** in footer when applicable
 6. **NO EMPTY BODIES** - Reject any commit without proper explanation
+7. **CLAUDE CODE ATTRIBUTION IS REQUIRED** - Always include the Claude Code footer
+
+## Claude Code Attribution Format
+
+All commits created by Claude Code must include this attribution in the footer:
+
+```
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+This ensures:
+- Transparency about AI-assisted development
+- Proper co-authorship tracking in Git history
+- Link to the tool for reference
+- Compliance with team's attribution standards
 
 ## Validation Checklist
 
@@ -147,3 +193,4 @@ Before creating commit, ensure:
 - [ ] Body lines are wrapped at 72 characters
 - [ ] Blank line separates subject from body
 - [ ] Related issues/tickets are referenced if applicable
+- [ ] Claude Code attribution is included in footer

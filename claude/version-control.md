@@ -68,6 +68,22 @@
 5. **Explain why** in body, not how
 6. **Use bullet points** with "-" for multiple items
 
+### Claude Code Attribution
+
+When using Claude Code to generate commits or code changes, include attribution in the footer:
+
+```
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+This attribution:
+- Provides transparency about AI-assisted development
+- Maintains proper co-authorship records
+- Links to the tool used for generation
+- Follows Git's standard co-author format
+
 ### Examples
 
 <example>
@@ -81,6 +97,10 @@ This change was needed because:
 - Compliance requirements for data protection
 
 Fixes #142
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
 </example>
 
 <example>
@@ -90,6 +110,10 @@ Extract connection pooling into separate module to improve
 code maintainability and reduce duplication across services.
 
 Related to INF-24
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
 </example>
 
 <example>
