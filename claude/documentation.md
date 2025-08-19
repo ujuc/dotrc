@@ -19,3 +19,23 @@
 - `DEVELOPMENT.md`: Development setup and run instructions
 - `CONVENTIONS.md`: Project-specific coding conventions
 - `TECH_STACK.md`: Technology stack and versions
+
+## Markdown Formatting Rules
+When including copyable markdown blocks in responses, follow these rules:
+
+1. **Outer fence**: Wrap the entire copyable block with `~~~`
+2. **Preserve inner fences**: Keep code blocks (```) inside the content unchanged
+3. **Prevent conflicts**: Ensure outer and inner fences don't interfere with each other
+
+Example:
+~~~markdown
+# Title
+This is a description.
+
+```python
+def example():
+    return "inner code block"
+```
+
+Additional explanation...
+~~~
