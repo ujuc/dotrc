@@ -4,6 +4,9 @@
 .vscode
 .DS_Store
 
-claude/**/*
-!claude/*.md
-!claude/mcp.json
+claude/ide
+claude/projects
+claude/shell-snapshots
+claude/statsig
+claude/todos
+claude/settings.json

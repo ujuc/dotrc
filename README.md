@@ -71,6 +71,14 @@ ln -sf ${DOTRCDIR}/zimrc ${ZDOTDIR}/.zimrc
 ln -sf ${DOTRCDIR}/zshrc ${ZDOTDIR}/.zshrc
 ```
 
+### GNU library
+
+- xcode util에서 제공하는 라이브러리 말고 GNU 라이브러리를 사용하기 위해서 추가.
+
+```sh
+brew install coreutils
+```
+
 ### [bat](https://github.com/sharkdp/bat)
 
 ```sh
