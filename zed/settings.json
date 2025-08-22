@@ -58,8 +58,12 @@
   "agent": {
     "use_modifier_to_send": true,
     "default_model": {
-      "provider": "ollama",
-      "model": "gemma3:270m"
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-thinking-latest"
+    },
+    "inline_assistant_model": {
+      "provider": "anthropic",
+      "model": "claude-3-5-haiku-latest"
     }
   },
 

@@ -3,17 +3,17 @@
 		// https://github.com/modelcontextprotocol/servers/tree/main/src/git
 		"git": {
 			"command": "mise",
-			"args": ["--", "uvx", "mcp-server-git"]
+			"args": ["exec", "--", "uvx", "mcp-server-git"]
 		},
 		// https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking
 		"sequential-thinking": {
 			"command": "mise",
-			"args": ["--", "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
+			"args": ["exec", "--", "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
 		},
 		"context7": {
 			"type": "stdio",
 			"command": "mise",
-			"args": ["--", "npx", "-y", "@upstash/context7-mcp"]
+			"args": ["exec", "--", "npx", "-y", "@upstash/context7-mcp"]
 		}
 	}
 }
