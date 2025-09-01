@@ -1,41 +1,136 @@
 # Documentation Standards
 
-## Code Documentation
+## Documentation Principles
 
-- All public APIs must include clear JSDoc/docstring
-- Complex algorithms require inline comments
-- Update README when adding new features
-- Maintain CHANGELOG for major changes
+- **Clear and concise**: Write for humans first, be direct and simple
+- **Purpose-driven**: Always explain WHY, not just WHAT
+- **Example-oriented**: Include practical examples when possible
+- **Maintenance-aware**: Keep documentation close to code
+- **Version-controlled**: Treat docs as code, track changes
+
+## Code Comments
+
+### When to Comment
+- Complex algorithms or business logic
+- Non-obvious design decisions
+- Workarounds and temporary solutions (with TODO)
+- Performance optimizations
+- Security considerations
+
+### Comment Guidelines
+- Write comments BEFORE the code, not after
+- Explain WHY, not WHAT (code shows what)
+- Keep comments up-to-date with code changes
+- Use proper grammar and punctuation
+- Mark technical debt with TODO/FIXME/HACK
+
+## API Documentation
+
+### Essential Elements
+- **Purpose**: What the API/function does
+- **Parameters**: Type, format, and constraints
+- **Return values**: Type and possible values
+- **Errors**: Possible exceptions and error codes
+- **Examples**: Real-world usage scenarios
+- **Deprecation**: Version and migration path
+
+### Best Practices
+- Document edge cases and limitations
+- Include authentication/authorization requirements
+- Specify rate limits and quotas
+- Provide both success and error examples
+- Keep examples simple but realistic
 
 ## Architecture Decision Records (ADR)
 
-- Document important technical decisions
-- Include alternatives and reasoning
-- Specify future re-evaluation points
+### ADR Structure
+1. **Title**: Short noun phrase
+2. **Status**: Proposed/Accepted/Deprecated/Superseded
+3. **Context**: The issue motivating this decision
+4. **Decision**: The change we're proposing/doing
+5. **Consequences**: What becomes easier or harder
+6. **Alternatives**: Other options considered
 
-## Required Project Files
+### When to Write ADRs
+- Significant architectural changes
+- Technology stack decisions
+- Major refactoring decisions
+- Security model changes
+- Data model changes
 
-- `PROJECT_STRUCTURE.md`: Directory structure and major modules
-- `DEVELOPMENT.md`: Development setup and run instructions
-- `CONVENTIONS.md`: Project-specific coding conventions
-- `TECH_STACK.md`: Technology stack and versions
+## Project Documentation Files
 
-## Markdown Formatting Rules
-When including copyable markdown blocks in responses, follow these rules:
+### Essential Files
+- **README.md**: Project overview, quick start, basic usage
+- **CONTRIBUTING.md**: How to contribute, coding standards
+- **CHANGELOG.md**: Version history and changes
+- **LICENSE**: Legal terms and conditions
+
+### Architecture Documentation
+- **ARCHITECTURE.md**: System design and components
+- **API.md**: API specifications and endpoints
+- **DATABASE.md**: Schema and data model
+- **DEPLOYMENT.md**: Deployment process and configuration
+
+### Development Documentation
+- **DEVELOPMENT.md**: Local setup and development workflow
+- **TESTING.md**: Testing strategy and instructions
+- **SECURITY.md**: Security considerations and practices
+- **TROUBLESHOOTING.md**: Common issues and solutions
+
+## Markdown Formatting Standards
+
+### Document Structure
+- Use hierarchical headings (# > ## > ###)
+- One H1 per document
+- Consistent heading capitalization
+- Logical section ordering
+
+### Code Blocks
+When including copyable markdown blocks in responses:
 
 1. **Outer fence**: Wrap the entire copyable block with `~~~`
-2. **Preserve inner fences**: Keep code blocks (```) inside the content unchanged
-3. **Prevent conflicts**: Ensure outer and inner fences don't interfere with each other
+2. **Preserve inner fences**: Keep code blocks (```) inside unchanged
+3. **Language hints**: Always specify language after ```
 
 Example:
 ~~~markdown
 # Title
-This is a description.
+Description text here.
 
 ```python
 def example():
-    return "inner code block"
+    return "code block with language hint"
 ```
 
 Additional explanation...
 ~~~
+
+### Formatting Guidelines
+- Use lists for multiple items (3+ items)
+- Bold for emphasis, italics for new terms
+- Link to external resources when helpful
+- Include table of contents for long documents
+- Use relative links for internal references
+
+## Change Management
+
+### Version Documentation
+- Maintain CHANGELOG.md following Keep a Changelog format
+- Group changes by type: Added, Changed, Deprecated, Removed, Fixed, Security
+- Include release date and version number
+- Link to relevant issues/PRs
+
+### Documentation Reviews
+- Review docs with code changes
+- Check for accuracy and completeness
+- Verify examples still work
+- Update version numbers and dates
+- Remove outdated information
+
+### Migration Guides
+- Document breaking changes clearly
+- Provide step-by-step migration instructions
+- Include before/after examples
+- Estimate migration effort
+- Offer automation scripts when possible
