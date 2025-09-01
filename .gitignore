@@ -10,3 +10,5 @@ claude/shell-snapshots
 claude/statsig
 claude/todos
 claude/settings.json
+
+.claude/*.local.*

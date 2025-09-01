@@ -19,9 +19,13 @@ STEP 1: Analyze current git state and changes
 
 - EXAMINE output from Context section for current status
 - DETERMINE if there are staged changes ready for commit
+- IF staged changes found:
+  - PROCEED with commit for staged files only
+  - DO NOT automatically add unstaged files
 - IF no staged changes found:
-  - IDENTIFY unstaged changes that should be committed
-  - STAGE appropriate files using `git add`
+  - CHECK for unstaged changes
+  - ASK user if they want to stage specific files or all files
+  - STAGE files based on user preference using `git add`
 - VALIDATE that commit is appropriate (not empty, not work-in-progress)
 
 STEP 2: Determine conventional commit type and scope
@@ -52,35 +56,22 @@ STEP 3: Compose conventional commit message
 - Separate from subject with blank line
 - **Intent focused**: Explain WHY the change was made, not just WHAT changed
 - **Context aware**: Include background and purpose of the change
-- **Collaboration oriented**: Reflect requirements and problem awareness
 - Use "-" for bullet points when listing multiple reasons
 - Minimum content requirements:
-  - At least explain the motivation for the change
-  - Include "This change was needed because:" or similar context
+  - Explain the motivation for the change
+  - Include context about why this change was needed
   - For simple changes, at least one sentence explaining why
 
-### Footer (REQUIRED for Claude Code commits)
+### Footer
 - Reference related issues, PRs, or tickets (e.g., `Fixes #142`, `Related to INF-24`)
-- **Always include Claude Code attribution**:
-  ```
-  🤖 Generated with [Claude Code](https://claude.ai/code)
-
-  Co-Authored-By: Claude <noreply@anthropic.com>
-  ```
+- Include Claude Code attribution (see format below)
 
 STEP 4: Create the commit
 
 TRY:
 - EXECUTE `git commit` with generated message
-- USE heredoc or -m flag for multi-line messages to ensure proper formatting
+- USE heredoc for multi-line messages to ensure proper formatting
 - ENSURE proper line breaks between subject, body, and footer
-- VERIFY body is included (reject commits without body)
-- INCLUDE Claude Code attribution in footer:
-  ```
-  🤖 Generated with [Claude Code](https://claude.ai/code)
-
-  Co-Authored-By: Claude <noreply@anthropic.com>
-  ```
 
 CATCH (commit_failed):
 - ANALYZE error message
@@ -90,13 +81,81 @@ CATCH (commit_failed):
 STEP 5: Validate commit result
 
 - CONFIRM commit was created successfully
-- VERIFY body was included in the commit message
 - DISPLAY commit hash and message
 - PROVIDE summary of what was committed
 - REMIND about push if needed
-- ENSURE Claude Code attribution is included in footer
 
-## Example commit messages
+## Claude Code Attribution Format
+
+All commits created by Claude Code must include this attribution in the footer:
+
+```
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+## Korean Commit Messages
+
+### Guidelines for Korean commit messages:
+
+- **Type**: Keep in English for consistency (`feat:`, `fix:`, `docs:`, etc.)
+- **Subject & Body**: Can be written in Korean
+- **UTF-8 encoding**: Ensure your git config supports UTF-8
+- **Format example**:
+  ```
+  type: 한글 제목 (50자 이내)
+  
+  한글 본문으로 변경 이유를 설명합니다.
+  왜 이 변경이 필요한지 명확하게 작성합니다.
+  ```
+
+### Korean commit message examples:
+
+```
+feat: 사용자 인증 시스템 추가
+
+JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
+이 변경이 필요한 이유:
+
+- 기존 시스템에 적절한 보안 조치가 부족했음
+- 사용자들이 계정 보호 기능을 요청함
+- 데이터 보호 규정 준수 필요
+
+Fixes #142
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+```
+fix: 인증 오류 메시지 오타 수정
+
+사용자에게 혼란을 주던 인증 오류 메시지의 오타를 수정합니다.
+명확한 오류 피드백으로 사용자 경험을 개선합니다.
+
+Related to #256
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+```
+refactor: 데이터베이스 연결 로직 단순화
+
+연결 풀링을 별도 모듈로 추출하여 코드 유지보수성을
+향상시키고 서비스 간 중복을 제거합니다.
+
+Related to INF-24
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+## Example commit messages (English)
 
 ### Feature addition:
 ```
@@ -159,6 +218,21 @@ Closes #89
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
+## Commit Options
+
+### --staged-only mode
+To commit only staged files without adding any unstaged changes:
+1. Check for staged changes with `git status`
+2. If staged changes exist, proceed directly to commit
+3. Skip any automatic `git add` operations
+4. This is useful when you want to commit specific changes while keeping others for a separate commit
+
+### --all mode (default behavior)
+To stage and commit all changes:
+1. Check current status
+2. If unstaged changes exist, stage them with `git add`
+3. Proceed with commit
+
 ## Important Guidelines
 
 1. **BODY IS MANDATORY** - Every commit MUST have a body explaining WHY
@@ -166,24 +240,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 3. **Follow the 50/72 character limits** for subject/body
 4. **Use imperative mood** and capitalize after type prefix
 5. **Reference issues/tickets** in footer when applicable
-6. **NO EMPTY BODIES** - Reject any commit without proper explanation
-7. **CLAUDE CODE ATTRIBUTION IS REQUIRED** - Always include the Claude Code footer
-
-## Claude Code Attribution Format
-
-All commits created by Claude Code must include this attribution in the footer:
-
-```
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-This ensures:
-- Transparency about AI-assisted development
-- Proper co-authorship tracking in Git history
-- Link to the tool for reference
-- Compliance with team's attribution standards
+6. **CLAUDE CODE ATTRIBUTION IS REQUIRED** - Always include the Claude Code footer
+7. **For staged-only commits** - Respect user's staging choices
 
 ## Validation Checklist
 
@@ -194,3 +252,4 @@ Before creating commit, ensure:
 - [ ] Blank line separates subject from body
 - [ ] Related issues/tickets are referenced if applicable
 - [ ] Claude Code attribution is included in footer
+- [ ] Staged files are handled according to user preference
