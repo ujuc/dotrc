@@ -4,11 +4,10 @@
 .vscode
 .DS_Store
 
-claude/ide
-claude/projects
-claude/shell-snapshots
-claude/statsig
-claude/todos
-claude/settings.json
-
+.claude/ide
+.claude/projects
+.claude/shell-snapshots
+.claude/statsig
+.claude/todos
+.claude/settings.json
 .claude/*.local.*
