@@ -11,6 +11,12 @@
 
 ## Commit Message Format
 
+### Core Principles
+
+- **Intent focused**: Explain WHY the change was made, not just WHAT changed
+- **Context aware**: Include background and purpose of the change
+- **Collaboration oriented**: Reflect requirements and problem awareness for team collaboration
+
 ### Template Structure
 
 ```
@@ -20,12 +26,6 @@
 
 <footer>
 ```
-
-### Writing Principles
-
-- **Intent focused**: Explain WHY the change was made, not just WHAT changed
-- **Context aware**: Include background and purpose of the change
-- **Collaboration oriented**: Reflect requirements and problem awareness for team collaboration
 
 ### Commit Types
 
@@ -37,7 +37,7 @@
 - `test`: Add or refactor tests
 - `chore`: Build process, dependencies, or tooling changes
 
-### Commit Message Rules
+### Formatting Rules
 
 #### Subject Line
 - Maximum 50 characters
@@ -55,11 +55,11 @@
 
 #### Footer
 - Reference related issues, PRs, or tickets
-- Include Claude Code attribution when applicable (see below)
+- Include Claude Code attribution when applicable
 
 ### Korean Commit Messages
 
-For Korean developers, commit messages can be written in Korean while maintaining conventional commit format:
+Korean developers can write commit messages in Korean while maintaining the conventional format:
 
 - **Type**: Keep in English (`feat:`, `fix:`, `docs:`, etc.)
 - **Subject & Body**: Can be written in Korean
@@ -78,7 +78,7 @@ JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
 
 ### Claude Code Attribution
 
-When using Claude Code to generate commits or code changes, include attribution in the footer:
+When using Claude Code to generate commits, include attribution in the footer:
 
 ```
 🤖 Generated with [Claude Code](https://claude.ai/code)
@@ -86,54 +86,4 @@ When using Claude Code to generate commits or code changes, include attribution 
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-For detailed Claude Code attribution guidelines, see `claude/commands/commit.md`.
-
-### Examples
-
-#### Feature with Attribution
-```
-feat: add user authentication system
-
-Implement JWT-based authentication to secure API endpoints.
-This change was needed because:
-
-- Previous system lacked proper security measures
-- Users requested account protection features
-- Compliance requirements for data protection
-
-Fixes #142
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-#### Refactoring
-```
-refactor: simplify database connection logic
-
-Extract connection pooling into separate module to improve
-code maintainability and reduce duplication across services.
-
-Related to INF-24
-```
-
-#### Bug Fix
-```
-fix: correct typo in error message
-
-Fix typo in authentication error message that was confusing users.
-This change improves user experience by providing clear error feedback.
-
-Related to #256
-```
-
-#### Documentation Update
-```
-docs: update API documentation for v2 endpoints
-
-Add missing parameter descriptions and response examples for
-new v2 endpoints to help developers integrate more effectively.
-
-Closes #89
-```
+> **Note**: For detailed implementation instructions and extensive examples, see [`.claude/commands/commit.md`](./commands/commit.md)

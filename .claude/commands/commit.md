@@ -11,6 +11,10 @@ description: Create a git commit following team's version control guidelines
 - Current branch: !`git branch --show-current`
 - Recent commits: !`git log --oneline -10`
 
+## Overview
+
+This command creates git commits following the team's version control guidelines defined in [`.claude/version-control.md`](../version-control.md). It analyzes changes, generates conventional commit messages, and creates commits automatically.
+
 ## Your task
 
 Generate a conventional commit message following the team's version control guidelines and create the commit automatically.
@@ -31,39 +35,27 @@ STEP 1: Analyze current git state and changes
 STEP 2: Determine conventional commit type and scope
 
 - ANALYZE the nature of changes from git diff output
-- CATEGORIZE changes using conventional commit types:
-  - `feat`: New feature
-  - `fix`: Bug fix
-  - `refactor`: Code refactoring (no functional changes)
-  - `style`: Formatting changes (no code changes)
-  - `docs`: Documentation updates
-  - `test`: Add or refactor tests
-  - `chore`: Build process, dependencies, or tooling changes
-
+- CATEGORIZE changes using conventional commit types defined in [`version-control.md`](../version-control.md#commit-types)
 - IDENTIFY scope if applicable (component, module, or functional area affected)
 
 STEP 3: Compose conventional commit message
 
+Follow the formatting rules defined in [`version-control.md`](../version-control.md#formatting-rules):
+
 ### Subject Line (max 50 characters)
 - Format: `<type>: <subject>` or `<type>(<scope>): <subject>`
-- Capitalize first letter after type
-- Use imperative mood ("add" not "added" or "adds")
-- No period at the end
+- Follow formatting rules from version-control.md
 
 ### Body (REQUIRED - MANDATORY)
 - **MUST include body for ALL commits**
-- Maximum 72 characters per line
-- Separate from subject with blank line
-- **Intent focused**: Explain WHY the change was made, not just WHAT changed
-- **Context aware**: Include background and purpose of the change
-- Use "-" for bullet points when listing multiple reasons
+- Follow the core principles and formatting rules from version-control.md
 - Minimum content requirements:
-  - Explain the motivation for the change
+  - Explain the motivation for the change (WHY)
   - Include context about why this change was needed
   - For simple changes, at least one sentence explaining why
 
 ### Footer
-- Reference related issues, PRs, or tickets (e.g., `Fixes #142`, `Related to INF-24`)
+- Reference related issues, PRs, or tickets
 - Include Claude Code attribution (see format below)
 
 STEP 4: Create the commit
@@ -97,18 +89,12 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## Korean Commit Messages
 
-### Guidelines for Korean commit messages:
+For Korean commit message guidelines, see [`version-control.md`](../version-control.md#korean-commit-messages).
 
-- **Type**: Keep in English for consistency (`feat:`, `fix:`, `docs:`, etc.)
+### Quick Reference:
+- **Type**: Keep in English (`feat:`, `fix:`, `docs:`, etc.)
 - **Subject & Body**: Can be written in Korean
-- **UTF-8 encoding**: Ensure your git config supports UTF-8
-- **Format example**:
-  ```
-  type: 한글 제목 (50자 이내)
-  
-  한글 본문으로 변경 이유를 설명합니다.
-  왜 이 변경이 필요한지 명확하게 작성합니다.
-  ```
+- **Format**: Same 50/72 character limits apply
 
 ### Korean commit message examples:
 
@@ -233,17 +219,16 @@ To stage and commit all changes:
 2. If unstaged changes exist, stage them with `git add`
 3. Proceed with commit
 
-## Important Guidelines
+## Implementation Notes
+
+### Important Requirements
 
 1. **BODY IS MANDATORY** - Every commit MUST have a body explaining WHY
-2. **Always explain WHY** in the body, not just what changed
-3. **Follow the 50/72 character limits** for subject/body
-4. **Use imperative mood** and capitalize after type prefix
-5. **Reference issues/tickets** in footer when applicable
-6. **CLAUDE CODE ATTRIBUTION IS REQUIRED** - Always include the Claude Code footer
-7. **For staged-only commits** - Respect user's staging choices
+2. **Follow all formatting rules** from [`version-control.md`](../version-control.md#formatting-rules)
+3. **CLAUDE CODE ATTRIBUTION IS REQUIRED** - Always include the Claude Code footer
+4. **Respect staging choices** - For staged-only commits, don't auto-add files
 
-## Validation Checklist
+### Validation Checklist
 
 Before creating commit, ensure:
 - [ ] Subject line follows format and is under 50 characters
@@ -253,3 +238,10 @@ Before creating commit, ensure:
 - [ ] Related issues/tickets are referenced if applicable
 - [ ] Claude Code attribution is included in footer
 - [ ] Staged files are handled according to user preference
+
+### Reference Documentation
+
+- **Principles & Guidelines**: [`version-control.md`](../version-control.md)
+- **Commit Types**: [`version-control.md#commit-types`](../version-control.md#commit-types)
+- **Formatting Rules**: [`version-control.md#formatting-rules`](../version-control.md#formatting-rules)
+- **Korean Guidelines**: [`version-control.md#korean-commit-messages`](../version-control.md#korean-commit-messages)
