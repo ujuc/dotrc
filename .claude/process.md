@@ -56,3 +56,11 @@ Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
 - **Fix root causes** - Do not rely on quick fixes that only mask symptoms
 - **Improve, don't band-aid** - Do not solve issues by just increasing memory, retries, or suppressing warnings
 - **Sustainable solutions** - Choose solutions that improve performance, stability, and maintainability
+
+## See Also
+
+- [**CLAUDE.md**](./CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](./system-rules.md) - Critical system-wide rules
+- [Philosophy](./philosophy.md) - Development philosophy and principles
+- [Quality Assurance](./quality-assurance.md) - Testing and quality gates
+- [Guidelines](./guidelines.md) - Emergency procedures and getting help

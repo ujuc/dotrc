@@ -20,3 +20,10 @@
 - Avoid premature abstractions
 - No clever tricks - choose the boring solution
 - If you need to explain it, it's too complex
+
+## See Also
+
+- [**CLAUDE.md**](./CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](./system-rules.md) - Critical system-wide rules
+- [Technical Standards](./technical-standards.md) - Code generation and architecture
+- [Process](./process.md) - Implementation workflow and planning
