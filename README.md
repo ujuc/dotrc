@@ -185,7 +185,7 @@ brew install --cask claude
 #### Claud Code Guide
 
 ```sh
-ln -sf ${DOTRCDIR}/.claude ${HOME}/.claude
+ln -sf ${DOTRCDIR}/claude ${HOME}/.claude
 ```
 
 ### [raycast](https://www.raycast.com/)
