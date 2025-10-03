@@ -1,5 +1,6 @@
 ---
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git diff:*), Bash(gdate:*)
+contexts: project, gitignored
 description: Create a git commit following team's version control guidelines
 ---
 

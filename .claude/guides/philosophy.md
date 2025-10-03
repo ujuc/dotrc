@@ -23,7 +23,7 @@
 
 ## See Also
 
-- [**CLAUDE.md**](./CLAUDE.md) - Primary document with complete guidelines
-- [System Rules](./system-rules.md) - Critical system-wide rules
-- [Technical Standards](./technical-standards.md) - Code generation and architecture
-- [Process](./process.md) - Implementation workflow and planning
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](../system-rules.md) - Critical system-wide rules
+- [Technical Standards](../technical-standards.md) - Code generation and architecture
+- [Process](../process.md) - Implementation workflow and planning

@@ -20,23 +20,24 @@ CLAUDE.md (You are here - Main entry point)
 ## Core Documents
 
 ### Development Philosophy & Process
-- [**Philosophy**](./philosophy.md) - Core beliefs and simplicity principles
-- [**Process**](./process.md) - Planning, implementation flow, and troubleshooting
-- [**Guidelines**](./guidelines.md) - Important reminders and emergency procedures
+- [**Philosophy**](./guides/philosophy.md) - Core beliefs and simplicity principles
+- [**Process**](./guides/process.md) - Planning, implementation flow, and troubleshooting
+- [**Guidelines**](./guides/guidelines.md) - Important reminders and emergency procedures
 
 ### Technical Implementation
-- [**Technical Standards**](./technical-standards.md) - Architecture, code quality, and error handling
-- [**Quality Assurance**](./quality-assurance.md) - Code review, decision framework, and quality gates
-- [**Documentation**](./documentation.md) - Code documentation and project file requirements
+- [**Technical Standards**](./guides/technical-standards.md) - Architecture, code quality, and error handling
+- [**Quality Assurance**](./guides/quality-assurance.md) - Code review, decision framework, and quality gates
+- [**Documentation**](./guides/documentation.md) - Code documentation and project file requirements
 
 ### Operations & Security
-- [**Security**](./security.md) - Security principles and data protection
-- [**Performance**](./performance.md) - Optimization guidelines and considerations
-- [**Monitoring**](./monitoring.md) - Logging standards and best practices
+- [**Security**](./guides/security.md) - Security principles and data protection
+- [**Performance**](./guides/performance.md) - Optimization guidelines and considerations
+- [**Monitoring**](./guides/monitoring.md) - Logging standards and best practices
 
 ### Collaboration
-- [**Version Control**](./version-control.md) - Git workflow and commit message format
-- [**Project Integration**](./project-integration.md) - Codebase learning, tooling, and i18n
+- [**Version Control**](./guides/version-control.md) - Git workflow and commit message format
+- [**Project Integration**](./guides/project-integration.md) - Codebase learning, tooling, and i18n
+- [**Interaction Modes**](./guides/interaction-modes.md) - Response style and reasoning control commands
 
 ## How to Use This Documentation
 
@@ -57,4 +58,4 @@ When guidelines conflict, follow this priority:
 
 _Remember: Good code is written for humans to read, and only incidentally for machines to execute._
 
-_Last Updated: 2025-09-01_
+_Last Updated: 2025-10-03_

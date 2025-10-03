@@ -124,10 +124,10 @@ Additional explanation...
 
 ## See Also
 
-- [**CLAUDE.md**](./CLAUDE.md) - Primary document with complete guidelines
-- [System Rules](./system-rules.md) - Critical system-wide rules
-- [Technical Standards](./technical-standards.md) - Code quality and standards
-- [Version Control](./version-control.md) - Git workflow and commit messages
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](../system-rules.md) - Critical system-wide rules
+- [Technical Standards](../technical-standards.md) - Code quality and standards
+- [Version Control](../version-control.md) - Git workflow and commit messages
 
 ### Documentation Reviews
 - Review docs with code changes

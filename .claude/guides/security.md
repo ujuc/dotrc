@@ -30,7 +30,7 @@
 
 ## See Also
 
-- [**CLAUDE.md**](./CLAUDE.md) - Primary document with complete guidelines
-- [System Rules](./system-rules.md) - Critical system-wide rules
-- [Technical Standards](./technical-standards.md) - Secure coding practices
-- [Guidelines](./guidelines.md) - Security warnings and best practices
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](../system-rules.md) - Critical system-wide rules
+- [Technical Standards](../technical-standards.md) - Secure coding practices
+- [Guidelines](../guidelines.md) - Security warnings and best practices

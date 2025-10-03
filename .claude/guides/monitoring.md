@@ -11,7 +11,7 @@
 
 ## See Also
 
-- [**CLAUDE.md**](./CLAUDE.md) - Primary document with complete guidelines
-- [System Rules](./system-rules.md) - Critical system-wide rules
-- [Security](./security.md) - Security principles and data protection
-- [Performance](./performance.md) - Performance optimization
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](../system-rules.md) - Critical system-wide rules
+- [Security](../security.md) - Security principles and data protection
+- [Performance](../performance.md) - Performance optimization

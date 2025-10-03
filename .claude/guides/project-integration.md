@@ -28,7 +28,7 @@
 
 ## See Also
 
-- [**CLAUDE.md**](./CLAUDE.md) - Primary document with complete guidelines
-- [System Rules](./system-rules.md) - Critical system-wide rules
-- [Process](./process.md) - Planning and implementation workflow
-- [Documentation](./documentation.md) - Documentation standards
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](../system-rules.md) - Critical system-wide rules
+- [Process](../process.md) - Planning and implementation workflow
+- [Documentation](../documentation.md) - Documentation standards

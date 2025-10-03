@@ -4,10 +4,11 @@
 .vscode
 .DS_Store
 
+.claude/file-history
 .claude/ide
 .claude/projects
 .claude/shell-snapshots
 .claude/statsig
 .claude/todos
+.claude/history*
 .claude/settings.json
-.claude/*.local.*

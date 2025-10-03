@@ -39,8 +39,8 @@
 
 ## See Also
 
-- [**CLAUDE.md**](./CLAUDE.md) - Primary document with complete guidelines
-- [System Rules](./system-rules.md) - Critical system-wide rules
-- [Philosophy](./philosophy.md) - Development philosophy and principles
-- [Quality Assurance](./quality-assurance.md) - Code review and testing
-- [Security](./security.md) - Security practices and data safety
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](../system-rules.md) - Critical system-wide rules
+- [Philosophy](../philosophy.md) - Development philosophy and principles
+- [Quality Assurance](../quality-assurance.md) - Code review and testing
+- [Security](../security.md) - Security practices and data safety

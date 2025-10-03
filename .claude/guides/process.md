@@ -59,8 +59,8 @@ Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
 
 ## See Also
 
-- [**CLAUDE.md**](./CLAUDE.md) - Primary document with complete guidelines
-- [System Rules](./system-rules.md) - Critical system-wide rules
-- [Philosophy](./philosophy.md) - Development philosophy and principles
-- [Quality Assurance](./quality-assurance.md) - Testing and quality gates
-- [Guidelines](./guidelines.md) - Emergency procedures and getting help
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](../system-rules.md) - Critical system-wide rules
+- [Philosophy](../philosophy.md) - Development philosophy and principles
+- [Quality Assurance](../quality-assurance.md) - Testing and quality gates
+- [Guidelines](../guidelines.md) - Emergency procedures and getting help

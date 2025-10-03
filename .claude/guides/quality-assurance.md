@@ -60,8 +60,8 @@ When multiple valid approaches exist, choose based on:
 
 ## See Also
 
-- [**CLAUDE.md**](./CLAUDE.md) - Primary document with complete guidelines
-- [System Rules](./system-rules.md) - Critical system-wide rules
-- [Technical Standards](./technical-standards.md) - Code quality requirements
-- [Process](./process.md) - Test-driven development workflow
-- [Guidelines](./guidelines.md) - Best practices and emergency procedures
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](../system-rules.md) - Critical system-wide rules
+- [Technical Standards](../technical-standards.md) - Code quality requirements
+- [Process](../process.md) - Test-driven development workflow
+- [Guidelines](../guidelines.md) - Best practices and emergency procedures
