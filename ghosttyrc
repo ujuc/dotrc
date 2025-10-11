@@ -1,8 +1,8 @@
-theme = nord-wave
+theme = Nord Wave
 window-theme = dark
 window-height = 30
 window-width = 120
-font-family = "Cascadia Code, D2CodingLigature Nerd Font Mono"
+font-family = "Cascadia Code NF, D2CodingLigature Nerd Font Mono"
 font-size = 12
 auto-update = download
 
