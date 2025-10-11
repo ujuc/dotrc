@@ -4,6 +4,7 @@
 .vscode
 .DS_Store
 
+claude/debug
 claude/file-history
 claude/ide
 claude/projects
