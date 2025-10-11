@@ -14,6 +14,10 @@
     "git_status": true
   },
 
+  "wrap_guides": [88, 120],
+  "show_wrap_guides": true,
+  "soft_wrap": "editor_width",
+
   "ensure_final_newline_on_save": true,
   "format_on_save": "on",
   "use_autoclose": true,
@@ -56,14 +60,17 @@
   },
 
   "agent": {
+    "always_allow_tool_actions": true,
+    "play_sound_when_agent_done": true,
+    "default_profile": "ask",
     "use_modifier_to_send": true,
     "default_model": {
       "provider": "anthropic",
-      "model": "claude-sonnet-4-thinking-latest"
+      "model": "claude-sonnet-4-5-thinking-latest"
     },
     "inline_assistant_model": {
       "provider": "anthropic",
-      "model": "claude-3-5-haiku-latest"
+      "model": "claude-sonnet-4-5-latest"
     }
   },
 
