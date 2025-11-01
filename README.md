@@ -179,13 +179,7 @@ ln -sf ${DOTRCDIR}/tigrc ${XDG_CONFIG_HOME}/tig/config
 ### [Claude](https://claude.ai/)
 
 ```sh
-brew install --cask claude
-```
-
-#### Claud Code Guide
-
-```sh
-ln -sf ${DOTRCDIR}/claude ${HOME}/.claude
+brew install --cask claude claude-code
 ```
 
 ### [raycast](https://www.raycast.com/)

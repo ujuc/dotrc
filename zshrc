@@ -59,7 +59,6 @@ function update_system() {
     zimfw update && zimfw upgrade
     brew cleanup
     # gh ext upgrade --all
-    npm upgrade -g
 }
 
 # Aliases
@@ -72,3 +71,5 @@ alias ll="eza -l --git --icons=auto"
 alias lt="eza -l --tree --icons=auto"
 alias cat="bat"
 alias vi="vim"
+
+source /Users/ujuc/.config/op/plugins.sh
