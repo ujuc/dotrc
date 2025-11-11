@@ -1,11 +1,20 @@
 {
+  "ui_font_family": "IBM Plex Sans KR",
+  "audio": {
+    "experimental.auto_speaker_volume": false,
+    "experimental.denoise": false,
+    "experimental.legacy_audio_compatible": false
+  },
+  "git_panel": {
+    "sort_by_path": true
+  },
   "icon_theme": "Catppuccin Macchiato",
   "theme": "Catppuccin Macchiato",
   "autosave": "on_focus_change",
   "restore_on_startup": "none",
   "base_keymap": "VSCode",
 
-  "buffer_font_family": "Google Sans Code",
+  "buffer_font_family": "JetBrains Mono",
   "buffer_font_fallbacks": ["D2Coding"],
   "buffer_font_size": 12,
 
@@ -25,6 +34,9 @@
   "file_scan_exclusions": ["**/.git", "**/.DS_Store", "**/Thumbs.db"],
 
   "git": {
+    "blame": {
+      "show_avatar": false
+    },
     "git_gutter": "tracked_files",
     "inline_blame": {
       "enabled": true,
@@ -46,7 +58,7 @@
   "terminal": {
     "alternate_scroll": "on",
     "copy_on_select": true,
-    "font_family": "ZedMono Nerd Font Mono",
+    "font_family": "JetBrainsMono Nerd Font Mono",
     "font_size": 12,
     "toolbar": {
       "breadcrumbs": false
@@ -70,7 +82,7 @@
     },
     "inline_assistant_model": {
       "provider": "anthropic",
-      "model": "claude-sonnet-4-5-latest"
+      "model": "claude-haiku-4-5"
     }
   },
 
