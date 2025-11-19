@@ -180,6 +180,7 @@ ln -sf ${DOTRCDIR}/tigrc ${XDG_CONFIG_HOME}/tig/config
 
 ```sh
 brew install --cask claude claude-code
+ln -sf ${DOTRCDIR}/claude ${HOME}/.claude
 ```
 
 ### [raycast](https://www.raycast.com/)
@@ -233,12 +234,6 @@ brew install mise
 # Autocomplete
 mise use -g uv
 mise use -g node
-```
-
-### [Claude Code](https://www.anthropic.com/claude-code)
-
-```sh
-npm install -g @anthropic-ai/claude-code
 ```
 
 ## Font
