@@ -72,4 +72,4 @@ alias lt="eza -l --tree --icons=auto"
 alias cat="bat"
 alias vi="vim"
 
-source /Users/ujuc/.config/op/plugins.sh
+source ${XDG_CONFIG_HOME:-$HOME/.config}/op/plugins.sh
