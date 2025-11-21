@@ -58,6 +58,7 @@ function update_system() {
     brew upgrade
     zimfw update && zimfw upgrade
     brew cleanup
+    mise up
     # gh ext upgrade --all
 }
 
