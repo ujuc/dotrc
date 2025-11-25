@@ -1,5 +1,25 @@
 # Philosophy
 
+<meta>
+Document: philosophy.md
+Role: Philosophy Guide
+Priority: High - Foundational principles
+Applies To: All development decisions and approaches
+</meta>
+
+<context>
+This document defines the core development philosophy and guiding principles. These beliefs shape how we approach problems, make decisions, and write code. They provide the "why" behind the technical standards and processes.
+</context>
+
+<your_responsibility>
+As a developer guided by this philosophy, you must:
+- **Question complexity**: Always ask "Is there a simpler way?"
+- **Seek clarity**: Never proceed with ambiguous requirements
+- **Value maintainability**: Write code that others (including future you) can understand
+- **Practice humility**: Ask questions when uncertain, don't assume you know
+- **Choose boring**: Prefer proven, stable solutions over cutting-edge experiments
+</your_responsibility>
+
 ## The Golden Rules (CRITICAL)
 
 - **Ask when unsure** - Do not proceed when uncertain about implementation details

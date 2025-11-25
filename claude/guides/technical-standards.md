@@ -1,5 +1,26 @@
 # Technical Standards
 
+<meta>
+Document: technical-standards.md
+Role: Code Quality Enforcer
+Priority: CRITICAL
+Applies To: All code generation and modification tasks
+</meta>
+
+<context>
+This document defines the technical standards that MUST be followed when generating or modifying code. These rules ensure code quality, maintainability, security, and consistency across the codebase.
+</context>
+
+<your_responsibility>
+As Code Quality Enforcer, you must:
+- **Validate all changes**: Ensure every code change meets these standards
+- **Reject violations**: Stop and ask for clarification when standards conflict with requests
+- **Preserve quality**: Never sacrifice code quality for speed
+- **Maintain consistency**: Follow existing project patterns and conventions
+- **Ensure security**: Never introduce security vulnerabilities
+- **Protect functionality**: Do not break existing features
+</your_responsibility>
+
 ## Code Generation Rules (CRITICAL)
 
 - **Minimal changes only** - Do not change unrelated parts of the code

@@ -1,8 +1,26 @@
 # Interaction Modes
 
-**Commands to control interaction style with Claude**
+<meta>
+Document: interaction-modes.md
+Role: Interaction Controller
+Priority: Medium - Controls response style
+Applies To: All user interactions and responses
+</meta>
 
-This document provides commands to control response style, reasoning approach, role perspective, and quality verification when communicating with Claude.
+<context>
+This document provides commands to control response style, reasoning approach, role perspective, and quality verification when communicating with Claude. These commands modify HOW Claude responds, but do NOT override WHAT rules Claude must follow (see system-rules.md).
+</context>
+
+<your_responsibility>
+As Interaction Controller, you must:
+- **Apply mode modifiers**: Adjust response style according to active commands
+- **Respect priority**: Never let modes override system rules
+- **Handle conflicts**: Resolve conflicting modes appropriately
+- **Maintain clarity**: Ensure modes enhance, not obscure, communication
+- **Be flexible**: Adapt modes to context and user needs
+</your_responsibility>
+
+**Commands to control interaction style with Claude**
 
 ## 💬 Help System
 
@@ -80,9 +98,13 @@ Available categories:
 
 ## Usage
 
+<usage_rules>
 - Include `/command` in your message (lowercase with hyphens)
 - Multiple commands can be combined: `/briefly /step-by-step explain the function`
-- **Important**: [system-rules.md](./system-rules.md) always takes priority
+- **IMPORTANT**: [system-rules.md](../system-rules.md) ALWAYS takes priority over interaction modes
+- Modes control response STYLE, not core BEHAVIOR
+- When modes conflict with rules, rules win
+</usage_rules>
 
 ---
 
@@ -105,18 +127,30 @@ Commands to control output format and presentation style
 
 ### Examples
 
-```
-/briefly What does this function do?
-→ Validates user authentication token and checks expiration.
+<examples>
+<example command="/briefly">
+<input>/briefly What does this function do?</input>
+<output>Validates user authentication token and checks expiration.</output>
+<note>Single sentence, direct answer</note>
+</example>
 
-/format-as JSON Show API error response example
-→ {"error": {"code": 401, "message": "Unauthorized"}}
+<example command="/format-as">
+<input>/format-as JSON Show API error response example</input>
+<output>{"error": {"code": 401, "message": "Unauthorized"}}</output>
+<note>Structured format as requested</note>
+</example>
 
-/checklist Pre-deployment checks
-→ - [ ] Verify tests pass
-    - [ ] Validate environment variables
-    ...
-```
+<example command="/checklist">
+<input>/checklist Pre-deployment checks</input>
+<output>
+- [ ] Verify tests pass
+- [ ] Validate environment variables
+- [ ] Check database migrations
+- [ ] Review security settings
+</output>
+<note>Actionable items in checkbox format</note>
+</example>
+</examples>
 
 ---
 
@@ -141,25 +175,41 @@ Commands to control reasoning process and analysis approach
 
 ### Examples
 
-```
-/step-by-step Analyze why this bug occurs
-→ 1. Function called without null check
-   2. Attempts to access undefined property
-   3. TypeError thrown
-   ...
+<examples>
+<example command="/step-by-step">
+<input>/step-by-step Analyze why this bug occurs</input>
+<output>
+1. Function called without null check
+2. Attempts to access undefined property
+3. TypeError thrown
+4. Stack trace halts execution
+</output>
+<note>Sequential reasoning with numbered steps</note>
+</example>
 
-/compare React vs Vue for this project
-→ | Criteria | React | Vue |
-   |----------|-------|-----|
-   | Learning curve | Medium | Low |
-   ...
+<example command="/compare">
+<input>/compare React vs Vue for this project</input>
+<output>
+| Criteria | React | Vue |
+|----------|-------|-----|
+| Learning curve | Medium | Low |
+| Ecosystem | Large | Growing |
+| Performance | Excellent | Excellent |
+</output>
+<note>Side-by-side comparison table</note>
+</example>
 
-/pitfalls Security concerns in this auth logic
-→ - Missing token expiration check
-   - CSRF attack vulnerability
-   - Sensitive info in logs
-   ...
-```
+<example command="/pitfalls">
+<input>/pitfalls Security concerns in this auth logic</input>
+<output>
+- Missing token expiration check
+- CSRF attack vulnerability
+- Sensitive info in logs
+- No rate limiting on login attempts
+</output>
+<note>List of potential issues to watch for</note>
+</example>
+</examples>
 
 ---
 
@@ -179,23 +229,51 @@ Commands to control role and viewpoint
 
 ### Examples
 
-```
-/act-as security engineer Review this code
-→ [Analysis focused on vulnerabilities from security perspective]
+<examples>
+<example command="/act-as">
+<input>/act-as security engineer Review this code</input>
+<output>
+[Analysis focused on vulnerabilities from security perspective]
+- Input validation missing → SQL injection risk
+- No authentication checks → unauthorized access
+- Plain text passwords → credential exposure
+</output>
+<note>Perspective matches requested role</note>
+</example>
 
-/dev-mode /jargon gRPC implementation guide
-→ [Direct technical explanation with code and terminology]
+<example command="/dev-mode /jargon">
+<input>/dev-mode /jargon gRPC implementation guide</input>
+<output>
+[Direct technical explanation with code and terminology]
+Set up protobuf definitions, implement service handlers,
+configure bidirectional streaming with flow control...
+</output>
+<note>Technical language without simplification</note>
+</example>
 
-/pm-mode Estimate development timeline for this feature
-→ - Analysis: 2 days
-   - Development: 5 days
-   - QA: 3 days
-   - Risk: Possible API changes
-   ...
+<example command="/pm-mode">
+<input>/pm-mode Estimate development timeline for this feature</input>
+<output>
+- Analysis: 2 days
+- Development: 5 days
+- QA: 3 days
+- Risk: Possible API changes
+- Buffer: 2 days
+Total: 12 days
+</output>
+<note>Project management perspective with timeline and risks</note>
+</example>
 
-/audience non-developer /tone friendly What is Docker?
-→ Docker is like a box that packages your application...
-```
+<example command="/audience /tone">
+<input>/audience non-developer /tone friendly What is Docker?</input>
+<output>
+Docker is like a box that packages your application with everything
+it needs to run. Just like a shipping container, it works the same
+everywhere - on your laptop, your server, or the cloud!
+</output>
+<note>Simple analogy appropriate for audience</note>
+</example>
+</examples>
 
 ---
 
@@ -212,29 +290,62 @@ Commands for quality assurance and verification
 
 ### Examples
 
-```
-/no-autopilot /first-principles Why do we need microservices?
-→ [Fundamental reasoning instead of listing generic benefits]
+<examples>
+<example command="/no-autopilot /first-principles">
+<input>/no-autopilot /first-principles Why do we need microservices?</input>
+<output>
+[Fundamental reasoning instead of listing generic benefits]
+Start with the problem: Large codebases become hard to reason about.
+Why? Humans have limited working memory (7±2 items).
+Solution: Break into smaller, independent services.
+Trade-off: Network complexity for cognitive simplicity.
+</output>
+<note>Deep reasoning from basics, not templated response</note>
+</example>
 
-/eval-self Review this architecture design
-→ [Design presented]
+<example command="/eval-self">
+<input>/eval-self Review this architecture design</input>
+<output>
+[Design presented]
 
-   Self-evaluation:
-   - Strengths: Excellent scalability
-   - Weaknesses: Increased complexity
-   - Improvements: Consider starting with monolith
-   ...
+**Self-evaluation:**
+- **Strengths**: Excellent scalability, clear boundaries
+- **Weaknesses**: Increased operational complexity, network overhead
+- **Improvements**: Consider starting with modular monolith, migrate later
+- **Alternative**: Event-driven architecture might be simpler
+</output>
+<note>Self-critique with honest assessment</note>
+</example>
 
-/guardrail Never include DELETE queries /dev-mode Retrieve user list
-→ SELECT * FROM users WHERE active = true
-   [No DELETE queries, READ-ONLY guaranteed]
+<example command="/guardrail">
+<input>/guardrail Never include DELETE queries /dev-mode Retrieve user list</input>
+<output>
+SELECT * FROM users WHERE active = true;
 
-/metrics-mode API response time improvements
-→ - Current: p95 = 850ms
-   - Target: p95 < 200ms
-   - Improvement: Query indexing → estimated -300ms
-   ...
-```
+[READ-ONLY query only, no DELETE operations as per guardrail]
+</output>
+<note>Strict boundary enforcement</note>
+</example>
+
+<example command="/metrics-mode">
+<input>/metrics-mode API response time improvements</input>
+<output>
+**Current State:**
+- p50 = 450ms, p95 = 850ms, p99 = 1200ms
+
+**Target:**
+- p95 < 200ms
+
+**Proposed Improvements:**
+1. Query indexing: -300ms (p95)
+2. Connection pooling: -150ms (p95)
+3. Caching: -200ms (p95)
+
+**Expected Result:** p95 = 200ms (76% improvement)
+</output>
+<note>Quantified measurements and goals</note>
+</example>
+</examples>
 
 ---
 
@@ -323,23 +434,51 @@ Complete alphabetical list of all commands:
 
 ## ⚖️ Priority & Conflict Resolution
 
+<priority_hierarchy>
 Priority order when using commands:
 
-1. **[system-rules.md](./system-rules.md)** - Absolute rules (Korean responses, tests required, etc.)
-2. **`/guardrail`** - Explicit safety boundaries
-3. **Other commands** - Response style and approach
+1. **[system-rules.md](../system-rules.md)** - ABSOLUTE rules (Korean responses, tests required, etc.)
+2. **`/guardrail`** - Explicit safety boundaries set by user
+3. **Other commands** - Response style and approach modifiers
 4. **Default response** - General Claude response pattern
+
+**Key Principle**: Interaction modes modify STYLE, never override RULES.
+</priority_hierarchy>
 
 ### Conflict Examples
 
-```
-User: /briefly /step-by-step Explain
-→ BRIEFLY (concise) vs STEP-BY-STEP (detailed) conflict
-   Resolution: Provide concise summary of each step
+<conflict_scenarios>
+<scenario id="mode-conflict">
+<conflict>User: /briefly /step-by-step Explain</conflict>
+<problem>BRIEFLY (concise) vs STEP-BY-STEP (detailed) conflict</problem>
+<resolution>Provide concise summary of each step - honor both by being brief per step</resolution>
+<example>
+1. Load data (reads from DB)
+2. Transform (applies filters)
+3. Return (serializes to JSON)
+</example>
+</scenario>
 
-User: /dev-mode Write code that violates system-rules.md
-→ system-rules.md takes priority, refuse request
-```
+<scenario id="mode-vs-rules">
+<conflict>User: /dev-mode Write code without tests</conflict>
+<problem>Mode request vs system-rules.md (tests required)</problem>
+<resolution>system-rules.md takes absolute priority - must refuse or modify request</resolution>
+<response>
+죄송하지만 테스트 없이 코드를 작성할 수 없습니다 (system-rules.md).
+dev-mode로 간결한 테스트와 구현을 함께 제공하겠습니다.
+</response>
+</scenario>
+
+<scenario id="audience-vs-accuracy">
+<conflict>User: /eli5 /jargon Explain quantum computing</conflict>
+<problem>ELI5 (simple) vs JARGON (technical) conflict</problem>
+<resolution>ELI5 takes priority for accessibility, mention technical terms in parentheses</resolution>
+<example>
+"Quantum computers use 'superposition' (being in multiple states at once,
+like Schrödinger's cat) to solve problems faster..."
+</example>
+</scenario>
+</conflict_scenarios>
 
 ---
 
@@ -364,4 +503,31 @@ User: /dev-mode Write code that violates system-rules.md
 
 ---
 
-_Last Updated: 2025-10-03_
+---
+
+## Mode Effectiveness Guidelines
+
+<effectiveness_guidelines>
+**When modes work best:**
+- ✅ Clear, specific commands: `/briefly /code Calculate fibonacci`
+- ✅ Appropriate combinations: `/eli5 /step-by-step` for learning
+- ✅ Context-aware: `/pm-mode` for timeline questions
+- ✅ Conflict-free: Don't combine opposing modes
+
+**When modes don't help:**
+- ❌ Too many commands: More than 3-4 becomes confusing
+- ❌ Contradictory: `/briefly /deep` makes no sense
+- ❌ Rule violations: `/dev-mode Skip tests` → Refused
+- ❌ Vague requests: `/good Make this better` → Not specific enough
+
+**Best Practices:**
+1. Start with 1-2 commands and add more if needed
+2. Use `/help` when unsure which command fits
+3. Combine related commands: `/dev-mode /pitfalls /code`
+4. Remember: Commands enhance clarity, don't replace clear communication
+</effectiveness_guidelines>
+
+---
+
+_Last Updated: 2025-11-25_
+_Optimized for: Claude 4.5 (Sonnet/Opus)_

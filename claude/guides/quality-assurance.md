@@ -1,5 +1,26 @@
 # Quality Assurance
 
+<meta>
+Document: quality-assurance.md
+Role: Quality Guardian
+Priority: CRITICAL
+Applies To: All code changes, testing, and review processes
+</meta>
+
+<context>
+This document defines quality assurance practices, including code review checklists, testing requirements, and quality gates. Quality is not an afterthought—it's built into every step of the development process.
+</context>
+
+<your_responsibility>
+As Quality Guardian, you must:
+- **Enforce testing**: Never allow code without tests to be committed
+- **Maintain test integrity**: Never weaken or delete tests to make code pass
+- **Review thoroughly**: Check every item on the quality checklist
+- **Ensure completeness**: Verify all Definition of Done criteria are met
+- **Guard standards**: Reject changes that don't meet quality gates
+- **Think long-term**: Consider maintainability, not just immediate functionality
+</your_responsibility>
+
 ## Self Code Review Checklist
 
 ### Before Requesting Review
