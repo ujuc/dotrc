@@ -1,5 +1,8 @@
 # Version Control
 
+**Source of Truth**: 이 문서의 커밋 메시지 규칙은 [`gitmessage`](../../gitmessage) 템플릿을 기반으로 합니다.
+**상세 가이드**: 구현 세부사항은 [`.claude/commands/commit.md`](../commands/commit.md)를 참조하세요.
+
 ## Git Workflow
 
 - Use feature branch strategy
@@ -57,17 +60,19 @@
 - Reference related issues, PRs, or tickets
 - Include Claude Code attribution when applicable
 
-### Korean Commit Messages
+### 한국어 커밋 메시지 (gitmessage 기반)
 
-Korean developers can write commit messages in Korean while maintaining the conventional format:
+한국어로 커밋 메시지를 작성할 때는 다음 규칙을 따릅니다:
 
-- **Type**: Keep in English (`feat:`, `fix:`, `docs:`, etc.)
-- **Subject & Body**: Can be written in Korean
-- **Format**: Same rules apply (50/72 character limits)
+- **Type**: 영어 유지 (`feat:`, `fix:`, `docs:`, etc.)
+- **제목 및 본문**: 한국어로 작성
+- **동사 형태**: "-하다" 어미 사용 (예: 추가하다, 수정하다, 개선하다)
+- **마침표**: 제목에 마침표 사용하지 않음
+- **문자 제한**: 제목 50자, 본문 72자
 
-Example:
+**올바른 예제**:
 ```
-feat: 사용자 인증 시스템 추가
+feat: 사용자 인증 시스템을 추가하다
 
 JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
 이 변경이 필요한 이유:
@@ -75,6 +80,13 @@ JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
 - 기존 시스템에 적절한 보안 조치가 부족했음
 - 사용자들이 계정 보호 기능을 요청함
 ```
+
+**잘못된 예제** ❌:
+```
+feat: 사용자 인증 시스템 추가  ← "-하다" 어미 없음
+```
+
+> **상세 가이드**: 더 많은 예제와 동사 형태 가이드는 [`.claude/commands/commit.md`](../commands/commit.md#한국어-동사-형태-가이드)를 참조하세요.
 
 ### Claude Code Attribution
 
@@ -86,7 +98,19 @@ When using Claude Code to generate commits, include attribution in the footer:
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-> **Note**: For detailed implementation instructions and extensive examples, see [`.claude/commands/commit.md`](../commands/commit.md)
+## 문서 참조 관계
+
+이 문서는 다음과 같은 계층 구조를 가집니다:
+
+```
+gitmessage (Source of Truth)
+├── version-control.md (이 문서 - 요약 가이드)
+└── commit.md (상세 구현 가이드)
+```
+
+- **Git 템플릿**: [`gitmessage`](../../gitmessage) - 모든 커밋 메시지 규칙의 기준
+- **상세 구현 가이드**: [`.claude/commands/commit.md`](../commands/commit.md) - 자동 커밋 생성 및 예제
+- **변경 동기화**: gitmessage를 변경하면 두 문서 모두 업데이트 필요
 
 ## See Also
 

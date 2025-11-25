@@ -14,7 +14,11 @@ description: Create a git commit following team's version control guidelines
 
 ## Overview
 
-This command creates git commits following the team's version control guidelines defined in [`.claude/version-control.md`](../version-control.md). It analyzes changes, generates conventional commit messages, and creates commits automatically.
+This command creates git commits following the team's version control guidelines. It analyzes changes, generates conventional commit messages, and creates commits automatically.
+
+**Source of Truth**: 모든 커밋 메시지 규칙은 [`gitmessage`](../../gitmessage) 템플릿을 기반으로 합니다.
+**요약 가이드**: 빠른 참조는 [`.claude/guides/version-control.md`](../guides/version-control.md)를 확인하세요.
+**이 문서**: 자동 커밋 생성을 위한 상세 구현 가이드를 제공합니다.
 
 ## 커밋 메시지 작성 원칙
 
@@ -44,23 +48,23 @@ STEP 1: Analyze current git state and changes
 STEP 2: Determine conventional commit type and scope
 
 - ANALYZE the nature of changes from git diff output
-- CATEGORIZE changes using conventional commit types defined in [`version-control.md`](../version-control.md#commit-types)
+- CATEGORIZE changes using conventional commit types defined in [`version-control.md`](../guides/version-control.md#commit-types)
 - IDENTIFY scope if applicable (component, module, or functional area affected)
 
 STEP 3: Compose conventional commit message
 
-Follow the formatting rules defined in [`version-control.md`](../version-control.md#formatting-rules):
+Follow the formatting rules defined in [`version-control.md`](../guides/version-control.md#formatting-rules):
 
 ### Subject Line (max 50 characters)
 - Format: `<type>: <subject>` or `<type>(<scope>): <subject>`
 - **Language**: 한국어로 작성 (영문 50자 이내로 한국어 작성)
 - **Verb form**: "-하다" 어미 사용 (예: 추가하다, 수정하다, 개선하다)
 - **No period**: 제목에 마침표 사용하지 않음
-- Follow formatting rules from version-control.md
+- Follow formatting rules from [version-control.md](../guides/version-control.md#formatting-rules)
 
 ### Body (REQUIRED - MANDATORY)
 - **MUST include body for ALL commits**
-- Follow the core principles and formatting rules from version-control.md
+- Follow the core principles and formatting rules from [version-control.md](../guides/version-control.md#formatting-rules)
 - Minimum content requirements:
   - Explain the motivation for the change (WHY)
   - Include context about why this change was needed
@@ -101,9 +105,9 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 ## 커밋 메시지 언어 정책
 
-**기본 원칙: 한국어로 작성**
+**기본 원칙: 한국어로 작성** (출처: [`gitmessage`](../../gitmessage#L24))
 
-자세한 가이드라인은 [`version-control.md`](../version-control.md#korean-commit-messages)를 참조하세요.
+자세한 가이드라인은 [`version-control.md`](../guides/version-control.md#한국어-커밋-메시지-gitmessage-기반)를 참조하세요.
 
 ### 작성 규칙:
 - **Type**: 영어 유지 (`feat:`, `fix:`, `docs:`, etc.)
@@ -309,7 +313,7 @@ To stage and commit all changes:
 ### Important Requirements
 
 1. **BODY IS MANDATORY** - Every commit MUST have a body explaining WHY
-2. **Follow all formatting rules** from [`version-control.md`](../version-control.md#formatting-rules)
+2. **Follow all formatting rules** from [`version-control.md`](../guides/version-control.md#formatting-rules)
 3. **CLAUDE CODE ATTRIBUTION IS REQUIRED** - Always include the Claude Code footer
 4. **Respect staging choices** - For staged-only commits, don't auto-add files
 
@@ -326,7 +330,16 @@ Before creating commit, ensure:
 
 ### Reference Documentation
 
-- **Principles & Guidelines**: [`version-control.md`](../version-control.md)
-- **Commit Types**: [`version-control.md#commit-types`](../version-control.md#commit-types)
-- **Formatting Rules**: [`version-control.md#formatting-rules`](../version-control.md#formatting-rules)
-- **Korean Guidelines**: [`version-control.md#korean-commit-messages`](../version-control.md#korean-commit-messages)
+**문서 계층 구조**:
+```
+gitmessage (Source of Truth - Git 커밋 템플릿)
+├── version-control.md (요약 가이드 - 빠른 참조)
+└── commit.md (상세 구현 가이드 - 자동 커밋 생성)
+```
+
+**참조 링크**:
+- **Source Template**: [`gitmessage`](../../gitmessage) - Git 커밋 템플릿 (모든 규칙의 기준)
+- **Summary Guide**: [`version-control.md`](../guides/version-control.md) - 버전 관리 요약 가이드
+- **Commit Types**: [`version-control.md#commit-types`](../guides/version-control.md#commit-types)
+- **Formatting Rules**: [`version-control.md#formatting-rules`](../guides/version-control.md#formatting-rules)
+- **Korean Guidelines**: [`version-control.md#한국어-커밋-메시지`](../guides/version-control.md#한국어-커밋-메시지-gitmessage-기반)
