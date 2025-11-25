@@ -13,3 +13,5 @@ claude/statsig
 claude/todos
 claude/history*
 claude/settings.json
+claude/downloads
+claude/session-env
