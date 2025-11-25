@@ -16,6 +16,14 @@ description: Create a git commit following team's version control guidelines
 
 This command creates git commits following the team's version control guidelines defined in [`.claude/version-control.md`](../version-control.md). It analyzes changes, generates conventional commit messages, and creates commits automatically.
 
+## 커밋 메시지 작성 원칙
+
+변경사항을 기반으로 의미 있는 커밋 메시지를 작성합니다:
+
+- **의도 중심**: 단순 변경 내용보다 **왜** 변경했는지 의도를 드러낸다
+- **맥락 반영**: 변경하게 된 배경과 목적을 포함한다
+- **협업 중심**: 다른 개발자가 이해할 수 있도록 요구사항과 문제 의식을 반영한다
+
 ## Your task
 
 Generate a conventional commit message following the team's version control guidelines and create the commit automatically.
@@ -45,6 +53,9 @@ Follow the formatting rules defined in [`version-control.md`](../version-control
 
 ### Subject Line (max 50 characters)
 - Format: `<type>: <subject>` or `<type>(<scope>): <subject>`
+- **Language**: 한국어로 작성 (영문 50자 이내로 한국어 작성)
+- **Verb form**: "-하다" 어미 사용 (예: 추가하다, 수정하다, 개선하다)
+- **No period**: 제목에 마침표 사용하지 않음
 - Follow formatting rules from version-control.md
 
 ### Body (REQUIRED - MANDATORY)
@@ -88,19 +99,25 @@ All commits created by Claude Code must include this attribution in the footer:
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-## Korean Commit Messages
+## 커밋 메시지 언어 정책
 
-For Korean commit message guidelines, see [`version-control.md`](../version-control.md#korean-commit-messages).
+**기본 원칙: 한국어로 작성**
 
-### Quick Reference:
-- **Type**: Keep in English (`feat:`, `fix:`, `docs:`, etc.)
-- **Subject & Body**: Can be written in Korean
-- **Format**: Same 50/72 character limits apply
+자세한 가이드라인은 [`version-control.md`](../version-control.md#korean-commit-messages)를 참조하세요.
 
-### Korean commit message examples:
+### 작성 규칙:
+- **Type**: 영어 유지 (`feat:`, `fix:`, `docs:`, etc.)
+- **제목 및 본문**: **한국어로 작성** (영문 50자 이내로 한국어 작성)
+- **동사 형태**: 현재 완료형 어미 "-하다" 사용 (예: 추가하다, 수정하다, 개선하다)
+- **마침표**: 제목에 마침표 사용하지 않음
+- **문자 제한**: 제목 50자, 본문 72자
+
+## 커밋 메시지 예제 (한국어)
+
+### 기능 추가:
 
 ```
-feat: 사용자 인증 시스템 추가
+feat: 사용자 인증 시스템을 추가하다
 
 JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
 이 변경이 필요한 이유:
@@ -116,8 +133,10 @@ Fixes #142
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
+### 버그 수정:
+
 ```
-fix: 인증 오류 메시지 오타 수정
+fix: 인증 오류 메시지 오타를 수정하다
 
 사용자에게 혼란을 주던 인증 오류 메시지의 오타를 수정합니다.
 명확한 오류 피드백으로 사용자 경험을 개선합니다.
@@ -129,8 +148,10 @@ Related to #256
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
+### 코드 리팩토링:
+
 ```
-refactor: 데이터베이스 연결 로직 단순화
+refactor: 데이터베이스 연결 로직을 단순화하다
 
 연결 풀링을 별도 모듈로 추출하여 코드 유지보수성을
 향상시키고 서비스 간 중복을 제거합니다.
@@ -142,7 +163,26 @@ Related to INF-24
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-## Example commit messages (English)
+### 한국어 동사 형태 가이드
+
+**올바른 형태 ✅**:
+- `feat: 사용자 인증을 추가하다`
+- `fix: 로그인 버그를 수정하다`
+- `refactor: 코드 구조를 개선하다`
+- `docs: README를 업데이트하다`
+- `test: 단위 테스트를 추가하다`
+- `chore: 의존성 패키지를 업그레이드하다`
+
+**잘못된 형태 ❌**:
+- `feat: 사용자 인증 추가` (어미 없음)
+- `fix: 로그인 버그 수정` (어미 없음)
+- `refactor: 코드 구조 개선` (어미 없음)
+
+**핵심 원칙**: 항상 "-하다" 어미를 포함하여 현재 완료형으로 작성합니다.
+
+## 참고: 영어 커밋 메시지 예제
+
+영어로 작성이 필요한 경우를 위한 참고 예제입니다.
 
 ### Feature addition:
 ```
@@ -203,6 +243,50 @@ Closes #89
 🤖 Generated with [Claude Code](https://claude.ai/code)
 
 Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+## 언어별 작성 규칙
+
+### 한국어 커밋 (기본)
+
+**제목 작성**:
+- 형식: `<type>: <한국어 제목>`
+- 동사: "-하다" 어미 사용 (예: 추가하다, 수정하다, 개선하다)
+- 길이: 영문 50자 이내 (한글 약 25자 내외)
+- 마침표: 사용하지 않음
+
+**본문 작성**:
+- 언어: 한국어
+- 내용: 변경의 이유(WHY), 배경, 맥락 포함
+- 길이: 각 줄 72자 이내
+
+**예시**:
+```
+feat: 사용자 인증 시스템을 추가하다
+
+JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
+보안 강화 요구사항을 충족하기 위해 필요합니다.
+```
+
+### 영어 커밋 (참고용)
+
+**Subject Line**:
+- Format: `<type>: <English subject>`
+- Verb: Imperative mood (add, fix, update)
+- Length: 50 characters max
+- No period at the end
+
+**Body**:
+- Language: English
+- Content: Explain WHY, context, and background
+- Length: 72 characters per line
+
+**Example**:
+```
+feat: add user authentication system
+
+Implement JWT-based authentication to secure API endpoints.
+This addresses security enhancement requirements.
 ```
 
 ## Commit Options
