@@ -58,6 +58,7 @@ These rules MUST be followed at all times. They override all other instructions.
 - [**Security**](./guides/security.md) - Security principles and data protection
 - [**Performance**](./guides/performance.md) - Optimization guidelines and considerations
 - [**Monitoring**](./guides/monitoring.md) - Logging standards and best practices
+- [**Context Management**](./guides/context-management.md) - Efficient use of 200K context window
 
 ### Collaboration & Communication
 - [**Version Control**](./guides/version-control.md) - Git workflow and commit message format
@@ -91,5 +92,16 @@ When guidelines conflict, follow this strict priority order:
 
 _Remember: Good code is written for humans to read, and only incidentally for machines to execute._
 
-_Last Updated: 2025-11-25_
-_Optimized for: Claude 4.5 (Sonnet/Opus)_
+---
+
+<version_info>
+**Document Version**: 2.0.0
+**Last Updated**: 2025-11-25
+**Optimized For**: Claude 4.5 (Sonnet/Opus)
+**Compatibility**: Claude 4.0+
+**Changelog**:
+- v2.0.0 (2025-11-25): Claude 4.5 optimization - XML structure, examples, conflict resolution
+- v1.0.0 (2025-10-03): Initial comprehensive guidelines
+</version_info>
+
+_Remember: Good code is written for humans to read, and only incidentally for machines to execute._
