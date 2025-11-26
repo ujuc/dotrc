@@ -9,11 +9,6 @@
 		"sequential-thinking": {
 			"command": "mise",
 			"args": ["exec", "--", "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
-		},
-		"context7": {
-			"type": "stdio",
-			"command": "mise",
-			"args": ["exec", "--", "npx", "-y", "@upstash/context7-mcp"]
 		}
 	}
 }
