@@ -1,9 +1,6 @@
 # history
 setopt HIST_IGNORE_ALL_DUPS
 
-# starship
-eval "$(starship init zsh)"
-
 # Zsh function file dir
 ZFUNCDIR=${ZDOTDIR}/.zfunc
 fpath=(${ZFUNCDIR} $fpath)
@@ -37,17 +34,24 @@ for key ('k') bindkey -M vicmd ${key} history-substring-search-up
 for key ('j') bindkey -M vicmd ${key} history-substring-search-down
 unset key
 
-# mise
-if (( $+commands[mise] )); then
-    eval "$(mise activate zsh)"
-fi
+# starship
+_evalcache starship init zsh
 
 # fzf
-[ -f ~/.fzf.zsh ] && source <(fzf --zsh)
+if [[ -f ~/.fzf.zsh ]]; then
+    source ~/.fzf.zsh
+else
+    source <(fzf --zsh)
+fi
 
 # zoxide
 if (( $+commands[zoxide] )); then
-    eval "$(zoxide init zsh)"
+    _evalcache zoxide init zsh
+fi
+
+# mise (zoxide 다음에 위치해야 PROMPT_COMMAND 훅이 정상 동작)
+if (( $+commands[mise] )); then
+    _evalcache mise activate zsh
 fi
 
 # work
