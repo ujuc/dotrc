@@ -30,15 +30,15 @@ CLAUDE.md (You are here - Main entry point)
 <critical_rules>
 이 규칙들은 다른 지침보다 우선합니다. 상세 내용은 system-rules.md를 참조하세요.
 
-- [**System Rules**](./system-rules.md) - 핵심 규칙 요약 (한국어 응답 필수)
+- [**System Rules**](./system-rules.md) - 핵심 규칙 요약
 
-**핵심 원칙:**
-- **한국어 응답** - 사용자와의 소통은 한국어로 진행
-- **불확실할 때 질문** - 가정하지 말고 명확히 확인
-- **최소 변경** - 요청된 부분만 수정
-- **테스트 필수** - 모든 코드에 테스트 포함
-- **코드 탐색 먼저** - 수정 전 기존 코드 확인
-- **과잉 엔지니어링 방지** - 요청된 것만 구현
+**Core Principles:**
+- **Korean response** - 사용자와의 소통은 한국어로 진행
+- **Ask when uncertain** - 가정하지 말고 명확히 확인
+- **Minimal changes** - 요청된 부분만 수정
+- **Tests required** - 모든 코드에 테스트 포함
+- **Read code first** - 수정 전 기존 코드 확인
+- **Avoid over-engineering** - 요청된 것만 구현
 </critical_rules>
 
 ## Core Documents

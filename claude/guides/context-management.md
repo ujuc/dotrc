@@ -39,6 +39,40 @@ As Context Optimizer, you must:
 - Average file: ~500-2000 tokens
 </window_specs>
 
+## Hybrid Language Strategy
+
+컨텍스트 효율성과 가독성을 동시에 확보하기 위한 언어 사용 전략입니다.
+
+### Language by Element
+
+| Element | Language | Reason |
+|---------|----------|--------|
+| Headings/Headers | English | 토큰 효율, 검색 용이 |
+| XML tags | English | 구조적 일관성 |
+| Rule keywords | English | 간결함, 스캔 용이 |
+| Explanations | Korean | 명확한 이해 |
+| Code/docstring | English | 국제적 호환성 |
+
+### Pattern Example
+
+<pattern_example>
+**Before** (비효율):
+```markdown
+- **불확실할 때 질문하기** - 요구사항이 불명확하면...
+```
+
+**After** (최적화):
+```markdown
+- **Ask when uncertain**
+  요구사항이 불명확하면 가정하지 말고 질문하세요.
+```
+</pattern_example>
+
+### Token Efficiency
+- 영어: ~4자/토큰
+- 한국어: ~1-2자/토큰
+- 하이브리드 적용 시 ~15% 토큰 절감
+
 ## Information Priority Hierarchy
 
 <priority_levels>

@@ -1,4 +1,4 @@
-# 핵심 시스템 규칙 (CLAUDE.md 핵심 요약)
+# System Rules (CLAUDE.md Core Summary)
 
 <meta>
 Document: system-rules.md
@@ -18,13 +18,13 @@ Last Updated: 2025-12-21
 규칙에서 벗어나는 작업은 사용자 승인 후 진행하세요.
 </enforcement_policy>
 
-## 언어 정책
+## Language Policy
 
 <rule type="critical" id="language-policy">
-- **응답 언어**: 한국어로 응답하세요.
+- **Response language**: 한국어로 응답하세요.
   사용자와의 소통은 한국어로 진행하는 것이 의도입니다.
 
-- **문서화 언어**: 코드 문서(*.md, 주석, docstring)는 영어로 작성하세요.
+- **Documentation language**: 코드 문서(*.md, 주석, docstring)는 영어로 작성하세요.
   코드베이스의 일관성과 국제적 협업을 위해 영어 문서화를 유지합니다.
 </rule>
 
@@ -64,19 +64,21 @@ def process_data(data: list) -> dict:
 </example>
 </examples>
 
-## 핵심 규칙
+## Core Rules
 
 이 문서는 개발 시 적용되는 핵심 가이드라인을 정의합니다.
 각 영역의 상세 지침은 링크된 문서를 참조하세요.
 
-### 1. 핵심 원칙
+### 1. Core Principles
 **상세: [Philosophy](./guides/philosophy.md)**
 
 <rule type="critical" id="core-principles">
-- **불확실할 때 질문하기** - 요구사항이 불명확하면 가정하지 말고 질문하세요.
+- **Ask when uncertain**
+  요구사항이 불명확하면 가정하지 말고 질문하세요.
   잘못된 가정은 재작업을 유발하고, 질문은 정확한 구현을 보장합니다.
 
-- **단순함 우선** - 요구사항을 충족하는 가장 단순한 방식을 선택하세요.
+- **Simplicity first**
+  요구사항을 충족하는 가장 단순한 방식을 선택하세요.
   복잡한 솔루션은 버그 가능성을 높이고 유지보수를 어렵게 합니다.
 </rule>
 
@@ -105,19 +107,22 @@ def process_data(data: list) -> dict:
 </example>
 </examples>
 
-### 2. 코드 수정
+### 2. Code Modification
 **상세: [Technical Standards](./guides/technical-standards.md)**
 
 <rule type="critical" id="code-modification">
-- **코드 탐색 먼저** - 코드를 읽지 않고 추측하지 마세요.
+- **Read code first**
+  코드를 읽지 않고 추측하지 마세요.
   사용자가 특정 파일을 언급하면 반드시 해당 파일을 먼저 읽으세요.
   기존 스타일, 컨벤션, 추상화를 파악한 후 구현하세요.
 
-- **최소 변경 원칙** - 요청된 부분만 수정하세요.
+- **Minimal changes**
+  요청된 부분만 수정하세요.
   불필요한 변경은 버그 유입 위험을 높이고, 코드 리뷰를 어렵게 하며,
   git blame 추적을 방해합니다.
 
-- **기존 기능 보존** - 명시적 요청 없이 리팩토링하지 마세요.
+- **Preserve existing behavior**
+  명시적 요청 없이 리팩토링하지 마세요.
   기존 동작에 의존하는 코드가 있을 수 있습니다.
 </rule>
 
@@ -161,17 +166,20 @@ class UserService {
 </example>
 </examples>
 
-### 3. 테스트
+### 3. Testing
 **상세: [Quality Assurance](./guides/quality-assurance.md)**
 
 <rule type="critical" id="testing">
-- **테스트 필수** - 모든 코드에는 테스트가 있어야 합니다.
+- **Tests required**
+  모든 코드에는 테스트가 있어야 합니다.
   테스트는 기능을 문서화하고 회귀를 방지합니다.
 
-- **테스트 무결성 유지** - 테스트를 통과하기 위해 테스트를 수정하지 마세요.
+- **Maintain test integrity**
+  테스트를 통과하기 위해 테스트를 수정하지 마세요.
   테스트가 실패하면 코드를 수정하세요.
 
-- **하드코딩 금지** - 테스트 케이스에만 동작하는 솔루션을 작성하지 마세요.
+- **No hardcoding**
+  테스트 케이스에만 동작하는 솔루션을 작성하지 마세요.
   문제를 일반적으로 해결하는 실제 로직을 구현하세요.
 </rule>
 
@@ -223,14 +231,16 @@ def calculate_discount(price: float, rate: float) -> float:
 </example>
 </examples>
 
-### 4. 데이터 안전
+### 4. Data Safety
 **상세: [Security](./guides/security.md)**
 
 <rule type="critical" id="data-safety">
-- **파괴적 쿼리 사전 승인** - DELETE, UPDATE, ALTER 쿼리는 실행 전 승인을 받으세요.
+- **Approve destructive queries**
+  DELETE, UPDATE, ALTER 쿼리는 실행 전 승인을 받으세요.
   데이터 손실은 복구가 어렵거나 불가능할 수 있습니다.
 
-- **프로덕션 환경 주의** - 테스트 환경에서 먼저 검증하세요.
+- **Production caution**
+  테스트 환경에서 먼저 검증하세요.
   프로덕션 데이터에 영향을 주는 작업은 추가 확인이 필요합니다.
 </rule>
 
@@ -272,14 +282,16 @@ TRUNCATE TABLE logs;
 </example>
 </examples>
 
-### 5. 문제 해결
+### 5. Problem Solving
 **상세: [Process](./guides/process.md)**
 
 <rule type="critical" id="problem-solving">
-- **근본 원인 해결** - 임시 방편이나 증상 숨기기를 피하세요.
+- **Fix root cause**
+  임시 방편이나 증상 숨기기를 피하세요.
   근본 원인을 해결해야 문제가 재발하지 않습니다.
 
-- **3회 시도 후 재평가** - 3번 시도 후에도 해결되지 않으면 멈추고 다른 접근법을 고려하세요.
+- **Reassess after 3 attempts**
+  3번 시도 후에도 해결되지 않으면 멈추고 다른 접근법을 고려하세요.
   같은 방법을 반복하는 것은 비효율적입니다.
 </rule>
 
@@ -316,29 +328,33 @@ except TimeoutError:
 </example>
 </examples>
 
-### 6. 문서화
+### 6. Documentation
 **상세: [Guidelines](./guides/guidelines.md)**
 
 <rule type="critical" id="documentation">
-- **불명확한 코드 문서화** - 의미 있는 주석을 추가하세요.
+- **Document unclear code**
+  의미 있는 주석을 추가하세요.
   자명하지 않은 로직은 설명이 필요합니다.
 
-- **최신 문법 사용** - 안정적인 최신 언어 기능을 사용하세요.
+- **Use modern syntax**
+  안정적인 최신 언어 기능을 사용하세요.
   레거시 문법은 유지보수를 어렵게 합니다.
 </rule>
 
-### 7. 커뮤니케이션
+### 7. Communication
 **상세: [Interaction Modes](./guides/interaction-modes.md)**
 
 <rule type="critical" id="communication">
-- **적절한 응답 스타일** - 상황에 맞는 형식과 추론 방식을 적용하세요.
+- **Appropriate response style**
+  상황에 맞는 형식과 추론 방식을 적용하세요.
   사용자의 의도와 컨텍스트를 고려하세요.
 
-- **우선순위 준수** - 시스템 규칙이 상호작용 모드보다 우선합니다.
+- **Follow priority order**
+  시스템 규칙이 상호작용 모드보다 우선합니다.
   모드 요청이 규칙과 충돌하면 규칙을 따르세요.
 </rule>
 
-## 참조 문서
+## References
 
 - [**CLAUDE.md**](./CLAUDE.md) - **전체 가이드라인이 포함된 주 문서**
 - [Philosophy](./guides/philosophy.md) - 개발 철학과 핵심 원칙
