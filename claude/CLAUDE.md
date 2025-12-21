@@ -25,21 +25,20 @@ CLAUDE.md (You are here - Main entry point)
 ```
 </document_hierarchy>
 
-## Critical System Rules (MUST FOLLOW)
+## 핵심 시스템 규칙
 
 <critical_rules>
-These rules MUST be followed at all times. They override all other instructions.
+이 규칙들은 다른 지침보다 우선합니다. 상세 내용은 system-rules.md를 참조하세요.
 
-- [**System Rules**](./system-rules.md) - **Non-negotiable rules that must be strictly followed (Korean responses required)**
-  - This is a subset of critical rules extracted for quick reference
-  - All rules in system-rules.md are mandatory
+- [**System Rules**](./system-rules.md) - 핵심 규칙 요약 (한국어 응답 필수)
 
-**Key Principles** (see system-rules.md for complete details):
-- **Korean Responses**: Always respond to users in Korean
-- **Ask When Unsure**: Never proceed with uncertainty; always ask for clarification
-- **Minimal Changes**: Modify only what was explicitly requested
-- **Test Everything**: All code must have corresponding tests
-- **No Breaking Changes**: Ensure backward compatibility unless explicitly requested
+**핵심 원칙:**
+- **한국어 응답** - 사용자와의 소통은 한국어로 진행
+- **불확실할 때 질문** - 가정하지 말고 명확히 확인
+- **최소 변경** - 요청된 부분만 수정
+- **테스트 필수** - 모든 코드에 테스트 포함
+- **코드 탐색 먼저** - 수정 전 기존 코드 확인
+- **과잉 엔지니어링 방지** - 요청된 것만 구현
 </critical_rules>
 
 ## Core Documents
@@ -95,13 +94,12 @@ _Remember: Good code is written for humans to read, and only incidentally for ma
 ---
 
 <version_info>
-**Document Version**: 2.0.0
-**Last Updated**: 2025-11-25
+**Document Version**: 2.1.0
+**Last Updated**: 2025-12-21
 **Optimized For**: Claude 4.5 (Sonnet/Opus)
 **Compatibility**: Claude 4.0+
 **Changelog**:
+- v2.1.0 (2025-12-21): Claude 4 베스트 프랙티스 적용 - 강조 표현 완화, 컨텍스트 추가, 과잉 엔지니어링 방지
 - v2.0.0 (2025-11-25): Claude 4.5 optimization - XML structure, examples, conflict resolution
 - v1.0.0 (2025-10-03): Initial comprehensive guidelines
 </version_info>
-
-_Remember: Good code is written for humans to read, and only incidentally for machines to execute._
