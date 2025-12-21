@@ -1,4 +1,4 @@
-# 품질 보증
+# Quality Assurance
 
 <meta>
 Document: quality-assurance.md
@@ -51,15 +51,18 @@ When multiple valid approaches exist, choose based on:
 6. **Performance** - Is the performance acceptable?
 7. **Security** - Are there security implications?
 
-## 테스트 코드 규칙
+## Test Code Rules
 
-- **테스트 필수** - 구현 코드와 함께 테스트를 작성하세요.
+- **Tests required**
+  구현 코드와 함께 테스트를 작성하세요.
   테스트는 기능을 문서화하고 회귀를 방지합니다.
 
-- **테스트 무결성 유지** - 테스트를 통과시키기 위해 테스트를 수정하지 마세요.
+- **Maintain test integrity**
+  테스트를 통과시키기 위해 테스트를 수정하지 마세요.
   테스트가 실패하면 실제 문제를 수정하세요.
 
-- **하드코딩 금지** - 테스트 케이스에만 동작하는 솔루션을 작성하지 마세요.
+- **No hardcoding**
+  테스트 케이스에만 동작하는 솔루션을 작성하지 마세요.
   문제를 일반적으로 해결하는 실제 로직을 구현하세요.
   테스트가 잘못되었다면 사용자에게 알려주세요.
 
@@ -71,11 +74,14 @@ When multiple valid approaches exist, choose based on:
 - 문제를 일반적으로 해결하는 실제 알고리즘을 구현하세요
 </test_integrity>
 
-- **테스트 변경 승인** - 테스트 파일, 데이터, 픽스처를 임의로 수정하지 마세요.
+- **Approval for test changes**
+  테스트 파일, 데이터, 픽스처를 임의로 수정하지 마세요.
 
-- **API 변경 확인** - 승인 없이 API 이름/파라미터를 변경하지 마세요.
+- **Confirm API changes**
+  승인 없이 API 이름/파라미터를 변경하지 마세요.
 
-- **데이터 변경 논의** - 사용자 논의 없이 데이터를 마이그레이션하거나 수정하지 마세요.
+- **Discuss data changes**
+  사용자 논의 없이 데이터를 마이그레이션하거나 수정하지 마세요.
 
 ## Quality Gates
 

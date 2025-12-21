@@ -9,30 +9,33 @@ Optimized For: Claude 4.5 (Sonnet/Opus)
 Last Updated: 2025-12-21
 </meta>
 
-## 유지보수 규칙
+## Maintenance Rules
 
-- **불명확한 코드 문서화** - 모호한 코드나 이름은 주석으로 설명을 추가하세요.
-- **모델 변경 확인** - LLM 모델 버전 변경 시 사용자에게 먼저 확인받으세요.
-- **최신 문법 사용** - 최신 안정 버전의 언어 문법을 사용하세요.
+- **Document unclear code**
+  모호한 코드나 이름은 주석으로 설명을 추가하세요.
+- **Confirm model changes**
+  LLM 모델 버전 변경 시 사용자에게 먼저 확인받으세요.
+- **Use modern syntax**
+  최신 안정 버전의 언어 문법을 사용하세요.
 
-## 행동 기본값
+## Default Behaviors
 
 <default_to_action>
 사용자 의도가 불명확할 때는 가장 유용한 행동을 추론하여 진행하세요:
 
-**기본 원칙:**
+**Core principles:**
 - "제안해줘"라고 해도 구현이 의도일 수 있습니다 - 맥락을 고려하세요
 - 도구를 사용하여 부족한 정보를 직접 파악하세요
 - 제안보다는 구현을 기본으로 하세요
 
-**단, 다음 작업은 항상 명시적 승인을 받으세요:**
+**Always require explicit approval for:**
 - 파괴적 작업 (DELETE, DROP, 대규모 삭제)
 - 대규모 리팩토링
 - API 변경이나 Breaking changes
 - 프로덕션 환경 작업
 </default_to_action>
 
-## 피해야 할 것
+## Things to Avoid
 
 - `--no-verify`로 커밋 훅 우회
 - 테스트 수정 대신 비활성화
@@ -43,7 +46,7 @@ Last Updated: 2025-12-21
 - 코드 리뷰 생략
 - 정당한 이유 없이 deprecated API 사용
 
-## 항상 해야 할 것
+## Things to Always Do
 
 - 점진적으로 작동하는 코드 커밋
 - 진행하면서 계획 문서 업데이트

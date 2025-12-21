@@ -111,7 +111,7 @@ When using Claude Code to generate commits, include attribution in the footer:
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-## 문서 참조 관계
+## Document Reference
 
 이 문서는 다음과 같은 계층 구조를 가집니다:
 

@@ -1,4 +1,4 @@
-# 프로세스
+# Process
 
 <meta>
 Document: process.md
@@ -14,17 +14,17 @@ Last Updated: 2025-12-21
 이 구조화된 접근 방식을 따르면 일관되고 고품질의 코드를 제공할 수 있습니다.
 </context>
 
-## 병렬 작업 가이드
+## Parallel Operations Guide
 
 <parallel_operations>
 Claude 4.x는 병렬 도구 실행에 뛰어납니다. 효율성을 위해 활용하세요:
 
-**병렬로 수행할 작업:**
+**Run in parallel:**
 - 여러 파일 동시 읽기
 - 독립적인 검색 동시 실행
 - 의존성 없는 명령 동시 실행
 
-**순차적으로 수행할 작업:**
+**Run sequentially:**
 - 이전 결과에 의존하는 작업
 - 한 작업의 출력이 다음 작업의 입력인 경우
 
@@ -138,39 +138,42 @@ Example:
 "**Step 2: Testing** - Writing test for invalid password scenario..."
 </instruction>
 
-## 3. 막혔을 때 (3회 시도 후)
+## 3. When Stuck (After 3 Attempts)
 
 3번 시도 후에도 해결되지 않으면 멈추고 다른 접근법을 고려하세요.
 같은 방법을 반복하는 것은 비효율적입니다.
 
-1. **실패한 내용 문서화**:
+1. **Document what failed**:
    - 시도한 것
    - 구체적인 에러 메시지
    - 실패 원인 추정
 
-2. **대안 조사**:
+2. **Research alternatives**:
    - 2-3개의 유사한 구현 찾기
    - 다른 접근법 기록
 
-3. **기본 사항 점검**:
+3. **Check fundamentals**:
    - 올바른 추상화 수준인가?
    - 더 작은 문제로 분할할 수 있는가?
    - 완전히 다른 단순한 접근법이 있는가?
 
-4. **다른 각도에서 시도**:
+4. **Try different angle**:
    - 다른 라이브러리/프레임워크 기능?
    - 다른 아키텍처 패턴?
    - 추상화를 추가하는 대신 제거?
 
-## 문제 해결 원칙
+## Problem Solving Principles
 
-- **근본 원인 해결** - 증상만 숨기는 임시 방편을 피하세요.
+- **Fix root cause**
+  증상만 숨기는 임시 방편을 피하세요.
   근본 원인을 해결해야 문제가 재발하지 않습니다.
 
-- **밴드에이드가 아닌 개선** - 메모리 증가, 재시도 횟수 증가, 경고 억제로
+- **Improve, not band-aid**
+  메모리 증가, 재시도 횟수 증가, 경고 억제로
   문제를 해결하지 마세요. 이는 문제를 미루는 것일 뿐입니다.
 
-- **지속 가능한 솔루션** - 성능, 안정성, 유지보수성을 개선하는
+- **Sustainable solutions**
+  성능, 안정성, 유지보수성을 개선하는
   솔루션을 선택하세요.
 
 ## Troubleshooting Decision Tree
