@@ -1,12 +1,13 @@
 {
+  "disable_ai": false,
   "ui_font_family": "IBM Plex Sans KR",
   "audio": {
     "experimental.auto_speaker_volume": false,
     "experimental.denoise": false,
-    "experimental.legacy_audio_compatible": false
+    "experimental.legacy_audio_compatible": false,
   },
   "git_panel": {
-    "sort_by_path": true
+    "sort_by_path": true,
   },
   "icon_theme": "Catppuccin Macchiato",
   "theme": "Catppuccin Macchiato",
@@ -14,13 +15,13 @@
   "restore_on_startup": "none",
   "base_keymap": "VSCode",
 
-  "buffer_font_family": "JetBrains Mono",
-  "buffer_font_fallbacks": ["D2Coding"],
+  "buffer_font_family": "Google Sans Code",
+  "buffer_font_fallbacks": ["JetBrains Mono", "D2Coding"],
   "buffer_font_size": 12,
 
   "tabs": {
     "file_icons": true,
-    "git_status": true
+    "git_status": true,
   },
 
   "wrap_guides": [88, 120],
@@ -35,19 +36,19 @@
 
   "git": {
     "blame": {
-      "show_avatar": false
+      "show_avatar": false,
     },
     "git_gutter": "tracked_files",
     "inline_blame": {
       "enabled": true,
-      "show_commit_summary": true
-    }
+      "show_commit_summary": true,
+    },
   },
 
   "indent_guides": {
     "enabled": true,
     "coloring": "indent_aware",
-    "background_coloring": "indent_aware"
+    "background_coloring": "indent_aware",
   },
 
   "preferred_line_length": 88,
@@ -61,14 +62,14 @@
     "font_family": "JetBrainsMono Nerd Font Mono",
     "font_size": 12,
     "toolbar": {
-      "breadcrumbs": false
-    }
+      "breadcrumbs": false,
+    },
   },
 
   "project_panel": {
     "scrollbar": {
-      "show": "auto"
-    }
+      "show": "auto",
+    },
   },
 
   "agent": {
@@ -78,16 +79,16 @@
     "use_modifier_to_send": true,
     "default_model": {
       "provider": "anthropic",
-      "model": "claude-sonnet-4-5-thinking-latest"
+      "model": "claude-sonnet-4-5-latest",
     },
     "inline_assistant_model": {
       "provider": "anthropic",
-      "model": "claude-haiku-4-5"
-    }
+      "model": "claude-haiku-4-5",
+    },
   },
 
   // editor 시스템 설정
   "cursor_shape": "bar",
   "confirm_quit": false,
-  "auto_update": true
+  "auto_update": true,
 }

@@ -239,6 +239,9 @@ mise use -g node
 ## Font
 
 ```sh
+# google sans
+font-google-sans-code
+
 # MS cascdia code font https://github.com/microsoft/cascadia-code
 font-cascadia-code
 font-cascadia-code-nf
