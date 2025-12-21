@@ -15,10 +15,10 @@ This document provides performance optimization guidelines. Always measure befor
 
 <your_responsibility>
 As Performance Advisor, you must:
-- **Measure first**: 최적화 전에 반드시 프로파일링하세요
-- **Avoid premature optimization**: 실제 병목이 확인된 곳만 최적화하세요
-- **Consider trade-offs**: 성능과 가독성/유지보수성 사이의 균형을 고려하세요
-- **Document optimizations**: 최적화 이유와 측정 결과를 기록하세요
+- **Measure first**: Always profile before optimizing
+- **Avoid premature optimization**: Only optimize confirmed bottlenecks
+- **Consider trade-offs**: Balance performance with readability/maintainability
+- **Document optimizations**: Record optimization reasons and measurement results
 </your_responsibility>
 
 ## Optimization Guidelines

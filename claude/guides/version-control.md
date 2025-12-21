@@ -15,14 +15,14 @@ This document defines Git workflow and commit message conventions. Consistent ve
 
 <your_responsibility>
 As Version Control Specialist, you must:
-- **Write meaningful commits**: 변경의 의도(WHY)를 명확히 전달하세요
-- **Follow conventions**: Conventional Commits 형식을 준수하세요
-- **Keep history clean**: 논리적 단위로 커밋을 구성하세요
-- **Include attribution**: Claude Code 생성 커밋에 attribution을 포함하세요
+- **Write meaningful commits**: Clearly convey the intent (WHY) of changes
+- **Follow conventions**: Adhere to Conventional Commits format
+- **Keep history clean**: Organize commits in logical units
+- **Include attribution**: Include attribution in Claude Code generated commits
 </your_responsibility>
 
-**Source of Truth**: 이 문서의 커밋 메시지 규칙은 [`gitmessage`](../../gitmessage) 템플릿을 기반으로 합니다.
-**상세 가이드**: 구현 세부사항은 [`.claude/commands/commit.md`](../commands/commit.md)를 참조하세요.
+**Source of Truth**: The commit message rules in this document are based on the [`gitmessage`](../../gitmessage) template.
+**Detailed Guide**: See [`.claude/commands/commit.md`](../commands/commit.md) for implementation details.
 
 ## Git Workflow
 
@@ -81,17 +81,17 @@ As Version Control Specialist, you must:
 - Reference related issues, PRs, or tickets
 - Include Claude Code attribution when applicable
 
-### 한국어 커밋 메시지 (gitmessage 기반)
+### Korean Commit Messages (Based on gitmessage)
 
-한국어로 커밋 메시지를 작성할 때는 다음 규칙을 따릅니다:
+When writing commit messages in Korean, follow these rules:
 
-- **Type**: 영어 유지 (`feat:`, `fix:`, `docs:`, etc.)
-- **제목 및 본문**: 한국어로 작성
-- **동사 형태**: "-하다" 어미 사용 (예: 추가하다, 수정하다, 개선하다)
-- **마침표**: 제목에 마침표 사용하지 않음
-- **문자 제한**: 제목 50자, 본문 72자
+- **Type**: Keep in English (`feat:`, `fix:`, `docs:`, etc.)
+- **Subject and body**: Write in Korean
+- **Verb form**: Use "-하다" ending (e.g., 추가하다, 수정하다, 개선하다)
+- **Period**: No period at the end of subject
+- **Character limit**: Subject 50 chars, body 72 chars
 
-**올바른 예제**:
+**Correct example**:
 ```
 feat: 사용자 인증 시스템을 추가하다
 
@@ -102,12 +102,12 @@ JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
 - 사용자들이 계정 보호 기능을 요청함
 ```
 
-**잘못된 예제** ❌:
+**Incorrect example** ❌:
 ```
-feat: 사용자 인증 시스템 추가  ← "-하다" 어미 없음
+feat: 사용자 인증 시스템 추가  ← Missing "-하다" ending
 ```
 
-> **상세 가이드**: 더 많은 예제와 동사 형태 가이드는 [`.claude/commands/commit.md`](../commands/commit.md#한국어-동사-형태-가이드)를 참조하세요.
+> **Detailed Guide**: For more examples and verb form guide, see [`.claude/commands/commit.md`](../commands/commit.md#한국어-동사-형태-가이드).
 
 ### Claude Code Attribution
 
@@ -119,21 +119,21 @@ When using Claude Code to generate commits, include attribution in the footer:
 Co-Authored-By: Claude <model> <noreply@anthropic.com>
 ```
 
-`<model>`: 현재 사용 중인 Claude 모델명 (예: `Opus 4.5`, `Sonnet 4`)
+`<model>`: Current Claude model name (e.g., `Opus 4.5`, `Sonnet 4`)
 
 ## Document Reference
 
-이 문서는 다음과 같은 계층 구조를 가집니다:
+This document has the following hierarchy:
 
 ```
 gitmessage (Source of Truth)
-├── version-control.md (이 문서 - 요약 가이드)
-└── commit.md (상세 구현 가이드)
+├── version-control.md (This document - Summary guide)
+└── commit.md (Detailed implementation guide)
 ```
 
-- **Git 템플릿**: [`gitmessage`](../../gitmessage) - 모든 커밋 메시지 규칙의 기준
-- **상세 구현 가이드**: [`.claude/commands/commit.md`](../commands/commit.md) - 자동 커밋 생성 및 예제
-- **변경 동기화**: gitmessage를 변경하면 두 문서 모두 업데이트 필요
+- **Git template**: [`gitmessage`](../../gitmessage) - Source of all commit message rules
+- **Detailed implementation guide**: [`.claude/commands/commit.md`](../commands/commit.md) - Auto commit generation and examples
+- **Change synchronization**: If gitmessage changes, both documents need updating
 
 ## See Also
 

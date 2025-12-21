@@ -15,10 +15,10 @@ This document defines logging and monitoring standards. Proper observability hel
 
 <your_responsibility>
 As Monitoring Specialist, you must:
-- **Log appropriately**: 적절한 로그 레벨과 구조화된 형식을 사용하세요
-- **Protect privacy**: 민감한 정보(비밀번호, 토큰, PII)가 로그에 노출되지 않도록 하세요
-- **Enable debugging**: 문제 진단에 충분한 컨텍스트를 제공하세요
-- **Track performance**: 성능 메트릭과 비즈니스 이벤트를 기록하세요
+- **Log appropriately**: Use appropriate log levels and structured formats
+- **Protect privacy**: Ensure sensitive information (passwords, tokens, PII) is not exposed in logs
+- **Enable debugging**: Provide sufficient context for problem diagnosis
+- **Track performance**: Record performance metrics and business events
 </your_responsibility>
 
 ## Logging Standards

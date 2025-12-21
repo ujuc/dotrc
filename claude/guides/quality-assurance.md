@@ -10,19 +10,19 @@ Last Updated: 2025-12-21
 </meta>
 
 <context>
-이 문서는 코드 리뷰 체크리스트, 테스트 요구사항, 품질 게이트를 포함한
-품질 보증 실천 사항을 정의합니다. 품질은 나중에 추가하는 것이 아니라
-개발 프로세스의 모든 단계에 내장됩니다.
+This document defines quality assurance practices including code review checklists,
+test requirements, and quality gates. Quality is built into every stage of the
+development process, not added later.
 </context>
 
 <your_responsibility>
-품질 관리자로서 다음을 수행하세요:
-- **테스트 필수** - 테스트 없는 코드가 커밋되지 않도록 하세요
-- **테스트 무결성 유지** - 코드를 통과시키기 위해 테스트를 약화하거나 삭제하지 마세요
-- **철저한 리뷰** - 품질 체크리스트의 모든 항목을 확인하세요
-- **완료 기준 확인** - 완료 정의의 모든 기준이 충족되는지 확인하세요
-- **표준 준수** - 품질 게이트를 통과하지 못하는 변경을 거부하세요
-- **장기적 관점** - 즉각적인 기능뿐만 아니라 유지보수성을 고려하세요
+As Quality Manager, you must:
+- **Tests required** - Ensure no code is committed without tests
+- **Maintain test integrity** - Don't weaken or delete tests to make code pass
+- **Thorough review** - Check all items on the quality checklist
+- **Verify completion criteria** - Ensure all Definition of Done criteria are met
+- **Enforce standards** - Reject changes that don't pass quality gates
+- **Long-term perspective** - Consider maintainability, not just immediate functionality
 </your_responsibility>
 
 ## Self Code Review Checklist
@@ -54,34 +54,34 @@ When multiple valid approaches exist, choose based on:
 ## Test Code Rules
 
 - **Tests required**
-  구현 코드와 함께 테스트를 작성하세요.
-  테스트는 기능을 문서화하고 회귀를 방지합니다.
+  Write tests alongside implementation code.
+  Tests document functionality and prevent regressions.
 
 - **Maintain test integrity**
-  테스트를 통과시키기 위해 테스트를 수정하지 마세요.
-  테스트가 실패하면 실제 문제를 수정하세요.
+  Don't modify tests to make them pass.
+  If tests fail, fix the actual problem.
 
 - **No hardcoding**
-  테스트 케이스에만 동작하는 솔루션을 작성하지 마세요.
-  문제를 일반적으로 해결하는 실제 로직을 구현하세요.
-  테스트가 잘못되었다면 사용자에게 알려주세요.
+  Don't write solutions that only work for test cases.
+  Implement actual logic that solves the problem generally.
+  If the test is wrong, inform the user.
 
 <test_integrity>
-테스트를 통과하기 위한 하드코딩을 피하세요:
-- 테스트 입력값에만 동작하는 조건문 금지
-- 특정 테스트 케이스에 대한 예외 처리 금지
-- 테스트 결과를 직접 반환하는 코드 금지
-- 문제를 일반적으로 해결하는 실제 알고리즘을 구현하세요
+Avoid hardcoding to pass tests:
+- No conditionals that only work for test input values
+- No exception handling for specific test cases
+- No code that directly returns test results
+- Implement actual algorithms that solve the problem generally
 </test_integrity>
 
 - **Approval for test changes**
-  테스트 파일, 데이터, 픽스처를 임의로 수정하지 마세요.
+  Don't arbitrarily modify test files, data, or fixtures.
 
 - **Confirm API changes**
-  승인 없이 API 이름/파라미터를 변경하지 마세요.
+  Don't change API names/parameters without approval.
 
 - **Discuss data changes**
-  사용자 논의 없이 데이터를 마이그레이션하거나 수정하지 마세요.
+  Don't migrate or modify data without user discussion.
 
 ## Quality Gates
 

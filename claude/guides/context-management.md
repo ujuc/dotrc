@@ -41,37 +41,37 @@ As Context Optimizer, you must:
 
 ## Hybrid Language Strategy
 
-컨텍스트 효율성과 가독성을 동시에 확보하기 위한 언어 사용 전략입니다.
+A language usage strategy to achieve both context efficiency and readability.
 
 ### Language by Element
 
 | Element | Language | Reason |
 |---------|----------|--------|
-| Headings/Headers | English | 토큰 효율, 검색 용이 |
-| XML tags | English | 구조적 일관성 |
-| Rule keywords | English | 간결함, 스캔 용이 |
-| Explanations | Korean | 명확한 이해 |
-| Code/docstring | English | 국제적 호환성 |
+| Headings/Headers | English | Token efficiency, easy to search |
+| XML tags | English | Structural consistency |
+| Rule keywords | English | Concise, easy to scan |
+| Explanations | English | Clear understanding (default) |
+| Code/docstring | English | International compatibility |
 
 ### Pattern Example
 
 <pattern_example>
-**Before** (비효율):
+**Before** (inefficient):
 ```markdown
-- **불확실할 때 질문하기** - 요구사항이 불명확하면...
+- **Ask when uncertain** - If requirements are unclear...
 ```
 
-**After** (최적화):
+**After** (optimized):
 ```markdown
 - **Ask when uncertain**
-  요구사항이 불명확하면 가정하지 말고 질문하세요.
+  If requirements are unclear, ask questions instead of assuming.
 ```
 </pattern_example>
 
 ### Token Efficiency
-- 영어: ~4자/토큰
-- 한국어: ~1-2자/토큰
-- 하이브리드 적용 시 ~15% 토큰 절감
+- English: ~4 chars/token
+- Korean: ~1-2 chars/token
+- Hybrid approach saves ~15% tokens
 
 ## Information Priority Hierarchy
 
@@ -314,57 +314,57 @@ Assistant: [Resumes with fresh context window]
 ```
 </strategy>
 
-### 6. Claude 4.5 상태 관리
+### 6. Claude 4.5 State Management
 
 <strategy name="state_management_claude4">
-**원칙**: Claude 4.5의 context awareness 기능을 활용하여 효율적으로 상태를 추적합니다.
+**Principle**: Use Claude 4.5's context awareness feature to efficiently track state.
 
-**구조화된 상태 추적 (JSON)**:
-테스트 결과, 작업 상태 등 구조화된 데이터에 적합합니다:
+**Structured State Tracking (JSON)**:
+Suitable for structured data like test results, task status:
 ```json
 {
   "tasks": [
-    {"id": 1, "name": "인증 플로우", "status": "passing"},
-    {"id": 2, "name": "사용자 관리", "status": "failing", "reason": "DB 연결 오류"}
+    {"id": 1, "name": "Auth flow", "status": "passing"},
+    {"id": 2, "name": "User management", "status": "failing", "reason": "DB connection error"}
   ],
-  "progress": "2/5 완료",
-  "next_action": "사용자 관리 테스트 디버깅"
+  "progress": "2/5 complete",
+  "next_action": "Debug user management tests"
 }
 ```
 
-**진행 노트 (자유 형식)**:
-탐색 과정이나 의사결정 기록에 적합합니다:
+**Progress Notes (Free-form)**:
+Suitable for exploration process or decision records:
 ```markdown
 ## Session 3 Progress:
-- 인증 토큰 검증 로직 수정 완료
-- DB 연결 타임아웃 문제 발견
-- 다음: connection pool 설정 확인 필요
+- Completed auth token validation logic fix
+- Discovered DB connection timeout issue
+- Next: Need to check connection pool settings
 ```
 
-**Git 활용**:
-- 세션 간 작업 복원을 위한 체크포인트로 활용
-- WIP 커밋으로 작업 상태 저장
-- 브랜치로 실험적 변경 격리
+**Git Usage**:
+- Use as checkpoints for work restoration between sessions
+- Save work state with WIP commits
+- Isolate experimental changes with branches
 
-**멀티 컨텍스트 워크플로우**:
-복잡한 작업은 여러 컨텍스트로 나누어 진행합니다:
+**Multi-Context Workflow**:
+Complex tasks are divided into multiple contexts:
 ```
-컨텍스트 1: 프레임워크 설정
-- 테스트 환경 구성
-- 셋업 스크립트 작성
-- 초기 구조 확립
+Context 1: Framework setup
+- Configure test environment
+- Write setup scripts
+- Establish initial structure
 
-컨텍스트 2+: 반복 구현
-- todo-list 기반 작업 진행
-- 컨텍스트 한계 접근 시 상태 저장
-- 다음 컨텍스트에서 상태 복원 후 계속
+Context 2+: Iterative implementation
+- Proceed with todo-list based work
+- Save state when approaching context limit
+- Restore state and continue in next context
 ```
 
-**상태 저장 타이밍**:
-- 주요 마일스톤 완료 시
-- 컨텍스트 윈도우 150K 접근 시
-- 복잡한 디버깅 세션 중간
-- 장시간 작업의 자연스러운 중단점
+**When to Save State**:
+- When major milestones are completed
+- When approaching 150K context window
+- During complex debugging sessions
+- At natural break points in long tasks
 </strategy>
 
 ## Context Budget Guidelines

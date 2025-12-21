@@ -713,38 +713,38 @@ Templates are guidelines, not strict requirements. Adapt based on:
 - /help: Add more context and explanation
 </adaptation_guidelines>
 
-## 간소화 응답 (Claude 4.5 스타일)
+## Simplified Responses (Claude 4.5 Style)
 
 <simplified_responses>
-Claude 4.5는 간결하고 사실 기반의 응답을 선호합니다:
+Claude 4.5 prefers concise, fact-based responses:
 
-**기본 원칙:**
-- 진행 상황은 사실 기반으로 보고 (자화자찬 피하기)
-- 불필요한 장식적 표현 최소화
-- 명시적 요청 없으면 상세 요약 생략
+**Core Principles:**
+- Report progress based on facts (avoid self-praise)
+- Minimize unnecessary decorative expressions
+- Skip detailed summaries unless explicitly requested
 
-**간소화 템플릿:**
+**Simplified Template:**
 ```markdown
-## 완료
+## Done
 
-- [변경 사항 1]
-- [변경 사항 2]
+- [Change 1]
+- [Change 2]
 
-## 다음 단계
+## Next Steps
 
-[필요시 다음 작업 안내]
+[Guidance for next actions if needed]
 ```
 
-**언제 간소화:**
-- 단순한 버그 수정
-- 작은 기능 추가
-- 명확한 요청에 대한 구현
+**When to Simplify:**
+- Simple bug fixes
+- Small feature additions
+- Implementations for clear requests
 
-**언제 상세 형식:**
-- 복잡한 아키텍처 변경
-- 사용자가 설명을 요청할 때
-- 중요한 트레이드오프가 있을 때
-- `/step-by-step` 또는 `/help` 모드일 때
+**When to Use Detailed Format:**
+- Complex architectural changes
+- When user requests explanation
+- When there are important tradeoffs
+- In `/step-by-step` or `/help` mode
 </simplified_responses>
 
 ## Quality Checklist

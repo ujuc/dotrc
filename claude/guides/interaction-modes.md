@@ -466,8 +466,8 @@ Priority order when using commands:
 <problem>Mode request vs system-rules.md (tests required)</problem>
 <resolution>system-rules.md takes absolute priority - must refuse or modify request</resolution>
 <response>
-죄송하지만 테스트 없이 코드를 작성할 수 없습니다 (system-rules.md).
-dev-mode로 간결한 테스트와 구현을 함께 제공하겠습니다.
+Sorry, I cannot write code without tests (system-rules.md).
+I'll provide concise tests along with the implementation in dev-mode.
 </response>
 </scenario>
 
