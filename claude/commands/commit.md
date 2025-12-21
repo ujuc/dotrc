@@ -20,13 +20,16 @@ This command creates git commits following the team's version control guidelines
 **요약 가이드**: 빠른 참조는 [`.claude/guides/version-control.md`](../guides/version-control.md)를 확인하세요.
 **이 문서**: 자동 커밋 생성을 위한 상세 구현 가이드를 제공합니다.
 
-## 커밋 메시지 작성 원칙
+## Commit Message Principles
 
 변경사항을 기반으로 의미 있는 커밋 메시지를 작성합니다:
 
-- **의도 중심**: 단순 변경 내용보다 **왜** 변경했는지 의도를 드러낸다
-- **맥락 반영**: 변경하게 된 배경과 목적을 포함한다
-- **협업 중심**: 다른 개발자가 이해할 수 있도록 요구사항과 문제 의식을 반영한다
+- **Intent focused**
+  단순 변경 내용보다 **왜** 변경했는지 의도를 드러낸다
+- **Context aware**
+  변경하게 된 배경과 목적을 포함한다
+- **Collaboration oriented**
+  다른 개발자가 이해할 수 있도록 요구사항과 문제 의식을 반영한다
 
 ## Your task
 
@@ -98,76 +101,33 @@ STEP 5: Validate commit result
 All commits created by Claude Code must include this attribution in the footer:
 
 ```
-🤖 Generated with [Claude Code](https://claude.ai/code)
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: Claude <model> <noreply@anthropic.com>
 ```
 
-## 커밋 메시지 언어 정책
+`<model>`: 현재 사용 중인 Claude 모델명
+- **기본값**: `Opus 4.5` (claude-opus-4-5-20251101)
+- 예시: `Opus 4.5`, `Sonnet 4`, `Haiku 3.5`
+
+## Commit Message Language Policy
 
 **기본 원칙: 한국어로 작성** (출처: [`gitmessage`](../../gitmessage#L24))
 
 자세한 가이드라인은 [`version-control.md`](../guides/version-control.md#한국어-커밋-메시지-gitmessage-기반)를 참조하세요.
 
-### 작성 규칙:
+### Writing Rules:
 - **Type**: 영어 유지 (`feat:`, `fix:`, `docs:`, etc.)
 - **제목 및 본문**: **한국어로 작성** (영문 50자 이내로 한국어 작성)
 - **동사 형태**: 현재 완료형 어미 "-하다" 사용 (예: 추가하다, 수정하다, 개선하다)
 - **마침표**: 제목에 마침표 사용하지 않음
 - **문자 제한**: 제목 50자, 본문 72자
 
-## 커밋 메시지 예제 (한국어)
+## Commit Message Examples
 
-### 기능 추가:
+예제는 [version-control.md](../guides/version-control.md#한국어-커밋-메시지-gitmessage-기반)를 참조하세요.
 
-```
-feat: 사용자 인증 시스템을 추가하다
-
-JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
-이 변경이 필요한 이유:
-
-- 기존 시스템에 적절한 보안 조치가 부족했음
-- 사용자들이 계정 보호 기능을 요청함
-- 데이터 보호 규정 준수 필요
-
-Fixes #142
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-### 버그 수정:
-
-```
-fix: 인증 오류 메시지 오타를 수정하다
-
-사용자에게 혼란을 주던 인증 오류 메시지의 오타를 수정합니다.
-명확한 오류 피드백으로 사용자 경험을 개선합니다.
-
-Related to #256
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-### 코드 리팩토링:
-
-```
-refactor: 데이터베이스 연결 로직을 단순화하다
-
-연결 풀링을 별도 모듈로 추출하여 코드 유지보수성을
-향상시키고 서비스 간 중복을 제거합니다.
-
-Related to INF-24
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-### 한국어 동사 형태 가이드
+### Korean Verb Form Guide
 
 **올바른 형태 ✅**:
 - `feat: 사용자 인증을 추가하다`
@@ -184,74 +144,9 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 **핵심 원칙**: 항상 "-하다" 어미를 포함하여 현재 완료형으로 작성합니다.
 
-## 참고: 영어 커밋 메시지 예제
+## Language-specific Rules
 
-영어로 작성이 필요한 경우를 위한 참고 예제입니다.
-
-### Feature addition:
-```
-feat: add user authentication system
-
-Implement JWT-based authentication to secure API endpoints.
-This change was needed because:
-
-- Previous system lacked proper security measures
-- Users requested account protection features
-- Compliance requirements for data protection
-
-Fixes #142
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-### Bug fix:
-```
-fix: correct typo in error message
-
-Fix typo in authentication error message that was confusing users.
-This change improves user experience by providing clear error feedback.
-
-Related to #256
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-### Code refactoring:
-```
-refactor: simplify database connection logic
-
-Extract connection pooling into separate module to improve
-code maintainability and reduce duplication across services.
-
-Related to INF-24
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-### Documentation update:
-```
-docs: update API documentation for v2 endpoints
-
-Add missing parameter descriptions and response examples for
-new v2 endpoints. This helps developers integrate with our API
-more effectively.
-
-Closes #89
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-## 언어별 작성 규칙
-
-### 한국어 커밋 (기본)
+### Korean Commits (Default)
 
 **제목 작성**:
 - 형식: `<type>: <한국어 제목>`
@@ -263,14 +158,6 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - 언어: 한국어
 - 내용: 변경의 이유(WHY), 배경, 맥락 포함
 - 길이: 각 줄 72자 이내
-
-**예시**:
-```
-feat: 사용자 인증 시스템을 추가하다
-
-JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
-보안 강화 요구사항을 충족하기 위해 필요합니다.
-```
 
 ### 영어 커밋 (참고용)
 
@@ -284,14 +171,6 @@ JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
 - Language: English
 - Content: Explain WHY, context, and background
 - Length: 72 characters per line
-
-**Example**:
-```
-feat: add user authentication system
-
-Implement JWT-based authentication to secure API endpoints.
-This addresses security enhancement requirements.
-```
 
 ## Commit Options
 
@@ -330,14 +209,14 @@ Before creating commit, ensure:
 
 ### Reference Documentation
 
-**문서 계층 구조**:
+**Document Hierarchy**:
 ```
 gitmessage (Source of Truth - Git 커밋 템플릿)
 ├── version-control.md (요약 가이드 - 빠른 참조)
 └── commit.md (상세 구현 가이드 - 자동 커밋 생성)
 ```
 
-**참조 링크**:
+**Reference Links**:
 - **Source Template**: [`gitmessage`](../../gitmessage) - Git 커밋 템플릿 (모든 규칙의 기준)
 - **Summary Guide**: [`version-control.md`](../guides/version-control.md) - 버전 관리 요약 가이드
 - **Commit Types**: [`version-control.md#commit-types`](../guides/version-control.md#commit-types)

@@ -106,10 +106,12 @@ feat: 사용자 인증 시스템 추가  ← "-하다" 어미 없음
 When using Claude Code to generate commits, include attribution in the footer:
 
 ```
-🤖 Generated with [Claude Code](https://claude.ai/code)
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-Co-Authored-By: Claude <noreply@anthropic.com>
+Co-Authored-By: Claude <model> <noreply@anthropic.com>
 ```
+
+`<model>`: 현재 사용 중인 Claude 모델명 (예: `Opus 4.5`, `Sonnet 4`)
 
 ## Document Reference
 
