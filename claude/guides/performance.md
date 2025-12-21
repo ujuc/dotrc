@@ -1,5 +1,14 @@
 # Performance Considerations
 
+<meta>
+Document: performance.md
+Role: Performance Guide
+Priority: Medium
+Applies To: Performance optimization tasks
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
+</meta>
+
 ## Optimization Guidelines
 
 - Avoid premature optimization, measure first

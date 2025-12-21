@@ -1,5 +1,14 @@
 # Monitoring & Logging
 
+<meta>
+Document: monitoring.md
+Role: Monitoring Guide
+Priority: Medium
+Applies To: Logging and observability
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
+</meta>
+
 ## Logging Standards
 
 - Use structured logging (JSON format)

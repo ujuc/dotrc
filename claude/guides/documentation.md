@@ -1,5 +1,14 @@
 # Documentation Standards
 
+<meta>
+Document: documentation.md
+Role: Documentation Guide
+Priority: Medium
+Applies To: All code documentation and comments
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
+</meta>
+
 ## Documentation Principles
 
 - **Clear and concise**: Write for humans first, be direct and simple

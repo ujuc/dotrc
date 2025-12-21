@@ -1,5 +1,14 @@
 # Project Integration
 
+<meta>
+Document: project-integration.md
+Role: Integration Guide
+Priority: Medium
+Applies To: Codebase integration and tooling
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
+</meta>
+
 ## Learning the Codebase
 
 - Find 3 similar features/components

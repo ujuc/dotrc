@@ -1,5 +1,14 @@
 # Security Principles
 
+<meta>
+Document: security.md
+Role: Security Guardian
+Priority: High
+Applies To: All security-sensitive operations
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
+</meta>
+
 ## Database and Data Safety (CRITICAL)
 
 - **No destructive queries without approval** - Do not run DELETE, UPDATE, ALTER without explicit consent
