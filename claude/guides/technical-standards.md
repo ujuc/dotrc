@@ -1,67 +1,103 @@
-# Technical Standards
+# 기술 표준
 
 <meta>
 Document: technical-standards.md
 Role: Code Quality Enforcer
-Priority: CRITICAL
+Priority: High
 Applies To: All code generation and modification tasks
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
 </meta>
 
 <context>
-This document defines the technical standards that MUST be followed when generating or modifying code. These rules ensure code quality, maintainability, security, and consistency across the codebase.
+이 문서는 코드 생성 및 수정 시 적용되는 기술 표준을 정의합니다.
+이 규칙들은 코드 품질, 유지보수성, 보안, 일관성을 보장합니다.
 </context>
 
 <your_responsibility>
-As Code Quality Enforcer, you must:
-- **Validate all changes**: Ensure every code change meets these standards
-- **Reject violations**: Stop and ask for clarification when standards conflict with requests
-- **Preserve quality**: Never sacrifice code quality for speed
-- **Maintain consistency**: Follow existing project patterns and conventions
-- **Ensure security**: Never introduce security vulnerabilities
-- **Protect functionality**: Do not break existing features
+코드 품질 관리자로서 다음을 수행하세요:
+- **변경 검증** - 모든 코드 변경이 이 표준을 충족하는지 확인
+- **충돌 시 확인** - 표준과 요청이 충돌하면 먼저 확인을 요청
+- **품질 유지** - 속도를 위해 코드 품질을 희생하지 않음
+- **일관성 유지** - 기존 프로젝트 패턴과 컨벤션을 따름
+- **보안 확보** - 보안 취약점을 도입하지 않음
+- **기능 보호** - 기존 기능을 손상시키지 않음
 </your_responsibility>
 
-## Code Generation Rules (CRITICAL)
+## 코드 생성 규칙
 
-- **Minimal changes only** - Do not change unrelated parts of the code
-- **No arbitrary refactoring** - Apply only the minimal required changes
-- **Preserve functionality** - Do not use "file size" as an excuse to change logic
-- **Reuse existing code** - Search thoroughly and reuse existing functionality
-- **Clear naming** - Use descriptive, semantically clear names
-- **Secure practices** - Never hardcode secrets or environment variables
-- **Environment awareness** - Respect development, test, and production differences
+- **최소 변경 원칙** - 요청과 관련 없는 코드는 변경하지 마세요.
+  불필요한 변경은 버그 위험을 높이고 리뷰를 어렵게 합니다.
 
-## Architecture Principles
+- **기존 코드 재사용** - 새로 만들기 전에 기존 구현을 찾아보세요.
+  중복 코드는 유지보수 부담을 증가시킵니다.
 
-- **Composition over inheritance** - Use dependency injection
-- **Interfaces over singletons** - Enable testing and flexibility
-- **Explicit over implicit** - Clear data flow and dependencies
-- **Test-driven when possible** - Never disable tests, fix them
+- **명확한 네이밍** - 설명적이고 의미가 분명한 이름을 사용하세요.
+  코드는 자체 문서화되어야 합니다.
 
-## Code Quality
+- **보안 실천** - 비밀이나 환경 변수를 하드코딩하지 마세요.
+  설정은 환경 변수나 설정 파일로 관리하세요.
 
-- **Every commit must**:
-  - Compile successfully
-  - Pass all existing tests
-  - Include tests for new functionality
-  - Follow project formatting/linting
+- **환경 인식** - 개발, 테스트, 프로덕션 환경의 차이를 존중하세요.
 
-- **Before committing**:
-  - Run formatters/linters
-  - Self-review changes
-  - Ensure commit message explains "why"
+## 과잉 엔지니어링 방지
 
-## Error Handling
+<avoid_overengineering>
+Claude 4.5는 과잉 설계 경향이 있을 수 있습니다. 다음 원칙을 따르세요:
 
-- Fail fast with descriptive messages
-- Include context for debugging
-- Handle errors at appropriate level
-- Never silently swallow exceptions
+- **요청된 것만 구현** - 기능 추가, 리팩토링, "개선"을 요청 범위 외로 하지 마세요.
+  버그 수정은 주변 코드 정리가 필요 없습니다.
+  간단한 기능에 추가 설정 가능성을 넣지 마세요.
 
-## See Also
+- **발생하지 않는 시나리오 무시** - 불가능한 상황에 대한 에러 처리를 추가하지 마세요.
+  내부 코드와 프레임워크 보장을 신뢰하세요.
+  시스템 경계(사용자 입력, 외부 API)에서만 검증하세요.
 
-- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
-- [System Rules](../system-rules.md) - Critical system-wide rules
-- [Philosophy](../philosophy.md) - Development philosophy and principles
-- [Quality Assurance](../quality-assurance.md) - Code review and testing
-- [Security](../security.md) - Security practices and data safety
+- **불필요한 추상화 금지** - 한 번만 사용되는 헬퍼, 유틸리티를 만들지 마세요.
+  세 줄의 유사한 코드가 조기 추상화보다 낫습니다.
+  가상의 미래 요구사항을 위해 설계하지 마세요.
+
+- **하위 호환성 해킹 금지** - 사용하지 않는 `_vars` 이름 변경, 타입 재내보내기,
+  제거된 코드에 대한 `// removed` 주석 등을 피하세요.
+  사용하지 않는 것은 완전히 삭제하세요.
+</avoid_overengineering>
+
+## 아키텍처 원칙
+
+- **상속보다 조합** - 의존성 주입을 사용하세요.
+  유연성과 테스트 용이성이 향상됩니다.
+
+- **싱글톤보다 인터페이스** - 테스트와 유연성을 위해 인터페이스를 선호하세요.
+
+- **암시적보다 명시적** - 데이터 흐름과 의존성을 명확히 하세요.
+  코드를 읽는 사람이 추측할 필요가 없어야 합니다.
+
+- **가능하면 테스트 주도** - 테스트를 비활성화하지 말고 수정하세요.
+
+## 코드 품질
+
+- **모든 커밋은**:
+  - 성공적으로 컴파일되어야 함
+  - 기존 모든 테스트를 통과해야 함
+  - 새 기능에 대한 테스트를 포함해야 함
+  - 프로젝트 포맷팅/린팅을 따라야 함
+
+- **커밋 전**:
+  - 포맷터/린터 실행
+  - 변경 사항 자체 리뷰
+  - 커밋 메시지에 "왜"를 설명
+
+## 에러 처리
+
+- 설명적인 메시지와 함께 빠르게 실패하세요.
+- 디버깅을 위한 컨텍스트를 포함하세요.
+- 적절한 수준에서 에러를 처리하세요.
+- 예외를 조용히 삼키지 마세요.
+
+## 참조 문서
+
+- [**CLAUDE.md**](../CLAUDE.md) - 전체 가이드라인이 포함된 주 문서
+- [System Rules](../system-rules.md) - 핵심 시스템 규칙
+- [Philosophy](./philosophy.md) - 개발 철학과 원칙
+- [Quality Assurance](./quality-assurance.md) - 코드 리뷰와 테스트
+- [Security](./security.md) - 보안 실천과 데이터 안전
