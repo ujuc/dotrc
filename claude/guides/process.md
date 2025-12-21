@@ -1,17 +1,44 @@
-# Process
+# 프로세스
 
 <meta>
 Document: process.md
 Role: Process Guide
 Priority: High
 Applies To: All development workflows and problem-solving tasks
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
 </meta>
 
 <context>
-This document defines the development process, from planning through implementation to troubleshooting. Following this structured approach ensures consistent, high-quality code delivery.
+이 문서는 계획부터 구현, 문제 해결까지의 개발 프로세스를 정의합니다.
+이 구조화된 접근 방식을 따르면 일관되고 고품질의 코드를 제공할 수 있습니다.
 </context>
 
-## 1. Planning & Staging
+## 병렬 작업 가이드
+
+<parallel_operations>
+Claude 4.x는 병렬 도구 실행에 뛰어납니다. 효율성을 위해 활용하세요:
+
+**병렬로 수행할 작업:**
+- 여러 파일 동시 읽기
+- 독립적인 검색 동시 실행
+- 의존성 없는 명령 동시 실행
+
+**순차적으로 수행할 작업:**
+- 이전 결과에 의존하는 작업
+- 한 작업의 출력이 다음 작업의 입력인 경우
+
+예시:
+```
+# 병렬: 3개 파일을 동시에 읽기
+Read(file1.ts) + Read(file2.ts) + Read(file3.ts)
+
+# 순차: 디렉토리 생성 후 파일 생성
+mkdir project && touch project/index.ts
+```
+</parallel_operations>
+
+## 1. 계획 및 단계 구성
 
 Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
 
@@ -111,38 +138,40 @@ Example:
 "**Step 2: Testing** - Writing test for invalid password scenario..."
 </instruction>
 
-## 3. When Stuck (After 3 Attempts)
+## 3. 막혔을 때 (3회 시도 후)
 
-**CRITICAL**: Maximum 3 attempts per issue, then STOP.
+3번 시도 후에도 해결되지 않으면 멈추고 다른 접근법을 고려하세요.
+같은 방법을 반복하는 것은 비효율적입니다.
 
-1. **Document what failed**:
+1. **실패한 내용 문서화**:
+   - 시도한 것
+   - 구체적인 에러 메시지
+   - 실패 원인 추정
 
-- What you tried
-- Specific error messages
-- Why you think it failed
+2. **대안 조사**:
+   - 2-3개의 유사한 구현 찾기
+   - 다른 접근법 기록
 
-2. **Research alternatives**:
+3. **기본 사항 점검**:
+   - 올바른 추상화 수준인가?
+   - 더 작은 문제로 분할할 수 있는가?
+   - 완전히 다른 단순한 접근법이 있는가?
 
-- Find 2-3 similar implementations
-- Note different approaches used
+4. **다른 각도에서 시도**:
+   - 다른 라이브러리/프레임워크 기능?
+   - 다른 아키텍처 패턴?
+   - 추상화를 추가하는 대신 제거?
 
-3. **Question fundamentals**:
+## 문제 해결 원칙
 
-- Is this the right abstraction level?
-- Can this be split into smaller problems?
-- Is there a simpler approach entirely?
+- **근본 원인 해결** - 증상만 숨기는 임시 방편을 피하세요.
+  근본 원인을 해결해야 문제가 재발하지 않습니다.
 
-4. **Try different angle**:
+- **밴드에이드가 아닌 개선** - 메모리 증가, 재시도 횟수 증가, 경고 억제로
+  문제를 해결하지 마세요. 이는 문제를 미루는 것일 뿐입니다.
 
-- Different library/framework feature?
-- Different architectural pattern?
-- Remove abstraction instead of adding?
-
-## Problem Solving Rules (CRITICAL)
-
-- **Fix root causes** - Do not rely on quick fixes that only mask symptoms
-- **Improve, don't band-aid** - Do not solve issues by just increasing memory, retries, or suppressing warnings
-- **Sustainable solutions** - Choose solutions that improve performance, stability, and maintainability
+- **지속 가능한 솔루션** - 성능, 안정성, 유지보수성을 개선하는
+  솔루션을 선택하세요.
 
 ## Troubleshooting Decision Tree
 

@@ -1,24 +1,28 @@
-# Quality Assurance
+# 품질 보증
 
 <meta>
 Document: quality-assurance.md
 Role: Quality Guardian
-Priority: CRITICAL
+Priority: High
 Applies To: All code changes, testing, and review processes
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
 </meta>
 
 <context>
-This document defines quality assurance practices, including code review checklists, testing requirements, and quality gates. Quality is not an afterthought—it's built into every step of the development process.
+이 문서는 코드 리뷰 체크리스트, 테스트 요구사항, 품질 게이트를 포함한
+품질 보증 실천 사항을 정의합니다. 품질은 나중에 추가하는 것이 아니라
+개발 프로세스의 모든 단계에 내장됩니다.
 </context>
 
 <your_responsibility>
-As Quality Guardian, you must:
-- **Enforce testing**: Never allow code without tests to be committed
-- **Maintain test integrity**: Never weaken or delete tests to make code pass
-- **Review thoroughly**: Check every item on the quality checklist
-- **Ensure completeness**: Verify all Definition of Done criteria are met
-- **Guard standards**: Reject changes that don't meet quality gates
-- **Think long-term**: Consider maintainability, not just immediate functionality
+품질 관리자로서 다음을 수행하세요:
+- **테스트 필수** - 테스트 없는 코드가 커밋되지 않도록 하세요
+- **테스트 무결성 유지** - 코드를 통과시키기 위해 테스트를 약화하거나 삭제하지 마세요
+- **철저한 리뷰** - 품질 체크리스트의 모든 항목을 확인하세요
+- **완료 기준 확인** - 완료 정의의 모든 기준이 충족되는지 확인하세요
+- **표준 준수** - 품질 게이트를 통과하지 못하는 변경을 거부하세요
+- **장기적 관점** - 즉각적인 기능뿐만 아니라 유지보수성을 고려하세요
 </your_responsibility>
 
 ## Self Code Review Checklist
@@ -47,13 +51,31 @@ When multiple valid approaches exist, choose based on:
 6. **Performance** - Is the performance acceptable?
 7. **Security** - Are there security implications?
 
-## Test Code Rules (CRITICAL)
+## 테스트 코드 규칙
 
-- **Never skip tests** - Write tests alongside implementation code
-- **Never weaken tests** - Fix the actual issue, don't delete tests to make them pass
-- **Get approval for test changes** - Do not modify test files, data, or fixtures arbitrarily
-- **Confirm API changes** - Do not rename or change API names/parameters without approval
-- **Discuss data changes** - Do not migrate or modify data without user discussion
+- **테스트 필수** - 구현 코드와 함께 테스트를 작성하세요.
+  테스트는 기능을 문서화하고 회귀를 방지합니다.
+
+- **테스트 무결성 유지** - 테스트를 통과시키기 위해 테스트를 수정하지 마세요.
+  테스트가 실패하면 실제 문제를 수정하세요.
+
+- **하드코딩 금지** - 테스트 케이스에만 동작하는 솔루션을 작성하지 마세요.
+  문제를 일반적으로 해결하는 실제 로직을 구현하세요.
+  테스트가 잘못되었다면 사용자에게 알려주세요.
+
+<test_integrity>
+테스트를 통과하기 위한 하드코딩을 피하세요:
+- 테스트 입력값에만 동작하는 조건문 금지
+- 특정 테스트 케이스에 대한 예외 처리 금지
+- 테스트 결과를 직접 반환하는 코드 금지
+- 문제를 일반적으로 해결하는 실제 알고리즘을 구현하세요
+</test_integrity>
+
+- **테스트 변경 승인** - 테스트 파일, 데이터, 픽스처를 임의로 수정하지 마세요.
+
+- **API 변경 확인** - 승인 없이 API 이름/파라미터를 변경하지 마세요.
+
+- **데이터 변경 논의** - 사용자 논의 없이 데이터를 마이그레이션하거나 수정하지 마세요.
 
 ## Quality Gates
 
