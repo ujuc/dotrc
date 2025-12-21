@@ -335,7 +335,7 @@ Assistant: [Resumes with fresh context window]
 **진행 노트 (자유 형식)**:
 탐색 과정이나 의사결정 기록에 적합합니다:
 ```markdown
-## 세션 3 진행:
+## Session 3 Progress:
 - 인증 토큰 검증 로직 수정 완료
 - DB 연결 타임아웃 문제 발견
 - 다음: connection pool 설정 확인 필요

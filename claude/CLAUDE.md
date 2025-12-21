@@ -1,5 +1,20 @@
 # Claude Development Guidelines — PRIMARY DOCUMENT
 
+<meta>
+Document: CLAUDE.md
+Role: Primary Entry Point
+Priority: Root - 모든 가이드라인의 시작점
+Applies To: All Claude Code interactions
+Version: 2.2.0
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
+</meta>
+
+<context>
+이 문서는 Claude Code 개발 가이드라인의 메인 진입점입니다.
+모든 개발 표준과 관행은 이 문서에서 시작됩니다.
+</context>
+
 **This is the primary entry point for all Claude development guidelines.**
 Start here to understand the complete development standards and practices.
 
@@ -25,7 +40,7 @@ CLAUDE.md (You are here - Main entry point)
 ```
 </document_hierarchy>
 
-## 핵심 시스템 규칙
+## Core System Rules
 
 <critical_rules>
 이 규칙들은 다른 지침보다 우선합니다. 상세 내용은 system-rules.md를 참조하세요.
@@ -94,13 +109,17 @@ _Remember: Good code is written for humans to read, and only incidentally for ma
 
 ---
 
-<version_info>
-**Document Version**: 2.1.0
-**Last Updated**: 2025-12-21
-**Optimized For**: Claude 4.5 (Sonnet/Opus)
-**Compatibility**: Claude 4.0+
-**Changelog**:
-- v2.1.0 (2025-12-21): Claude 4 베스트 프랙티스 적용 - 강조 표현 완화, 컨텍스트 추가, 과잉 엔지니어링 방지
-- v2.0.0 (2025-11-25): Claude 4.5 optimization - XML structure, examples, conflict resolution
-- v1.0.0 (2025-10-03): Initial comprehensive guidelines
-</version_info>
+## See Also
+
+- [**System Rules**](./system-rules.md) - Critical rules (highest priority)
+- [**Philosophy**](./guides/philosophy.md) - Core development beliefs
+- [**Conflict Resolution**](./guides/conflict-resolution.md) - Handling guideline conflicts
+
+---
+
+<changelog>
+- **v2.2.0** (2025-12-21): 문서 포맷 표준화 - meta/context 블록 추가, 헤더 영어화
+- **v2.1.0** (2025-12-21): Claude 4 베스트 프랙티스 적용 - 강조 표현 완화, 컨텍스트 추가, 과잉 엔지니어링 방지
+- **v2.0.0** (2025-11-25): Claude 4.5 optimization - XML structure, examples, conflict resolution
+- **v1.0.0** (2025-10-03): Initial comprehensive guidelines
+</changelog>

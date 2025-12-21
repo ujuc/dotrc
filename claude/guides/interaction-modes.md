@@ -529,3 +529,10 @@ like Schrödinger's cat) to solve problems faster..."
 4. Remember: Commands enhance clarity, don't replace clear communication
 </effectiveness_guidelines>
 
+## See Also
+
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [System Rules](../system-rules.md) - Critical rules (modes cannot override)
+- [Output Formats](./output-formats.md) - Response templates for different scenarios
+- [Conflict Resolution](./conflict-resolution.md) - Handling conflicting requirements
+

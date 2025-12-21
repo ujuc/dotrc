@@ -4,6 +4,15 @@ contexts: project, gitignored
 description: Create a git commit following team's version control guidelines
 ---
 
+<meta>
+Document: commit.md
+Role: Commit Generator
+Priority: Medium - Git workflow automation
+Applies To: Git commit creation in any project
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
+</meta>
+
 ## Context
 
 - Session ID: !`gdate +%s%N`
@@ -207,18 +216,10 @@ Before creating commit, ensure:
 - [ ] Claude Code attribution is included in footer
 - [ ] Staged files are handled according to user preference
 
-### Reference Documentation
+## See Also
 
-**Document Hierarchy**:
-```
-gitmessage (Source of Truth - Git 커밋 템플릿)
-├── version-control.md (요약 가이드 - 빠른 참조)
-└── commit.md (상세 구현 가이드 - 자동 커밋 생성)
-```
-
-**Reference Links**:
-- **Source Template**: [`gitmessage`](../../gitmessage) - Git 커밋 템플릿 (모든 규칙의 기준)
-- **Summary Guide**: [`version-control.md`](../guides/version-control.md) - 버전 관리 요약 가이드
-- **Commit Types**: [`version-control.md#commit-types`](../guides/version-control.md#commit-types)
-- **Formatting Rules**: [`version-control.md#formatting-rules`](../guides/version-control.md#formatting-rules)
-- **Korean Guidelines**: [`version-control.md#한국어-커밋-메시지`](../guides/version-control.md#한국어-커밋-메시지-gitmessage-기반)
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [**gitmessage**](../../gitmessage) - Git 커밋 템플릿 (Source of Truth)
+- [Version Control](../guides/version-control.md) - Git workflow and commit guidelines
+- [Version Control - Commit Types](../guides/version-control.md#commit-types) - Conventional commit types
+- [Version Control - Korean Guidelines](../guides/version-control.md#한국어-커밋-메시지-gitmessage-기반) - 한국어 커밋 메시지 규칙

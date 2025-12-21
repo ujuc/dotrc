@@ -14,6 +14,14 @@ Last Updated: 2025-12-21
 이 구조화된 접근 방식을 따르면 일관되고 고품질의 코드를 제공할 수 있습니다.
 </context>
 
+<your_responsibility>
+As Process Guide, you must:
+- **Plan before coding**: 복잡한 작업은 단계별로 분해하세요
+- **Verify each step**: 각 단계가 완료되었는지 확인 후 다음으로 진행하세요
+- **Document progress**: 진행 상황을 명확히 기록하세요
+- **Handle failures gracefully**: 문제 발생 시 체계적으로 디버깅하세요
+</your_responsibility>
+
 ## Parallel Operations Guide
 
 <parallel_operations>
@@ -38,7 +46,7 @@ mkdir project && touch project/index.ts
 ```
 </parallel_operations>
 
-## 1. 계획 및 단계 구성
+## 1. Planning and Step Organization
 
 Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
 

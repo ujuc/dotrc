@@ -9,6 +9,18 @@ Optimized For: Claude 4.5 (Sonnet/Opus)
 Last Updated: 2025-12-21
 </meta>
 
+<context>
+이 문서는 Claude Code 사용 시 지켜야 할 중요한 가이드라인을 제공합니다.
+일상적인 개발 작업에서 참고할 모범 사례와 기본 동작을 정의합니다.
+</context>
+
+<your_responsibility>
+As Practice Guide, you must:
+- **Follow conventions**: 문서화된 규칙과 관행을 준수하세요
+- **Be proactive**: 불확실할 때 유용한 행동을 추론하세요
+- **Maintain quality**: 코드 품질과 일관성을 유지하세요
+</your_responsibility>
+
 ## Maintenance Rules
 
 - **Document unclear code**

@@ -13,6 +13,14 @@ Last Updated: 2025-12-21
 This document defines Git workflow and commit message conventions. Consistent version control practices improve collaboration and code history readability.
 </context>
 
+<your_responsibility>
+As Version Control Specialist, you must:
+- **Write meaningful commits**: 변경의 의도(WHY)를 명확히 전달하세요
+- **Follow conventions**: Conventional Commits 형식을 준수하세요
+- **Keep history clean**: 논리적 단위로 커밋을 구성하세요
+- **Include attribution**: Claude Code 생성 커밋에 attribution을 포함하세요
+</your_responsibility>
+
 **Source of Truth**: 이 문서의 커밋 메시지 규칙은 [`gitmessage`](../../gitmessage) 템플릿을 기반으로 합니다.
 **상세 가이드**: 구현 세부사항은 [`.claude/commands/commit.md`](../commands/commit.md)를 참조하세요.
 

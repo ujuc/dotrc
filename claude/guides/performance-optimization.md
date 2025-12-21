@@ -14,7 +14,15 @@ Last Updated: 2025-12-21
 이 문서는 Google의 성능 최적화 가이드를 기반으로, 언어에 독립적인 범용 성능 최적화 원칙을 정리한 참조 문서입니다.
 </context>
 
-## 1. 핵심 철학
+<your_responsibility>
+As Optimization Expert, you must:
+- **Measure before optimizing**: 추측이 아닌 프로파일링 결과에 기반하세요
+- **Focus on the 3%**: 실제 병목 지점에만 최적화 노력을 집중하세요
+- **Consider trade-offs**: 최적화가 가독성/유지보수성에 미치는 영향을 평가하세요
+- **Document changes**: 최적화 이유와 성능 개선 수치를 기록하세요
+</your_responsibility>
+
+## 1. Core Philosophy
 
 > "우리는 97%의 경우 작은 효율성은 잊어야 한다: 성급한 최적화는 모든 악의 근원이다. **하지만 중요한 3%에서의 기회를 놓쳐서는 안 된다.**" — Donald Knuth
 
@@ -27,7 +35,7 @@ Last Updated: 2025-12-21
 
 ---
 
-## 2. 연산 비용 추정
+## 2. Computational Cost Estimation
 
 ### 하드웨어 연산 비용 참조 테이블
 
@@ -53,7 +61,7 @@ Last Updated: 2025-12-21
 
 ---
 
-## 3. 측정과 프로파일링
+## 3. Measurement and Profiling
 
 ### 원칙
 
@@ -73,7 +81,7 @@ Last Updated: 2025-12-21
 
 ---
 
-## 4. API 설계
+## 4. API Design
 
 ### 벌크 연산 (Bulk Operations)
 
@@ -119,7 +127,7 @@ recordEvent(eventName, data, now)
 
 ---
 
-## 5. 알고리즘 개선
+## 5. Algorithm Improvements
 
 알고리즘 개선이 가장 큰 성능 향상을 제공합니다.
 
@@ -139,7 +147,7 @@ recordEvent(eventName, data, now)
 
 ---
 
-## 6. 메모리 표현
+## 6. Memory Representation
 
 ### 컴팩트 데이터 구조
 
@@ -196,7 +204,7 @@ zones = BitVector<256>
 
 ---
 
-## 7. 할당 최적화
+## 7. Allocation Optimization
 
 ### 불필요한 할당 방지
 
@@ -245,7 +253,7 @@ for item in items:
 
 ---
 
-## 8. 불필요한 작업 회피
+## 8. Avoiding Unnecessary Work
 
 ### 공통 케이스 빠른 경로
 
@@ -336,7 +344,7 @@ for item in items:
 
 ---
 
-## 9. 코드 크기
+## 9. Code Size
 
 ### 큰 코드의 부정적 효과
 
@@ -392,7 +400,7 @@ map.insertAll([
 
 ---
 
-## 10. 병렬화와 동기화
+## 10. Parallelization and Synchronization
 
 ### 병렬성 활용
 
@@ -467,7 +475,7 @@ counter2: int (aligned to cache line)
 
 ---
 
-## 추가 읽기 자료
+## Additional Resources
 
 - "Optimizing software in C++" - Agner Fog
 - "Understanding Software Dynamics" - Richard L. Sites

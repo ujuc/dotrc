@@ -9,6 +9,11 @@ Optimized For: Claude 4.5 (Sonnet/Opus)
 Last Updated: 2025-12-21
 </meta>
 
+<context>
+이 문서는 CLAUDE.md의 핵심 규칙만 추출한 것입니다.
+모든 코드 생성 및 수정 작업에서 가장 높은 우선순위로 적용됩니다.
+</context>
+
 **이 문서는 [CLAUDE.md](./CLAUDE.md)의 핵심 규칙만 추출한 것입니다.**
 전체 가이드라인은 [CLAUDE.md](./CLAUDE.md)를 참조하세요.
 
@@ -354,7 +359,7 @@ except TimeoutError:
   모드 요청이 규칙과 충돌하면 규칙을 따르세요.
 </rule>
 
-## References
+## See Also
 
 - [**CLAUDE.md**](./CLAUDE.md) - **전체 가이드라인이 포함된 주 문서**
 - [Philosophy](./guides/philosophy.md) - 개발 철학과 핵심 원칙
