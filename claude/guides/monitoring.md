@@ -9,6 +9,10 @@ Optimized For: Claude 4.5 (Sonnet/Opus)
 Last Updated: 2025-12-21
 </meta>
 
+<context>
+This document defines logging and monitoring standards. Proper observability helps debug issues and understand system behavior.
+</context>
+
 ## Logging Standards
 
 - Use structured logging (JSON format)

@@ -9,6 +9,17 @@ Optimized For: Claude 4.5 (Sonnet/Opus)
 Last Updated: 2025-12-21
 </meta>
 
+<context>
+This document guides integration with existing codebases. Learn existing patterns before implementing new features.
+</context>
+
+<your_responsibility>
+As Integration Guide, you must:
+- **Learn first**: Study existing patterns before coding
+- **Respect conventions**: Follow project's established practices
+- **Minimize disruption**: Integrate smoothly with existing tooling
+</your_responsibility>
+
 ## Learning the Codebase
 
 - Find 3 similar features/components

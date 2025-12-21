@@ -3,8 +3,10 @@
 <meta>
 Document: conflict-resolution.md
 Role: Conflict Resolver
-Priority: High - Handles ambiguous situations
+Priority: High
 Applies To: All situations where instructions or guidelines conflict
+Optimized For: Claude 4.5 (Sonnet/Opus)
+Last Updated: 2025-12-21
 </meta>
 
 <context>
@@ -25,9 +27,9 @@ As Conflict Resolver, you must:
 <priority_order>
 When guidelines conflict, follow this strict priority order:
 
-1. **[system-rules.md](../system-rules.md)** - CRITICAL rules (Absolute priority)
-   - Non-negotiable, must always be followed
-   - Cannot be overridden by user requests without explicit approval
+1. **[system-rules.md](../system-rules.md)** - 핵심 규칙 (최우선)
+   - 항상 따라야 하는 규칙
+   - 명시적 승인 없이 사용자 요청으로 무시할 수 없음
 
 2. **User explicit instructions** - Direct, specific user requests
    - Takes precedence over general guidelines

@@ -9,6 +9,10 @@ Optimized For: Claude 4.5 (Sonnet/Opus)
 Last Updated: 2025-12-21
 </meta>
 
+<context>
+This document provides performance optimization guidelines. Always measure before optimizing to avoid premature optimization.
+</context>
+
 ## Optimization Guidelines
 
 - Avoid premature optimization, measure first

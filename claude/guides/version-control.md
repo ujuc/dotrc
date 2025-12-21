@@ -9,6 +9,10 @@ Optimized For: Claude 4.5 (Sonnet/Opus)
 Last Updated: 2025-12-21
 </meta>
 
+<context>
+This document defines Git workflow and commit message conventions. Consistent version control practices improve collaboration and code history readability.
+</context>
+
 **Source of Truth**: 이 문서의 커밋 메시지 규칙은 [`gitmessage`](../../gitmessage) 템플릿을 기반으로 합니다.
 **상세 가이드**: 구현 세부사항은 [`.claude/commands/commit.md`](../commands/commit.md)를 참조하세요.
 
