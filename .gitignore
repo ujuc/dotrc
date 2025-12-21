@@ -8,6 +8,7 @@ claude/debug
 claude/file-history
 claude/ide
 claude/projects
+claude/plugins
 claude/shell-snapshots
 claude/statsig
 claude/todos
@@ -16,3 +17,4 @@ claude/settings.json
 claude/downloads
 claude/session-env
 claude/plans
+claude/stats-cache.json
