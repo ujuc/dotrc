@@ -25,6 +25,7 @@ This document provides performance optimization guidelines. Always measure befor
 ## See Also
 
 - [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [Performance Optimization](./performance-optimization.md) - Detailed optimization techniques reference
 - [System Rules](../system-rules.md) - Critical system-wide rules
-- [Technical Standards](../technical-standards.md) - Architecture and code quality
-- [Monitoring](../monitoring.md) - Performance metrics and logging
+- [Technical Standards](./technical-standards.md) - Architecture and code quality
+- [Monitoring](./monitoring.md) - Performance metrics and logging

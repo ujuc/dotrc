@@ -56,6 +56,7 @@ CLAUDE.md (You are here - Main entry point)
 ### Operations & Security
 - [**Security**](./guides/security.md) - Security principles and data protection
 - [**Performance**](./guides/performance.md) - Optimization guidelines and considerations
+- [**Performance Optimization**](./guides/performance-optimization.md) - Detailed optimization techniques reference
 - [**Monitoring**](./guides/monitoring.md) - Logging standards and best practices
 - [**Context Management**](./guides/context-management.md) - Efficient use of 200K context window
 
