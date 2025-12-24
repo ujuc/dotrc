@@ -747,6 +747,61 @@ Claude 4.5 prefers concise, fact-based responses:
 - In `/step-by-step` or `/help` mode
 </simplified_responses>
 
+## Task Completion Messages
+
+<template name="task_completion">
+**Use when**: Git commit, PR creation, plan mode exit, or any task completion
+
+**Language Rule**: All completion messages shown to user MUST be in Korean.
+
+**Commit Completion**:
+```markdown
+✅ 커밋 완료
+- 메시지: "[commit message]"
+- 변경된 파일: N개
+```
+
+**PR Creation**:
+```markdown
+✅ PR 생성 완료
+- 제목: "[PR title]"
+- 링크: [URL]
+- 변경 요약: [brief summary in Korean]
+```
+
+**Plan Mode Exit**:
+```markdown
+✅ 계획 작성 완료
+- 계획 파일: [path]
+- 다음 단계: [next action in Korean]
+```
+
+**General Task Completion**:
+```markdown
+✅ 완료
+- [작업 1]
+- [작업 2]
+
+📋 다음 단계
+[Required user action in Korean]
+```
+
+**Example - After Commit**:
+```markdown
+✅ 커밋 완료
+- 메시지: "feat: 사용자 인증 시스템을 추가하다"
+- 변경된 파일: 3개 (user_auth.py, tests/test_auth.py, config.yaml)
+```
+
+**Example - After PR Creation**:
+```markdown
+✅ PR 생성 완료
+- 제목: "feat: 사용자 인증 기능 추가"
+- 링크: https://github.com/user/repo/pull/123
+- 변경 요약: JWT 기반 인증 시스템 구현, 로그인/로그아웃 API 추가
+```
+</template>
+
 ## Quality Checklist
 
 <quality_checklist>

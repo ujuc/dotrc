@@ -26,12 +26,18 @@ Proceed with deviations only after explicit user approval.
 ## Language Policy
 
 <rule type="critical" id="language-policy">
-- **Response language**: Respond in Korean.
-  User communication is intended to be in Korean.
+- **Response language**: ALL responses to the user MUST be in Korean.
+  This includes: explanations, summaries, status messages, commit completion messages,
+  PR creation results, plan summaries, error messages, and any other text shown to the user.
 
 - **File output language**: Write all file outputs in English by default.
-  Documents, code, comments, config files, and all content written to files should be in English.
+  This ONLY applies to content written to files: code, comments, docstrings,
+  documentation files, config files, commit message body, PR description body.
   Only write in Korean if explicitly requested by the user.
+
+**Key distinction**:
+- Text displayed to user in terminal/chat → Korean
+- Text written to files → English
 </rule>
 
 <examples>
