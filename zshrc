@@ -6,7 +6,7 @@ ZFUNCDIR=${ZDOTDIR}/.zfunc
 fpath=(${ZFUNCDIR} $fpath)
 
 # zimfw
-ZIM_HOME=${XDG_CONFIG_HOME:-$HOME/.config}/zim
+ZIM_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}/zim
 ## 없으면 설치한다
 if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
     curl -fsSL --create-dirs -o ${ZIM_HOME}/zimfw.zsh https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
@@ -38,8 +38,8 @@ unset key
 _evalcache starship init zsh
 
 # fzf
-if [[ -f ~/.fzf.zsh ]]; then
-    source ~/.fzf.zsh
+if [[ -f ${HOME}/.fzf.zsh ]]; then
+    source ${HOME}/.fzf.zsh
 else
     source <(fzf --zsh)
 fi
@@ -54,8 +54,13 @@ if (( $+commands[mise] )); then
     _evalcache mise activate zsh
 fi
 
+# amp
+if [[ -d "$HOME/.amp/bin" ]]; then
+    export PATH="$HOME/.amp/bin:$PATH"
+fi
+
 # work
-[ -f ~/.zshrc.work ] && source ~/.zshrc.work
+[ -f ${HOME}/.zshrc.work ] && source ${HOME}/.zshrc.work
 
 function update_system() {
     brew update
@@ -77,4 +82,4 @@ alias lt="eza -l --tree --icons=auto"
 alias cat="bat"
 alias vi="vim"
 
-source ${XDG_CONFIG_HOME:-$HOME/.config}/op/plugins.sh
+source ${XDG_CONFIG_HOME:-${HOME}/.config}/op/plugins.sh
