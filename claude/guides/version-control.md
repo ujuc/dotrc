@@ -18,11 +18,11 @@ As Version Control Specialist, you must:
 - **Write meaningful commits**: Clearly convey the intent (WHY) of changes
 - **Follow conventions**: Adhere to Conventional Commits format
 - **Keep history clean**: Organize commits in logical units
-- **Include attribution**: Include attribution in Claude Code generated commits
+- **Include attribution**: Include attribution in AI agent generated commits
 </your_responsibility>
 
 **Source of Truth**: The commit message rules in this document are based on the [`gitmessage`](../../gitmessage) template.
-**Detailed Guide**: See [`.claude/commands/commit.md`](../commands/commit.md) for implementation details.
+**Detailed Guide**: See [commit skill](../skills/commit/SKILL.md) for implementation details.
 
 ## Git Workflow
 
@@ -79,7 +79,7 @@ As Version Control Specialist, you must:
 
 #### Footer
 - Reference related issues, PRs, or tickets
-- Include Claude Code attribution when applicable
+- Include AI agent attribution when applicable
 
 ### Korean Commit Messages (Based on gitmessage)
 
@@ -107,20 +107,6 @@ JWT 기반 인증을 구현하여 API 엔드포인트를 보호합니다.
 feat: 사용자 인증 시스템 추가  ← Missing "-하다" ending
 ```
 
-> **Detailed Guide**: For more examples and verb form guide, see [`.claude/commands/commit.md`](../commands/commit.md#한국어-동사-형태-가이드).
-
-### Claude Code Attribution
-
-When using Claude Code to generate commits, include attribution in the footer:
-
-```
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <model> <noreply@anthropic.com>
-```
-
-`<model>`: Current Claude model name (e.g., `Opus 4.5`, `Sonnet 4`)
-
 ## Document Reference
 
 This document has the following hierarchy:
@@ -132,7 +118,7 @@ gitmessage (Source of Truth)
 ```
 
 - **Git template**: [`gitmessage`](../../gitmessage) - Source of all commit message rules
-- **Detailed implementation guide**: [`.claude/commands/commit.md`](../commands/commit.md) - Auto commit generation and examples
+- **Detailed implementation guide**: [commit skill](../skills/commit/SKILL.md) - Auto commit generation and examples
 - **Change synchronization**: If gitmessage changes, both documents need updating
 
 ## See Also

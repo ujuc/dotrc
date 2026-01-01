@@ -73,7 +73,9 @@ Analyze changes and categorize using conventional commit types:
 
 **Footer**:
 - Reference related issues/PRs
-- Include Claude Code attribution
+
+**AI agent footer**:
+- Include AI agent attribution
 
 ### Step 4: Create Commit
 
@@ -85,9 +87,9 @@ git commit -m "$(cat <<'EOF'
 
 <본문 - 변경 이유와 맥락>
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+<footer>
 
-Co-Authored-By: Claude <model> <noreply@anthropic.com>
+<ai agent footer>
 EOF
 )"
 ```
@@ -108,17 +110,28 @@ EOF
 
 **Key Rule**: Always include "-하다" verb ending.
 
-## Claude Code Attribution
+## Agent Footer Format
 
-All commits must include this footer:
+The `<ai agent footer>` placeholder in commit templates should be replaced with your AI agent's attribution.
+
+### Format
+
+```
+🤖 Generated with [Agent Name](agent-url)
+```
+
+### Example for Claude Code
 
 ```
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-Co-Authored-By: Claude <model> <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 ```
 
-Replace `<model>` with current model (e.g., `Opus 4.5`, `Sonnet 4`).
+### Notes
+
+- First line: Emoji + link to agent (optional if no URL)
+- Model name is optional (Claude-specific)
 
 ## See Also
 
