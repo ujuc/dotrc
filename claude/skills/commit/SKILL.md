@@ -120,14 +120,6 @@ The `<ai agent footer>` placeholder in commit templates should be replaced with 
 🤖 Generated with [Agent Name](agent-url)
 ```
 
-### Example for Claude Code
-
-```
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
-```
-
 ### Notes
 
 - First line: Emoji + link to agent (optional if no URL)
@@ -135,5 +127,5 @@ Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
 
 ## See Also
 
-- [gitmessage](../../gitmessage) - Git commit template (Source of Truth)
-- [version-control.md](../guides/version-control.md) - Complete git workflow guidelines
+- [git message template](../../gitmessage) - Git commit template (Source of Truth)
+- [guide/version-control](../guides/version-control.md) - Complete git workflow guidelines

@@ -21,7 +21,7 @@ As Version Control Specialist, you must:
 - **Include attribution**: Include attribution in AI agent generated commits
 </your_responsibility>
 
-**Source of Truth**: The commit message rules in this document are based on the [`gitmessage`](../../gitmessage) template.
+**Source of Truth**: The commit message rules in this document are based on the [`git message template`](../../gitmessage) template.
 **Detailed Guide**: See [commit skill](../skills/commit/SKILL.md) for implementation details.
 
 ## Git Workflow
