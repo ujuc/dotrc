@@ -486,6 +486,6 @@ counter2: int (aligned to cache line)
 
 ## See Also
 
-- [**CLAUDE.md**](../CLAUDE.md) - Primary document
+- [**AGENTS.md**](../AGENTS.md) - Primary document
 - [Performance](./performance.md) - Basic optimization guidelines
 - [Technical Standards](./technical-standards.md) - Architecture and code quality

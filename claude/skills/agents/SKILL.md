@@ -17,7 +17,7 @@ Last Updated: 2026-01-04
 <context>
 This skill is auto-discovered by Claude when users request AGENTS.md-related tasks.
 AGENTS.md is a project-specific guide for AI agents (Copilot, Cursor, Aider, etc.),
-complementing CLAUDE.md which contains Claude-specific global standards.
+complementing AGENTS.md which contains Claude-specific global standards.
 </context>
 
 # AGENTS.md Management Skill
@@ -45,7 +45,7 @@ This skill activates in these scenarios:
 - **Project-specific**: Contains project context, not generic standards
 - **Flexible structure**: No required fields, adapt to project needs
 - **Hierarchical support**: Root file + subdirectory overrides (monorepo)
-- **Complementary to CLAUDE.md**: Reference Claude-specific standards via link
+- **Complementary to AGENTS.md**: Reference Claude-specific standards via link
 
 ## Instructions
 
@@ -63,7 +63,7 @@ This skill activates in these scenarios:
    - Check for dotrc indicators: `zshrc`, `zshenv`, `starship.toml`, `claude/` directory
    - For dotrc: Use dotrc-specific template (shell configs, tool settings, symlinks)
    - For other projects: Read README.md, package.json, or similar to identify type
-   - Check for `claude/CLAUDE.md` to determine if Claude-specific section should be included
+   - Check for `claude/AGENTS.md` to determine if Claude-specific section should be included
 
 3. **Generate template content**:
    - Create comprehensive template with essential sections:
@@ -77,9 +77,9 @@ This skill activates in these scenarios:
      - Common Tasks (frequent operations, examples)
      - Security Considerations (secrets, sensitive files)
      - Troubleshooting (common issues, diagnostics)
-   - If `claude/CLAUDE.md` exists: Add section with link:
+   - If `claude/AGENTS.md` exists: Add section with link:
      ```markdown
-     > **For Claude Code users**: See [CLAUDE.md](./claude/CLAUDE.md) for Claude-specific guidelines.
+     > **For Claude Code users**: See [AGENTS.md](./claude/AGENTS.md) for Claude-specific guidelines.
      ```
    - Include footer: Last Updated, Maintainer, AI Agent Compatibility
 
@@ -201,7 +201,7 @@ diff <backup-file> AGENTS.md
 2. **Read and analyze**:
    - Parse markdown structure (count headings, check hierarchy)
    - Identify all sections (scan for `## ` patterns)
-   - Verify CLAUDE.md link if present (check file exists at path)
+   - Verify AGENTS.md link if present (check file exists at path)
 
 3. **Quality checks**:
    - **Structure**: Valid markdown, proper H1 → H2 → H3 hierarchy
@@ -249,7 +249,7 @@ When creating AGENTS.md, include these essential sections:
 3. **Build & Test Commands**: Setup, validation, testing
 4. **Development Environment**: Required/optional tools, installation
 5. **Code Style & Conventions**: Language-specific guidelines, formatting
-6. **Git Workflow**: Commit format (reference CLAUDE.md if exists), types, examples
+6. **Git Workflow**: Commit format (reference AGENTS.md if exists), types, examples
 7. **Testing Changes**: Pre-commit checks, safe testing procedures
 8. **Common Tasks**: Frequent operations with examples
 9. **Security Considerations**: Secrets handling, sensitive file locations

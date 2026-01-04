@@ -2,7 +2,7 @@
 
 This file provides guidance to AI agents when working with code in this repository.
 
-> **For Claude Code users**: See [CLAUDE.md](./claude/CLAUDE.md) for detailed Claude-specific guidelines including Korean commit message format, code review process, and refactoring standards.
+> **For Claude Code users**: See [AGENTS.md](./claude/AGENTS.md) for detailed Claude-specific guidelines including Korean commit message format, code review process, and refactoring standards.
 
 ## Project Overview
 
@@ -27,7 +27,7 @@ dotrc/
 ├── gitmessage         # Git commit template
 ├── zed/               # Zed editor settings
 ├── claude/            # Claude Code guidelines
-│   ├── CLAUDE.md      # Main guidelines document
+│   ├── AGENTS.md      # Main guidelines document
 │   ├── system-rules.md # Critical rules
 │   ├── mcp.json       # MCP server configuration
 │   ├── guides/        # 16 detailed guide documents
@@ -52,8 +52,8 @@ ln -sf ${DOTRCDIR}/starship.toml ${XDG_CONFIG_HOME}/starship.toml
 ln -sf ${DOTRCDIR}/zed/settings.json ${XDG_CONFIG_HOME}/zed/settings.json
 ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 
-# Claude global config
-ln -sf ${DOTRCDIR}/claude/CLAUDE.md ${HOME}/.claude/CLAUDE.md
+# Claude global config (folder link)
+ln -sf ${DOTRCDIR}/claude ${HOME}/.claude
 
 # Pre-commit hook (optional)
 ln -sf ${DOTRCDIR}/claude/scripts/pre-commit-lint ${DOTRCDIR}/.git/hooks/pre-commit
@@ -91,7 +91,7 @@ zsh -c 'echo "Zsh loaded successfully"'
 
 # Verify symlinks
 ls -la ${XDG_CONFIG_HOME}/starship.toml
-ls -la ${HOME}/.claude/CLAUDE.md
+ls -la ${HOME}/.claude/AGENTS.md
 ```
 
 ## Development Environment
@@ -218,7 +218,7 @@ ZDOTDIR="${HOME}/.config/zsh"             # Zsh configs
 - ✅ `docs: AGENTS.md 파일을 생성하다`
 - ❌ `feat: Starship 프롬프트 추가` (missing -하다)
 
-**For Claude Code users**: See [CLAUDE.md](./claude/CLAUDE.md) and [gitmessage](./gitmessage) for full commit guidelines.
+**For Claude Code users**: See [AGENTS.md](./claude/AGENTS.md) and [gitmessage](./gitmessage) for full commit guidelines.
 
 ## Testing Changes
 

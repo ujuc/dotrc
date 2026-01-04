@@ -819,7 +819,7 @@ Before sending response, verify:
 
 ## See Also
 
-- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Language policy (Korean/English)
 - [Interaction Modes](./interaction-modes.md) - How modes affect response style
 - [Documentation](./documentation.md) - Code documentation standards

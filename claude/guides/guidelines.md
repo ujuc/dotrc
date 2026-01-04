@@ -92,7 +92,7 @@ When user intent is unclear, infer and proceed with the most useful action:
 
 ## See Also
 
-- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Critical system-wide rules
 - [Process](../process.md) - Problem solving and troubleshooting
 - [Quality Assurance](../quality-assurance.md) - Quality gates and testing

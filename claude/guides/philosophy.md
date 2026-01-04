@@ -67,7 +67,7 @@ Detailed guide: [Technical Standards - Avoid Over-engineering](./technical-stand
 
 ## See Also
 
-- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Critical system-wide rules
 - [Technical Standards](../technical-standards.md) - Code generation and architecture
 - [Process](../process.md) - Implementation workflow and planning

@@ -77,7 +77,7 @@ A language usage strategy to achieve both context efficiency and readability.
 
 <priority_levels>
 ### Level 1: Critical (Always Include)
-- **System rules** and guidelines from CLAUDE.md, system-rules.md
+- **System rules** and guidelines from AGENTS.md, system-rules.md
 - **Current task** description and requirements
 - **Direct dependencies**: Code directly referenced or modified
 - **Error messages**: Full, exact error text when debugging
@@ -577,7 +577,7 @@ Task: "Add a new API endpoint"
 
 ## See Also
 
-- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
 - [Process](./process.md) - Implementation workflow (uses context efficiently)
 - [Conflict Resolution](./conflict-resolution.md) - Managing complex decisions
 - [Output Formats](./output-formats.md) - Structured responses save tokens

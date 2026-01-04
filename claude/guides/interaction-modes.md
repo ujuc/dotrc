@@ -497,7 +497,7 @@ like Schrödinger's cat) to solve problems faster..."
 
 ## 📚 See Also
 
-- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
 - [**System Rules**](../system-rules.md) - Critical non-negotiable rules (highest priority)
 - [Guidelines](../guidelines.md) - Important reminders and best practices
 - [Process](../process.md) - Problem solving and troubleshooting approaches
@@ -531,7 +531,7 @@ like Schrödinger's cat) to solve problems faster..."
 
 ## See Also
 
-- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Critical rules (modes cannot override)
 - [Output Formats](./output-formats.md) - Response templates for different scenarios
 - [Conflict Resolution](./conflict-resolution.md) - Handling conflicting requirements

@@ -538,7 +538,7 @@ Rate each option (1-5) on:
 
 ## See Also
 
-- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Critical system-wide rules
 - [Philosophy](../philosophy.md) - Development philosophy and principles
 - [Quality Assurance](../quality-assurance.md) - Testing and quality gates

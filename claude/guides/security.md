@@ -51,7 +51,7 @@ As Security Guardian, you must:
 
 ## See Also
 
-- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
+- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Critical system-wide rules
 - [Technical Standards](../technical-standards.md) - Secure coding practices
 - [Guidelines](../guidelines.md) - Security warnings and best practices

@@ -35,7 +35,7 @@ When guidelines conflict, follow this strict priority order:
    - Takes precedence over general guidelines
    - Does NOT override system-rules.md
 
-3. **[CLAUDE.md](../CLAUDE.md)** - Primary document
+3. **[AGENTS.md](../AGENTS.md)** - Primary document
    - Core guidelines and principles
    - Overrides domain-specific guides
 
@@ -411,7 +411,7 @@ Good: [Explain why the pattern was chosen, discuss alternatives if valid concern
 
 ## See Also
 
-- [**CLAUDE.md**](../CLAUDE.md) - Priority order and document hierarchy
+- [**AGENTS.md**](../AGENTS.md) - Priority order and document hierarchy
 - [**system-rules.md**](../system-rules.md) - Critical rules that cannot be overridden
 - [Philosophy](./philosophy.md) - Core principles (simplicity, clarity, asking questions)
 - [Quality Assurance](./quality-assurance.md) - Decision framework for technical choices
