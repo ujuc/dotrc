@@ -12,3 +12,4 @@ clipboard-read = allow
 clipboard-write = allow
 clipboard-trim-trailing-spaces = true
 copy-on-select = clipboard
+keybind = shift+enter=text:\x1b\r
