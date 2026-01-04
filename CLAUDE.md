@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for Claude Code when working with this dotfiles repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Overview
 
@@ -22,10 +22,10 @@ Personal dotfiles repository (`dotrc`) for macOS. Manages shell configs, applica
 | `CLAUDE.md` | Main entry point (→ `~/.claude/CLAUDE.md`) |
 | `system-rules.md` | Critical rules (highest priority) |
 | `mcp.json` | MCP server configuration |
-| `guides/` | 16 detailed guide documents (~4,500 lines) |
+| `guides/` | 16 detailed guide documents |
+| `skills/` | Auto-discovered skills (commit, review, troubleshoot, refactor) |
 | `scripts/` | Doc linting automation |
 | `templates/` | Guide document template |
-| `commands/` | CLI command definitions |
 
 ## File Linking
 
@@ -64,9 +64,20 @@ update → brew update/upgrade + zimfw update + cleanup
 - `XDG_CONFIG_HOME`: App configs
 - `ZDOTDIR`: Zsh config directory
 
+## Skills (Auto-Discovered)
+
+Skills are triggered by natural language requests:
+
+| Skill | Trigger Examples | Purpose |
+|-------|------------------|---------|
+| `commit` | "커밋해줘", "commit changes" | Creates git commits with Korean messages |
+| `review` | "리뷰해줘", "이거 괜찮아?" | Performs code review |
+| `troubleshoot` | "왜 안돼?", "에러 났어" | Diagnoses and fixes errors |
+| `refactor` | "리팩토링 해줘", "정리해줘" | Improves code quality |
+
 ## Notes
 
 - Use `(( $+commands[tool] ))` for command existence checks
 - Work overrides: `~/.zshrc.work` (auto-sourced)
 - Test config changes before committing
-- Follow commit template in `gitmessage`
+- Korean commit messages use "-하다" verb ending (e.g., `feat: 기능을 추가하다`)
