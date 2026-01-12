@@ -36,6 +36,16 @@ When creating commits, follow these core principles:
 - **Context aware**: Include background and purpose of the change
 - **Collaboration oriented**: Write for other developers to understand
 
+## Language Policy (Default: Korean)
+
+커밋 메시지 언어의 기본값은 **한국어(Korean)**입니다.
+
+- **Default**: Korean commit messages (subject and body)
+- **Override**: If project's CLAUDE.md or AGENTS.md specifies a different language policy, follow that policy
+- **Explicit request**: Use other languages only when explicitly requested by the user
+
+This ensures consistency with the user's personal workflow while allowing project-specific flexibility.
+
 ## Instructions
 
 ### Step 1: Analyze Git State
@@ -67,6 +77,7 @@ Analyze changes and categorize using conventional commit types:
 - No period at end
 
 **Body** (REQUIRED):
+- Language: Korean (한국어)
 - Explain WHY the change was made
 - Include context and background
 - Wrap lines at 72 characters
@@ -85,7 +96,7 @@ Use heredoc for proper formatting:
 git commit -m "$(cat <<'EOF'
 <type>: <한국어 제목>
 
-<본문 - 변경 이유와 맥락>
+<한국어 본문 - 변경 이유와 맥락 설명>
 
 <footer>
 
@@ -109,6 +120,45 @@ EOF
 - `fix: 로그인 버그 수정` (missing verb ending)
 
 **Key Rule**: Always include "-하다" verb ending.
+
+### Complete Commit Message Examples
+
+**Example 1 - Feature Addition**:
+```
+feat(skills): PR 본문 작성 언어를 한국어로 변경하다
+
+create-pr 스킬에서 PR 본문 작성 언어 정책을 영어에서 한국어로 변경하다.
+이제 PR 제목과 본문 모두 일관성 있게 한국어로 작성된다.
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+**Example 2 - Bug Fix**:
+```
+fix(alb): WAF 규칙 우선순위 충돌을 수정하다
+
+동일한 우선순위를 가진 WAF 규칙들이 충돌을 일으키는 문제를 해결하다.
+각 규칙에 고유한 우선순위 값을 할당하여 충돌을 방지한다.
+
+Closes: RP-1234
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+**Example 3 - Documentation**:
+```
+docs(spec): ALB listener priority 정책 문서를 추가하다
+
+ALB listener 우선순위 할당 규칙과 범위에 대한 명확한 가이드라인을 제공하다.
+이를 통해 팀원들이 일관된 우선순위 전략을 따를 수 있다.
+
+Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+**Key Points**:
+- Subject and body both in Korean (한국어)
+- Body explains WHY, not just WHAT
+- Footer includes issue references and AI attribution
 
 ## Agent Footer Format
 
