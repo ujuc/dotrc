@@ -18,3 +18,5 @@ claude/downloads
 claude/session-env
 claude/plans
 claude/stats-cache.json
+claude/cache
+claude/paste-cache
