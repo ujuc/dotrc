@@ -179,8 +179,15 @@ ln -sf ${DOTRCDIR}/tigrc ${XDG_CONFIG_HOME}/tig/config
 ### [Claude](https://claude.ai/)
 
 ```sh
-brew install --cask claude claude-code
+curl -fsSL https://claude.ai/install.sh | bash
 ln -sf ${DOTRCDIR}/claude ${HOME}/.claude
+```
+
+### [Pi](https://github.com/badlogic/pi-mono)
+
+```sh
+npm install -g @mariozechner/pi-coding-agent
+ln -sf ${DOTRCDIR}/pi ${HOME}/.pi
 ```
 
 ### [raycast](https://www.raycast.com/)
@@ -224,7 +231,7 @@ mkdir -p ${XDG_CONFIG_HOME}/ghostty
 ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 ```
 
-## Lang
+## Lang Env
 
 ### [mise-en-place](https://mise.jdx.dev/)
 
