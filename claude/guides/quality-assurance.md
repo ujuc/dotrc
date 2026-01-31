@@ -405,7 +405,7 @@ time make && make test
 
 ## See Also
 
-- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Critical system-wide rules
 - [Technical Standards](../technical-standards.md) - Code quality requirements
 - [Process](../process.md) - Test-driven development workflow

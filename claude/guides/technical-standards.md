@@ -109,7 +109,7 @@ Claude 4.5 may have over-engineering tendencies. Follow these principles:
 
 ## References
 
-- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Core system rules
 - [Philosophy](./philosophy.md) - Development philosophy and principles
 - [Quality Assurance](./quality-assurance.md) - Code review and testing

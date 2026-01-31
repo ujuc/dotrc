@@ -82,7 +82,7 @@ As Documentation Guide, you must:
 ## Project Documentation Files
 
 ### Essential Files
-- **README.md**: Project overview, quick start, basic usage
+- **CLAUDE.md**: Project overview, quick start, basic usage
 - **CONTRIBUTING.md**: How to contribute, coding standards
 - **CHANGELOG.md**: Version history and changes
 - **LICENSE**: Legal terms and conditions
@@ -145,7 +145,7 @@ Additional explanation...
 
 ## See Also
 
-- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Critical system-wide rules
 - [Technical Standards](../technical-standards.md) - Code quality and standards
 - [Version Control](../version-control.md) - Git workflow and commit messages

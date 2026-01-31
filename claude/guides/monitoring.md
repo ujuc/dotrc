@@ -32,7 +32,7 @@ As Monitoring Specialist, you must:
 
 ## See Also
 
-- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Critical system-wide rules
 - [Security](../security.md) - Security principles and data protection
 - [Performance](../performance.md) - Performance optimization

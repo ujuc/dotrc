@@ -17,7 +17,7 @@ Last Updated: 2026-01-04
 <context>
 This skill is auto-discovered by Claude when users request AGENTS.md-related tasks.
 AGENTS.md is a project-specific guide for AI agents (Copilot, Cursor, Aider, etc.),
-complementing AGENTS.md which contains Claude-specific global standards.
+complementing CLAUDE.md which contains Claude-specific global standards.
 </context>
 
 # AGENTS.md Management Skill

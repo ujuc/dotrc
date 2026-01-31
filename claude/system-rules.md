@@ -1,4 +1,4 @@
-# System Rules (AGENTS.md Core Summary)
+# System Rules (CLAUDE.md Core Summary)
 
 <meta>
 Document: system-rules.md
@@ -10,12 +10,12 @@ Last Updated: 2025-12-21
 </meta>
 
 <context>
-This document extracts the core rules from AGENTS.md.
+This document extracts the core rules from CLAUDE.md.
 These rules have the highest priority in all code generation and modification tasks.
 </context>
 
-**This document extracts the core rules from [AGENTS.md](./AGENTS.md).**
-See [AGENTS.md](./AGENTS.md) for complete guidelines.
+**This document extracts the core rules from [CLAUDE.md](./CLAUDE.md).**
+See [CLAUDE.md](./CLAUDE.md) for complete guidelines.
 
 <enforcement_policy>
 These rules apply during code generation and modification.
@@ -368,7 +368,7 @@ Ignoring errors can lead to bigger problems later</reason>
 
 ## See Also
 
-- [**AGENTS.md**](./AGENTS.md) - **Primary document with complete guidelines**
+- [**CLAUDE.md**](./CLAUDE.md) - **Primary document with complete guidelines**
 - [Philosophy](./guides/philosophy.md) - Development philosophy and core principles
 - [Process](./guides/process.md) - Planning, implementation, problem solving
 - [Technical Standards](./guides/technical-standards.md) - Code generation and architecture

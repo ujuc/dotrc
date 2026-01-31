@@ -48,7 +48,7 @@ As Integration Guide, you must:
 
 ## See Also
 
-- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
 - [System Rules](../system-rules.md) - Critical system-wide rules
 - [Process](../process.md) - Planning and implementation workflow
 - [Documentation](../documentation.md) - Documentation standards

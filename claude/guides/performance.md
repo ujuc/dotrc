@@ -32,7 +32,7 @@ As Performance Advisor, you must:
 
 ## See Also
 
-- [**AGENTS.md**](../AGENTS.md) - Primary document with complete guidelines
+- [**CLAUDE.md**](../CLAUDE.md) - Primary document with complete guidelines
 - [Performance Optimization](./performance-optimization.md) - Detailed optimization techniques reference
 - [System Rules](../system-rules.md) - Critical system-wide rules
 - [Technical Standards](./technical-standards.md) - Architecture and code quality
