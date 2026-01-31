@@ -1,4 +1,9 @@
 {
+  "agent_servers": {
+    "mistral-vibe": {
+      "type": "registry"
+    }
+  },
   "disable_ai": false,
   "ui_font_family": "IBM Plex Sans KR",
   "audio": {
