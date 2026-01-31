@@ -1,0 +1,10 @@
+{
+  "packages": [
+    "npm:pi-interactive-shell"
+  ],
+  "lastChangelogVersion": "0.50.7",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-sonnet-4-5",
+  "defaultThinkingLevel": "medium",
+  "theme": "dark"
+}

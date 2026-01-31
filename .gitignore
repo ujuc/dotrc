@@ -20,3 +20,7 @@ claude/plans
 claude/stats-cache.json
 claude/cache
 claude/paste-cache
+
+pi/agent/bin
+pi/agent/sessions/**
+pi/agent/auth.json
