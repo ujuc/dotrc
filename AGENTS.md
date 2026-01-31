@@ -1,8 +1,23 @@
 # AGENTS.md
 
-This file provides guidance to AI agents when working with code in this repository.
+<meta>
+Version: 2.0.0
+Last Updated: 2026-02-01
+Standard: https://agents.md/
+AI Compatibility: Universal (Claude Code, GitHub Copilot, Cursor, Aider)
+</meta>
 
-> **For Claude Code users**: See [AGENTS.md](./claude/AGENTS.md) for detailed Claude-specific guidelines including Korean commit message format, code review process, and refactoring standards.
+**Universal AI Agent Guide** for the `dotrc` repository.
+
+This file provides **platform-agnostic guidance** for all AI coding assistants (GitHub Copilot, Cursor, Aider, etc.) working with this dotfiles repository.
+
+> **For Claude Code users**: See [CLAUDE.md](./claude/CLAUDE.md) for **Claude-specific** guidelines including:
+> - Korean commit message format (Conventional Commits with `-하다` ending)
+> - Code review process and quality standards
+> - Auto-discovered skills (commit, review, troubleshoot, refactor, agents)
+> - MCP server integrations and advanced features
+>
+> **Note**: CLAUDE.md contains comprehensive development standards optimized for Claude 4.5. Other AI agents should follow this AGENTS.md file.
 
 ## Project Overview
 
@@ -13,28 +28,48 @@ Personal dotfiles repository (`dotrc`) for macOS. Manages shell configurations, 
 **Platform**: macOS
 **Purpose**: Centralized management of development environment and tool configurations
 
+### AI Agent Usage
+
+- **Claude Code**: Use [CLAUDE.md](./claude/CLAUDE.md) for comprehensive guidelines
+- **GitHub Copilot**: Follow this AGENTS.md + code style conventions
+- **Cursor**: Follow this AGENTS.md + git workflow guidelines
+- **Aider**: Follow this AGENTS.md + commit message format
+- **Other AI tools**: This AGENTS.md provides all essential guidance
+
 ## Repository Structure
 
 ```
 dotrc/
+├── AGENTS.md           # This file - Universal AI agent guide
 ├── zshrc               # Zsh main config (sourced by zshenv)
 ├── zshenv              # Zsh environment setup (entry point)
 ├── zimrc               # Zim framework modules
 ├── starship.toml       # Starship prompt config
-├── ghosttyrc          # Ghostty terminal config
-├── batrc              # bat (cat alternative) config
-├── tigrc              # tig (git UI) config
-├── gitmessage         # Git commit template
-├── zed/               # Zed editor settings
-├── claude/            # Claude Code guidelines
-│   ├── AGENTS.md      # Main guidelines document
-│   ├── system-rules.md # Critical rules
-│   ├── mcp.json       # MCP server configuration
-│   ├── guides/        # 16 detailed guide documents
-│   ├── skills/        # Auto-discovered skills (commit, review, troubleshoot, refactor, agents)
-│   ├── scripts/       # Automation scripts
-│   └── templates/     # Document templates
-└── AGENTS.md          # This file
+├── ghosttyrc           # Ghostty terminal config
+├── batrc               # bat (cat alternative) config
+├── tigrc               # tig (git UI) config
+├── gitmessage          # Git commit template
+├── zed/                # Zed editor settings
+└── claude/             # Claude Code specific guidelines
+    ├── CLAUDE.md       # Claude-specific entry point
+    ├── system-rules.md # Critical rules (highest priority)
+    ├── mcp.json        # MCP server configuration
+    ├── settings.json   # Claude CLI settings
+    ├── guides/         # 16 detailed guideline documents
+    │   ├── philosophy.md
+    │   ├── process.md
+    │   ├── technical-standards.md
+    │   ├── quality-assurance.md
+    │   └── ... (12 more)
+    ├── skills/         # Auto-discovered skills
+    │   ├── commit/     # Korean commit message automation
+    │   ├── review/     # Code review automation
+    │   ├── troubleshoot/ # Error diagnosis
+    │   ├── refactor/   # Code improvement
+    │   └── agents/     # AGENTS.md management
+    ├── scripts/        # Automation scripts
+    ├── templates/      # Document templates
+    └── (runtime)       # Auto-generated: commands/, history.jsonl, plans/, etc.
 ```
 
 ## File Linking Strategy
@@ -91,7 +126,10 @@ zsh -c 'echo "Zsh loaded successfully"'
 
 # Verify symlinks
 ls -la ${XDG_CONFIG_HOME}/starship.toml
-ls -la ${HOME}/.claude/AGENTS.md
+
+# Verify Claude config (if using Claude Code)
+ls -la ${HOME}/.claude/CLAUDE.md
+test -L ${HOME}/.claude && echo "Claude config symlink OK" || echo "Claude config not linked"
 ```
 
 ## Development Environment
@@ -218,7 +256,7 @@ ZDOTDIR="${HOME}/.config/zsh"             # Zsh configs
 - ✅ `docs: AGENTS.md 파일을 생성하다`
 - ❌ `feat: Starship 프롬프트 추가` (missing -하다)
 
-**For Claude Code users**: See [AGENTS.md](./claude/AGENTS.md) and [gitmessage](./gitmessage) for full commit guidelines.
+**For Claude Code users**: See [CLAUDE.md](./claude/CLAUDE.md) and [gitmessage](./gitmessage) for full commit guidelines.
 
 ## Testing Changes
 
@@ -258,18 +296,26 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
 
 ### Updating Claude Guidelines
 
+**Note**: This is Claude Code specific.
+
 1. Edit files in `claude/guides/`
 2. Run linter: `${DOTRCDIR}/claude/scripts/lint-docs.sh` (if exists)
 3. Verify links work
 4. Commit with `docs(claude): <description>`
 
-### Managing Skills
+For details, see [CLAUDE.md](./claude/CLAUDE.md).
+
+### Managing Claude Skills
+
+**Note**: This is Claude Code specific. Other AI agents can skip this section.
 
 1. Create skill directory: `claude/skills/<skill-name>/`
 2. Write `SKILL.md` following existing patterns
 3. Include: YAML frontmatter, metadata, context, instructions
 4. Test with natural language: "<skill-trigger>"
 5. Commit with `feat(claude): <skill-name> 스킬을 추가하다`
+
+For details, see [CLAUDE.md](./claude/CLAUDE.md).
 
 ## Security Considerations
 
@@ -316,9 +362,13 @@ ls -la ${XDG_CONFIG_HOME}/tool.toml
 ln -sf ${DOTRCDIR}/tool.toml ${XDG_CONFIG_HOME}/tool.toml
 ```
 
-## Claude Skills (Auto-Discovered)
+## Claude Code Features
 
-Skills are triggered by natural language requests:
+**Note**: The following features are specific to Claude Code. Other AI agents can ignore this section.
+
+### Auto-Discovered Skills
+
+Claude Code automatically discovers and activates skills based on natural language triggers:
 
 | Skill | Trigger Examples | Purpose |
 |-------|------------------|---------|
@@ -328,16 +378,37 @@ Skills are triggered by natural language requests:
 | `refactor` | "리팩토링 해줘", "정리해줘" | Improves code quality |
 | `agents` | "에이전트해줘", "AGENTS.md 만들어줘" | Manages AGENTS.md file |
 
+For complete documentation, see [CLAUDE.md](./claude/CLAUDE.md) and [claude/skills/](./claude/skills/).
+
 ## Related Resources
 
+### Documentation
+- [CLAUDE.md](./claude/CLAUDE.md) - Claude Code specific guidelines
+- [AGENTS.md Spec](https://agents.md/) - Universal AI agent guide standard
+
+### Tool Documentation
 - [Zsh Documentation](https://zsh.sourceforge.io/Doc/)
 - [ZimFW Modules](https://zimfw.sh/docs/modules/)
 - [Starship Config](https://starship.rs/config/)
 - [mise Documentation](https://mise.jdx.dev/)
-- [AGENTS.md Spec](https://agents.md/)
+- [Ghostty](https://ghostty.org/)
+- [Zed Editor](https://zed.dev/)
 
 ---
 
-**Last Updated**: 2026-01-04
-**Maintainer**: ujuc
-**AI Agent Compatibility**: Universal (tested with Claude Code, GitHub Copilot, Cursor)
+## Document Organization
+
+- **AGENTS.md** (this file): Universal guide for all AI agents
+- **claude/CLAUDE.md**: Claude Code specific standards and advanced features
+- **Relationship**: AGENTS.md provides the foundation; CLAUDE.md extends it for Claude users
+
+## Change Log
+
+- **v2.0.0** (2026-02-01): Separated Claude-specific content to claude/CLAUDE.md
+- **v1.0.0** (2026-01-04): Initial version with universal and Claude-specific content merged
+
+---
+
+**Maintainer**: ujuc  
+**AI Agent Compatibility**: Universal (tested with Claude Code, GitHub Copilot, Cursor)  
+**Last Updated**: 2026-02-01
