@@ -236,7 +236,7 @@ ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 ### [mise-en-place](https://mise.jdx.dev/)
 
 ```sh
-brew install mise
+curl https://mise.run | sh
 
 # Autocomplete
 mise use -g uv
