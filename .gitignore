@@ -24,3 +24,10 @@ claude/paste-cache
 pi/agent/bin
 pi/agent/sessions/**
 pi/agent/auth.json
+pi/agent/settings.json
+
+# Zsh compiled files
+*.zwc
+
+# Zsh backup files
+zshrc.backup
