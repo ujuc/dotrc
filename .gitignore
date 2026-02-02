@@ -20,6 +20,10 @@ claude/plans
 claude/stats-cache.json
 claude/cache
 claude/paste-cache
+claude/telemetry
+claude/tasks
+claude/security_warnings_state*
+
 
 pi/agent/bin
 pi/agent/sessions/**
