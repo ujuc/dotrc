@@ -23,7 +23,8 @@ claude/paste-cache
 claude/telemetry
 claude/tasks
 claude/security_warnings_state*
-
+claude/chrome
+claude/usage-data
 
 pi/agent/bin
 pi/agent/sessions/**
