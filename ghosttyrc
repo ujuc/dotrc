@@ -2,8 +2,8 @@ theme = Nord Wave
 window-theme = dark
 window-height = 30
 window-width = 120
-font-family = "JetBrainsMono Nerd Font Mono, Cascadia Code NF, D2CodingLigature Nerd Font Mono"
-font-size = 12
+font-family = "GoogleSansCode, NanumSquareNeo-Variable, ZedMonoNerdFont"
+font-size = 13
 auto-update = download
 
 shell-integration = zsh

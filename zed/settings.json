@@ -1,11 +1,11 @@
 {
   "agent_servers": {
     "mistral-vibe": {
-      "type": "registry"
-    }
+      "type": "registry",
+    },
   },
   "disable_ai": false,
-  "ui_font_family": "IBM Plex Sans KR",
+  "ui_font_family": "NanumSquare Neo variable",
   "audio": {
     "experimental.auto_speaker_volume": false,
     "experimental.denoise": false,
@@ -17,11 +17,11 @@
   "icon_theme": "Catppuccin Macchiato",
   "theme": "Catppuccin Macchiato",
   "autosave": "on_focus_change",
-  "restore_on_startup": "none",
+  "restore_on_startup": null,
   "base_keymap": "VSCode",
 
   "buffer_font_family": "Google Sans Code",
-  "buffer_font_fallbacks": ["JetBrains Mono", "D2Coding"],
+  "buffer_font_fallbacks": ["ZedMono Nerd Font"],
   "buffer_font_size": 12,
 
   "tabs": {
@@ -64,7 +64,7 @@
   "terminal": {
     "alternate_scroll": "on",
     "copy_on_select": true,
-    "font_family": "JetBrainsMono Nerd Font Mono",
+    "font_family": "ZedMono Nerd Font",
     "font_size": 12,
     "toolbar": {
       "breadcrumbs": false,
