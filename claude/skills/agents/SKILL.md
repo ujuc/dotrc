@@ -2,6 +2,7 @@
 name: agents
 description: Creates and manages AGENTS.md files for AI agent integration. Use when the user asks to "에이전트해줘", "create agents", "AGENTS.md 만들어줘", "agents.md 업데이트", "agents 파일 검증", or needs to set up project guidance for AI agents.
 allowed-tools: Read, Write, Edit, Bash(git status:*), Bash(git diff:*), Bash(test:*)
+model: haiku
 version: 2.1.0
 metadata:
   role: "AGENTS.md Manager"
@@ -22,8 +23,7 @@ This skill creates and manages AGENTS.md files for universal AI agent integratio
 ## Source of Truth
 
 - **AGENTS.md Spec**: [agents.md](https://agents.md/)
-- **Template**: [`agents-template.md`](../../docs/templates/agents-template.md) - Base template for new AGENTS.md files
-- **Guidelines**: [`documentation.md`](../guides/documentation.md), [`project-integration.md`](../guides/project-integration.md)
+- **Template**: [`agents-template.md`](./agents-template.md) - Base template for new AGENTS.md files
 
 ## When to Activate
 
@@ -57,22 +57,21 @@ This skill activates in these scenarios:
    - If exists: Ask user to choose update (Feature 2) or regenerate (Feature 3)
 
 2. **Detect project characteristics**:
-   - Check for dotrc indicators: `zshrc`, `zshenv`, `starship.toml`, `claude/` directory
-   - For dotrc: Use dotrc-specific template (shell configs, tool settings, symlinks)
-   - For other projects: Read README.md, package.json, or similar to identify type
-   - Check for `claude/AGENTS.md` to determine if Claude-specific section should be included
+   - Read project files (README.md, package.json, setup.py, Cargo.toml, go.mod, etc.) to identify project type, primary language(s), and build system
+   - Check directory structure and key entry points
+   - Check if CLAUDE.md exists to determine if Claude-specific callout should be included
 
 3. **Load and adapt template**:
-   - Read `docs/templates/agents-template.md` (or locate it relative to the dotrc project)
+   - Read `agents-template.md` from the skill directory
    - Remove YAML frontmatter and comment blocks (template management only)
    - Customize each section based on project analysis from Step 2:
      - Replace placeholders (`[Project Name]`, `[language]`, etc.) with actual values
      - Fill 6 Core Areas with project-specific content (see Template Sections Reference)
      - Remove sections that don't apply (but keep all 6 Core Areas)
-     - Add project-specific sections as needed (e.g., dotrc: File Linking Strategy, Aliases)
-   - If `claude/CLAUDE.md` exists: Add Claude Code callout:
+     - Add project-specific sections as needed based on project type
+   - If CLAUDE.md exists in the project: Add Claude Code callout:
      ```markdown
-     > **For Claude Code users**: See [CLAUDE.md](./claude/CLAUDE.md) for Claude-specific guidelines.
+     > **For Claude Code users**: See [CLAUDE.md](./CLAUDE.md) for Claude-specific guidelines.
      ```
    - Include footer: Last Updated, Maintainer, AI Agent Compatibility
 
@@ -81,18 +80,21 @@ This skill activates in these scenarios:
    - Confirm completion with file path and section summary
 
 **Output Format** (Korean):
+
 ```markdown
 ## AGENTS.md 생성 완료 ✅
 
 **위치**: `<absolute-path>/AGENTS.md`
 
 **포함된 섹션** (<N>개):
+
 - Project Overview
 - Repository Structure
 - Build & Test Commands
 - ...
 
 **다음 단계**:
+
 - 파일을 검토하고 프로젝트에 맞게 조정
 - 커밋: "커밋해줘"
 ```
@@ -130,7 +132,8 @@ This skill activates in these scenarios:
    - Suggest running `git diff AGENTS.md` for full review
 
 **Output Format** (Korean):
-```markdown
+
+````markdown
 ## 섹션 업데이트 완료 ✅
 
 **수정된 섹션**: <Section Name>
@@ -139,7 +142,7 @@ This skill activates in these scenarios:
 \```bash
 git diff AGENTS.md
 \```
-```
+````
 
 ---
 
@@ -167,7 +170,8 @@ git diff AGENTS.md
    - Confirm completion with backup path
 
 **Output Format** (Korean):
-```markdown
+
+````markdown
 ## AGENTS.md 재생성 완료 ✅
 
 **백업 위치**: `<path>/AGENTS.md.backup.<timestamp>`
@@ -175,6 +179,7 @@ git diff AGENTS.md
 **새 파일 생성**: `<path>/AGENTS.md`
 
 **변경사항**:
+
 - ✅ 최신 템플릿 구조 적용
 - ✅ 프로젝트 특성 재분석
 - ⚠️ 이전 커스텀 내용은 백업 파일에서 확인 가능
@@ -183,7 +188,7 @@ git diff AGENTS.md
 \```bash
 diff <backup-file> AGENTS.md
 \```
-```
+````
 
 ---
 
@@ -232,17 +237,20 @@ diff <backup-file> AGENTS.md
    - Assign quality score: 10/10 (Excellent), 7-9/10 (Good), 4-6/10 (Needs work), 1-3/10 (Incomplete)
 
 **Output Format** (Korean):
+
 ```markdown
 ## AGENTS.md 검증 결과
 
 **품질 점수**: <X>/10 (<Rating>)
 
 ### ✅ 구조
+
 - 유효한 Markdown 형식
 - 적절한 헤딩 계층 구조
 - <N>개 섹션 발견
 
 ### 📋 6 Core Areas 커버리지
+
 - ✅ Commands (Build & Test Commands)
 - ✅ Testing (Testing Changes)
 - ✅ Project Structure (Project Overview + Repository Structure)
@@ -251,14 +259,17 @@ diff <backup-file> AGENTS.md
 - ❌ Boundaries - 섹션 누락
 
 ### 📋 기타 섹션
+
 - ✅ Development Environment
 - ⚠️ Security Considerations (내용 부족)
 - ...
 
 ### ⚠️ 탐지된 Anti-patterns
+
 - [해당 사항이 있으면 나열]
 
 ### 💡 개선 제안
+
 <Specific recommendations>
 
 **다음 단계**: 특정 섹션 업데이트는 "Security 섹션 업데이트" 요청
@@ -268,20 +279,20 @@ diff <backup-file> AGENTS.md
 
 ## Template Sections Reference
 
-Full template: [`docs/templates/agents-template.md`](../../docs/templates/agents-template.md)
+Full template: [`agents-template.md`](./agents-template.md)
 
 ### 6 Core Areas (Required)
 
 These 6 areas must be present in every AGENTS.md (based on analysis of 2,500+ repositories):
 
-| Core Area | AGENTS.md Section | What It Covers |
-|-----------|-------------------|----------------|
-| Commands | Build & Test Commands | Setup, build, test, lint commands (copy-pasteable) |
-| Testing | Testing Changes | Pre-commit checks, test guidelines, verification steps |
-| Project Structure | Project Overview + Repository Structure | Type, languages, directory tree, key files |
-| Code Style | Code Style & Conventions | Formatting, naming, patterns with good/bad examples |
-| Git Workflow | Git Workflow | Commit format, branch strategy, examples |
-| Boundaries | Boundaries | Always Do / Ask First / Never Do action lists |
+| Core Area         | AGENTS.md Section                       | What It Covers                                         |
+| ----------------- | --------------------------------------- | ------------------------------------------------------ |
+| Commands          | Build & Test Commands                   | Setup, build, test, lint commands (copy-pasteable)     |
+| Testing           | Testing Changes                         | Pre-commit checks, test guidelines, verification steps |
+| Project Structure | Project Overview + Repository Structure | Type, languages, directory tree, key files             |
+| Code Style        | Code Style & Conventions                | Formatting, naming, patterns with good/bad examples    |
+| Git Workflow      | Git Workflow                            | Commit format, branch strategy, examples               |
+| Boundaries        | Boundaries                              | Always Do / Ask First / Never Do action lists          |
 
 ### Additional Recommended Sections
 
@@ -290,11 +301,6 @@ These 6 areas must be present in every AGENTS.md (based on analysis of 2,500+ re
 - **Security Considerations**: Secrets handling, sensitive file locations
 - **Troubleshooting**: Common issues, diagnostic commands
 - **Related Resources**: External documentation links
-
-**For dotrc projects**, add specific sections:
-- File Linking Strategy (symlink approach, environment variables)
-- Aliases & Functions (standard aliases, modification guidelines)
-- Environment Variables (core variables, adding new ones)
 
 ### Anti-Patterns to Avoid
 
@@ -307,14 +313,12 @@ These 6 areas must be present in every AGENTS.md (based on analysis of 2,500+ re
 
 ## Response Language
 
-- **User communication**: Korean (한국어)
-- **File content (AGENTS.md)**: English (for universal AI agent compatibility)
+- **File content (AGENTS.md)**: English by default (for universal AI agent compatibility)
 - **Section headers in AGENTS.md**: English
 - **Code examples**: English (comments, variable names)
+- **User communication**: Follow the project's or user's language preference
 
 ## See Also
 
-- [agents-template.md](../../docs/templates/agents-template.md) - AGENTS.md base template (6 Core Areas)
-- [documentation.md](../guides/documentation.md) - Documentation standards
-- [project-integration.md](../guides/project-integration.md) - Codebase learning guidelines
-- [version-control.md](../guides/version-control.md) - For Git workflow section in AGENTS.md
+- [agents-template.md](./agents-template.md) - AGENTS.md base template (6 Core Areas)
+- [AGENTS.md Spec](https://agents.md/) - Universal AI agent file standard

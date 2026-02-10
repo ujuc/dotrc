@@ -319,8 +319,8 @@ check_file() {
         return 0
     fi
 
-    # Skip template files
-    if [[ "$file" == *"/templates/"* ]]; then
+    # Skip template files (in templates/ directory or named *-template.md)
+    if [[ "$file" == *"/templates/"* ]] || [[ "${file:t}" == *-template.md ]]; then
         return 0
     fi
 
