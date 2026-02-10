@@ -2,22 +2,18 @@
 name: commit
 description: Creates git commits following team's version control guidelines. Use when the user asks to "commit changes", "create a commit", "make a commit", "커밋해줘", "변경사항 저장", "커밋 메시지 작성", "커밋 만들어줘", or needs to commit staged/unstaged changes to git.
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git diff:*), Bash(gdate:*)
+model: haiku
 version: 1.0.0
+metadata:
+  role: "Git Commit Generator"
+  priority: "Medium"
+  applies-to: "Git commit creation in any project"
+  optimized-for: "Claude 4.5 (Sonnet/Opus)"
+  last-updated: "2025-12-22"
+  context: |
+    This skill is auto-discovered by Claude when users request commit-related tasks.
+    It replaces the previous /commit command with natural language activation.
 ---
-
-<meta>
-Document: SKILL.md
-Role: Git Commit Generator
-Priority: Medium - Git workflow automation
-Applies To: Git commit creation in any project
-Optimized For: Claude 4.5 (Sonnet/Opus)
-Last Updated: 2025-12-22
-</meta>
-
-<context>
-This skill is auto-discovered by Claude when users request commit-related tasks.
-It replaces the previous /commit command with natural language activation.
-</context>
 
 # Git Commit Skill
 
@@ -58,34 +54,38 @@ This ensures consistency with the user's personal workflow while allowing projec
 
 Analyze changes and categorize using conventional commit types:
 
-| Type | Description |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
-| `style` | Formatting, no code change |
-| `refactor` | Code restructuring |
-| `test` | Adding/updating tests |
-| `chore` | Maintenance tasks |
+| Type       | Description                |
+| ---------- | -------------------------- |
+| `feat`     | New feature                |
+| `fix`      | Bug fix                    |
+| `docs`     | Documentation only         |
+| `style`    | Formatting, no code change |
+| `refactor` | Code restructuring         |
+| `test`     | Adding/updating tests      |
+| `chore`    | Maintenance tasks          |
 
 ### Step 3: Compose Commit Message
 
 **Subject Line** (max 50 characters):
+
 - Format: `<type>: <subject>` or `<type>(<scope>): <subject>`
 - Language: Korean (한국어)
 - Verb form: Use "-하다" ending (예: 추가하다, 수정하다, 개선하다)
 - No period at end
 
 **Body** (REQUIRED):
+
 - Language: Korean (한국어)
 - Explain WHY the change was made
 - Include context and background
 - Wrap lines at 72 characters
 
 **Footer**:
+
 - Reference related issues/PRs
 
 **AI agent footer**:
+
 - Include AI agent attribution
 
 ### Step 4: Create Commit
@@ -110,12 +110,14 @@ EOF
 ### Subject Line Examples
 
 **Correct ✅**:
+
 - `feat: 사용자 인증을 추가하다`
 - `fix: 로그인 버그를 수정하다`
 - `refactor: 코드 구조를 개선하다`
 - `docs: README를 업데이트하다`
 
 **Incorrect ❌**:
+
 - `feat: 사용자 인증 추가` (missing verb ending)
 - `fix: 로그인 버그 수정` (missing verb ending)
 
@@ -124,6 +126,7 @@ EOF
 ### Complete Commit Message Examples
 
 **Example 1 - Feature Addition**:
+
 ```
 feat(skills): PR 본문 작성 언어를 한국어로 변경하다
 
@@ -134,6 +137,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
 **Example 2 - Bug Fix**:
+
 ```
 fix(alb): WAF 규칙 우선순위 충돌을 수정하다
 
@@ -146,6 +150,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
 **Example 3 - Documentation**:
+
 ```
 docs(spec): ALB listener priority 정책 문서를 추가하다
 
@@ -156,6 +161,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
 **Key Points**:
+
 - Subject and body both in Korean (한국어)
 - Body explains WHY, not just WHAT
 - Footer includes issue references and AI attribution

@@ -2,23 +2,19 @@
 name: refactor
 description: Suggests and performs code refactoring following best practices. Use when user asks to "리팩토링 해줘", "refactor this", "코드 개선해줘", "정리해줘", "클린 코드로", "중복 제거해줘", "이거 더 깔끔하게", or wants to improve code quality without changing functionality.
 allowed-tools: Read, Glob, Grep, Edit, Write, Bash(git diff:*), Bash(git status:*)
+model: opus
 version: 1.0.0
+metadata:
+  role: "Code Refactoring Assistant"
+  priority: "Medium"
+  applies-to: "Code refactoring and improvement in any project"
+  optimized-for: "Claude 4.5 (Sonnet/Opus)"
+  last-updated: "2025-12-28"
+  context: |
+    This skill is auto-discovered by Claude when users request code refactoring.
+    It suggests improvements and performs refactoring while maintaining functionality.
+    After refactoring, it naturally connects with /review and /commit skills.
 ---
-
-<meta>
-Document: SKILL.md
-Role: Code Refactoring Assistant
-Priority: Medium - Code quality improvement
-Applies To: Code refactoring and improvement in any project
-Optimized For: Claude 4.5 (Sonnet/Opus)
-Last Updated: 2025-12-28
-</meta>
-
-<context>
-This skill is auto-discovered by Claude when users request code refactoring.
-It suggests improvements and performs refactoring while maintaining functionality.
-After refactoring, it naturally connects with /review and /commit skills.
-</context>
 
 # Refactor Skill
 
@@ -65,14 +61,14 @@ This skill activates in these scenarios:
 
 Determine the refactoring type:
 
-| Type | When to Use | Example |
-|------|-------------|---------|
-| Extract Function | Long function, repeated code | Split into smaller functions |
-| Rename | Unclear naming | `x` → `userCount` |
-| Inline | Unnecessary abstraction | Remove wrapper function |
-| Move | Wrong location | Move method to appropriate class |
-| Simplify Conditional | Complex if/else | Use early return, guard clauses |
-| Replace Magic Number | Hardcoded values | Use named constants |
+| Type                 | When to Use                  | Example                          |
+| -------------------- | ---------------------------- | -------------------------------- |
+| Extract Function     | Long function, repeated code | Split into smaller functions     |
+| Rename               | Unclear naming               | `x` → `userCount`                |
+| Inline               | Unnecessary abstraction      | Remove wrapper function          |
+| Move                 | Wrong location               | Move method to appropriate class |
+| Simplify Conditional | Complex if/else              | Use early return, guard clauses  |
+| Replace Magic Number | Hardcoded values             | Use named constants              |
 
 ### Step 3: Perform Refactoring
 
@@ -91,11 +87,13 @@ Use this structured format:
 ### 📊 현재 상태 분석
 
 **문제점**:
+
 - [Issue 1]
 - [Issue 2]
 - [Issue 3]
 
 **메트릭**:
+
 - 함수 길이: [N lines]
 - 복잡도: [N]
 - 중복 코드: [N occurrences]
@@ -105,6 +103,7 @@ Use this structured format:
 ## 개선 방안
 
 ### Before
+
 \`\`\`[language]
 [Current code]
 \`\`\`
@@ -112,11 +111,13 @@ Use this structured format:
 **문제점**: [What's wrong with this]
 
 ### After
+
 \`\`\`[language]
 [Refactored code]
 \`\`\`
 
 **개선사항**:
+
 - ✅ [Improvement 1]
 - ✅ [Improvement 2]
 - ✅ [Improvement 3]
@@ -126,13 +127,16 @@ Use this structured format:
 ## 변경 영향 분석
 
 ### 영향받는 코드
+
 - [File 1]: [How it's affected]
 - [File 2]: [How it's affected]
 
 ### 호환성
+
 - ✅ 기존 API 유지 / ⚠️ Breaking change
 
 ### 테스트 수정 필요
+
 - [Test file 1]: [Required changes]
 
 ---
@@ -154,11 +158,13 @@ When the change is simple:
 ## 리팩토링
 
 ### Before
+
 \`\`\`[language]
 [Current code]
 \`\`\`
 
 ### After
+
 \`\`\`[language]
 [Refactored code]
 \`\`\`

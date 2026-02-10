@@ -27,6 +27,7 @@ It replaces CLAUDE.md as the single entry point following the agents.md standard
 ### What is claude/?
 
 The `claude/` directory is a self-contained documentation project that defines:
+
 - Development philosophy and processes
 - Code quality standards
 - Security and performance guidelines
@@ -65,9 +66,10 @@ claude/
 ├── skills/             # Auto-discovered Claude skills
 │   ├── agents/         # AGENTS.md management
 │   ├── commit/         # Git commit automation
+│   ├── interview/      # Interactive spec creation
+│   ├── refactor/       # Code improvement
 │   ├── review/         # Code review automation
-│   ├── troubleshoot/   # Error diagnosis
-│   └── refactor/       # Code improvement
+│   └── troubleshoot/   # Error diagnosis
 ├── scripts/            # Automation scripts
 ├── templates/          # Document templates
 └── (auto-generated)    # Commands, history, plans, etc.
@@ -106,6 +108,7 @@ ls -la ${HOME}/.claude/
 ### Required Context
 
 This documentation is designed for:
+
 - **Claude Code** (Desktop, CLI): Primary AI assistant
 - **macOS**: Platform-specific examples
 - **Zsh**: Shell environment in examples
@@ -120,13 +123,15 @@ This documentation is designed for:
 ### Documentation Standards
 
 **Markdown Files**:
-- XML tags for semantic blocks: `<meta>`, `<context>`, `<rule>`, `<examples>`
-- Consistent frontmatter for skills (YAML)
+
+- **Guide documents** (`guides/`): XML tags for semantic blocks (`<meta>`, `<context>`, `<rule>`, `<examples>`)
+- **Skill files** (`skills/`): YAML frontmatter with `metadata` block (name, description, allowed-tools, model, version, metadata)
 - Hierarchical heading structure (H1 → H2 → H3)
 - Line length: No strict limit, readable wrapping
 - Cross-references: Use "See Also" sections
 
 **Example**:
+
 ```markdown
 <meta>
 Document: example.md
@@ -165,9 +170,10 @@ Content with XML semantics when needed.
   - Only write in Korean if explicitly requested
 
 **Key distinction**:
+
 - Text displayed to user in terminal/chat → Korean
 - Text written to files → English
-</rule>
+  </rule>
 
 ## Priority Hierarchy
 
@@ -186,6 +192,7 @@ When guidelines conflict, follow this strict order:
 See [system-rules.md](./system-rules.md) for complete details.
 
 **Core Principles**:
+
 - **Ask when uncertain** - Clarify instead of assuming
 - **Minimal changes** - Only modify what was requested
 - **Tests required** - Include tests for all code
@@ -197,16 +204,19 @@ See [system-rules.md](./system-rules.md) for complete details.
 ## Document Catalog
 
 ### Development Philosophy & Process
+
 - [**Philosophy**](./guides/philosophy.md) - Core beliefs and simplicity principles
 - [**Process**](./guides/process.md) - Planning, implementation flow, troubleshooting
 - [**Guidelines**](./guides/guidelines.md) - Important reminders and emergency procedures
 
 ### Technical Implementation
+
 - [**Technical Standards**](./guides/technical-standards.md) - Architecture, code quality, error handling
 - [**Quality Assurance**](./guides/quality-assurance.md) - Code review, decision framework, quality gates
 - [**Documentation**](./guides/documentation.md) - Code documentation and project file requirements
 
 ### Operations & Security
+
 - [**Security**](./guides/security.md) - Security principles and data protection
 - [**Performance**](./guides/performance.md) - Optimization guidelines and considerations
 - [**Performance Optimization**](./guides/performance-optimization.md) - Detailed optimization techniques
@@ -214,6 +224,7 @@ See [system-rules.md](./system-rules.md) for complete details.
 - [**Context Management**](./guides/context-management.md) - Efficient use of 200K context window
 
 ### Collaboration & Communication
+
 - [**Version Control**](./guides/version-control.md) - Git workflow and commit format
 - [**Project Integration**](./guides/project-integration.md) - Codebase learning, tooling, i18n
 - [**Interaction Modes**](./guides/interaction-modes.md) - Response style and reasoning control
@@ -248,12 +259,14 @@ See [system-rules.md](./system-rules.md) for complete details.
 **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 **Examples**:
+
 - ✅ `feat(guides): 새 성능 최적화 가이드를 추가하다`
 - ✅ `fix(skills): commit 스킬의 heredoc 형식을 수정하다`
 - ✅ `docs(claude): AGENTS.md 표준 구조로 마이그레이션하다`
 - ❌ `feat: 새 가이드 추가` (missing -하다 ending)
 
 **AI Agent Footer**:
+
 ```
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
@@ -299,8 +312,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 1. Create directory: `skills/<skill-name>/`
 2. Write `SKILL.md` with:
-   - YAML frontmatter (name, description, allowed-tools, version)
-   - `<meta>` and `<context>` blocks
+   - YAML frontmatter (name, description, allowed-tools, model, version, metadata)
    - "Source of Truth" section
    - "When to Activate" scenarios
    - Instructions with Feature sections
@@ -329,13 +341,14 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 
 Skills are triggered by natural language requests:
 
-| Skill | Trigger Examples | Purpose | Location |
-|-------|------------------|---------|----------|
-| `agents` | "에이전트해줘", "AGENTS.md 만들어줘" | Creates/manages AGENTS.md files | [skills/agents/](./skills/agents/) |
-| `commit` | "커밋해줘", "commit changes" | Creates git commits with Korean messages | [skills/commit/](./skills/commit/) |
-| `review` | "리뷰해줘", "이거 괜찮아?" | Performs code review | [skills/review/](./skills/review/) |
-| `troubleshoot` | "왜 안돼?", "에러 났어" | Diagnoses and fixes errors | [skills/troubleshoot/](./skills/troubleshoot/) |
-| `refactor` | "리팩토링 해줘", "정리해줘" | Improves code quality | [skills/refactor/](./skills/refactor/) |
+| Skill          | Trigger Examples                     | Purpose                         | Model  | Location                                       |
+| -------------- | ------------------------------------ | ------------------------------- | ------ | ---------------------------------------------- |
+| `agents`       | "에이전트해줘", "AGENTS.md 만들어줘" | Creates/manages AGENTS.md files | haiku  | [skills/agents/](./skills/agents/)             |
+| `commit`       | "커밋해줘", "commit changes"         | Creates git commits with Korean | haiku  | [skills/commit/](./skills/commit/)             |
+| `interview`    | "인터뷰해줘", "스펙 작성해줘"        | Interactive spec creation       | sonnet | [skills/interview/](./skills/interview/)       |
+| `review`       | "리뷰해줘", "이거 괜찮아?"           | Performs code review            | sonnet | [skills/review/](./skills/review/)             |
+| `troubleshoot` | "왜 안돼?", "에러 났어"              | Diagnoses and fixes errors      | opus   | [skills/troubleshoot/](./skills/troubleshoot/) |
+| `refactor`     | "리팩토링 해줘", "정리해줘"          | Improves code quality           | opus   | [skills/refactor/](./skills/refactor/)         |
 
 **Skill Discovery**: Skills are automatically discovered by Claude when their trigger phrases are used in conversation.
 
@@ -355,6 +368,7 @@ Configured servers (in `mcp.json`):
 Claude supports multiple response styles. See [guides/interaction-modes.md](./guides/interaction-modes.md) for details.
 
 **Quick commands**:
+
 - **Standard mode**: Default balanced response
 - **Reasoning mode**: Show detailed thought process
 - **Concise mode**: Minimal explanations

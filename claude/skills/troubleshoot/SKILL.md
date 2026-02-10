@@ -2,22 +2,18 @@
 name: troubleshoot
 description: Diagnoses and fixes errors following structured troubleshooting process. Use when user reports errors, bugs, or asks "왜 안돼?", "에러 났어", "문제 해결해줘", "디버깅 해줘", "이거 왜 이래?", "안 돼", "오류", or needs help with compilation, runtime, or logic errors.
 allowed-tools: Read, Glob, Grep, Bash(*)
+model: opus
 version: 1.0.0
+metadata:
+  role: "Error Diagnosis and Troubleshooting Assistant"
+  priority: "High"
+  applies-to: "Error diagnosis and debugging in any project"
+  optimized-for: "Claude 4.5 (Sonnet/Opus)"
+  last-updated: "2025-12-28"
+  context: |
+    This skill is auto-discovered by Claude when users encounter errors or need debugging help.
+    It provides structured diagnosis and resolution following the team's troubleshooting process.
 ---
-
-<meta>
-Document: SKILL.md
-Role: Error Diagnosis and Troubleshooting Assistant
-Priority: High - Problem solving automation
-Applies To: Error diagnosis and debugging in any project
-Optimized For: Claude 4.5 (Sonnet/Opus)
-Last Updated: 2025-12-28
-</meta>
-
-<context>
-This skill is auto-discovered by Claude when users encounter errors or need debugging help.
-It provides structured diagnosis and resolution following the team's troubleshooting process.
-</context>
 
 # Troubleshoot Skill
 
@@ -51,13 +47,13 @@ This skill activates in these scenarios:
 
 Identify the issue type to apply the correct diagnosis approach:
 
-| Issue Type | Symptoms | First Action |
-|------------|----------|--------------|
-| Compilation/Build | Error during build, syntax error | Read error message, check recent changes |
-| Runtime | Crash during execution, exception | Get stack trace, identify error location |
-| Logic Bug | Wrong behavior, unexpected output | Define expected vs actual behavior |
-| Performance | Slow, timeout, high resource usage | Measure and profile first |
-| Test Failure | Test not passing | Check if test or code is wrong |
+| Issue Type        | Symptoms                           | First Action                             |
+| ----------------- | ---------------------------------- | ---------------------------------------- |
+| Compilation/Build | Error during build, syntax error   | Read error message, check recent changes |
+| Runtime           | Crash during execution, exception  | Get stack trace, identify error location |
+| Logic Bug         | Wrong behavior, unexpected output  | Define expected vs actual behavior       |
+| Performance       | Slow, timeout, high resource usage | Measure and profile first                |
+| Test Failure      | Test not passing                   | Check if test or code is wrong           |
 
 ### Step 2: Apply Diagnosis Process
 
@@ -106,6 +102,7 @@ Identify the issue type to apply the correct diagnosis approach:
    - Environment issue → Fix configuration
 
 **NEVER**:
+
 - ❌ Delete failing tests
 - ❌ Comment out assertions
 - ❌ Add try-catch to hide errors
@@ -118,6 +115,7 @@ Use this structured format:
 ## 에러 진단
 
 ### ❌ 에러 메시지
+
 \`\`\`
 [Full error message]
 \`\`\`
@@ -131,6 +129,7 @@ Use this structured format:
 [왜 그런 상황이 발생했는지]
 
 **발생 위치**:
+
 - File: [file_path:line_number]
 - Function: [function_name]
 - Context: [what was being done]
@@ -226,6 +225,7 @@ If unresolved after 3 attempts, stop and:
 ```markdown
 **원인**: 패키지 미설치 또는 경로 오류
 **해결**:
+
 1. 패키지 설치 확인: `npm install` / `pip install`
 2. import 경로 확인
 3. 상대/절대 경로 구분
@@ -236,6 +236,7 @@ If unresolved after 3 attempts, stop and:
 ```markdown
 **원인**: 파일/디렉토리 접근 권한 부족
 **해결**:
+
 1. 파일 권한 확인: `ls -la`
 2. 소유자 확인
 3. 필요시 권한 변경 (주의 필요)

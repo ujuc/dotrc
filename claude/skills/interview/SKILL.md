@@ -3,22 +3,19 @@ name: interview
 description: Interview user in-depth to create a detailed specification document. Use when the user asks to "interview me", "인터뷰해줘", "스펙 작성해줘", "요구사항 정리해줘", or needs to create a detailed spec through interactive Q&A.
 argument-hint: [instructions]
 allowed-tools: AskUserQuestion, Write
+model: sonnet
 version: 1.0.0
+metadata:
+  role: "Interactive Requirements Gathering"
+  priority: "High"
+  applies-to: "Any project requiring detailed requirements analysis"
+  optimized-for: "Claude 4.5 (Sonnet/Opus)"
+  last-updated: "2026-02-01"
+  context: |
+    This skill is auto-discovered by Claude when users need to create detailed specifications
+    through interactive interviews. It uses the AskUserQuestion tool to conduct in-depth Q&A
+    sessions, then generates comprehensive spec files.
 ---
-
-<meta>
-Document: SKILL.md
-Role: Interactive Requirements Gathering
-Priority: High - Detailed specification creation
-Applies To: Any project requiring detailed requirements analysis
-Optimized For: Claude 4.5 (Sonnet/Opus)
-Last Updated: 2026-02-01
-</meta>
-
-<context>
-This skill is auto-discovered by Claude when users need to create detailed specifications through interactive interviews.
-It uses the AskUserQuestion tool to conduct in-depth Q&A sessions, then generates comprehensive spec files.
-</context>
 
 # Interview Skill
 
@@ -27,6 +24,7 @@ This skill conducts in-depth interviews with users to create detailed specificat
 ## Purpose
 
 The interview skill helps users:
+
 - **Clarify requirements**: Ask probing questions about technical implementation
 - **Explore UI/UX**: Gather detailed user experience requirements
 - **Identify concerns**: Uncover potential issues and tradeoffs
@@ -70,6 +68,7 @@ This skill is designed to integrate with a multi-stage development workflow:
 6. **Challenge assumptions** to uncover hidden requirements
 
 **Question Quality**:
+
 - ✅ "사용자가 로그인 실패 3회 후에는 어떻게 처리할까요? 계정 잠금? 대기 시간?"
 - ✅ "API 응답 시간 SLA는? 타임아웃 전략은?"
 - ❌ "로그인 기능이 필요한가요?" (너무 명확한 질문)
@@ -101,11 +100,13 @@ Once the interview is complete:
 ## Example Usage
 
 **User Request**:
+
 ```
 인터뷰해줘. 새로운 사용자 인증 시스템을 만들려고 해.
 ```
 
 **Interview Flow**:
+
 1. Ask about authentication method (OAuth, JWT, session-based?)
 2. Ask about password requirements and security policy
 3. Ask about MFA requirements
@@ -118,6 +119,7 @@ Once the interview is complete:
 10. ... (continue until complete)
 
 **Output**:
+
 - Detailed spec file: `spec-user-authentication-2026-02-01.md`
 
 ## Tips for Effective Interviews

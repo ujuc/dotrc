@@ -2,23 +2,19 @@
 name: review
 description: Performs code review following team's quality assurance guidelines. Use when the user asks to "review code", "check this code", "리뷰해줘", "코드 리뷰", "코드 검토", "이 코드 봐줘", "이거 괜찮아?", "확인해줘", "문제 없어?", or after writing code when they want feedback on the changes just made.
 allowed-tools: Read, Glob, Grep, Bash(git diff:*), Bash(git log:*), Bash(git show:*)
+model: sonnet
 version: 1.0.0
+metadata:
+  role: "Code Review Assistant"
+  priority: "High"
+  applies-to: "Code review in any project"
+  optimized-for: "Claude 4.5 (Sonnet/Opus)"
+  last-updated: "2025-12-28"
+  context: |
+    This skill is auto-discovered by Claude when users request code review tasks.
+    It can also be triggered naturally after code has been written, when the user
+    wants to verify the quality of recent changes.
 ---
-
-<meta>
-Document: SKILL.md
-Role: Code Review Assistant
-Priority: High - Quality assurance automation
-Applies To: Code review in any project
-Optimized For: Claude 4.5 (Sonnet/Opus)
-Last Updated: 2025-12-28
-</meta>
-
-<context>
-This skill is auto-discovered by Claude when users request code review tasks.
-It can also be triggered naturally after code has been written, when the user
-wants to verify the quality of recent changes.
-</context>
 
 # Code Review Skill
 
@@ -64,13 +60,13 @@ When reviewing code, follow these core principles:
 
 Check for issues in these categories:
 
-| Category | Priority | Examples |
-|----------|----------|----------|
-| Security | 🔴 Critical | SQL injection, XSS, secrets in code |
-| Bugs | 🔴 Critical | Logic errors, null references, race conditions |
-| Performance | 🟡 Medium | N+1 queries, unnecessary loops, memory leaks |
-| Maintainability | 🟡 Medium | Long functions, unclear names, missing docs |
-| Style | 🟢 Low | Formatting, conventions, minor improvements |
+| Category        | Priority    | Examples                                       |
+| --------------- | ----------- | ---------------------------------------------- |
+| Security        | 🔴 Critical | SQL injection, XSS, secrets in code            |
+| Bugs            | 🔴 Critical | Logic errors, null references, race conditions |
+| Performance     | 🟡 Medium   | N+1 queries, unnecessary loops, memory leaks   |
+| Maintainability | 🟡 Medium   | Long functions, unclear names, missing docs    |
+| Style           | 🟢 Low      | Formatting, conventions, minor improvements    |
 
 ### Step 3: Apply Self-Review Checklist
 
@@ -92,6 +88,7 @@ Use this structured format for review results:
 ## 코드 리뷰 결과
 
 ### 📊 전체 평가
+
 - **품질**: [상/중/하]
 - **주요 이슈**: [N개 발견]
 - **긴급도**: [즉시 수정 필요/개선 권장/양호]
@@ -99,6 +96,7 @@ Use this structured format for review results:
 ### 🔴 Critical Issues (우선순위: 높음)
 
 **[Issue Title]** (`file:line`)
+
 - **Problem**: [명확한 문제 설명]
 - **Impact**: [영향 범위와 위험도]
 - **Fix**: [구체적인 수정 방법]
@@ -138,10 +136,12 @@ When reviewing small changes or code just written, use a lighter format:
 ✅ **양호** - 주요 문제 없음
 
 ### 확인 사항
+
 - ✅ [확인된 항목 1]
 - ✅ [확인된 항목 2]
 
 ### 개선 제안 (선택)
+
 - 💡 [사소한 개선 사항]
 ```
 
@@ -151,6 +151,7 @@ When reviewing small changes or code just written, use a lighter format:
 
 ```markdown
 **[보안 취약점 유형]** (`file:line`)
+
 - **Problem**: [취약점 설명]
 - **Impact**: [공격 시나리오와 피해 범위]
 - **Fix**: [수정 방법]
@@ -161,6 +162,7 @@ When reviewing small changes or code just written, use a lighter format:
 
 ```markdown
 **[성능 문제 유형]** (`file:line`)
+
 - **Problem**: [현재 성능 문제]
 - **Impact**: [예상 성능 저하]
 - **Fix**: [최적화 방법]
@@ -170,6 +172,7 @@ When reviewing small changes or code just written, use a lighter format:
 
 ```markdown
 **[유지보수 문제 유형]** (`file:line`)
+
 - **Problem**: [현재 코드의 문제점]
 - **Impact**: [향후 유지보수 어려움]
 - **Fix**: [리팩토링 제안]
@@ -179,19 +182,19 @@ When reviewing small changes or code just written, use a lighter format:
 
 ### 품질 평가 기준
 
-| Rating | Criteria |
-|--------|----------|
-| 상 (High) | No critical issues, minor improvements only, follows best practices |
+| Rating      | Criteria                                                                 |
+| ----------- | ------------------------------------------------------------------------ |
+| 상 (High)   | No critical issues, minor improvements only, follows best practices      |
 | 중 (Medium) | No critical issues, some improvements needed, mostly follows conventions |
-| 하 (Low) | Critical issues found, significant refactoring needed |
+| 하 (Low)    | Critical issues found, significant refactoring needed                    |
 
 ### 긴급도 평가 기준
 
-| Urgency | Criteria |
-|---------|----------|
+| Urgency        | Criteria                                                  |
+| -------------- | --------------------------------------------------------- |
 | 즉시 수정 필요 | Security vulnerabilities, data loss risk, production bugs |
-| 개선 권장 | Performance issues, code smells, missing tests |
-| 양호 | Only minor style/formatting suggestions |
+| 개선 권장      | Performance issues, code smells, missing tests            |
+| 양호           | Only minor style/formatting suggestions                   |
 
 ## Response Language
 
