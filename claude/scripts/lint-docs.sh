@@ -73,18 +73,21 @@ check_meta_block() {
     local file="$1"
     local content="$2"
 
-    # Accept either <meta> block or YAML frontmatter with metadata:
+    # Accept <meta> block
     if grep -q '<meta>' <<< "$content"; then
         return 0
     fi
 
-    # Check for YAML frontmatter (starts with ---) containing metadata:
+    # Check for YAML frontmatter (starts with ---)
     if head -1 <<< "$content" | grep -q '^---$'; then
         local frontmatter
-        frontmatter=$(sed -n '1,/^---$/{ /^---$/d; p; }' <<< "$content" | tail -n +1)
-        # Second --- delimiter extraction
         frontmatter=$(awk 'NR==1 && /^---$/{start=1; next} start && /^---$/{exit} start{print}' <<< "$content")
+        # Accept nested metadata: block
         if grep -q 'metadata:' <<< "$frontmatter"; then
+            return 0
+        fi
+        # Accept top-level role: field (non-SKILL frontmatter)
+        if grep -qE '^role:' <<< "$frontmatter"; then
             return 0
         fi
     fi
@@ -149,6 +152,24 @@ check_meta_fields() {
             fi
             return 0
         fi
+
+        # Check top-level frontmatter fields (non-SKILL documents)
+        if grep -qE '^role:' <<< "$frontmatter"; then
+            local missing_fields=()
+
+            if ! grep -qE '^priority:' <<< "$frontmatter"; then
+                missing_fields+=("priority")
+            fi
+            if ! grep -qE '^last-updated:' <<< "$frontmatter"; then
+                missing_fields+=("last-updated")
+            fi
+
+            if (( ${#missing_fields[@]} > 0 )); then
+                log_error "$file" "002" "Missing frontmatter fields: ${missing_fields[*]}"
+                return 1
+            fi
+            return 0
+        fi
     fi
 
     return 1  # Already reported by E001
@@ -170,11 +191,11 @@ check_context_block() {
         return 0
     fi
 
-    # Accept YAML frontmatter with metadata.context field
+    # Accept YAML frontmatter with context field (nested or top-level)
     if head -1 <<< "$content" | grep -q '^---$'; then
         local frontmatter
         frontmatter=$(awk 'NR==1 && /^---$/{start=1; next} start && /^---$/{exit} start{print}' <<< "$content")
-        if grep -qE '^\s+context:' <<< "$frontmatter"; then
+        if grep -qE '^(\s+)?context:' <<< "$frontmatter"; then
             return 0
         fi
     fi
