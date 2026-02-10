@@ -1,9 +1,14 @@
-# Document Templates
+---
+name: "dotrc-templates-agents"
+description: "Document templates directory guide for the dotrc repository"
+version: "1.1.0"
+last_updated: "2026-02-10"
+metadata:
+  standard: "https://agents.md/"
+  ai-compatibility: "Universal (Claude Code, GitHub Copilot, Cursor, Aider)"
+---
 
-<meta>
-Version: 1.0.0
-Last Updated: 2026-02-10
-</meta>
+# Document Templates
 
 Shared document templates for the `dotrc` repository. Each template provides a standardized starting point for creating new documents with consistent structure and metadata.
 

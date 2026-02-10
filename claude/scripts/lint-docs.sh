@@ -68,16 +68,29 @@ log_success() {
 # Check Functions
 # ============================================================================
 
-# E001: Check for <meta> block
+# E001: Check for <meta> block or YAML frontmatter metadata
 check_meta_block() {
     local file="$1"
     local content="$2"
 
-    if ! grep -q '<meta>' <<< "$content"; then
-        log_error "$file" "001" "Missing <meta> block"
-        return 1
+    # Accept either <meta> block or YAML frontmatter with metadata:
+    if grep -q '<meta>' <<< "$content"; then
+        return 0
     fi
-    return 0
+
+    # Check for YAML frontmatter (starts with ---) containing metadata:
+    if head -1 <<< "$content" | grep -q '^---$'; then
+        local frontmatter
+        frontmatter=$(sed -n '1,/^---$/{ /^---$/d; p; }' <<< "$content" | tail -n +1)
+        # Second --- delimiter extraction
+        frontmatter=$(awk 'NR==1 && /^---$/{start=1; next} start && /^---$/{exit} start{print}' <<< "$content")
+        if grep -q 'metadata:' <<< "$frontmatter"; then
+            return 0
+        fi
+    fi
+
+    log_error "$file" "001" "Missing <meta> block or YAML frontmatter metadata:"
+    return 1
 }
 
 # E002: Check meta required fields
@@ -85,56 +98,89 @@ check_meta_fields() {
     local file="$1"
     local content="$2"
 
+    # Check <meta> block format
     local meta_block
     meta_block=$(sed -n '/<meta>/,/<\/meta>/p' <<< "$content")
 
-    if [[ -z "$meta_block" ]]; then
-        return 1  # Already reported by E001
-    fi
+    if [[ -n "$meta_block" ]]; then
+        local missing_fields=()
 
-    local missing_fields=()
+        if ! grep -q 'Document:' <<< "$meta_block"; then
+            missing_fields+=("Document")
+        fi
+        if ! grep -q 'Role:' <<< "$meta_block"; then
+            missing_fields+=("Role")
+        fi
+        if ! grep -q 'Priority:' <<< "$meta_block"; then
+            missing_fields+=("Priority")
+        fi
+        if ! grep -q 'Last Updated:' <<< "$meta_block"; then
+            missing_fields+=("Last Updated")
+        fi
 
-    if ! grep -q 'Document:' <<< "$meta_block"; then
-        missing_fields+=("Document")
-    fi
-    if ! grep -q 'Role:' <<< "$meta_block"; then
-        missing_fields+=("Role")
-    fi
-    if ! grep -q 'Priority:' <<< "$meta_block"; then
-        missing_fields+=("Priority")
-    fi
-    if ! grep -q 'Last Updated:' <<< "$meta_block"; then
-        missing_fields+=("Last Updated")
-    fi
-
-    if (( ${#missing_fields[@]} > 0 )); then
-        log_error "$file" "002" "Missing meta fields: ${missing_fields[*]}"
-        return 1
-    fi
-    return 0
-}
-
-# E003: Check for <context> block
-check_context_block() {
-    local file="$1"
-    local content="$2"
-    local filename="${file:t}"
-
-    # Skip for commands with YAML frontmatter (different structure)
-    if [[ "$file" == *"/commands/"* ]] && grep -q '^---$' <<< "$content"; then
-        # Commands can use ## Context section instead
-        if ! grep -q '<context>' <<< "$content" && ! grep -q '^## Context' <<< "$content"; then
-            log_error "$file" "003" "Missing <context> block or ## Context section"
+        if (( ${#missing_fields[@]} > 0 )); then
+            log_error "$file" "002" "Missing meta fields: ${missing_fields[*]}"
             return 1
         fi
         return 0
     fi
 
-    if ! grep -q '<context>' <<< "$content"; then
-        log_error "$file" "003" "Missing <context> block"
-        return 1
+    # Check YAML frontmatter metadata: block format
+    if head -1 <<< "$content" | grep -q '^---$'; then
+        local frontmatter
+        frontmatter=$(awk 'NR==1 && /^---$/{start=1; next} start && /^---$/{exit} start{print}' <<< "$content")
+
+        if grep -q 'metadata:' <<< "$frontmatter"; then
+            local missing_fields=()
+
+            if ! grep -qE '^\s+role:' <<< "$frontmatter"; then
+                missing_fields+=("role")
+            fi
+            if ! grep -qE '^\s+priority:' <<< "$frontmatter"; then
+                missing_fields+=("priority")
+            fi
+            if ! grep -qE '^\s+last-updated:' <<< "$frontmatter"; then
+                missing_fields+=("last-updated")
+            fi
+
+            if (( ${#missing_fields[@]} > 0 )); then
+                log_error "$file" "002" "Missing metadata fields: ${missing_fields[*]}"
+                return 1
+            fi
+            return 0
+        fi
     fi
-    return 0
+
+    return 1  # Already reported by E001
+}
+
+# E003: Check for <context> block or YAML frontmatter metadata.context
+check_context_block() {
+    local file="$1"
+    local content="$2"
+    local filename="${file:t}"
+
+    # Accept <context> block
+    if grep -q '<context>' <<< "$content"; then
+        return 0
+    fi
+
+    # Accept ## Context section (for commands)
+    if grep -q '^## Context' <<< "$content"; then
+        return 0
+    fi
+
+    # Accept YAML frontmatter with metadata.context field
+    if head -1 <<< "$content" | grep -q '^---$'; then
+        local frontmatter
+        frontmatter=$(awk 'NR==1 && /^---$/{start=1; next} start && /^---$/{exit} start{print}' <<< "$content")
+        if grep -qE '^\s+context:' <<< "$frontmatter"; then
+            return 0
+        fi
+    fi
+
+    log_error "$file" "003" "Missing <context> block or YAML frontmatter metadata.context"
+    return 1
 }
 
 # E004: Check for See Also section
@@ -149,11 +195,12 @@ check_see_also() {
     return 0
 }
 
-# E005: Check Last Updated date format
+# E005: Check Last Updated date format (supports <meta> and YAML frontmatter)
 check_date_format() {
     local file="$1"
     local content="$2"
 
+    # Check <meta> block format: Last Updated: YYYY-MM-DD
     local date_line
     date_line=$(grep 'Last Updated:' <<< "$content" | head -1)
 
@@ -161,6 +208,21 @@ check_date_format() {
         if ! grep -qE 'Last Updated: [0-9]{4}-[0-9]{2}-[0-9]{2}' <<< "$date_line"; then
             log_error "$file" "005" "Invalid date format. Expected: YYYY-MM-DD"
             return 1
+        fi
+        return 0
+    fi
+
+    # Check YAML frontmatter format: last-updated: "YYYY-MM-DD" or last_updated: "YYYY-MM-DD"
+    if head -1 <<< "$content" | grep -q '^---$'; then
+        local frontmatter
+        frontmatter=$(awk 'NR==1 && /^---$/{start=1; next} start && /^---$/{exit} start{print}' <<< "$content")
+        date_line=$(grep -E '^\s*last[-_]updated:' <<< "$frontmatter" | head -1)
+
+        if [[ -n "$date_line" ]]; then
+            if ! grep -qE '[0-9]{4}-[0-9]{2}-[0-9]{2}' <<< "$date_line"; then
+                log_error "$file" "005" "Invalid date format. Expected: YYYY-MM-DD"
+                return 1
+            fi
         fi
     fi
     return 0
@@ -209,7 +271,15 @@ check_stale_date() {
     local content="$2"
 
     local date_str
+    # Try <meta> format first
     date_str=$(grep -oE 'Last Updated: [0-9]{4}-[0-9]{2}-[0-9]{2}' <<< "$content" | head -1 | cut -d' ' -f3)
+
+    # Try YAML frontmatter format
+    if [[ -z "$date_str" ]] && head -1 <<< "$content" | grep -q '^---$'; then
+        local frontmatter
+        frontmatter=$(awk 'NR==1 && /^---$/{start=1; next} start && /^---$/{exit} start{print}' <<< "$content")
+        date_str=$(grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' <<< "$(grep -E '^\s*last[-_]updated:' <<< "$frontmatter")" | head -1)
+    fi
 
     if [[ -n "$date_str" ]]; then
         local file_date

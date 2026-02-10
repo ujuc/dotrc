@@ -31,12 +31,13 @@ metadata:
 
   Usage:
     1. Copy this template to your project root as AGENTS.md
-    2. Remove this comment block and the YAML frontmatter above
-    3. Fill in each section with project-specific information
-    4. Delete sections that are not applicable (but keep 6 Core Areas)
+    2. Remove this comment block
+    3. Fill in YAML frontmatter with project-specific metadata
+    4. Fill in each section with project-specific information
+    5. Delete sections that are not applicable (but keep 6 Core Areas)
 
-  NOTE: The YAML frontmatter is for template management only.
-        Remove it when creating the actual AGENTS.md file.
+  NOTE: YAML frontmatter is REQUIRED for all AGENTS.md files.
+        It provides structured metadata for AI agent discovery.
   ================================================================ -->
 
 # [Project Name]

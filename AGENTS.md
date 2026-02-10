@@ -1,15 +1,16 @@
-# AGENTS.md
+---
+name: "dotrc-agents"
+description: "Universal AI agent guide for the dotrc dotfiles repository"
+version: "3.1.0"
+last_updated: "2026-02-10"
+metadata:
+  standard: "https://agents.md/"
+  ai-compatibility: "Universal (Claude Code, GitHub Copilot, Cursor, Aider)"
+---
 
-<meta>
-Version: 2.0.0
-Last Updated: 2026-02-01
-Standard: https://agents.md/
-AI Compatibility: Universal (Claude Code, GitHub Copilot, Cursor, Aider)
-</meta>
+# dotrc
 
 **Universal AI Agent Guide** for the `dotrc` repository.
-
-This file provides **platform-agnostic guidance** for all AI coding assistants (GitHub Copilot, Cursor, Aider, etc.) working with this dotfiles repository.
 
 > **For Claude Code users**: See [CLAUDE.md](./claude/CLAUDE.md) for **Claude-specific** guidelines including:
 > - Korean commit message format (Conventional Commits with `-하다` ending)
@@ -20,8 +21,6 @@ This file provides **platform-agnostic guidance** for all AI coding assistants (
 > **Note**: CLAUDE.md contains comprehensive development standards optimized for Claude 4.5. Other AI agents should follow this AGENTS.md file.
 
 ## Project Overview
-
-Personal dotfiles repository (`dotrc`) for macOS. Manages shell configurations, application settings, and development environment setup.
 
 **Type**: Configuration repository (dotfiles)
 **Primary Language**: Shell (Zsh), Configuration files (YAML, TOML, JSON)
@@ -63,35 +62,16 @@ dotrc/
 ├── gitmessage          # Git commit template
 ├── docs/               # Project documentation
 │   ├── templates/      # Document templates (shared)
-│   │   ├── AGENTS.md          # Template directory guide
-│   │   ├── guide-template.md  # Guide document template
-│   │   ├── work-template.md   # Work document template
-│   │   ├── agents-template.md # AGENTS.md template
-│   │   └── skill-template.md  # Claude skill template
 │   └── ai/             # AI work logs
 ├── zed/                # Zed editor settings
 └── claude/             # Claude Code specific guidelines
     ├── CLAUDE.md       # Claude-specific entry point
-    ├── system-rules.md # Critical rules (highest priority)
-    ├── mcp.json        # MCP server configuration
-    ├── settings.json   # Claude CLI settings
     ├── guides/         # 16 detailed guideline documents
-    │   ├── philosophy.md
-    │   ├── process.md
-    │   ├── technical-standards.md
-    │   ├── quality-assurance.md
-    │   └── ... (12 more)
     ├── skills/         # Auto-discovered skills
-    │   ├── commit/     # Korean commit message automation
-    │   ├── review/     # Code review automation
-    │   ├── troubleshoot/ # Error diagnosis
-    │   ├── refactor/   # Code improvement
-    │   └── agents/     # AGENTS.md management
-    ├── scripts/        # Automation scripts
-    └── (runtime)       # Auto-generated: commands/, history.jsonl, plans/, etc.
+    └── scripts/        # Automation scripts
 ```
 
-## File Linking Strategy
+### File Linking Strategy
 
 This repository uses symbolic links to place configs in their expected locations:
 
@@ -108,9 +88,6 @@ ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 
 # Claude global config (folder link)
 ln -sf ${DOTRCDIR}/claude ${HOME}/.claude
-
-# Pre-commit hook (optional)
-ln -sf ${DOTRCDIR}/claude/scripts/pre-commit-lint ${DOTRCDIR}/.git/hooks/pre-commit
 ```
 
 **Important**: Always update files in `${DOTRCDIR}`, not the symlink targets.
@@ -119,7 +96,7 @@ ln -sf ${DOTRCDIR}/claude/scripts/pre-commit-lint ${DOTRCDIR}/.git/hooks/pre-com
 
 **No build system** - This is a configuration repository.
 
-### Setup Commands
+### Setup
 
 ```bash
 # Initial setup (run once)
@@ -134,7 +111,7 @@ git pull
 update  # Alias: brew update + zimfw update + cleanup
 ```
 
-### Validation
+### Test
 
 ```bash
 # Check Zsh config syntax
@@ -182,25 +159,46 @@ brew install zsh starship mise zoxide fzf bat eza tig git-delta
 curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
 ```
 
+### Environment Variables
+
+```bash
+DOTRCDIR="${HOME}/.config/dotrc"          # This repository
+XDG_CONFIG_HOME="${HOME}/.config"         # App configs
+ZDOTDIR="${HOME}/.config/zsh"             # Zsh configs
+```
+
+#### Adding New Variables
+
+1. Add to `zshenv` (sourced first, always)
+2. Export with `export VAR="value"`
+3. Use `${HOME}` not `~` for portability
+4. Document in comments
+
 ## Code Style & Conventions
 
-### Shell Scripts (Zsh)
+### Formatting
 
-- **Shebang**: `#!/usr/bin/env zsh` (not `/bin/zsh`)
-- **Command checks**: Use `(( $+commands[tool] ))` instead of `which` or `command -v`
-- **Variables**: Use `${VAR}` for clarity, not `$VAR`
-- **Quoting**: Always quote variables: `"${VAR}"`
-- **Conditionals**: Prefer `[[ ]]` over `[ ]`
-- **Lazy loading**: Wrap expensive initializations in wrapper functions
+- **Indentation**: 2 spaces (YAML, TOML, JSON)
+- **Line length**: No strict limit for config files
+- **Quotes**: Always quote shell variables: `"${VAR}"`
+- **Comments**: Explain non-obvious settings
 
-**Example**:
+### Naming Conventions
+
+- **Files**: Flat structure, one tool per file (`starship.toml`, `batrc`)
+- **Variables**: `${VAR}` for clarity, not `$VAR`
+- **Functions**: Lowercase with underscores for complex logic
+- **Exceptions**: Multi-file tools use directories (`claude/`, `zed/`)
+
+### Code Patterns
+
 ```zsh
-# Good ✅ - Eager loading (fast tools)
+# Good - Eager loading (fast tools)
 if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi
 
-# Good ✅ - Lazy loading (slow tools)
+# Good - Lazy loading (slow tools)
 if (( $+commands[mise] )); then
   function mise() {
     unfunction mise
@@ -209,28 +207,20 @@ if (( $+commands[mise] )); then
   }
 fi
 
-# Bad ❌
+# Bad
 if [ -x $(which starship) ]; then
   eval $(starship init zsh)
 fi
 ```
 
-### Configuration Files
+### Shell Scripts (Zsh) Rules
 
-- **YAML/TOML**: 2-space indentation
-- **JSON**: 2-space indentation (per Zed settings)
-- **Line length**: No strict limit for config files
-- **Comments**: Explain non-obvious settings
+- **Shebang**: `#!/usr/bin/env zsh` (not `/bin/zsh`)
+- **Command checks**: Use `(( $+commands[tool] ))` instead of `which` or `command -v`
+- **Conditionals**: Prefer `[[ ]]` over `[ ]`
+- **Lazy loading**: Wrap expensive initializations in wrapper functions
 
-### File Organization
-
-- **Keep flat**: Avoid deep nesting unless necessary (apps like Zed)
-- **One tool per file**: `starship.toml`, `batrc`, not `config/starship.toml`
-- **Exceptions**: Multi-file tools like `claude/`, `zed/`
-
-## Aliases & Functions
-
-### Standard Aliases (from zshrc)
+### Aliases & Functions
 
 ```bash
 ls='eza --icons=auto --group-directories-first --git'
@@ -245,30 +235,12 @@ When modifying aliases:
 - Document non-obvious behavior
 - Use functions for complex logic (not aliases)
 
-## Environment Variables
-
-### Core Variables
-
-```bash
-DOTRCDIR="${HOME}/.config/dotrc"          # This repository
-XDG_CONFIG_HOME="${HOME}/.config"         # App configs
-ZDOTDIR="${HOME}/.config/zsh"             # Zsh configs
-```
-
-### Adding New Variables
-
-1. Add to `zshenv` (sourced first, always)
-2. Export with `export VAR="value"`
-3. Use `${HOME}` not `~` for portability
-4. Document in comments
-
 ## Git Workflow
 
 ### Commit Messages
 
 **Format**: Korean commit messages using Conventional Commits with `-하다` verb ending.
 
-**Template** (from `gitmessage`):
 ```
 <type>: <subject in Korean ending with -하다>
 
@@ -280,12 +252,15 @@ ZDOTDIR="${HOME}/.config/zsh"             # Zsh configs
 **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 **Examples**:
-- ✅ `feat: Starship 프롬프트 설정을 추가하다`
-- ✅ `fix(zshrc): 중복된 PATH 항목을 제거하다`
-- ✅ `docs: AGENTS.md 파일을 생성하다`
-- ❌ `feat: Starship 프롬프트 추가` (missing -하다)
+- `feat: Starship 프롬프트 설정을 추가하다`
+- `fix(zshrc): 중복된 PATH 항목을 제거하다`
+- `docs: AGENTS.md 파일을 생성하다`
 
-**For Claude Code users**: See [CLAUDE.md](./claude/CLAUDE.md) and [gitmessage](./gitmessage) for full commit guidelines.
+### Branch Strategy
+
+- **Main branch**: `main`
+- **Feature branches**: `feat/<description>`
+- **Fix branches**: `fix/<description>`
 
 ## Testing Changes
 
@@ -326,7 +301,6 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
    - Tools (starship, fzf, etc.) → `zsh.d/30-tools.zsh`
    - Aliases/functions → `zsh.d/40-aliases.zsh`
    - Local settings → `zsh.d/99-local.zsh`
-
 2. **Syntax check**: `zsh -n zsh.d/XX-name.zsh`
 3. **Auto-compile**: Modified files auto-compile to `.zwc` on next load
 4. **Test in new shell**: `zsh -c 'source ~/.config/dotrc/zshrc'`
@@ -339,33 +313,56 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
 
 ### Updating Claude Guidelines
 
-**Note**: This is Claude Code specific.
+> **Note**: This is Claude Code specific.
 
 1. Edit files in `claude/guides/`
 2. Run linter: `${DOTRCDIR}/claude/scripts/lint-docs.sh` (if exists)
 3. Verify links work
 4. Commit with `docs(claude): <description>`
 
-For details, see [CLAUDE.md](./claude/CLAUDE.md).
-
 ### Managing Claude Skills
 
-**Note**: This is Claude Code specific. Other AI agents can skip this section.
+> **Note**: This is Claude Code specific. Other AI agents can skip this task.
 
 1. Create skill directory: `claude/skills/<skill-name>/`
 2. Write `SKILL.md` following existing patterns
 3. Include: YAML frontmatter, metadata, context, instructions
-4. Test with natural language: "<skill-trigger>"
+4. Test with natural language: `"<skill-trigger>"`
 5. Commit with `feat(claude): <skill-name> 스킬을 추가하다`
 
-For details, see [CLAUDE.md](./claude/CLAUDE.md).
+## Boundaries
+
+### Always Do
+
+- Run `zsh -n <file>` syntax check before committing shell scripts
+- Follow existing code patterns and conventions in each file
+- Quote all shell variables: `"${VAR}"`
+- Use `(( $+commands[tool] ))` for command existence checks
+- Test symlinks after creating or modifying them
+- Include `-하다` verb ending in Korean commit messages
+- Update files in `${DOTRCDIR}`, not symlink targets
+
+### Ask First
+
+- Adding new dependencies (Homebrew packages)
+- Changing the zsh.d module loading order (XX- prefix numbers)
+- Modifying `zshenv` (affects all Zsh sessions)
+- Adding new symlinks to system directories
+- Changing Claude Code guidelines in `claude/guides/`
+
+### Never Do
+
+- Commit secrets, API keys, or tokens
+- Push directly to main without verification
+- Delete or overwrite `~/.zshrc.work` (user's private work config)
+- Modify files outside `${DOTRCDIR}` without explicit request
+- Remove existing symlinks without confirming with user
 
 ## Security Considerations
 
-- **Never commit secrets**: Use `.env` files (gitignored)
-- **Work overrides**: Use `~/.zshrc.work` for company-specific configs (gitignored)
-- **SSH keys**: Keep in `~/.ssh/`, not in dotrc
-- **API tokens**: Use keychain or environment-specific files
+- **Secrets**: Never commit secrets. Use `.env` files (gitignored)
+- **Dependencies**: Use `~/.zshrc.work` for company-specific configs (gitignored)
+- **Data**: Keep SSH keys in `~/.ssh/`, API tokens in keychain or environment-specific files
 
 ## Troubleshooting
 
@@ -405,49 +402,15 @@ ls -la ${XDG_CONFIG_HOME}/tool.toml
 ln -sf ${DOTRCDIR}/tool.toml ${XDG_CONFIG_HOME}/tool.toml
 ```
 
-## Claude Code Features
-
-**Note**: The following features are specific to Claude Code. Other AI agents can ignore this section.
-
-### Auto-Discovered Skills
-
-Claude Code automatically discovers and activates skills based on natural language triggers:
-
-| Skill | Trigger Examples | Purpose |
-|-------|------------------|---------|
-| `commit` | "커밋해줘", "commit changes" | Creates git commits with Korean messages |
-| `review` | "리뷰해줘", "이거 괜찮아?" | Performs code review |
-| `troubleshoot` | "왜 안돼?", "에러 났어" | Diagnoses and fixes errors |
-| `refactor` | "리팩토링 해줘", "정리해줘" | Improves code quality |
-| `agents` | "에이전트해줘", "AGENTS.md 만들어줘" | Manages AGENTS.md file |
-
-For complete documentation, see [CLAUDE.md](./claude/CLAUDE.md) and [claude/skills/](./claude/skills/).
-
-## Document Templates
-
-문서 작성 시 `docs/templates/` 의 템플릿을 참고하세요.
-
-| 템플릿 | 용도 | 경로 |
-|--------|------|------|
-| [guide-template.md](./docs/templates/guide-template.md) | 가이드 문서 작성 (역할, 지침, 참고문서 구조) | `docs/templates/guide-template.md` |
-| [work-template.md](./docs/templates/work-template.md) | 작업 문서 작성 (분석, 계획, 구현, 테스트, 회고) | `docs/templates/work-template.md` |
-| [agents-template.md](./docs/templates/agents-template.md) | AGENTS.md 작성 (AI 에이전트 가이드, 프로젝트 구조, 명령어, 경계) | `docs/templates/agents-template.md` |
-| [skill-template.md](./docs/templates/skill-template.md) | Claude 스킬 작성 (SKILL.md, 트리거, 명령어) | `docs/templates/skill-template.md` |
-
-**공통 규칙**:
-- 메타데이터는 YAML frontmatter(`---`) 형식으로 작성
-- `name`, `description`, `version` 은 필수 필드
-- 템플릿 고유 필드는 `metadata:` 블록 하위에 배치
-- 상세 가이드: [docs/templates/AGENTS.md](./docs/templates/AGENTS.md)
-- 참고: [agentskills.io frontmatter spec](https://agentskills.io/specification#frontmatter-required)
-
 ## Related Resources
 
 ### Documentation
+
 - [CLAUDE.md](./claude/CLAUDE.md) - Claude Code specific guidelines
 - [AGENTS.md Spec](https://agents.md/) - Universal AI agent guide standard
 
 ### Tool Documentation
+
 - [Zsh Documentation](https://zsh.sourceforge.io/Doc/)
 - [ZimFW Modules](https://zimfw.sh/docs/modules/)
 - [Starship Config](https://starship.rs/config/)
@@ -455,21 +418,33 @@ For complete documentation, see [CLAUDE.md](./claude/CLAUDE.md) and [claude/skil
 - [Ghostty](https://ghostty.org/)
 - [Zed Editor](https://zed.dev/)
 
+### Document Templates
+
+Use templates in `docs/templates/` when creating new documents. See [docs/templates/AGENTS.md](./docs/templates/AGENTS.md) for details.
+
+| Template | Purpose | Path |
+|----------|---------|------|
+| [guide-template.md](./docs/templates/guide-template.md) | Guide documents | `docs/templates/guide-template.md` |
+| [work-template.md](./docs/templates/work-template.md) | Work logs | `docs/templates/work-template.md` |
+| [agents-template.md](./docs/templates/agents-template.md) | AGENTS.md files | `docs/templates/agents-template.md` |
+| [skill-template.md](./docs/templates/skill-template.md) | Claude skills | `docs/templates/skill-template.md` |
+
 ---
 
-## Document Organization
+**Maintainer**: ujuc
+**AI Agent Compatibility**: Universal (tested with Claude Code, GitHub Copilot, Cursor)
+**Last Updated**: 2026-02-10
 
-- **AGENTS.md** (this file): Universal guide for all AI agents
-- **claude/CLAUDE.md**: Claude Code specific standards and advanced features
-- **Relationship**: AGENTS.md provides the foundation; CLAUDE.md extends it for Claude users
+## See Also
+
+- [**AGENTS.md Spec**](https://agents.md/) - Universal AI agent file standard
+- [**CLAUDE.md**](./claude/CLAUDE.md) - Claude-specific guidelines
+- [**docs/templates/AGENTS.md**](./docs/templates/AGENTS.md) - Document template directory guide
 
 ## Change Log
 
+- **v3.1.0** (2026-02-10): Migrated from `<meta>` XML tag to YAML frontmatter
+- **v3.0.0** (2026-02-10): Rewritten to follow agents-template.md structure
+- **v2.1.0** (2026-02-10): Restructured to match agents-template format, added Boundaries section
 - **v2.0.0** (2026-02-01): Separated Claude-specific content to claude/CLAUDE.md
 - **v1.0.0** (2026-01-04): Initial version with universal and Claude-specific content merged
-
----
-
-**Maintainer**: ujuc  
-**AI Agent Compatibility**: Universal (tested with Claude Code, GitHub Copilot, Cursor)  
-**Last Updated**: 2026-02-01
