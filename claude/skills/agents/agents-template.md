@@ -238,3 +238,4 @@ metadata:
 ## See Also
 
 - [**AGENTS.md Spec**](https://agents.md/) - Universal AI agent file standard
+- [**Claude Code Skills**](https://code.claude.com/docs/en/skills) - Claude Code skills documentation
