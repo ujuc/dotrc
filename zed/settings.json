@@ -1,5 +1,8 @@
 {
   "agent_servers": {
+    "claude": {
+      "default_model": "default"
+    },
     "mistral-vibe": {
       "type": "registry",
     },
