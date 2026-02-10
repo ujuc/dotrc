@@ -61,6 +61,14 @@ dotrc/
 ├── batrc               # bat (cat alternative) config
 ├── tigrc               # tig (git UI) config
 ├── gitmessage          # Git commit template
+├── docs/               # Project documentation
+│   ├── templates/      # Document templates (shared)
+│   │   ├── AGENTS.md          # Template directory guide
+│   │   ├── guide-template.md  # Guide document template
+│   │   ├── work-template.md   # Work document template
+│   │   ├── agents-template.md # AGENTS.md template
+│   │   └── skill-template.md  # Claude skill template
+│   └── ai/             # AI work logs
 ├── zed/                # Zed editor settings
 └── claude/             # Claude Code specific guidelines
     ├── CLAUDE.md       # Claude-specific entry point
@@ -80,7 +88,6 @@ dotrc/
     │   ├── refactor/   # Code improvement
     │   └── agents/     # AGENTS.md management
     ├── scripts/        # Automation scripts
-    ├── templates/      # Document templates
     └── (runtime)       # Auto-generated: commands/, history.jsonl, plans/, etc.
 ```
 
@@ -415,6 +422,24 @@ Claude Code automatically discovers and activates skills based on natural langua
 | `agents` | "에이전트해줘", "AGENTS.md 만들어줘" | Manages AGENTS.md file |
 
 For complete documentation, see [CLAUDE.md](./claude/CLAUDE.md) and [claude/skills/](./claude/skills/).
+
+## Document Templates
+
+문서 작성 시 `docs/templates/` 의 템플릿을 참고하세요.
+
+| 템플릿 | 용도 | 경로 |
+|--------|------|------|
+| [guide-template.md](./docs/templates/guide-template.md) | 가이드 문서 작성 (역할, 지침, 참고문서 구조) | `docs/templates/guide-template.md` |
+| [work-template.md](./docs/templates/work-template.md) | 작업 문서 작성 (분석, 계획, 구현, 테스트, 회고) | `docs/templates/work-template.md` |
+| [agents-template.md](./docs/templates/agents-template.md) | AGENTS.md 작성 (AI 에이전트 가이드, 프로젝트 구조, 명령어, 경계) | `docs/templates/agents-template.md` |
+| [skill-template.md](./docs/templates/skill-template.md) | Claude 스킬 작성 (SKILL.md, 트리거, 명령어) | `docs/templates/skill-template.md` |
+
+**공통 규칙**:
+- 메타데이터는 YAML frontmatter(`---`) 형식으로 작성
+- `name`, `description`, `version` 은 필수 필드
+- 템플릿 고유 필드는 `metadata:` 블록 하위에 배치
+- 상세 가이드: [docs/templates/AGENTS.md](./docs/templates/AGENTS.md)
+- 참고: [agentskills.io frontmatter spec](https://agentskills.io/specification#frontmatter-required)
 
 ## Related Resources
 
