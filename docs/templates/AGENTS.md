@@ -33,6 +33,8 @@ Standard structure for guide documents. Includes role definition, responsibiliti
 
 Comprehensive work log template covering the full lifecycle: analysis, planning, implementation, testing, results, documentation, follow-up, and retrospective. Includes version history tracking.
 
+> **Note**: This template is written entirely in Korean. Documents created from this template must also be written in Korean.
+
 **Key metadata fields**: `type`, `status`, `agent`, `related`, `started`
 
 ### agents-template.md
@@ -88,9 +90,8 @@ Every template must include a `## See Also` section at the bottom with:
 
 ### Language Policy
 
-- **Comments and guide text within templates**: Korean allowed for instructional notes
-- **File content (body text)**: English by default
-- **Placeholder descriptions**: Korean allowed inside `<!-- -->` HTML comments
+- **All template content**: English (comments, placeholders, body text)
+- **Placeholder descriptions**: English inside `<!-- -->` HTML comments
 
 ### Placeholder Convention
 

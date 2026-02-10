@@ -1,59 +1,21 @@
 ---
-# AGENTS.md Template Metadata (YAML Frontmatter)
-# Reference: https://agentskills.io/specification#frontmatter-required
 name: "[project-name]-agents"
 description: "[Describe the purpose of this AGENTS.md in one sentence]"
 version: "1.0.0"
-
-# Optional fields
 tags: []
 context: |
   [Describe the project context and why this AGENTS.md exists]
 last_updated: "YYYY-MM-DD"
-
-# AGENTS.md-specific fields
 metadata:
   standard: "https://agents.md/"
   ai-compatibility: "Universal (Claude Code, GitHub Copilot, Cursor, Aider)"
 ---
 
-<!-- ================================================================
-  AGENTS.md Template
-  ================================================================
-  This template covers the 6 Core Areas identified from analysis of
-  2,500+ repositories (GitHub blog, 2025):
-    1. Commands       → Build & Test Commands
-    2. Testing        → Testing Changes
-    3. Project Struct → Project Overview + Repository Structure
-    4. Code Style     → Code Style & Conventions
-    5. Git Workflow   → Git Workflow
-    6. Boundaries     → Boundaries (Always Do / Ask First / Never Do)
-
-  Usage:
-    1. Copy this template to your project root as AGENTS.md
-    2. Remove this comment block
-    3. Fill in YAML frontmatter with project-specific metadata
-    4. Fill in each section with project-specific information
-    5. Delete sections that are not applicable (but keep 6 Core Areas)
-
-  NOTE: YAML frontmatter is REQUIRED for all AGENTS.md files.
-        It provides structured metadata for AI agent discovery.
-  ================================================================ -->
-
 # [Project Name]
 
-<!-- 프로젝트를 한 문장으로 소개합니다 -->
 **Universal AI Agent Guide** for the `[project-name]` repository.
 
-<!-- Claude Code 등 특정 에이전트용 별도 파일이 있다면 여기에 안내합니다 -->
-<!-- > **For Claude Code users**: See [CLAUDE.md](./claude/CLAUDE.md) for Claude-specific guidelines. -->
-
 ## Project Overview
-
-<!-- ★ CORE AREA: Project Structure (1/2)
-     프로젝트의 핵심 정보를 빠르게 파악할 수 있도록 작성합니다.
-     ANTI-PATTERN: "This is a web app" 같은 모호한 설명 대신
-     구체적인 기술 스택과 목적을 명시하세요. -->
 
 **Type**: [Application type - e.g., Web API, CLI tool, Library, Configuration]
 **Primary Language**: [Main language(s)]
@@ -62,10 +24,7 @@ metadata:
 
 ## Repository Structure
 
-<!-- ★ CORE AREA: Project Structure (2/2)
-     디렉토리 트리를 통해 코드베이스 탐색 시간을 줄입니다.
-     ANTI-PATTERN: 모든 파일을 나열하지 마세요. 핵심 디렉토리와
-     진입점 파일만 표시하고 나머지는 "..." 으로 줄입니다. -->
+<!-- Show only key directories and entry points -->
 
 ```
 [project-name]/
@@ -81,10 +40,7 @@ metadata:
 
 ## Build & Test Commands
 
-<!-- ★ CORE AREA: Commands
-     에이전트가 직접 실행할 수 있는 구체적인 명령어를 제공합니다.
-     ANTI-PATTERN: "Run the tests" 같은 설명 대신 복사-붙여넣기
-     가능한 정확한 명령어를 작성하세요. -->
+<!-- Provide exact, copy-pasteable commands -->
 
 ### Setup
 
@@ -132,10 +88,7 @@ metadata:
 
 ## Code Style & Conventions
 
-<!-- ★ CORE AREA: Code Style
-     에이전트가 일관된 코드를 생성하도록 구체적인 규칙을 제공합니다.
-     ANTI-PATTERN: "Follow best practices" 같은 모호한 지침 대신
-     구체적인 패턴과 예시를 포함하세요. -->
+<!-- Include concrete patterns and examples -->
 
 ### Formatting
 
@@ -164,14 +117,12 @@ metadata:
 
 ## Git Workflow
 
-<!-- ★ CORE AREA: Git Workflow
-     커밋 메시지 형식, 브랜치 전략 등을 명확히 정의합니다.
-     ANTI-PATTERN: 형식만 나열하지 마세요. 올바른 예시와
-     잘못된 예시를 함께 제공하세요. -->
+<!-- Provide both good and bad examples -->
 
 ### Commit Messages
 
 **Format**:
+
 ```
 <type>: <subject>
 
@@ -181,6 +132,7 @@ metadata:
 **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 **Examples**:
+
 - [Good example 1]
 - [Good example 2]
 
@@ -192,10 +144,7 @@ metadata:
 
 ## Testing Changes
 
-<!-- ★ CORE AREA: Testing
-     변경사항이 기존 기능을 깨뜨리지 않도록 검증 절차를 정의합니다.
-     ANTI-PATTERN: "Write tests" 만 쓰지 마세요. 어떤 종류의
-     테스트를 어떻게 실행하는지 구체적으로 안내하세요. -->
+<!-- Describe which tests to run and how -->
 
 ### Before Committing
 
@@ -212,8 +161,6 @@ metadata:
 
 ## Common Tasks
 
-<!-- 에이전트가 자주 수행하는 작업의 구체적인 절차를 안내합니다 -->
-
 ### [Task 1 Name]
 
 1. [Step 1]
@@ -228,29 +175,22 @@ metadata:
 
 ## Boundaries
 
-<!-- ★ CORE AREA: Boundaries
-     에이전트가 해야 할 것, 물어봐야 할 것, 절대 하면 안 되는 것을
-     명확히 구분합니다. 이 섹션은 안전한 자율 작업의 핵심입니다.
-     ANTI-PATTERN: "Be careful" 같은 모호한 경고 대신
-     구체적인 행동 목록을 작성하세요. -->
+<!-- Separate what to always do, ask first, and never do -->
 
 ### Always Do
 
-<!-- 에이전트가 확인 없이 자율적으로 수행해도 되는 작업 -->
 - [e.g., Run tests before committing]
 - [e.g., Follow existing code patterns]
 - [e.g., Keep functions under 50 lines]
 
 ### Ask First
 
-<!-- 에이전트가 사용자 확인을 받아야 하는 작업 -->
 - [e.g., Adding new dependencies]
 - [e.g., Changing public API signatures]
 - [e.g., Modifying CI/CD configuration]
 
 ### Never Do
 
-<!-- 에이전트가 절대 수행하면 안 되는 작업 -->
 - [e.g., Commit secrets or API keys]
 - [e.g., Delete database migration files]
 - [e.g., Push directly to main branch]
@@ -298,6 +238,3 @@ metadata:
 ## See Also
 
 - [**AGENTS.md Spec**](https://agents.md/) - Universal AI agent file standard
-<!-- 아래는 예시입니다. 프로젝트에 맞게 수정하세요 -->
-<!-- - [**CLAUDE.md**](./claude/CLAUDE.md) - Claude-specific guidelines -->
-<!-- - [**README.md**](./README.md) - Project README -->

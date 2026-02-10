@@ -1,11 +1,7 @@
 ---
-# Work Document Metadata (YAML Frontmatter)
-# Reference: https://agentskills.io/specification#frontmatter-required
 name: "[YYYY-MM-DD_TYPE_description]"
 description: "[이 작업 문서의 목적을 한 문장으로 설명]"
 version: "YYYY.MM.01"
-
-# Optional fields
 tags: []
 context: |
   이 문서는 [작업 목적]을 위해 작성되었습니다.
@@ -18,8 +14,6 @@ context: |
   **배경**:
   [이 작업을 수행하게 된 이유나 문제 상황 설명]
 last_updated: "YYYY-MM-DD"
-
-# Work-specific fields
 metadata:
   type: "[OPTIMIZATION/TEST/REFACTOR/REVIEW/TROUBLESHOOT/ANALYSIS/IMPLEMENTATION/DOCUMENTATION]"
   status: "Planning"
@@ -28,24 +22,28 @@ metadata:
   started: "YYYY-MM-DD"
 ---
 
-# [Work Title]
+# [작업 제목]
 
-<!-- Objective: 작업의 구체적인 목표와 성공 기준을 정의합니다 -->
-## Objective
+> **작성 언어**: 이 템플릿으로 작성하는 문서는 **한국어**로 작성합니다.
+> 검토와 확인이 한국어로 이루어지므로, 본문·제목·설명 모두 한국어를 사용하세요.
+
+## 목표
 
 **작업 목표**:
+
 1. [목표 1]: 구체적이고 측정 가능한 목표
 2. [목표 2]: 구체적이고 측정 가능한 목표
 3. [목표 3]: 구체적이고 측정 가능한 목표
 
 **성공 기준**:
+
 - ✅ [기준 1]
 - ✅ [기준 2]
 - ✅ [기준 3]
 
-## 1. 분석 (Analysis)
+## 1. 분석
 
-### 현재 상태 (Current State)
+### 현재 상태
 
 [현재 상황에 대한 분석]
 
@@ -53,59 +51,64 @@ metadata:
 # 현재 상태 확인 명령어/코드
 ```
 
-### 문제점 (Issues)
+### 문제점
 
-- **Issue 1**: 설명
-- **Issue 2**: 설명
-- **Issue 3**: 설명
+- **문제 1**: [설명]
+- **문제 2**: [설명]
+- **문제 3**: [설명]
 
-### 원인 분석 (Root Cause)
+### 원인 분석
 
 [문제의 근본 원인 분석]
 
-## 2. 계획 (Planning)
+## 2. 계획
 
-### 접근 방법 (Approach)
+### 접근 방법
 
 [선택한 접근 방법과 그 이유]
 
-### 작업 단계 (Steps)
+### 작업 단계
 
-| 단계 | 작업 내용 | 예상 시간 | 상태 |
-|------|-----------|-----------|------|
-| 1 | [작업 1] | [시간] | ⬜️ Todo |
-| 2 | [작업 2] | [시간] | ⬜️ Todo |
-| 3 | [작업 3] | [시간] | ⬜️ Todo |
-| 4 | [작업 4] | [시간] | ⬜️ Todo |
+| 단계 | 작업 내용 | 예상 시간 | 상태    |
+| ---- | --------- | --------- | ------- |
+| 1    | [작업 1]  | [시간]    | ⬜️ Todo |
+| 2    | [작업 2]  | [시간]    | ⬜️ Todo |
+| 3    | [작업 3]  | [시간]    | ⬜️ Todo |
+| 4    | [작업 4]  | [시간]    | ⬜️ Todo |
 
 **상태 표시**:
+
 - ⬜️ Todo
 - 🔄 In Progress
 - ✅ Done
 - ❌ Blocked
 
-### 예상 영향 (Impact)
+### 예상 영향
 
 **변경될 파일**:
+
 - `path/to/file1` - 변경 내용
 - `path/to/file2` - 변경 내용
 
 **의존성**:
+
 - [의존하는 도구/라이브러리]
 - [영향받는 다른 설정]
 
-## 3. 구현 (Implementation)
+## 3. 구현
 
-### 변경 사항 (Changes)
+### 변경 사항
 
 #### 파일 1: `path/to/file`
 
 **변경 전**:
+
 ```language
 # 이전 코드
 ```
 
 **변경 후**:
+
 ```language
 # 새 코드
 ```
@@ -116,7 +119,7 @@ metadata:
 
 [같은 형식으로 반복]
 
-### 주요 결정 사항 (Key Decisions)
+### 주요 결정 사항
 
 1. **결정**: [내용]
    - **이유**: [설명]
@@ -126,37 +129,39 @@ metadata:
    - **이유**: [설명]
    - **대안**: [고려했던 다른 방법]
 
-## 4. 테스트 (Testing)
+## 4. 테스트
 
-### 테스트 계획 (Test Plan)
+### 테스트 계획
 
-| 테스트 케이스 | 예상 결과 | 실제 결과 | 상태 |
-|---------------|-----------|-----------|------|
-| [케이스 1] | [예상] | [실제] | ✅/❌ |
-| [케이스 2] | [예상] | [실제] | ✅/❌ |
-| [케이스 3] | [예상] | [실제] | ✅/❌ |
+| 테스트 케이스 | 예상 결과 | 실제 결과 | 상태  |
+| ------------- | --------- | --------- | ----- |
+| [케이스 1]    | [예상]    | [실제]    | ✅/❌ |
+| [케이스 2]    | [예상]    | [실제]    | ✅/❌ |
+| [케이스 3]    | [예상]    | [실제]    | ✅/❌ |
 
-### 테스트 결과 (Test Results)
+### 테스트 결과
 
 ```bash
 # 테스트 명령어 및 결과
 ```
 
 **발견된 이슈**:
+
 - [이슈 1]: 해결 방법
 - [이슈 2]: 해결 방법
 
-## 5. 결과 (Results)
+## 5. 결과
 
-### 달성한 목표 (Achievements)
+### 달성한 목표
 
 - ✅ [목표 1]: [결과 설명]
 - ✅ [목표 2]: [결과 설명]
 - ⚠️ [목표 3]: [부분 달성 또는 미달성 설명]
 
-### 성능 비교 (Performance Comparison)
+### 성능 비교
 
 **변경 전**:
+
 ```
 지표 1: [값]
 지표 2: [값]
@@ -164,19 +169,20 @@ metadata:
 ```
 
 **변경 후**:
+
 ```
 지표 1: [값] ([개선율]% 개선)
 지표 2: [값] ([개선율]% 개선)
 지표 3: [값] ([개선율]% 개선)
 ```
 
-### 스크린샷/로그 (Evidence)
+### 근거 자료
 
 ```
 [관련 로그나 출력 결과]
 ```
 
-## 6. 문서화 (Documentation)
+## 6. 문서화
 
 ### 업데이트된 문서
 
@@ -188,15 +194,15 @@ metadata:
 
 - `docs/new-doc.md` - [설명]
 
-## 7. 후속 작업 (Follow-up)
+## 7. 후속 작업
 
-### 남은 작업 (Remaining Tasks)
+### 남은 작업
 
 - [ ] [작업 1]
 - [ ] [작업 2]
 - [ ] [작업 3]
 
-### 개선 사항 (Future Improvements)
+### 개선 사항
 
 - [개선 1]: [설명]
 - [개선 2]: [설명]
@@ -206,39 +212,34 @@ metadata:
 - Issue #XXX: [제목]
 - PR #YYY: [제목]
 
-## 8. 회고 (Retrospective)
+## 8. 회고
 
-### 잘된 점 (What Went Well)
-
-- [항목 1]
-- [항목 2]
-
-### 개선할 점 (What Could Be Improved)
+### 잘된 점
 
 - [항목 1]
 - [항목 2]
 
-### 배운 점 (Lessons Learned)
+### 개선할 점
+
+- [항목 1]
+- [항목 2]
+
+### 배운 점
 
 - [교훈 1]
 - [교훈 2]
 
-<!-- See Also: 항상 AGENTS.md, CLAUDE.md 를 포함하고, 관련 문서를 추가합니다 -->
-## See Also
+## 참고
 
-- [**AGENTS.md**](../../AGENTS.md) - Universal AI agent guide
-- [**CLAUDE.md**](../../claude/CLAUDE.md) - Claude-specific guidelines
-
-<!-- 아래는 예시입니다. 관련 문서에 맞게 수정하세요 -->
-<!-- - [**README.md**](../ai/README.md) - AI documentation directory guide -->
-<!-- - [Related work document](./YYYY-MM-DD_TYPE_related.md) - Description -->
+- [**AGENTS.md**](../../AGENTS.md) - AI 에이전트 가이드
+- [**CLAUDE.md**](../../claude/CLAUDE.md) - Claude 전용 가이드라인
 
 ---
 
-## Version History
+## 버전 이력
 
-| Version | Date | Changes | Status |
-|---------|------|---------|--------|
-| YYYY.MM.01 | YYYY-MM-DD | 초기 작성 | Planning |
+| 버전       | 날짜       | 변경 사항   | 상태        |
+| ---------- | ---------- | ----------- | ----------- |
+| YYYY.MM.01 | YYYY-MM-DD | 초기 작성   | Planning    |
 | YYYY.MM.02 | YYYY-MM-DD | [변경 사항] | In Progress |
-| YYYY.MM.03 | YYYY-MM-DD | [변경 사항] | Completed |
+| YYYY.MM.03 | YYYY-MM-DD | [변경 사항] | Completed   |
