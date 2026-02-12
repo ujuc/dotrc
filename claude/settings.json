@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": ["Bash(git log:*)"],
+    "deny": [],
+    "ask": [],
+    "defaultMode": "plan",
+    "disableBypassPermissionsMode": "disable"
+  },
+  "model": "sonnet",
+  "alwaysThinkingEnabled": true,
+  "language": "korean",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline-command.sh"
+  },
+  "respectGitignore": true,
+  "spinnerTipsEnabled": false,
+  "env": {
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "0"
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true
+  }
+}
