@@ -1,7 +1,7 @@
 {
   "agent_servers": {
     "claude": {
-      "default_model": "default"
+      "default_model": "default",
     },
     "mistral-vibe": {
       "type": "registry",
@@ -67,7 +67,7 @@
   "terminal": {
     "alternate_scroll": "on",
     "copy_on_select": true,
-    "font_family": "ZedMono Nerd Font",
+    "font_family": "D2CodingLigature Nerd Font Mono",
     "font_size": 12,
     "toolbar": {
       "breadcrumbs": false,
