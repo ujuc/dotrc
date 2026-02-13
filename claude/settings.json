@@ -1,25 +1,27 @@
 {
+  "respectGitignore": true,
+  "env": {
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "0"
+  },
   "permissions": {
-    "allow": ["Bash(git log:*)"],
+    "allow": [
+      "Bash(git log:*)"
+    ],
     "deny": [],
     "ask": [],
     "defaultMode": "plan",
     "disableBypassPermissionsMode": "disable"
   },
-  "model": "sonnet",
-  "alwaysThinkingEnabled": true,
-  "language": "korean",
+  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline-command.sh"
   },
-  "respectGitignore": true,
-  "spinnerTipsEnabled": false,
-  "env": {
-    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "0"
-  },
+  "language": "korean",
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true
-  }
+  },
+  "spinnerTipsEnabled": false,
+  "alwaysThinkingEnabled": true
 }
