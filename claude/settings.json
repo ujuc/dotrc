@@ -1,12 +1,11 @@
 {
   "respectGitignore": true,
   "env": {
-    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "0"
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "0",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "permissions": {
-    "allow": [
-      "Bash(git log:*)"
-    ],
+    "allow": [],
     "deny": [],
     "ask": [],
     "defaultMode": "plan",
@@ -23,5 +22,6 @@
     "autoAllowBashIfSandboxed": true
   },
   "spinnerTipsEnabled": false,
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "teammateMode": "auto"
 }
