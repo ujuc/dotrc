@@ -23,5 +23,6 @@
   },
   "spinnerTipsEnabled": false,
   "alwaysThinkingEnabled": true,
-  "teammateMode": "auto"
+  "teammateMode": "auto",
+  "effortLevel": "high"
 }
