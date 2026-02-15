@@ -17,24 +17,6 @@ if (( $+commands[fzf] )); then
     fi
 fi
 
-# # fzf (lazy loading version - uncomment if needed)
-# if (( $+commands[fzf] )); then
-#     # Wrapper that loads fzf on first key press
-#     function __fzf_init_lazy() {
-#         unfunction __fzf_init_lazy
-#         if [[ -f ${HOME}/.fzf.zsh ]]; then
-#             source ${HOME}/.fzf.zsh
-#         else
-#             eval "$(fzf --zsh)"
-#         fi
-#         zle reset-prompt
-#     }
-#     zle -N __fzf_init_lazy
-#     bindkey '^T' __fzf_init_lazy  # Files
-#     bindkey '^R' __fzf_init_lazy  # History
-#     bindkey '\ec' __fzf_init_lazy # Directories
-# fi
-
 # zoxide (lazy loading)
 if (( $+commands[zoxide] )); then
     # Create wrapper function that initializes on first use
@@ -43,7 +25,7 @@ if (( $+commands[zoxide] )); then
         _evalcache zoxide init zsh
         z "$@"
     }
-    
+
     # Alias zi for interactive mode
     function zi() {
         unfunction zi
@@ -60,7 +42,7 @@ if (( $+commands[mise] )); then
         eval "$(${HOME}/.local/bin/mise activate zsh)"
         mise "$@"
     }
-    
+
     # But activate immediately if we're in a project directory with mise config
     if [[ -f .mise.toml ]] || [[ -f .tool-versions ]] || [[ -f mise.toml ]]; then
         eval "$(${HOME}/.local/bin/mise activate zsh)"
