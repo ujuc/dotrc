@@ -41,15 +41,7 @@ metadata:
 ```
 dotrc/
 ├── AGENTS.md           # This file - Universal AI agent guide
-├── zshrc               # Zsh main config (module loader)
-├── zsh.d/              # Modular Zsh configurations (optimized)
-│   ├── 00-env.zsh      # Environment variables, PATH
-│   ├── 10-history.zsh  # History settings
-│   ├── 20-plugins.zsh  # Zimfw and plugins (incl. completion)
-│   ├── 30-tools.zsh    # External tools (lazy loading)
-│   ├── 40-aliases.zsh  # Aliases, functions, benchmarks
-│   ├── 99-local.zsh    # Local/work overrides
-│   └── README.md       # Module documentation
+├── zshrc               # Zsh main config (single file, sectioned)
 ├── scripts/            # Automation and optimization scripts
 │   ├── compile-zsh.sh  # Compile configs to bytecode
 │   ├── benchmark.sh    # Measure startup time
@@ -121,7 +113,7 @@ update  # Alias: brew update + zimfw update + cleanup
 
 ```bash
 # Check Zsh config syntax
-zsh -n ~/.config/dotrc/zshrc
+zsh -n zshrc
 
 # Test Zsh startup
 zsh -c 'echo "Zsh loaded successfully"'
@@ -300,22 +292,20 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
 
 ### Modifying Zsh Config
 
-**Modular structure**: Configurations are split into `zsh.d/*.zsh` files, loaded by `zshrc`.
+**Single file structure**: All Zsh configuration lives in `zshrc`, organized by section separators (`# ── Section ──`).
 
-1. **Edit appropriate module**:
-   - Environment/PATH → `zsh.d/00-env.zsh`
-   - History → `zsh.d/10-history.zsh`
-   - Plugins/Completion → `zsh.d/20-plugins.zsh`
-   - Tools (starship, fzf, etc.) → `zsh.d/30-tools.zsh`
-   - Aliases/functions → `zsh.d/40-aliases.zsh`
-   - Local settings → `zsh.d/99-local.zsh`
-2. **Syntax check**: `zsh -n zsh.d/XX-name.zsh`
-3. **Auto-compile**: Modified files auto-compile to `.zwc` on next load
+1. **Edit the appropriate section in `zshrc`**:
+   - `# ── Environment ──` — fpath, PATH
+   - `# ── History ──` — History settings
+   - `# ── Plugins ──` — Zimfw, completion
+   - `# ── Tools ──` — starship, fzf, zoxide, mise
+   - `# ── Aliases ──` — Functions, aliases
+   - `# ── Local ──` — Work config, 1Password
+2. **Syntax check**: `zsh -n zshrc`
+3. **Auto-compile**: `zshrc` auto-compiles to `.zwc` on next load
 4. **Test in new shell**: `zsh -c 'source ~/.config/dotrc/zshrc'`
 5. **Reload current shell**: `source ~/.config/dotrc/zshrc`
 6. **Commit** with appropriate type (`refactor`, `feat`, `fix`)
-
-**Adding new module**: Create `zsh.d/XX-name.zsh` (XX = load order 00-99). Auto-loaded and auto-compiled by `zshrc`.
 
 **Performance tools**: Use `zbench`, `zprofile`, `zcompile` to measure and optimize.
 
@@ -353,7 +343,7 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
 ### Ask First
 
 - Adding new dependencies (Homebrew packages)
-- Changing the zsh.d module loading order (XX- prefix numbers)
+- Changing the section order in zshrc
 - Modifying `zshenv` (affects all Zsh sessions)
 - Adding new symlinks to system directories
 - Changing Claude Code guidelines in `agents/claude/guides/`

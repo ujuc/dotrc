@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 # Compile Zsh configuration files for faster loading
-# Run this after modifying any zsh.d/*.zsh files
+# Run this after modifying zshrc or zshenv
 
 set -e
 
@@ -22,15 +22,6 @@ if [[ -f ${DOTRCDIR}/zshenv ]]; then
     zcompile ${DOTRCDIR}/zshenv
 fi
 
-# Compile all modules in zsh.d/
-if [[ -d ${DOTRCDIR}/zsh.d ]]; then
-    echo "  Compiling zsh.d modules..."
-    for module in ${DOTRCDIR}/zsh.d/*.zsh(N); do
-        echo "    - ${module:t}"
-        zcompile ${module}
-    done
-fi
-
 # Compile zcompdump (completion cache)
 if [[ -f ${ZDOTDIR}/.zcompdump ]]; then
     echo "  Compiling .zcompdump..."
@@ -49,5 +40,5 @@ echo ""
 echo "Compiled files (.zwc) are generated alongside originals."
 echo "Zsh will automatically use compiled versions for faster loading."
 echo ""
-echo "💡 Tip: Run this script after updating any config files:"
+echo "💡 Tip: Run this script after updating zshrc or zshenv:"
 echo "   ${DOTRCDIR}/scripts/compile-zsh.sh"

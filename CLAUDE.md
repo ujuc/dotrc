@@ -6,15 +6,15 @@ Personal dotfiles repository for macOS. Manages Zsh, terminal, editor, and tool 
 
 ```bash
 # Validate shell syntax
-zsh -n zsh.d/XX-name.zsh
+zsh -n zshrc
 
 # Benchmark startup time (default 10 runs)
 ./scripts/benchmark.sh [runs]
 
-# Profile per-module loading time
+# Profile startup with zprof
 ./scripts/profile-startup.zsh
 
-# Compile all configs to .zwc bytecode
+# Compile configs to .zwc bytecode
 ./scripts/compile-zsh.sh
 ```
 
@@ -24,19 +24,18 @@ zsh -n zsh.d/XX-name.zsh
 
 ```
 zshenv (DOTRCDIR, XDG, PATH)
-  └─ zshrc (module loader + auto-compiler)
-       └─ zsh.d/*.zsh (sourced in XX- numeric order)
-            00-env.zsh      # Extra env vars, PATH
-            10-history.zsh  # History settings
-            20-plugins.zsh  # Zimfw, completion
-            30-tools.zsh    # External tools init
-            40-aliases.zsh  # Aliases, functions
-            99-local.zsh    # Machine-local overrides
+  └─ zshrc (single file, sectioned)
+       ├─ Environment    # fpath, PATH
+       ├─ History        # setopt HIST_*
+       ├─ Plugins        # Zimfw, completion
+       ├─ Tools          # starship, fzf, zoxide, mise
+       ├─ Aliases        # Functions, aliases
+       └─ Local          # Work config, 1Password
 ```
 
 ### Auto-Compilation
 
-`zshrc` automatically compiles itself and every `zsh.d/*.zsh` module to `.zwc` bytecode when the source is newer than the compiled version. No manual compilation needed during normal workflow.
+`zshrc` automatically compiles itself to `.zwc` bytecode when the source is newer than the compiled version. No manual compilation needed during normal workflow.
 
 ### Tool Loading Patterns
 
@@ -100,4 +99,3 @@ Examples: `feat: Starship 프롬프트 설정을 추가하다`, `fix(zshrc): 중
 
 - **[AGENTS.md](./AGENTS.md)** — Full repo structure, all tool configs, troubleshooting, boundaries
 - **[agents/claude/CLAUDE.md](./agents/claude/CLAUDE.md)** — Claude-specific skills, MCP servers, priority hierarchy, guides
-- **[zsh.d/README.md](./zsh.d/README.md)** — Module documentation
