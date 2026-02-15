@@ -1,0 +1,178 @@
+Implement the following plan:
+
+# Plan: generate-claude-md 스킬에 중첩 CLAUDE.md 생성 기능 추가
+
+## Context
+
+현재 `generate-claude-md` 스킬(179줄)은 루트 레벨 파일 3종(CLAUDE.md, AGENTS.md, contributing-docs/)만 생성한다.
+모노레포 패키지(`packages/app-a/`)나 git 서브모듈(`agents/`)처럼 하위 디렉토리에 독립적인 CLAUDE.md가 필요한 경우가 있지만, 현재 스킬은 이를 지원하지 않는다.
+
+dotrc 저장소 자체가 3단계 중첩 CLAUDE.md(루트 → agents/ → agents/claude/)를 실제 사용하고 있어, 이 패턴을 스킬에 일반화한다.
+
+## 수정 대상
+
+**단일 파일**: `/Users/ujuc/.config/dotrc/agents/claude/skills/generate-claude-md/SKILL.md`
+
+예상 줄 수: 179줄 → ~233줄 (250줄 제한 내)
+
+## 변경 사항
+
+### 1. 1단계 탐지 항목 추가 (line 35 뒤)
+
+모노레포/서브모듈 탐지를 구체화하고 하위 CLAUDE.md 탐지를 추가한다.
+
+line 35 (`모노레포 구조 여부`) 다음에 3줄 삽입:
+
+```
+- git 서브모듈 (.gitmodules 파싱: 경로, URL, 독립 저장소 여부)
+- 하위 디렉토리별 독립성 (자체 package.json, Cargo.toml 등 패키지 매니저 존재 여부)
+- 기존 하위 CLAUDE.md 위치 및 내용 분석 (중첩 구조 파악)
+```
+
+line 43 (`기존 AGENTS.md가 있으면`) 다음에 후보 표 출력 추가:
+
+```
+- 중첩 CLAUDE.md 후보 목록을 표로 정리한다:
+  | 경로 | 유형 (모노레포 패키지/서브모듈) | 기존 CLAUDE.md 유무 | 생성 권장 여부 |
+```
+
+### 2. 2단계 인터뷰 질문 추가
+
+line 57-58 (WHAT 섹션)에 서브모듈 질문 삽입:
+
+```
+- 서브모듈이 있는 경우 부모 저장소와의 관계 및 독립 운영 여부
+```
+
+line 63 (HOW 섹션 마지막) 다음에 추가:
+
+```
+- 중첩 CLAUDE.md 후보 목록을 보여주고, 각 후보에 대해 생성 여부를 확인한다
+```
+
+### 3. 3단계 도입부 변경 (line 75)
+
+`세 가지` → `네 가지` (Section D 추가로 인해)
+
+### 4. 3단계 Section A 참조 템플릿 확장 (line 109)
+
+현재:
+```markdown
+- **[AGENTS.md](./AGENTS.md)** — 전체 프로젝트 구조, 코드 규약, 상세 가이드
+```
+
+다음으로 변경:
+```markdown
+- **[AGENTS.md](./AGENTS.md)** — 전체 프로젝트 구조, 코드 규약, 상세 가이드
+(중첩 CLAUDE.md가 있는 하위 디렉토리도 나열)
+```
+
+### 5. 3단계 새 Section D 추가 (line 144 뒤, `---` 이전)
+
+```markdown
+### D. 중첩 CLAUDE.md (모노레포 패키지 / 서브모듈)
+
+1단계에서 탐지된 후보 중, 2단계에서 사용자가 승인한 디렉토리에 대해 생성한다.
+
+#### 생성 조건
+
+다음 **모두**를 만족하는 디렉토리에만 생성한다:
+
+- 자체 패키지 매니저 파일이 있거나 git 서브모듈이다
+- 루트 CLAUDE.md와 다른 기술 스택, 빌드 명령, 또는 작업 규칙이 필요하다
+- 사용자가 2단계에서 생성을 승인했다
+
+다음 경우에는 생성하지 **않는다**:
+
+- 루트 CLAUDE.md의 내용만으로 충분한 단순 하위 디렉토리
+- 빌드/테스트 명령이 루트와 동일한 패키지
+- 사용자가 불필요하다고 판단한 후보
+
+#### 생성 원칙
+
+Section A의 원칙을 상속하되, 추가로:
+
+- **범위 한정**: 해당 디렉토리 안의 컨텍스트만 다룬다
+- **중복 금지**: 상위 CLAUDE.md에 있는 내용을 반복하지 않는다. 차이점만 기술한다
+- **상위 참조**: 공통 규칙은 상위 CLAUDE.md를 구체적 경로로 참조한다
+- **목표 줄 수**: 50줄 이하. 절대 100줄을 넘기지 않는다
+- **자기 완결적 제목**: `# CLAUDE.md — {패키지/서브모듈 이름}`으로 시작한다
+
+#### 구조
+
+```markdown
+# CLAUDE.md — {이름}
+
+(1줄: 이 디렉토리의 목적/역할)
+
+## 기술 스택
+(상위와 다른 부분만. 동일하면 섹션 생략)
+
+## 개발 명령
+(이 디렉토리 고유의 빌드/테스트/린트 명령)
+
+## 작업 규칙
+(상위와 다른 규칙이 있는 경우만. 없으면 생략)
+
+## 참조 문서
+- **[../CLAUDE.md](../CLAUDE.md)** — 프로젝트 공통 규칙
+(하위에 AGENTS.md가 있으면 참조, 없으면 생략)
+```
+
+#### 참조 경로 규칙
+
+- 상위 CLAUDE.md: 항상 상대 경로 (`../CLAUDE.md`)
+- 서브모듈: 부모 저장소 CLAUDE.md를 URL 또는 상대 경로로 참조
+- 형제 디렉토리: 직접 참조하지 않는다 (상위를 경유)
+```
+
+### 6. 4단계 검증 확장
+
+line 161 (체크리스트 10번) 다음에 3항목 추가:
+
+```
+11. **범위 한정**: 중첩 CLAUDE.md가 자기 디렉토리 밖의 내용을 포함하는가? → 포함하면 삭제하거나 상위로 이동
+12. **중복 배제**: 중첩 CLAUDE.md가 상위 CLAUDE.md의 내용을 반복하는가? → 반복하면 삭제하고 상위 참조로 대체
+13. **참조 정합성**: 중첩 CLAUDE.md의 상위 참조 경로가 올바른가? → 상대 경로 검증
+```
+
+line 166 (자기 테스트 질문 마지막) 다음에 2개 추가:
+
+```
+- "중첩 CLAUDE.md를 제거해도 상위 CLAUDE.md만으로 해당 디렉토리 작업이 충분한가?" → 충분하면 중첩 파일 삭제 권장
+- "중첩 CLAUDE.md 간에 내용이 서로 모순되는가?"
+```
+
+## 변경하지 않는 부분
+
+- Frontmatter (lines 1-6) — 이미 AGENTS.md 포함하도록 업데이트됨
+- 생성 철학 (lines 12-21) — 중첩에도 동일 적용
+- LLM 컨텍스트 원칙 (lines 172-178) — 일반 원칙
+
+## 검증 방법
+
+1. 수정 후 SKILL.md 총 줄 수가 250줄 이하인지 확인
+2. Section A-B-C-D 순서와 헤딩 레벨(###)이 일관되는지 확인
+3. `agent_docs` 문자열이 여전히 없는지 grep 확인
+4. 중첩 CLAUDE.md 템플릿에서 상위 참조 경로(`../CLAUDE.md`)가 정확한지 확인
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/ujuc/.REDACTED.jsonl
+
+If this plan can be broken down into multiple independent tasks, consider using the TeamCreate tool to create a team and parallelize the work.
+
+---
+
+@agents/claude/skills/generate-claude-md/SKILL.md 내용을 압축했어. 좀더 압축할 내용이 있을까? 명확성은 낮추지마.
+
+---
+
+어 적용해줘.
+
+---
+
+변경사항들을 커밋해줘.
+
+---
+
+어 부탁해
