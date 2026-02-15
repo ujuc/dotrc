@@ -45,7 +45,6 @@ dotrc/
 ├── scripts/            # Automation and optimization scripts
 │   ├── benchmark.sh    # Measure startup time
 │   └── profile-startup.zsh # Profile module loading
-├── zshenv              # Zsh environment setup (entry point)
 ├── zimrc               # Zim framework modules
 ├── starship.toml       # Starship prompt config
 ├── ghosttyrc           # Ghostty terminal config
@@ -74,9 +73,9 @@ This repository uses symbolic links to place configs in their expected locations
 # Core environment
 export DOTRCDIR="${HOME}/.config/dotrc"
 export XDG_CONFIG_HOME="${HOME}/.config"
-export ZDOTDIR="${HOME}/.config/zsh"
 
 # Example links (from zshrc)
+ln -sf ${DOTRCDIR}/zshrc ${HOME}/.zshrc
 ln -sf ${DOTRCDIR}/starship.toml ${XDG_CONFIG_HOME}/starship.toml
 ln -sf ${DOTRCDIR}/zed/settings.json ${XDG_CONFIG_HOME}/zed/settings.json
 ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
@@ -98,7 +97,7 @@ ln -sf ${DOTRCDIR}/agents/gemini ${HOME}/.gemini
 ```bash
 # Initial setup (run once)
 git clone <repo-url> ~/.config/dotrc
-source ~/.config/dotrc/zshenv
+ln -sf ~/.config/dotrc/zshrc ~/.zshrc
 
 # Update dotfiles
 cd ${DOTRCDIR}
@@ -161,12 +160,11 @@ curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | 
 ```bash
 DOTRCDIR="${HOME}/.config/dotrc"          # This repository
 XDG_CONFIG_HOME="${HOME}/.config"         # App configs
-ZDOTDIR="${HOME}/.config/zsh"             # Zsh configs
 ```
 
 #### Adding New Variables
 
-1. Add to `zshenv` (sourced first, always)
+1. Add to `zshrc` Environment section
 2. Export with `export VAR="value"`
 3. Use `${HOME}` not `~` for portability
 4. Document in comments
@@ -277,7 +275,7 @@ When modifying aliases:
 zsh -c 'source ~/.config/dotrc/zshrc; ls'
 
 # Test specific config
-zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
+zsh -c 'source ~/.config/dotrc/zshrc; echo ${DOTRCDIR}'
 ```
 
 ## Common Tasks
@@ -342,7 +340,6 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
 
 - Adding new dependencies (Homebrew packages)
 - Changing the section order in zshrc
-- Modifying `zshenv` (affects all Zsh sessions)
 - Adding new symlinks to system directories
 - Changing Claude Code guidelines in `agents/claude/guides/`
 
@@ -365,14 +362,11 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
 ### Zsh Not Loading Configs
 
 ```bash
-# Check ZDOTDIR
-echo ${ZDOTDIR}  # Should be ~/.config/zsh
-
-# Check if zshenv is sourced
+# Check if zshrc is sourced
 echo ${DOTRCDIR}  # Should be ~/.config/dotrc
 
 # Verify symlinks
-ls -la ~/.zshenv  # Should point to ${DOTRCDIR}/zshenv
+ls -la ~/.zshrc  # Should point to ${DOTRCDIR}/zshrc
 ```
 
 ### Tool Command Not Found

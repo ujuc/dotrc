@@ -3,14 +3,26 @@
 
 # ── Environment ────────────────────────────────────────────
 
-# Zsh function file dir
-ZFUNCDIR=${ZDOTDIR}/.zfunc
-fpath=(${ZFUNCDIR} $fpath)
+# Global environment (moved from zshenv)
+export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
+export DOTRCDIR=${DOTRCDIR:-$XDG_CONFIG_HOME/dotrc}
+export HOMEBREW_PREFIX=${HOMEBREW_PREFIX:-/opt/homebrew}
 
-# User local binaries (claude, custom scripts, etc.)
-if [[ -d "${HOME}/.local/bin" ]]; then
-    export PATH="${HOME}/.local/bin:${PATH}"
-fi
+# Ensure path arrays do not contain duplicates.
+typeset -gU path fpath
+
+# Set the list of directories that zsh searches for commands.
+path=(
+    ${HOME}/{,s}bin(N)
+    ${HOME}/.local/{,s}bin(N)
+    /opt/{homebrew,local}/{,s}bin(N)
+    /usr/local/{,s}bin(N)
+    $path
+)
+
+## ENV
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
 
 # amp
 if [[ -d "${HOME}/.amp/bin" ]]; then
@@ -35,9 +47,10 @@ setopt HIST_IGNORE_ALL_DUPS
 
 # zimfw
 ZIM_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}/zim
+ZIM_CONFIG_FILE=${DOTRCDIR}/zimrc
 
 ## Initialize zimfw (installed via Homebrew)
-if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE:-${ZDOTDIR}/.zimrc} ]]; then
+if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE} ]]; then
     source ${HOMEBREW_PREFIX}/opt/zimfw/share/zimfw.zsh init
 fi
 source ${ZIM_HOME}/init.zsh

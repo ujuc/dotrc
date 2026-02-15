@@ -15,20 +15,19 @@ zsh -n zshrc                     # Validate shell syntax
 ### Zsh Loading Chain
 
 ```
-zshenv (DOTRCDIR, XDG, PATH)
-  └─ zshrc (single file, sectioned)
-       ├─ Environment    # fpath, PATH
-       ├─ History        # setopt HIST_*
-       ├─ Plugins        # Zimfw, completion
-       ├─ Tools          # starship, fzf, zoxide, mise
-       ├─ Aliases        # Functions, aliases
-       └─ Local          # Work config, 1Password
+~/.zshrc → ${DOTRCDIR}/zshrc (single file, sectioned)
+  ├─ Environment    # XDG, DOTRCDIR, PATH
+  ├─ History        # setopt HIST_*
+  ├─ Plugins        # Zimfw, completion
+  ├─ Tools          # starship, fzf, zoxide, mise
+  ├─ Aliases        # Functions, aliases
+  └─ Local          # Work config, 1Password
 ```
 
 ### Key Patterns
 
-- **Eager loading**: Fast tools initialized immediately — starship, fzf (zshrc:76-88)
-- **Lazy loading**: Slow tools deferred via wrapper functions — zoxide, mise (zshrc:91-120)
+- **Eager loading**: Fast tools initialized immediately — starship, fzf (zshrc:77-90)
+- **Lazy loading**: Slow tools deferred via wrapper functions — zoxide, mise (zshrc:92-122)
 
 ### Symlink Deployment
 

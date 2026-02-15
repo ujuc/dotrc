@@ -39,20 +39,13 @@ gh auth login
 gh repo clone ujuc/dotrc ${HOME}/.config/dotrc -- --recurse-submodules
 ```
 
-### `zshenv` 파일 링크
+### `zshrc` 파일 링크
 
 ```sh
-ln -sf ${HOME}/.config/dotrc/zshenv ${HOME}/.zshenv
+ln -sf ${HOME}/.config/dotrc/zshrc ${HOME}/.zshrc
 ```
 
 ## 사용하는 cli 패키지 설치하고 설정
-
-### Zsh 사전 작업
-
-```sh
-mkdir -p ${XDG_CONFIG_HOME}/zsh
-mkdir -p ${XDG_CONFIG_HOME}/zsh/.zfunc
-```
 
 ### [starship](https://starship.rs/)
 
@@ -67,8 +60,6 @@ ln -sf ${DOTRCDIR}/starship.toml ${XDG_CONFIG_HOME}/starship.toml
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
-ln -sf ${DOTRCDIR}/zimrc ${ZDOTDIR}/.zimrc
-ln -sf ${DOTRCDIR}/zshrc ${ZDOTDIR}/.zshrc
 ```
 
 ### GNU library
