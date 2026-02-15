@@ -5,17 +5,10 @@ Personal dotfiles repository for macOS. Manages Zsh, terminal, editor, and tool 
 ## Key Commands
 
 ```bash
-# Validate shell syntax
-zsh -n zshrc
-
-# Benchmark startup time (default 10 runs)
-./scripts/benchmark.sh [runs]
-
-# Profile startup with zprof
-./scripts/profile-startup.zsh
-
-# Compile configs to .zwc bytecode
-./scripts/compile-zsh.sh
+zsh -n zshrc                     # Validate shell syntax
+./scripts/benchmark.sh [runs]    # Benchmark startup time
+./scripts/profile-startup.zsh    # Profile startup with zprof
+./scripts/compile-zsh.sh         # Compile configs to .zwc bytecode
 ```
 
 ## Architecture
@@ -33,41 +26,19 @@ zshenv (DOTRCDIR, XDG, PATH)
        └─ Local          # Work config, 1Password
 ```
 
-### Auto-Compilation
+### Key Patterns
 
-`zshrc` automatically compiles itself to `.zwc` bytecode when the source is newer than the compiled version. No manual compilation needed during normal workflow.
-
-### Tool Loading Patterns
-
-**Eager** — fast tools needed immediately (starship, fzf):
-
-```zsh
-if (( $+commands[starship] )); then
-    _evalcache starship init zsh
-fi
-```
-
-**Lazy** — slow tools deferred until first use (zoxide, mise):
-
-```zsh
-function z() {
-    unfunction z
-    _evalcache zoxide init zsh
-    z "$@"
-}
-```
+- **Auto-compilation**: `zshrc` compiles to `.zwc` when source is newer (zshrc:5-7)
+- **Eager loading**: Fast tools initialized immediately — starship, fzf (zshrc:76-88)
+- **Lazy loading**: Slow tools deferred via wrapper functions — zoxide, mise (zshrc:91-120)
 
 ### Symlink Deployment
 
-Configs live in this repo and symlink to their expected locations:
+Configs symlink to expected locations. Agent configs managed as git submodule (`agents/`) from ujuc/agent-stuff.
 
-- `agents/claude/` → `~/.claude` (submodule — Claude Code global config)
-- `agents/pi/` → `~/.pi` (submodule — Pi agent config)
-- `agents/gemini/` → `~/.gemini` (submodule — Gemini CLI config)
+- `agents/claude/` → `~/.claude`, `agents/pi/` → `~/.pi`, `agents/gemini/` → `~/.gemini`
 - `starship.toml` → `$XDG_CONFIG_HOME/starship.toml`
 - `ghosttyrc` → `$XDG_CONFIG_HOME/ghostty/config`
-
-Agent configs are managed as a git submodule (`agents/`) from [ujuc/agent-stuff](https://github.com/ujuc/agent-stuff).
 
 Always edit files in this repo, not at symlink targets.
 
