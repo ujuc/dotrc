@@ -36,7 +36,7 @@ gh auth login
 ## Repo 환경 작업
 
 ```sh
-gh repo clone ujuc/dotrc ${HOME}/.config/dotrc
+gh repo clone ujuc/dotrc ${HOME}/.config/dotrc -- --recurse-submodules
 ```
 
 ### `zshenv` 파일 링크
@@ -186,11 +186,20 @@ mise use -g node
 
 ## Agent
 
+에이전트 설정은 [ujuc/agent-stuff](https://github.com/ujuc/agent-stuff) 저장소의 git submodule(`agents/`)로 관리됩니다.
+
+> Repo clone 시 `--recurse-submodules` 를 사용하지 않았다면:
+>
+> ```sh
+> cd ${DOTRCDIR}
+> git submodule update --init --recursive
+> ```
+
 ### [Claude](https://claude.ai/)
 
 ```sh
 curl -fsSL https://claude.ai/install.sh | bash
-ln -sf ${DOTRCDIR}/claude ${HOME}/.claude
+ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 ```
 
 ### [Pi](https://github.com/badlogic/pi-mono)
@@ -199,7 +208,7 @@ ln -sf ${DOTRCDIR}/claude ${HOME}/.claude
 
 ```sh
 npm install -g @mariozechner/pi-coding-agent
-ln -sf ${DOTRCDIR}/pi ${HOME}/.pi
+ln -sf ${DOTRCDIR}/agents/pi ${HOME}/.pi
 ```
 
 ### [Gemini](https://geminicli.com/)
@@ -208,7 +217,7 @@ ln -sf ${DOTRCDIR}/pi ${HOME}/.pi
 
 ```sh
 npm install -g @google/gemini-cli
-ln -sf ${DOTRCDIR}/gemini ${HOME}/.gemini
+ln -sf ${DOTRCDIR}/agents/gemini ${HOME}/.gemini
 ```
 
 ## Apps

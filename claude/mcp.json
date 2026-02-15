@@ -1,9 +1,0 @@
-{
-	"mcpServers": {
-		// https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking
-		"sequential-thinking": {
-			"command": "mise",
-			"args": ["exec", "--", "npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
-		}
-	}
-}

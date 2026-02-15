@@ -12,7 +12,8 @@ metadata:
 
 **Universal AI Agent Guide** for the `dotrc` repository.
 
-> **For Claude Code users**: See [CLAUDE.md](./claude/CLAUDE.md) for **Claude-specific** guidelines including:
+> **For Claude Code users**: See [CLAUDE.md](./agents/claude/CLAUDE.md) for **Claude-specific** guidelines including:
+>
 > - Korean commit message format (Conventional Commits with `-하다` ending)
 > - Code review process and quality standards
 > - Auto-discovered skills (commit, review, troubleshoot, refactor, agents)
@@ -29,7 +30,7 @@ metadata:
 
 ### AI Agent Usage
 
-- **Claude Code**: Use [CLAUDE.md](./claude/CLAUDE.md) for comprehensive guidelines
+- **Claude Code**: Use [CLAUDE.md](./agents/claude/CLAUDE.md) for comprehensive guidelines
 - **GitHub Copilot**: Follow this AGENTS.md + code style conventions
 - **Cursor**: Follow this AGENTS.md + git workflow guidelines
 - **Aider**: Follow this AGENTS.md + commit message format
@@ -64,11 +65,14 @@ dotrc/
 │   ├── templates/      # Document templates (shared)
 │   └── ai/             # AI work logs
 ├── zed/                # Zed editor settings
-└── claude/             # Claude Code specific guidelines
-    ├── CLAUDE.md       # Claude-specific entry point
-    ├── guides/         # 16 detailed guideline documents
-    ├── skills/         # Auto-discovered skills
-    └── scripts/        # Automation scripts
+└── agents/             # Git submodule (ujuc/agent-stuff)
+    ├── claude/         # Claude Code specific guidelines
+    │   ├── CLAUDE.md   # Claude-specific entry point
+    │   ├── guides/     # 16 detailed guideline documents
+    │   ├── skills/     # Auto-discovered skills
+    │   └── scripts/    # Automation scripts
+    ├── pi/             # Pi agent config
+    └── gemini/         # Gemini CLI config
 ```
 
 ### File Linking Strategy
@@ -86,8 +90,10 @@ ln -sf ${DOTRCDIR}/starship.toml ${XDG_CONFIG_HOME}/starship.toml
 ln -sf ${DOTRCDIR}/zed/settings.json ${XDG_CONFIG_HOME}/zed/settings.json
 ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 
-# Claude global config (folder link)
-ln -sf ${DOTRCDIR}/claude ${HOME}/.claude
+# Agent configs (submodule folder links)
+ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
+ln -sf ${DOTRCDIR}/agents/pi ${HOME}/.pi
+ln -sf ${DOTRCDIR}/agents/gemini ${HOME}/.gemini
 ```
 
 **Important**: Always update files in `${DOTRCDIR}`, not the symlink targets.
@@ -124,7 +130,7 @@ zsh -c 'echo "Zsh loaded successfully"'
 ls -la ${XDG_CONFIG_HOME}/starship.toml
 
 # Verify Claude config (if using Claude Code)
-ls -la ${HOME}/.claude/CLAUDE.md
+ls -la ${HOME}/.claude/CLAUDE.md  # via agents/claude/ submodule
 test -L ${HOME}/.claude && echo "Claude config symlink OK" || echo "Claude config not linked"
 ```
 
@@ -188,7 +194,7 @@ ZDOTDIR="${HOME}/.config/zsh"             # Zsh configs
 - **Files**: Flat structure, one tool per file (`starship.toml`, `batrc`)
 - **Variables**: `${VAR}` for clarity, not `$VAR`
 - **Functions**: Lowercase with underscores for complex logic
-- **Exceptions**: Multi-file tools use directories (`claude/`, `zed/`)
+- **Exceptions**: Multi-file tools use directories (`agents/`, `zed/`)
 
 ### Code Patterns
 
@@ -230,6 +236,7 @@ update='brew update && brew upgrade && zimfw update && brew cleanup'
 ```
 
 When modifying aliases:
+
 - Keep them intuitive (common command names)
 - Test for conflicts with system commands
 - Document non-obvious behavior
@@ -252,6 +259,7 @@ When modifying aliases:
 **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 **Examples**:
+
 - `feat: Starship 프롬프트 설정을 추가하다`
 - `fix(zshrc): 중복된 PATH 항목을 제거하다`
 - `docs: AGENTS.md 파일을 생성하다`
@@ -315,8 +323,8 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
 
 > **Note**: This is Claude Code specific.
 
-1. Edit files in `claude/guides/`
-2. Run linter: `${DOTRCDIR}/claude/scripts/lint-docs.sh` (if exists)
+1. Edit files in `agents/claude/guides/`
+2. Run linter: `${DOTRCDIR}/agents/claude/scripts/lint-docs.sh` (if exists)
 3. Verify links work
 4. Commit with `docs(claude): <description>`
 
@@ -324,7 +332,7 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
 
 > **Note**: This is Claude Code specific. Other AI agents can skip this task.
 
-1. Create skill directory: `claude/skills/<skill-name>/`
+1. Create skill directory: `agents/claude/skills/<skill-name>/`
 2. Write `SKILL.md` following existing patterns
 3. Include: YAML frontmatter, metadata, context, instructions
 4. Test with natural language: `"<skill-trigger>"`
@@ -348,7 +356,7 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
 - Changing the zsh.d module loading order (XX- prefix numbers)
 - Modifying `zshenv` (affects all Zsh sessions)
 - Adding new symlinks to system directories
-- Changing Claude Code guidelines in `claude/guides/`
+- Changing Claude Code guidelines in `agents/claude/guides/`
 
 ### Never Do
 
@@ -406,7 +414,7 @@ ln -sf ${DOTRCDIR}/tool.toml ${XDG_CONFIG_HOME}/tool.toml
 
 ### Documentation
 
-- [CLAUDE.md](./claude/CLAUDE.md) - Claude Code specific guidelines
+- [CLAUDE.md](./agents/claude/CLAUDE.md) - Claude Code specific guidelines
 - [AGENTS.md Spec](https://agents.md/) - Universal AI agent guide standard
 
 ### Tool Documentation
@@ -422,12 +430,12 @@ ln -sf ${DOTRCDIR}/tool.toml ${XDG_CONFIG_HOME}/tool.toml
 
 Use templates in `docs/templates/` when creating new documents. See [docs/templates/AGENTS.md](./docs/templates/AGENTS.md) for details.
 
-| Template | Purpose | Path |
-|----------|---------|------|
-| [guide-template.md](./docs/templates/guide-template.md) | Guide documents | `docs/templates/guide-template.md` |
-| [work-template.md](./docs/templates/work-template.md) | Work logs | `docs/templates/work-template.md` |
+| Template                                                  | Purpose         | Path                                |
+| --------------------------------------------------------- | --------------- | ----------------------------------- |
+| [guide-template.md](./docs/templates/guide-template.md)   | Guide documents | `docs/templates/guide-template.md`  |
+| [work-template.md](./docs/templates/work-template.md)     | Work logs       | `docs/templates/work-template.md`   |
 | [agents-template.md](./docs/templates/agents-template.md) | AGENTS.md files | `docs/templates/agents-template.md` |
-| [skill-template.md](./docs/templates/skill-template.md) | Claude skills | `docs/templates/skill-template.md` |
+| [skill-template.md](./docs/templates/skill-template.md)   | Claude skills   | `docs/templates/skill-template.md`  |
 
 ---
 
@@ -438,7 +446,7 @@ Use templates in `docs/templates/` when creating new documents. See [docs/templa
 ## See Also
 
 - [**AGENTS.md Spec**](https://agents.md/) - Universal AI agent file standard
-- [**CLAUDE.md**](./claude/CLAUDE.md) - Claude-specific guidelines
+- [**CLAUDE.md**](./agents/claude/CLAUDE.md) - Claude-specific guidelines
 - [**docs/templates/AGENTS.md**](./docs/templates/AGENTS.md) - Document template directory guide
 
 ## Change Log
@@ -446,5 +454,5 @@ Use templates in `docs/templates/` when creating new documents. See [docs/templa
 - **v3.1.0** (2026-02-10): Migrated from `<meta>` XML tag to YAML frontmatter
 - **v3.0.0** (2026-02-10): Rewritten to follow agents-template.md structure
 - **v2.1.0** (2026-02-10): Restructured to match agents-template format, added Boundaries section
-- **v2.0.0** (2026-02-01): Separated Claude-specific content to claude/CLAUDE.md
+- **v2.0.0** (2026-02-01): Separated Claude-specific content to agents/claude/CLAUDE.md
 - **v1.0.0** (2026-01-04): Initial version with universal and Claude-specific content merged

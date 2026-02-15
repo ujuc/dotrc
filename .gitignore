@@ -4,32 +4,6 @@
 .vscode
 .DS_Store
 
-claude/debug
-claude/file-history
-claude/ide
-claude/projects
-claude/plugins
-claude/shell-snapshots
-claude/statsig
-claude/todos
-claude/history*
-claude/downloads
-claude/session-env
-claude/plans
-claude/stats-cache.json
-claude/cache
-claude/paste-cache
-claude/telemetry
-claude/tasks
-claude/security_warnings_state*
-claude/chrome
-claude/usage-data
-
-pi/agent/bin
-pi/agent/sessions/**
-pi/agent/auth.json
-pi/agent/settings.json
-
 # Zsh compiled files
 *.zwc
 

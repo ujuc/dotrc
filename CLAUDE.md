@@ -41,6 +41,7 @@ zshenv (DOTRCDIR, XDG, PATH)
 ### Tool Loading Patterns
 
 **Eager** — fast tools needed immediately (starship, fzf):
+
 ```zsh
 if (( $+commands[starship] )); then
     _evalcache starship init zsh
@@ -48,6 +49,7 @@ fi
 ```
 
 **Lazy** — slow tools deferred until first use (zoxide, mise):
+
 ```zsh
 function z() {
     unfunction z
@@ -59,9 +61,14 @@ function z() {
 ### Symlink Deployment
 
 Configs live in this repo and symlink to their expected locations:
-- `claude/` → `~/.claude` (folder link — Claude Code global config)
+
+- `agents/claude/` → `~/.claude` (submodule — Claude Code global config)
+- `agents/pi/` → `~/.pi` (submodule — Pi agent config)
+- `agents/gemini/` → `~/.gemini` (submodule — Gemini CLI config)
 - `starship.toml` → `$XDG_CONFIG_HOME/starship.toml`
 - `ghosttyrc` → `$XDG_CONFIG_HOME/ghostty/config`
+
+Agent configs are managed as a git submodule (`agents/`) from [ujuc/agent-stuff](https://github.com/ujuc/agent-stuff).
 
 Always edit files in this repo, not at symlink targets.
 
@@ -75,9 +82,11 @@ Always edit files in this repo, not at symlink targets.
 ### Commit Messages
 
 Korean Conventional Commits ending with `-하다`:
+
 ```
 <type>(<scope>): <Korean subject ending with -하다>
 ```
+
 Examples: `feat: Starship 프롬프트 설정을 추가하다`, `fix(zshrc): 중복된 PATH 항목을 제거하다`
 
 ### Shell Coding
@@ -90,5 +99,5 @@ Examples: `feat: Starship 프롬프트 설정을 추가하다`, `fix(zshrc): 중
 ## Cross-References
 
 - **[AGENTS.md](./AGENTS.md)** — Full repo structure, all tool configs, troubleshooting, boundaries
-- **[claude/CLAUDE.md](./claude/CLAUDE.md)** — Claude-specific skills, MCP servers, priority hierarchy, guides
+- **[agents/claude/CLAUDE.md](./agents/claude/CLAUDE.md)** — Claude-specific skills, MCP servers, priority hierarchy, guides
 - **[zsh.d/README.md](./zsh.d/README.md)** — Module documentation
