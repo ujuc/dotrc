@@ -6,7 +6,7 @@
 # Global environment (moved from zshenv)
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
 export DOTRCDIR=${DOTRCDIR:-$XDG_CONFIG_HOME/dotrc}
-export HOMEBREW_PREFIX=${HOMEBREW_PREFIX:-/opt/homebrew}
+export HOMEBREW_PREFIX=${HOMEBREW_PREFIX:-$(brew --prefix)}
 
 # Ensure path arrays do not contain duplicates.
 typeset -gU path fpath
