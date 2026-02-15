@@ -174,7 +174,17 @@ mkdir -p ${XDG_CONFIG_HOME}/tig
 ln -sf ${DOTRCDIR}/tigrc ${XDG_CONFIG_HOME}/tig/config
 ```
 
-## Apps
+### [mise-en-place](https://mise.jdx.dev/)
+
+```sh
+curl https://mise.run | sh
+
+# Autocomplete
+mise use -g uv
+mise use -g node
+```
+
+## Agent
 
 ### [Claude](https://claude.ai/)
 
@@ -185,10 +195,23 @@ ln -sf ${DOTRCDIR}/claude ${HOME}/.claude
 
 ### [Pi](https://github.com/badlogic/pi-mono)
 
+사용할때 연결
+
 ```sh
 npm install -g @mariozechner/pi-coding-agent
 ln -sf ${DOTRCDIR}/pi ${HOME}/.pi
 ```
+
+### [Gemini](https://geminicli.com/)
+
+사용할때 연결
+
+```sh
+npm install -g @google/gemini-cli
+ln -sf ${DOTRCDIR}/gemini ${HOME}/.gemini
+```
+
+## Apps
 
 ### [raycast](https://www.raycast.com/)
 
@@ -229,18 +252,6 @@ ollama pull qwen3
 brew install ghostty
 mkdir -p ${XDG_CONFIG_HOME}/ghostty
 ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
-```
-
-## Lang Env
-
-### [mise-en-place](https://mise.jdx.dev/)
-
-```sh
-curl https://mise.run | sh
-
-# Autocomplete
-mise use -g uv
-mise use -g node
 ```
 
 ## Font
