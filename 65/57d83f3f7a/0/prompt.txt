@@ -1,0 +1,127 @@
+Implement the following plan:
+
+# Plan: generate-claude-md SKILL.md 3계층 참조 구조로 리팩토링
+
+## Context
+
+현재 `generate-claude-md` 스킬은 2계층 출력 구조(`CLAUDE.md → agent_docs/`)를 사용한다.
+이를 3계층(`CLAUDE.md → AGENTS.md → contributing-docs/`)으로 확장하여:
+
+- CLAUDE.md는 Claude 전용 최소 가이드로 유지
+- AGENTS.md는 모든 AI 에이전트가 활용할 수 있는 범용 프로젝트 가이드 (agents.md 표준)
+- contributing-docs/는 상세 참조 문서
+
+이렇게 관심사를 분리한다.
+
+## 수정 대상
+
+**단일 파일**: `/Users/ujuc/.config/dotrc/agents/claude/skills/generate-claude-md/SKILL.md`
+
+## 변경 사항
+
+### 1. Frontmatter (line 3)
+
+description을 AGENTS.md 포함하도록 수정:
+
+```
+description: CLAUDE.md 및 AGENTS.md 파일을 가이드 원칙에 따라 생성한다. ...
+```
+
+### 2. 스킬 제목 (line 8)
+
+```
+# CLAUDE.md 및 AGENTS.md 생성 스킬
+```
+
+### 3. 1단계 — 탐지 항목 보강 (line 37)
+
+`contributing-docs/` 를 탐지 대상에 추가:
+
+```
+- 기존 CLAUDE.md, AGENTS.md, contributing-docs/, .cursorrules 등의 존재 여부
+```
+
+line 42 뒤에 추가:
+
+```
+- 기존 AGENTS.md가 있으면 구조와 내용을 분석하여 3단계 생성 시 참고한다.
+```
+
+### 4. 3단계 — 핵심 구조 변경
+
+#### 4a. 도입부 (line 74)
+
+`두 가지` → `세 가지`
+
+#### 4b. Section A: CLAUDE.md 간소화 (lines 76–113)
+
+- line 84: `agent_docs/ 참조` → `AGENTS.md만 참조한다 (contributing-docs/를 직접 참조하지 않는다)`
+- 참조 문서 템플릿 (lines 107–112)을 AGENTS.md 단일 참조로 교체:
+
+```markdown
+# 참조 문서
+- **[AGENTS.md](./AGENTS.md)** — 전체 프로젝트 구조, 코드 규약, 상세 가이드
+```
+
+#### 4c. 새 Section B: AGENTS.md 추가 (기존 B 앞에 삽입)
+
+agents.md 표준 준수, YAML frontmatter 포함, contributing-docs/ 참조하는 구조 템플릿 추가.
+기존 dotrc AGENTS.md (`/Users/ujuc/.config/dotrc/AGENTS.md`) 패턴을 참고하되, 생성 스킬답게 간결한 템플릿으로 구성.
+
+핵심 구조:
+```markdown
+### B. AGENTS.md
+
+agents.md 표준을 따르는 프로젝트 가이드. CLAUDE.md에서 참조하며, contributing-docs/의 상세 문서를 가리킨다.
+
+생성 원칙:
+- 모든 AI 에이전트가 활용할 수 있는 보편적 형식
+- contributing-docs/ 참조로 점진적 공개 구현
+- 기존 AGENTS.md가 있으면 참고하되 이 스킬 원칙에 맞게 재생성
+
+구조:
+- YAML frontmatter (name, description, version, standard)
+- Project Overview, Repository Structure, Build & Test, Code Style, Git Workflow, Boundaries
+- Contributing Docs 참조 섹션
+```
+
+#### 4d. 기존 Section B → Section C 리넘버링 (lines 115–127)
+
+- 제목: `### B. agent_docs/` → `### C. contributing-docs/`
+- 설명: `CLAUDE.md에서 제외된` → `AGENTS.md에서 참조하는`
+- 모든 `agent_docs/` → `contributing-docs/` (6곳)
+
+### 5. 4단계 — 검증 확장
+
+- line 132: `생성된 CLAUDE.md에 대해` → `생성된 CLAUDE.md와 AGENTS.md에 대해`
+- line 134: `agent_docs/로 이동` → `AGENTS.md 또는 contributing-docs/로 이동`
+- 체크리스트 항목 2개 추가:
+  - **계층 분리**: CLAUDE.md가 contributing-docs/를 직접 참조하는가?
+  - **AGENTS.md 보편성**: Claude 외 에이전트도 활용 가능한가?
+- 자기 테스트 질문 1개 추가:
+  - "CLAUDE.md → AGENTS.md → contributing-docs/ 계층이 명확하게 분리되어 있는가?"
+
+## 변경하지 않는 부분
+
+- 생성 철학 (lines 12–21) — 변경 불필요
+- 2단계 인터뷰 (lines 46–68) — 출력 형식에 의존하지 않음
+- LLM 컨텍스트 원칙 (lines 151–157) — 일반 원칙이므로 변경 불필요
+
+## 검증 방법
+
+1. 수정된 SKILL.md에서 `agent_docs` 문자열이 완전히 제거되었는지 grep 확인
+2. `CLAUDE.md → AGENTS.md → contributing-docs/` 참조 체인이 일관되는지 확인
+3. 문서 내 마크다운 문법 오류 없는지 확인
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/ujuc/.REDACTED.jsonl
+
+If this plan can be broken down into multiple independent tasks, consider using the TeamCreate tool to create a team and parallelize the work.
+
+---
+
+nested 된 CLAUDE.md 파일을 생성하는 분에 대해서도 추가했으면하는데. 이거는 새로운 SKILL을 만드는게 좋을까?
+
+---
+
+[Request interrupted by user for tool use]
