@@ -1,11 +1,6 @@
 # Zsh configuration
 # All settings in a single file with section separators
 
-# Auto-compile this file if modified
-if [[ ! -f ${DOTRCDIR}/zshrc.zwc ]] || [[ ${DOTRCDIR}/zshrc -nt ${DOTRCDIR}/zshrc.zwc ]]; then
-    zcompile ${DOTRCDIR}/zshrc
-fi
-
 # ── Environment ────────────────────────────────────────────
 
 # Zsh function file dir
@@ -41,15 +36,9 @@ setopt HIST_IGNORE_ALL_DUPS
 # zimfw
 ZIM_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}/zim
 
-## Install zimfw if not exists
-if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
-    curl -fsSL --create-dirs -o ${ZIM_HOME}/zimfw.zsh \
-        https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
-fi
-
-## Initialize zimfw
+## Initialize zimfw (installed via Homebrew)
 if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE:-${ZDOTDIR}/.zimrc} ]]; then
-    source ${ZIM_HOME}/zimfw.zsh init
+    source ${HOMEBREW_PREFIX}/opt/zimfw/share/zimfw.zsh init
 fi
 source ${ZIM_HOME}/init.zsh
 
@@ -131,11 +120,6 @@ function update_system() {
     # gh ext upgrade --all
 }
 
-# Compile Zsh configs for faster loading
-function compile_zsh() {
-    ${DOTRCDIR}/scripts/compile-zsh.sh
-}
-
 # Benchmark Zsh startup time
 function benchmark_zsh() {
     ${DOTRCDIR}/scripts/benchmark.sh "$@"
@@ -150,7 +134,6 @@ function profile_zsh() {
 alias update=update_system
 
 # Zsh optimization aliases
-alias zcompile=compile_zsh
 alias zbench=benchmark_zsh
 alias zprofile=profile_zsh
 

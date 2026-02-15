@@ -8,7 +8,6 @@ Personal dotfiles repository for macOS. Manages Zsh, terminal, editor, and tool 
 zsh -n zshrc                     # Validate shell syntax
 ./scripts/benchmark.sh [runs]    # Benchmark startup time
 ./scripts/profile-startup.zsh    # Profile startup with zprof
-./scripts/compile-zsh.sh         # Compile configs to .zwc bytecode
 ```
 
 ## Architecture
@@ -28,7 +27,6 @@ zshenv (DOTRCDIR, XDG, PATH)
 
 ### Key Patterns
 
-- **Auto-compilation**: `zshrc` compiles to `.zwc` when source is newer (zshrc:5-7)
 - **Eager loading**: Fast tools initialized immediately — starship, fzf (zshrc:76-88)
 - **Lazy loading**: Slow tools deferred via wrapper functions — zoxide, mise (zshrc:91-120)
 

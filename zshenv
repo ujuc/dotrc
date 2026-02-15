@@ -5,6 +5,9 @@ export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
 export ZDOTDIR=${ZDOTDIR:-$XDG_CONFIG_HOME/zsh}
 export DOTRCDIR=${DOTRCDIR:-$XDG_CONFIG_HOME/dotrc}
 
+# Homebrew prefix (for opt/ references)
+export HOMEBREW_PREFIX=${HOMEBREW_PREFIX:-/opt/homebrew}
+
 # Ensure path arrays do not contain duplicates.
 typeset -gU path fpath
 

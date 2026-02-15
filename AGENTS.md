@@ -43,7 +43,6 @@ dotrc/
 ├── AGENTS.md           # This file - Universal AI agent guide
 ├── zshrc               # Zsh main config (single file, sectioned)
 ├── scripts/            # Automation and optimization scripts
-│   ├── compile-zsh.sh  # Compile configs to bytecode
 │   ├── benchmark.sh    # Measure startup time
 │   └── profile-startup.zsh # Profile module loading
 ├── zshenv              # Zsh environment setup (entry point)
@@ -302,12 +301,11 @@ zsh -c 'source ~/.config/dotrc/zshenv; echo ${DOTRCDIR}'
    - `# ── Aliases ──` — Functions, aliases
    - `# ── Local ──` — Work config, 1Password
 2. **Syntax check**: `zsh -n zshrc`
-3. **Auto-compile**: `zshrc` auto-compiles to `.zwc` on next load
-4. **Test in new shell**: `zsh -c 'source ~/.config/dotrc/zshrc'`
+3. **Test in new shell**: `zsh -c 'source ~/.config/dotrc/zshrc'`
 5. **Reload current shell**: `source ~/.config/dotrc/zshrc`
 6. **Commit** with appropriate type (`refactor`, `feat`, `fix`)
 
-**Performance tools**: Use `zbench`, `zprofile`, `zcompile` to measure and optimize.
+**Performance tools**: Use `zbench`, `zprofile` to measure and optimize.
 
 ### Updating Claude Guidelines
 
