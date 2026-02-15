@@ -2,14 +2,6 @@
 
 ## 설치전 작업
 
-### MacOS
-
-- `brew` 에서 설치하는 작업을 진행해서 따로 설치해주지 않아도 된다.
-
-```sh
-xcode-select --install
-```
-
 ### [Homebrew](https://brew.sh/)
 
 ```sh
@@ -39,13 +31,7 @@ gh auth login
 gh repo clone ujuc/dotrc ${HOME}/.config/dotrc -- --recurse-submodules
 ```
 
-### `zshrc` 파일 링크
-
-```sh
-ln -sf ${HOME}/.config/dotrc/zshrc ${HOME}/.zshrc
-```
-
-## 사용하는 cli 패키지 설치하고 설정
+## zsh 설정
 
 ### [starship](https://starship.rs/)
 
@@ -59,8 +45,16 @@ ln -sf ${DOTRCDIR}/starship.toml ${XDG_CONFIG_HOME}/starship.toml
 ### [ZimFW](https://zimfw.sh/)
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh
+brew install zimfw
 ```
+
+### `zshrc` 파일 링크
+
+```sh
+ln -sf ${HOME}/.config/dotrc/zshrc ${HOME}/.zshrc
+```
+
+## CLI Packages
 
 ### GNU library
 
