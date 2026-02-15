@@ -87,7 +87,7 @@
     "use_modifier_to_send": true,
     "default_model": {
       "provider": "anthropic",
-      "model": "claude-sonnet-4-5-latest",
+      "model": "claude-opus-4-6-thinking-latest",
     },
     "inline_assistant_model": {
       "provider": "anthropic",
