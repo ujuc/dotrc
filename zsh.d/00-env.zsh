@@ -14,3 +14,13 @@ fi
 if [[ -d "${HOME}/.amp/bin" ]]; then
     export PATH="${HOME}/.amp/bin:${PATH}"
 fi
+
+# JetBrains Toolbox CLI scripts
+if [[ -d "/Users/ujuc/Library/Application Support/JetBrains/Toolbox/scripts" ]]; then
+    export PATH="${PATH}:/Users/ujuc/Library/Application Support/JetBrains/Toolbox/scripts"
+fi
+
+# Obsidian CLI
+if [[ -d "/Applications/Obsidian.app" ]]; then
+    export PATH="${PATH}:/Applications/Obsidian.app/Contents/MacOS"
+fi
