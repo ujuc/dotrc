@@ -1,7 +1,7 @@
 ---
 name: "[YYYY-MM-DD_TYPE_description]"
 description: "[이 작업 문서의 목적을 한 문장으로 설명]"
-version: "YYYY.MM.01"
+version: "YYYY.MM.00"
 tags: []
 context: |
   이 문서는 [작업 목적]을 위해 작성되었습니다.
