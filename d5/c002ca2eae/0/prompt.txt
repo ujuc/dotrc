@@ -1,0 +1,548 @@
+Base directory for this skill: /Users/ujuc/.claude/skills/generate-claude-md
+
+# CLAUDE.md 및 AGENTS.md 생성 스킬
+
+ 가 주어지면 해당 프로젝트 경로를 대상으로 한다. 없으면 현재 작업 디렉토리를 대상으로 한다.
+
+## 생성 철학
+
+이 스킬 전체를 관통하는 4가지 원칙이다 (references/karpathy-guidelines.md 참조).
+
+- **생각 후 행동**: 가정하지 말고 확인한다. 모호함을 감추지 말고 드러낸다.
+- **단순함 우선**: 문제를 해결하는 최소한의 내용만 포함한다. 추측을 배제한다.
+- **외과적 정밀함**: 프로젝트에서 관찰된 사실만 포함한다. 린터가 할 일은 린터에게 맡긴다.
+- **목표 기반 실행**: 모든 지시사항은 검증 가능해야 한다.
+
+아래 4단계를 순서대로 수행한다.
+
+---
+
+## 1단계: 프로젝트 분석 — Think Before Coding
+
+대상 디렉토리에서 다음을 자동 탐지한다:
+
+- 패키지/빌드/테스트/린트·포매터 설정 (package.json, Cargo.toml, pyproject.toml, go.mod, .eslintrc, .prettierrc, biome.json, ruff.toml 등)
+- 저장소 구조 및 독립성 (모노레포: workspaces, packages/, apps/; 서브모듈: .gitmodules 파싱으로 경로/URL/독립 저장소 여부; 하위 디렉토리의 자체 패키지 매니저 존재 여부)
+- 문서/CI 구성 (기존 CLAUDE.md, AGENTS.md, contributing-docs/, .cursorrules, 하위 CLAUDE.md 위치/내용, CI/CD: .github/workflows, .gitlab-ci.yml)
+
+탐지 결과를 간략히 정리하여 사용자에게 보여준다. 이때:
+
+- 탐지 결과에서 **사실**과 **가정**을 구분하여 표시한다.
+- 자동 탐지로 알 수 없는 항목을 명시적으로 나열한다.
+- 기존 AGENTS.md가 있으면 구조와 내용을 분석하여 3단계 생성 시 참고한다.
+- 중첩 CLAUDE.md 후보 목록을 표로 정리한다:
+  | 경로 | 유형 (모노레포 패키지/서브모듈) | 기존 CLAUDE.md 유무 | 생성 권장 여부 |
+
+---
+
+## 2단계: 인터뷰 — Think Before Coding
+
+1단계 자동 탐지로 알 수 없는 항목만 질문한다. WHAT/WHY/HOW 프레임워크를 따른다.
+
+질문은 다음 범위 내에서 필요한 것만 한다:
+
+**WHY (자동 탐지 불가)**:
+- 이 프로젝트의 목적/역할은 무엇인가?
+
+**WHAT (자동 탐지로 부족한 부분만)**:
+- 모노레포인 경우 각 패키지/앱의 역할
+- 서브모듈이 있는 경우 부모 저장소와의 관계 및 독립 운영 여부
+- 외부 서비스 의존성 (DB, 메시지 큐, 외부 API 등)
+
+**HOW (자동 탐지로 부족한 부분만)**:
+- 특별한 작업 규칙/워크플로우, 브랜치 전략, PR/커밋 규칙, 환경 설정 특이사항이 있는가?
+- 중첩 CLAUDE.md 후보 목록을 보여주고, 각 후보에 대해 생성 여부를 확인한다
+
+추가 원칙:
+- 모호한 항목은 **가능한 해석을 제시한 뒤** 사용자에게 선택을 요청한다.
+- 1단계에서 가정한 내용을 사용자에게 확인한다.
+
+---
+
+## 3단계: 생성 — Simplicity First + Surgical Changes
+
+네 가지를 생성한다:
+
+공통 작성 규칙:
+- 코드 스니펫은 직접 포함하지 않고 file:line 참조만 사용한다
+
+### A. 루트 CLAUDE.md
+
+생성 원칙:
+
+- 모든 세션, 모든 작업에 적용되는 보편적 내용만 포함한다
+- 목표 줄 수: 100줄 이하. 절대 300줄을 넘기지 않는다
+- 코드 스타일 규칙을 포함하지 않는다 (린터/포매터에 위임)
+- AGENTS.md만 참조한다 (contributing-docs/를 직접 참조하지 않는다)
+- 1~2단계에서 **확인된 사실만** 포함한다. 추측이나 '있으면 좋을' 항목을 배제한다
+- 지시사항 추가 시 자문한다: **"이것 없이 Claude가 실수하는가?"**
+
+구조:
+
+```markdown
+# 프로젝트 개요
+(WHY: 1-2줄로 프로젝트 목적)
+
+# 기술 스택
+(WHAT: 핵심 기술만 나열)
+
+# 개발 명령
+(HOW: 빌드, 테스트, 린트 명령)
+
+# 작업 규칙
+(HOW: 브랜치, 커밋, PR 등 보편적 규칙)
+
+# 행동 가이드라인
+(프로젝트 고유 제약이 있는 경우만. 예: "DB 마이그레이션 시 반드시 확인 후 실행")
+
+# 참조 문서
+- **[AGENTS.md](./AGENTS.md)** — 전체 프로젝트 구조, 코드 규약, 상세 가이드
+(중첩 CLAUDE.md가 있는 하위 디렉토리도 나열)
+```
+
+### B. AGENTS.md
+
+agents.md 표준을 따르는 프로젝트 가이드. CLAUDE.md에서 참조하며, contributing-docs/의 상세 문서를 가리킨다.
+
+생성 원칙:
+
+- 모든 AI 에이전트가 활용할 수 있는 보편적 형식
+- contributing-docs/ 참조로 점진적 공개 구현
+- 기존 AGENTS.md가 있으면 참고하되 이 스킬 원칙에 맞게 재생성
+
+구조:
+
+- YAML frontmatter (name, description, version, standard)
+- Project Overview: 프로젝트 목적, 기술 스택
+- Repository Structure: 디렉토리 구조 및 핵심 파일
+- Build & Test: 빌드, 테스트, 린트 명령
+- Code Style: 코드 규약 (린터로 강제할 수 없는 것만)
+- Git Workflow: 브랜치 전략, 커밋 규약
+- Boundaries: Always Do / Ask First / Never Do
+- Contributing Docs 참조 섹션: contributing-docs/ 내 상세 문서 목록
+
+### C. contributing-docs/ 분리 문서
+
+AGENTS.md에서 참조하는 상세 내용을 별도 문서로 생성한다. 다음 중 프로젝트에 해당하는 것만 생성한다:
+
+- `contributing-docs/architecture.md`: 서비스 구조, 통신 패턴, 데이터 흐름
+- `contributing-docs/building_the_project.md`: 상세 빌드/배포 절차
+- `contributing-docs/testing.md`: 테스트 전략, 테스트 데이터 설정
+- `contributing-docs/database.md`: 스키마 구조, 마이그레이션 방법
+- `contributing-docs/conventions.md`: 코드 규약, 네이밍 규칙 (린터로 강제할 수 없는 것만)
+- `contributing-docs/behavioral.md`: 프로젝트 고유 행동 제약 (해당하는 경우만)
+
+각 분리 문서도 간결하게 작성하며, 공통 작성 규칙을 따른다.
+
+### D. 중첩 CLAUDE.md (모노레포 패키지 / 서브모듈)
+
+1단계에서 탐지된 후보 중, 2단계에서 사용자가 승인한 디렉토리에 대해 생성한다.
+
+#### 생성 조건
+
+다음 **모두**를 만족하는 디렉토리에만 생성한다:
+
+- 자체 패키지 매니저 파일이 있거나 git 서브모듈이다
+- 루트 CLAUDE.md와 다른 기술 스택, 빌드 명령, 또는 작업 규칙이 필요하다
+- 사용자가 2단계에서 생성을 승인했다
+
+#### 생성 원칙
+
+Section A의 원칙을 상속하되, 추가로:
+
+- **범위 한정**: 해당 디렉토리 안의 컨텍스트만 다룬다
+- **중복 금지**: 상위 CLAUDE.md에 있는 내용을 반복하지 않는다. 차이점만 기술한다
+- **상위 참조**: 공통 규칙은 상위 CLAUDE.md를 구체적 경로로 참조한다
+- **목표 줄 수**: 50줄 이하. 절대 100줄을 넘기지 않는다
+- **자기 완결적 제목**: `# CLAUDE.md — {패키지/서브모듈 이름}`으로 시작한다
+
+#### 구조
+
+```markdown
+# CLAUDE.md — {이름}
+
+(1줄: 이 디렉토리의 목적/역할)
+
+## 기술 스택
+(상위와 다른 부분만. 동일하면 섹션 생략)
+
+## 개발 명령
+(이 디렉토리 고유의 빌드/테스트/린트 명령)
+
+## 작업 규칙
+(상위와 다른 규칙이 있는 경우만. 없으면 생략)
+
+## 참조 문서
+- **[../CLAUDE.md](../CLAUDE.md)** — 프로젝트 공통 규칙
+(하위에 AGENTS.md가 있으면 참조, 없으면 생략)
+```
+
+#### 참조 경로 규칙
+
+- 상위 CLAUDE.md: 항상 상대 경로 (`../CLAUDE.md`)
+- 서브모듈: 부모 저장소 CLAUDE.md를 URL 또는 상대 경로로 참조
+- 형제 디렉토리: 직접 참조하지 않는다 (상위를 경유)
+
+---
+
+## 4단계: 검증 — Goal-Driven Execution
+
+생성된 CLAUDE.md와 AGENTS.md에 대해 다음 체크리스트를 줄 단위로 적용한다:
+
+1. **보편성/필수성/중복**: 모든 작업에 적용되는가? 없으면 실수하는가? 코드를 읽으면 자명한가? → 아니면 삭제 또는 AGENTS.md/contributing-docs/로 이동
+2. **린터 역할**: 코드 스타일 규칙인가? → 삭제하고 린터/Hook으로 대체 권장
+3. **추측 배제**: 1~2단계에서 확인되지 않은 내용이 포함되는가? → 있으면 삭제
+4. **검증 가능성**: 각 지시사항을 따랐는지 판별 가능한가? → 아니면 구체화
+5. **분량 제약**: 100줄 이하, 개별 지시사항 50개 이하인가? → 초과하면 통합 또는 삭제
+6. **계층/범위**: CLAUDE.md가 contributing-docs/를 직접 참조하는가? AGENTS.md가 Claude 전용 내용만 담는가? 중첩 CLAUDE.md가 자기 디렉토리 밖을 포함하거나 상위 내용을 반복하는가? → 있으면 이동/삭제 또는 상위 참조로 대체
+7. **참조 정합성**: 중첩 CLAUDE.md의 상위 참조 경로가 올바른가? → 상대 경로 검증
+
+자기 테스트 질문:
+- "시니어 엔지니어가 이 CLAUDE.md를 보고 '과하다'고 할까?"
+- "CLAUDE.md → AGENTS.md → contributing-docs/ 계층이 명확하게 분리되어 있는가?"
+- "중첩 CLAUDE.md를 제거해도 상위 CLAUDE.md만으로 해당 디렉토리 작업이 충분한가?" → 충분하면 중첩 파일 삭제 권장
+- "중첩 CLAUDE.md 간에 내용이 서로 모순되는가?"
+
+검증 결과를 사용자에게 보고한다. 탈락 항목이 있으면 해당 줄과 사유를 함께 표시하고, 정제된 최종본을 제시한다.
+
+---
+
+## LLM 컨텍스트 원칙
+
+- LLM은 인컨텍스트 학습자다. 기존 코드 패턴을 검색하면 스타일을 자연스럽게 따라가므로, 스타일 규칙을 CLAUDE.md에 포함할 필요가 없다.
+- Claude Code 시스템 프롬프트가 이미 ~50개 지시사항을 포함하며, 보편적이지 않은 내용이 많을수록 전체가 무시될 확률이 높아진다.
+- 상위 레벨(CLAUDE.md)의 오류는 하위(계획 → 코드)로 기하급수적으로 증폭된다.
+- LLM은 명확한 목표가 있을 때 반복 실행에 탁월하다 (references/karpathy-guidelines.md). 지시사항을 **검증 가능한 목표**로 작성해야 Claude가 자율적으로 올바른 결과에 도달한다.
+
+---
+
+<task-notification>
+<task-id>a40c489</task-id>
+<status>completed</status>
+<summary>Agent "dotrc 프로젝트 구조 분석" completed</summary>
+<result>Perfect! Now I have a comprehensive understanding. Let me compile the final report:
+
+## 종합 탐색 보고서: /Users/ujuc/.config/dotrc
+
+### 1. 디렉토리 구조 및 목적
+
+**repository-level**: 개인 도트파일(dotfiles) 저장소로, 개발 환경 및 AI 에이전트 설정을 관리합니다.
+
+**Top-Level Directories**:
+- `/Users/ujuc/.config/dotrc/agents/` - Git 서브모듈 (ujuc/agent-stuff)로 AI 에이전트 설정 관리
+- `/Users/ujuc/.config/dotrc/docs/` - 프로젝트 문서 및 템플릿
+- `/Users/ujuc/.config/dotrc/scripts/` - Zsh 성능 측정 및 프로파일링 스크립트
+- `/Users/ujuc/.config/dotrc/zed/` - Zed 에디터 설정 파일
+- `/Users/ujuc/.config/dotrc/.claude/` - 프로젝트 레벨 Claude Code 설정 (Entire 통합)
+- `/Users/ujuc/.config/dotrc/.vscode/` - VSCode 에디터 설정
+- `/Users/ujuc/.config/dotrc/.idea/` - JetBrains IDE 설정
+- `/Users/ujuc/.config/dotrc/.entire/` - Entire 통합 설정 (read-protected)
+
+---
+
+### 2. 패키지/빌드/테스트/린트/포매터 설정
+
+**존재하는 설정 파일**:
+
+| 파일 | 위치 | 목적 |
+|------|------|------|
+| `starship.toml` | `/Users/ujuc/.config/dotrc/starship.toml` | Zsh 프롬프트/테마 설정 |
+| `zimrc` | `/Users/ujuc/.config/dotrc/zimrc` | Zim 프레임워크 모듈 설정 |
+| `batrc` | `/Users/ujuc/.config/dotrc/batrc` | bat(cat 대체) 테마 설정 (gruvbox-dark) |
+| `tigrc` | `/Users/ujuc/.config/dotrc/tigrc` | Tig(Git UI) 바인딩 및 뷰 설정 |
+| `ghosttyrc` | `/Users/ujuc/.config/dotrc/ghosttyrc` | Ghostty 터미널 설정 |
+| `zshrc` | `/Users/ujuc/.config/dotrc/zshrc` | Zsh 주요 설정 (PATH, 플러그인, 도구) |
+| `.gitmodules` | `/Users/ujuc/.config/dotrc/.gitmodules` | Git 서브모듈 설정 |
+| `.gitignore` | `/Users/ujuc/.config/dotrc/.gitignore` | Git 제외 규칙 |
+| `gitmessage` | `/Users/ujuc/.config/dotrc/gitmessage` | Git 커밋 메시지 템플릿 (한글 가이드 포함) |
+
+**Claude Code 설정**:
+- `/Users/ujuc/.config/dotrc/agents/claude/settings.json` - 글로벌 Claude Code 설정 (Opus 모델, 권한, 샌드박스)
+- `/Users/ujuc/.config/dotrc/agents/claude/mcp.json` - MCP 서버 설정 (sequential-thinking)
+- `/Users/ujuc/.config/dotrc/.claude/settings.json` - 프로젝트 레벨 설정 (Entire 통합 hooks)
+
+**VSCode 설정**:
+- `/Users/ujuc/.config/dotrc/.vscode/settings.json` - mise 런타임 경로 지정 (Node, Go, Python)
+
+**빌드/테스트 도구**:
+- No Makefile, package.json, Cargo.toml, pyproject.toml 등의 빌드 시스템 (순수 설정 저장소)
+- 검증 스크립트: `claude/scripts/lint-docs.sh` (마크다운 포맷 검증)
+
+---
+
+### 3. 저장소 구조 및 독립성
+
+#### 서브모듈 구조
+
+**Git Submodule**: `agents/`
+- **경로**: `/Users/ujuc/.config/dotrc/agents/`
+- **URL**: `git@github.com:ujuc/agent-stuff.git`
+- **독립성**: 완전 독립 저장소 (parent와 별도 .git)
+- **배포 전략**: Symlink를 통해 각 에이전트 설정을 홈 디렉토리에 배치
+
+#### agents/ 하위 구조
+
+```
+agents/
+├── CLAUDE.md              # agent-stuff 프로젝트 가이드
+├── AGENTS.md              # agents.md 표준 프로젝트 설명
+├── claude/                # Claude Code 글로벌 설정 (→ ~/.claude)
+│   ├── CLAUDE.md          # Claude Code 설정 (모델, 권한, 언어, 스킬)
+│   ├── settings.json      # 글로벌 설정
+│   ├── mcp.json           # MCP 서버 (sequential-thinking)
+│   ├── memory/MEMORY.md   # 자동 메모리 (세션 간 지속)
+│   ├── skills/            # 스킬 정의
+│   │   └── generate-claude-md/SKILL.md   # CLAUDE.md/AGENTS.md 생성 스킬
+│   ├── scripts/           # 린팅 및 검증
+│   │   ├── lint-docs.sh       # 마크다운 형식 검증
+│   │   └── pre-commit-lint    # Pre-commit 훅
+│   ├── plugins/config.json    # 플러그인 설정
+│   ├── deplicated/        # 레거시 (사용 금지)
+│   └── [runtime dirs]     # cache, debug, plans, projects, todos 등
+├── gemini/                # Gemini CLI 설정 (→ ~/.gemini) — placeholder
+│   └── .gitkeep
+├── pi/                    # Pi agent 설정 (→ ~/.pi) — placeholder
+│   └── .gitkeep
+└── specs/
+    └── SOUL.md            # 공유 에이전트 사명/가치 (정준 원본)
+```
+
+#### 모노레포 신호
+
+**모노레포 X** — 이는 모노레포가 아닌 단일 도트파일 저장소입니다.
+- No workspaces, packages/, apps/ 디렉토리
+- No multiple package.json 또는 다중 언어 빌드 설정
+- 서브모듈(`agents/`)은 독립 저장소이므로 모노레포 패턴이 아닙니다
+
+---
+
+### 4. 문서 및 CI/CD
+
+#### CLAUDE.md 파일들
+
+| 파일 위치 | 용도 | 라인 수 |
+|----------|------|--------|
+| `/Users/ujuc/.config/dotrc/agents/CLAUDE.md` | agent-stuff 프로젝트 가이드 | ~48줄 |
+| `/Users/ujuc/.config/dotrc/agents/claude/CLAUDE.md` | Claude Code 글로벌 설정 | ~75줄 |
+| `/Users/ujuc/.config/dotrc/agents/claude/deplicated/skills/CLAUDE.md` | 레거시 (deprecated) | - |
+
+#### AGENTS.md 파일
+
+- `/Users/ujuc/.config/dotrc/agents/AGENTS.md` — agents.md 표준 준수, agent-stuff 프로젝트 상세 가이드
+
+#### 스킬/도구 문서
+
+- `/Users/ujuc/.config/dotrc/agents/claude/skills/generate-claude-md/SKILL.md` — CLAUDE.md/AGENTS.md 자동 생성 스킬 (4단계: 분석 → 인터뷰 → 생성 → 검증)
+
+#### 기타 문서
+
+- `/Users/ujuc/.config/dotrc/README.md` — 설치 및 설정 가이드 (환경 준비, Homebrew, CLI 도구, 에이전트, 앱)
+- `/Users/ujuc/.config/dotrc/LICENSE` — MIT 라이선스 (2014-2100)
+
+#### CI/CD 구성
+
+**CI/CD 없음** — 이는 설정 저장소입니다.
+- No .github/workflows/, .gitlab-ci.yml, Jenkins 설정
+- 자동 검증: `claude/scripts/lint-docs.sh` (마크다운 형식만)
+
+---
+
+### 5. Dotfiles 관리 범위
+
+이 저장소가 관리하는 설정 파일들:
+
+**Shell 설정**:
+- `~/.zshrc` ← `/Users/ujuc/.config/dotrc/zshrc` (심링크)
+- `~/.zimrc` ← `/Users/ujuc/.config/dotrc/zimrc` (ZimFW 모듈)
+
+**Terminal & CLI Tools**:
+- `~/.config/starship.toml` ← `/Users/ujuc/.config/dotrc/starship.toml` (Starship 프롬프트)
+- `~/.config/bat/config` ← `/Users/ujuc/.config/dotrc/batrc` (bat 색상)
+- `~/.config/tig/config` ← `/Users/ujuc/.config/dotrc/tigrc` (Tig 바인딩)
+- `~/.config/ghostty/config` ← `/Users/ujuc/.config/dotrc/ghosttyrc` (Ghostty 터미널)
+
+**Editor 설정**:
+- `~/.claude/` ← `/Users/ujuc/.config/dotrc/agents/claude/` (심링크, Claude Code)
+- `~/.pi/` ← `/Users/ujuc/.config/dotrc/agents/pi/` (심링크, Pi agent)
+- `~/.gemini/` ← `/Users/ujuc/.config/dotrc/agents/gemini/` (심링크, Gemini CLI)
+- `~/.config/zed/settings.json` ← `/Users/ujuc/.config/dotrc/zed/settings.json` (Zed 에디터)
+
+**Git 설정**:
+- `~/.gitmessage` ← `/Users/ujuc/.config/dotrc/gitmessage` (커밋 메시지 템플릿)
+
+---
+
+### 6. 스크립트 및 자동화 도구
+
+| 파일 | 목적 |
+|------|------|
+| `/Users/ujuc/.config/dotrc/scripts/benchmark.sh` | Zsh 시작 시간 벤치마크 (10회 평균) |
+| `/Users/ujuc/.config/dotrc/scripts/profile-startup.zsh` | Zsh 모듈별 프로파일링 |
+| `/Users/ujuc/.config/dotrc/agents/claude/scripts/lint-docs.sh` | 마크다운 형식 검증 |
+| `/Users/ujuc/.config/dotrc/agents/claude/scripts/pre-commit-lint` | Pre-commit 훅 (claude/*.md 검증) |
+
+---
+
+### 7. 심링크 배포 패턴
+
+**배포 모델**:
+```
+dotrc/ (parent repo)
+  ├── agents/ (git submodule: ujuc/agent-stuff)
+  │   ├── claude/ → ~/.claude
+  │   ├── gemini/ → ~/.gemini
+  │   └── pi/ → ~/.pi
+  └── [dotfiles] → ~/.config/[...]
+```
+
+**환경 변수 참조**:
+- `DOTRCDIR` = `${XDG_CONFIG_HOME}/dotrc` (기본값)
+- `XDG_CONFIG_HOME` = `${HOME}/.config` (기본값)
+
+**설치 커맨드** (README.md):
+```bash
+gh repo clone ujuc/dotrc ${HOME}/.config/dotrc -- --recurse-submodules
+ln -sf ${DOTRCDIR}/zshrc ${HOME}/.zshrc
+ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
+```
+
+---
+
+### 8. 특별한 구성
+
+#### Entire 통합
+
+**프로젝트 레벨 설정**: `/Users/ujuc/.config/dotrc/.claude/settings.json`
+
+Entire 시스템과의 hooks 통합:
+- `SessionStart`, `SessionEnd`, `UserPromptSubmit`, `Stop` — Claude Code 세션 이벤트
+- `PreToolUse`, `PostToolUse` — Task, TodoWrite 실행 전/후 훅
+
+```json
+{
+  "hooks": {
+    "SessionStart": [{"type": "command", "command": "entire hooks claude-code session-start"}],
+    ...
+  },
+  "permissions": {
+    "deny": ["Read(./.entire/metadata/**)" ]
+  }
+}
+```
+
+#### 언어 정책 (CLAUDE.md)
+
+- **사용자 소통**: 한국어 (한글)
+- **파일 출력**: 기본 영어 (명시적 요청 시 한글)
+
+#### Git 커밋 규칙
+
+**한국어 Conventional Commits** (동사 `-하다` 종료):
+```
+<type>(<scope>): <한국어 주제 문장형>
+```
+
+**타입**: feat, fix, docs, style, refactor, test, chore
+**스코프**: agents, claude, pi, gemini, specs, skills, guides
+
+**예시**:
+```
+chore(agents): 서브모듈을 업데이트하다
+docs(claude): CLAUDE.md를 스킬 원칙에 따라 정제하다
+```
+
+---
+
+### 9. 스킬 시스템
+
+**활성화된 스킬**:
+
+| 스킬명 | 위치 | 트리거 | 모델 |
+|--------|------|--------|------|
+| `generate-claude-md` | `agents/claude/skills/generate-claude-md/SKILL.md` | `/generate-claude-md` (수동) | Opus |
+| `commit` | agent-stuff 내 정의 | "커밋해줘" | Haiku |
+| `agents` | agent-stuff 내 정의 | "에이전트해줘" | Haiku |
+| `interview`, `review`, `refactor`, `troubleshoot`, `ship` | agent-stuff 내 정의 | 자연어 트리거 | Sonnet/Opus |
+
+**generate-claude-md 스킬 특징**:
+- 프로젝트 자동 분석 (4단계: 분석 → 인터뷰 → 생성 → 검증)
+- 중첩 CLAUDE.md 생성 지원
+- agents.md/v1 표준 준수
+- Karpathy 가이드라인 원칙 적용
+
+---
+
+### 10. 주요 파일 절대 경로 요약
+
+```
+/Users/ujuc/.config/dotrc/
+├── README.md                                      # 설치/설정 가이드
+├── LICENSE                                        # MIT 라이센스
+├── zshrc                                          # Zsh 설정
+├── zimrc                                          # Zim 설정
+├── starship.toml                                  # Starship 프롬프트
+├── batrc                                          # Bat 테마
+├── tigrc                                          # Tig 바인딩
+├── ghosttyrc                                      # Ghostty 터미널
+├── gitmessage                                     # Git 커밋 템플릿
+├── .gitmodules                                    # 서브모듈 설정
+├── .gitignore                                     # Git 제외
+├── .claude/                                       # 프로젝트 Claude Code 설정
+│   └── settings.json                              # Entire 통합 hooks
+├── .vscode/settings.json                          # VSCode 설정
+├── .idea/                                         # JetBrains 설정
+├── zed/settings.json                              # Zed 에디터 설정
+├── docs/
+│   ├── ai/                                        # AI 관련 문서
+│   └── templates/work-template.md                 # 업무 템플릿
+├── scripts/
+│   ├── benchmark.sh                               # Zsh 벤치마크
+│   └── profile-startup.zsh                        # Zsh 프로파일
+└── agents/ (git submodule: ujuc/agent-stuff)
+    ├── CLAUDE.md                                  # 프로젝트 가이드
+    ├── AGENTS.md                                  # agents.md 표준
+    ├── claude/
+    │   ├── CLAUDE.md                              # 글로벌 설정
+    │   ├── settings.json                          # 모델/권한/언어
+    │   ├── mcp.json                               # MCP 서버
+    │   ├── memory/MEMORY.md                       # 자동 메모리
+    │   ├── skills/generate-claude-md/SKILL.md    # CLAUDE.md 생성
+    │   └── scripts/lint-docs.sh                   # 마크다운 검증
+    ├── gemini/                                    # Placeholder
+    ├── pi/                                        # Placeholder
+    └── specs/SOUL.md                              # 에이전트 사명
+```
+
+---
+
+### 11. 저장소 메타데이터
+
+| 항목 | 값 |
+|------|-----|
+| **URL** | `git@github.com:ujuc/dotrc.git` |
+| **현재 브랜치** | `main` |
+| **라이선스** | MIT (2014-2100) |
+| **최근 커밋** | `e948416` (chore(agents): 서브모듈 업데이트) |
+| **서브모듈 URL** | `git@github.com:ujuc/agent-stuff.git` |
+| **서브모듈 최근 커밋** | `fb61181` (docs: generate-claude-md 스킬로 CLAUDE.md 정제) |
+
+---
+
+### 12. 핵심 특징
+
+1. **설정 중심**: 빌드 시스템 없이 순수 설정/문서만 관리
+2. **에이전트 통합**: Claude Code, Pi, Gemini CLI 설정을 중앙 집중식 관리
+3. **Entire 통합**: Claude Code 세션 이벤트 훅 연결
+4. **한글 가이드**: 모든 CLAUDE.md, AGENTS.md, 커밋 메시지가 한국어
+5. **심링크 배포**: 서브모듈과 도트파일을 홈 디렉토리에 심링크로 배포
+6. **생성형 스킬**: generate-claude-md 스킬로 CLAUDE.md/AGENTS.md를 자동 생성/검증
+7. **검증 자동화**: lint-docs.sh로 마크다운 형식 검증 (pre-commit 훅)</result>
+<usage>total_tokens: 51663
+tool_uses: 52
+duration_ms: 78947</usage>
+</task-notification>
+Full transcript available at: REDACTED.output
+
+---
+
+커밋해줘.
