@@ -1,0 +1,245 @@
+Implement the following plan:
+
+# Plan: CLAUDE.md 및 AGENTS.md 신규 작성
+
+## Context
+
+dotrc 저장소의 CLAUDE.md와 AGENTS.md를 프로젝트 분석 결과를 바탕으로 완전히 새로 작성한다. 기존 문서 구조를 참고하지 않고, `generate-claude-md` 스킬 원칙("이것 없이 Claude가 실수하는가?")에 따라 바닥부터 구성한다.
+
+**범위**: dotrc 루트의 CLAUDE.md + AGENTS.md
+**제외**: agents/ 서브모듈, contributing-docs/
+
+---
+
+## Step 1: CLAUDE.md 신규 작성 (~60줄)
+
+**파일**: `/Users/ujuc/.config/dotrc/CLAUDE.md`
+
+모든 세션, 모든 작업에서 Claude Code가 반드시 알아야 하는 내용만 포함한다. 코드에서 자명한 패턴은 포함하지 않는다.
+
+### 구조
+
+```markdown
+# CLAUDE.md — dotrc
+
+macOS 개인 dotfiles 저장소. ${DOTRCDIR} (~/.config/dotrc)에서 심링크로 설정 파일을 배포한다.
+
+## Key Commands
+
+zsh -n zshrc                     # Zsh 문법 검증
+./scripts/benchmark.sh [runs]    # 시작 시간 벤치마크
+./scripts/profile-startup.zsh    # zprof 프로파일링
+
+## Architecture
+
+### Zsh Loading Chain
+
+~/.zshrc → ${DOTRCDIR}/zshrc (단일 파일, 섹션 구분)
+  ├─ Environment    # XDG, DOTRCDIR, PATH
+  ├─ History        # setopt HIST_*
+  ├─ Plugins        # Zimfw, completion
+  ├─ Tools          # starship, fzf, zoxide, mise
+  ├─ Aliases        # Functions, aliases
+  └─ Local          # Work config, 1Password
+
+### Key Patterns
+
+- Eager loading: 빠른 도구는 즉시 초기화 (starship, fzf)
+- Lazy loading: 느린 도구는 래퍼 함수로 지연 초기화 (zoxide, mise)
+
+### Symlink Deployment
+
+설정 파일은 심링크로 표준 위치에 배포. agents/는 git 서브모듈(ujuc/agent-stuff).
+
+- agents/claude/ → ~/.claude, agents/pi/ → ~/.pi, agents/gemini/ → ~/.gemini
+- starship.toml → $XDG_CONFIG_HOME/starship.toml
+- ghosttyrc → $XDG_CONFIG_HOME/ghostty/config
+
+항상 이 저장소의 파일을 편집할 것. 심링크 대상을 직접 수정하지 않는다.
+
+## Conventions
+
+### Language Policy
+
+- User-facing output (터미널 응답, 커밋 제목): Korean
+- File content (코드, 주석, 문서): English
+
+### Commit Messages
+
+Korean Conventional Commits ending with -하다:
+
+<type>(<scope>): <Korean subject ending with -하다>
+
+Types: feat, fix, docs, style, refactor, test, chore
+Examples:
+  feat: Starship 프롬프트 설정을 추가하다
+  fix(zshrc): 중복된 PATH 항목을 제거하다
+
+## Cross-References
+
+- [AGENTS.md](./AGENTS.md) — 저장소 구조, 코드 규약, 경계선
+- [agents/claude/CLAUDE.md](./agents/claude/CLAUDE.md) — Claude 전용 스킬, MCP, 우선순위
+```
+
+---
+
+## Step 2: AGENTS.md 신규 작성 (~130줄)
+
+**파일**: `/Users/ujuc/.config/dotrc/AGENTS.md`
+
+모든 AI 에이전트가 이 저장소에서 작업할 때 필요한 범용 가이드. agents.md 표준을 따른다.
+
+### 구조
+
+```yaml
+---
+name: "dotrc-agents"
+description: "Universal AI agent guide for the dotrc dotfiles repository"
+version: "4.0.0"
+last_updated: "2026-02-16"
+metadata:
+  standard: "https://agents.md/"
+---
+```
+
+```markdown
+# dotrc
+
+Universal AI agent guide for the dotrc repository.
+
+## Project Overview
+
+Type: Configuration repository (dotfiles)
+Language: Zsh, YAML, TOML, JSON
+Platform: macOS
+Purpose: ${DOTRCDIR} (~/.config/dotrc)에서 심링크로 개발 환경 설정을 중앙 관리
+
+## Repository Structure
+
+dotrc/
+├── zshrc               # Zsh 설정 (단일 파일, 섹션 구분)
+├── zimrc               # Zim 프레임워크 모듈
+├── starship.toml       # Starship 프롬프트
+├── ghosttyrc           # Ghostty 터미널
+├── batrc               # bat 설정
+├── tigrc               # tig 설정
+├── gitmessage          # Git 커밋 템플릿
+├── scripts/            # benchmark.sh, profile-startup.zsh
+├── docs/templates/     # work-template.md
+├── zed/                # Zed 에디터 설정
+└── agents/             # Git submodule (ujuc/agent-stuff)
+
+파일은 ${DOTRCDIR}에서 편집. 심링크 대상을 직접 수정하지 않는다.
+
+## Build & Test Commands
+
+빌드 시스템 없음. 설정 저장소.
+
+zsh -n zshrc                     # Zsh 문법 검증 (커밋 전 필수)
+./scripts/benchmark.sh [runs]    # 시작 시간 벤치마크
+./scripts/profile-startup.zsh    # zprof 프로파일링
+
+쉘 별칭: zbench (벤치마크), zprofile (프로파일)
+
+## Code Style & Conventions
+
+### Zsh (zshrc)
+
+단일 파일 아키텍처. 섹션 구분자(# ── Section ──)로 구역 분리.
+섹션: Environment, History, Plugins, Tools, Aliases, Local.
+
+- Eager loading: 빠른 도구(starship, fzf)는 즉시 초기화
+- Lazy loading: 느린 도구(zoxide, mise)는 래퍼 함수로 첫 사용 시 초기화
+- 새 도구 추가 시 적절한 로딩 패턴을 따를 것
+
+### Configuration Files
+
+- 들여쓰기: 2 spaces (YAML, TOML, JSON)
+- 파일 단위: 저장소 루트에 도구당 1 파일 (예외: zed/, agents/)
+
+## Git Workflow
+
+### Commit Messages
+
+Korean Conventional Commits with -하다 verb ending:
+
+<type>(<scope>): <Korean subject ending with -하다>
+
+Types: feat, fix, docs, style, refactor, test, chore
+
+Examples:
+  feat: Starship 프롬프트 설정을 추가하다
+  fix(zshrc): 중복된 PATH 항목을 제거하다
+  chore(agents): Claude 가이드 문서 한국어 번역 반영하다
+
+### Branch Strategy
+
+- Main: main
+- Feature: feat/<description>
+- Fix: fix/<description>
+
+## Boundaries
+
+### Always Do
+
+- zsh -n zshrc 문법 검증 후 커밋
+- 각 파일의 기존 패턴 따르기
+- ${DOTRCDIR} 내 파일만 편집
+- 커밋 제목에 한국어 -하다 어미 사용
+
+### Ask First
+
+- 새 Homebrew 의존성 추가
+- zshrc 섹션 순서 변경
+- 시스템 디렉토리에 새 심링크 추가
+- agents/ 서브모듈 내 파일 수정
+
+### Never Do
+
+- 시크릿, API 키, 토큰 커밋
+- ~/.zshrc.work 삭제/덮어쓰기 (개인 작업 설정)
+- ${DOTRCDIR} 외부 파일을 명시적 요청 없이 수정
+- 기존 심링크를 확인 없이 제거
+
+## Related Resources
+
+- [CLAUDE.md](./CLAUDE.md) — Claude Code 프로젝트 가이드
+- [agents/claude/CLAUDE.md](./agents/claude/CLAUDE.md) — Claude 전용 스킬, MCP, 가이드
+- [docs/templates/work-template.md](./docs/templates/work-template.md) — 작업 로그 템플릿
+
+## See Also
+
+- [agents.md standard](https://agents.md/) — Universal AI agent file specification
+
+## Change Log
+
+- v4.0.0 (2026-02-16): 프로젝트 분석 기반 전면 재작성
+- v3.1.0 (2026-02-10): XML meta → YAML frontmatter 전환
+- v3.0.0 (2026-02-10): agents-template 구조 기반 재작성
+- v2.0.0 (2026-02-01): Claude 전용 내용을 agents/claude/CLAUDE.md로 분리
+- v1.0.0 (2026-01-04): 최초 작성
+```
+
+---
+
+## Step 3: 검증
+
+1. **분량**: CLAUDE.md ~60줄, AGENTS.md ~130줄
+2. **참조 정합성**: 참조된 모든 파일이 실존하는지 확인
+3. **추측 배제**: 프로젝트 탐지에서 확인된 사실만 포함
+4. **자기 테스트**: 각 줄에 대해 "이것 없이 실수하는가?" 확인
+5. **린터 역할 배제**: 코드에서 자명한 스타일 규칙 미포함
+
+---
+
+## 수정 대상 파일
+
+| 파일 | 작업 |
+|------|------|
+| `/Users/ujuc/.config/dotrc/CLAUDE.md` | 전체 새로 작성 (~60줄) |
+| `/Users/ujuc/.config/dotrc/AGENTS.md` | 전체 새로 작성 (~130줄) |
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/ujuc/.claude/projects/-Users-ujuc--config-dotrc/a9598c25-95cf-440d-a5df-5a93bd9f70f4.jsonl
+
+If this plan can be broken down into multiple independent tasks, consider using the TeamCreate tool to create a team and parallelize the work.
