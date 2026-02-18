@@ -30,8 +30,8 @@ if [[ -d "${HOME}/.amp/bin" ]]; then
 fi
 
 # JetBrains Toolbox CLI scripts
-if [[ -d "/Users/ujuc/Library/Application Support/JetBrains/Toolbox/scripts" ]]; then
-    export PATH="${PATH}:/Users/ujuc/Library/Application Support/JetBrains/Toolbox/scripts"
+if [[ -d "${HOME}/Library/Application Support/JetBrains/Toolbox/scripts" ]]; then
+    export PATH="${PATH}:${HOME}/Library/Application Support/JetBrains/Toolbox/scripts"
 fi
 
 # Obsidian CLI
@@ -46,7 +46,7 @@ setopt HIST_IGNORE_ALL_DUPS
 # ── Plugins ────────────────────────────────────────────────
 
 # zimfw
-ZIM_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}/zim
+ZIM_HOME=${XDG_CONFIG_HOME}/zim
 ZIM_CONFIG_FILE=${DOTRCDIR}/zimrc
 
 ## Initialize zimfw (installed via Homebrew)
@@ -81,28 +81,19 @@ fi
 
 # fzf
 # Note: fzf init is fast (~10ms), so eager loading is fine
-if (( $+commands[fzf] )); then
-    if [[ -f ${HOME}/.fzf.zsh ]]; then
-        source ${HOME}/.fzf.zsh
-    else
-        source <(fzf --zsh)
-    fi
+if (( $+commands[fzf] )) && [[ -f ${HOME}/.fzf.zsh ]]; then
+    source ${HOME}/.fzf.zsh
+elif (( $+commands[fzf] )); then
+    source <(fzf --zsh)
 fi
 
 # zoxide (lazy loading)
 if (( $+commands[zoxide] )); then
-    # Create wrapper function that initializes on first use
-    function z() {
-        unfunction z
+    # Create wrapper functions that initialize on first use
+    function z zi() {
+        unfunction z zi
         _evalcache zoxide init zsh
-        z "$@"
-    }
-
-    # Alias zi for interactive mode
-    function zi() {
-        unfunction zi
-        _evalcache zoxide init zsh
-        zi "$@"
+        $0 "$@"
     }
 fi
 
@@ -111,13 +102,14 @@ if (( $+commands[mise] )); then
     # Create wrapper function that activates on first use
     function mise() {
         unfunction mise
-        eval "$(${HOME}/.local/bin/mise activate zsh)"
+        _evalcache mise activate zsh
         mise "$@"
     }
 
     # But activate immediately if we're in a project directory with mise config
-    if [[ -f .mise.toml ]] || [[ -f .tool-versions ]] || [[ -f mise.toml ]]; then
-        eval "$(${HOME}/.local/bin/mise activate zsh)"
+    if [[ -f .mise.toml || -f .tool-versions || -f mise.toml ]]; then
+        unfunction mise
+        _evalcache mise activate zsh
     fi
 fi
 
@@ -169,6 +161,6 @@ if [[ -f ${HOME}/.zshrc.work ]]; then
 fi
 
 # 1Password CLI plugins
-if [[ -f ${XDG_CONFIG_HOME:-${HOME}/.config}/op/plugins.sh ]]; then
-    source ${XDG_CONFIG_HOME:-${HOME}/.config}/op/plugins.sh
+if [[ -f ${XDG_CONFIG_HOME}/op/plugins.sh ]]; then
+    source ${XDG_CONFIG_HOME}/op/plugins.sh
 fi
