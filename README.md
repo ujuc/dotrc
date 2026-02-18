@@ -169,6 +169,14 @@ mise use -g uv
 mise use -g node
 ```
 
+### [yq](https://github.com/mikefarah/yq)
+
+- YAML 파서. Claude 스킬 검증 스크립트에서 사용.
+
+```sh
+brew install yq
+```
+
 ## Agent
 
 에이전트 설정은 [ujuc/agent-stuff](https://github.com/ujuc/agent-stuff) 저장소의 git submodule(`agents/`)로 관리됩니다.
