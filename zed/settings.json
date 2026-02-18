@@ -1,85 +1,83 @@
 {
   "agent_servers": {
     "claude": {
-      "default_model": "default",
+      "default_model": "default"
     },
     "mistral-vibe": {
-      "type": "registry",
-    },
+      "type": "registry"
+    }
   },
   "disable_ai": false,
   "ui_font_family": "NanumSquare Neo variable",
   "audio": {
     "experimental.auto_speaker_volume": false,
     "experimental.denoise": false,
-    "experimental.legacy_audio_compatible": false,
+    "experimental.legacy_audio_compatible": false
   },
   "git_panel": {
-    "sort_by_path": true,
+    "sort_by_path": true
   },
   "icon_theme": "Catppuccin Macchiato",
   "theme": "Catppuccin Macchiato",
   "autosave": "on_focus_change",
   "restore_on_startup": null,
   "base_keymap": "VSCode",
-
   "buffer_font_family": "Google Sans Code",
-  "buffer_font_fallbacks": ["ZedMono Nerd Font"],
+  "buffer_font_fallbacks": [
+    "ZedMono Nerd Font"
+  ],
   "buffer_font_size": 12,
-
   "tabs": {
     "file_icons": true,
-    "git_status": true,
+    "git_status": true
   },
-
-  "wrap_guides": [88, 120],
+  "wrap_guides": [
+    88,
+    120
+  ],
   "show_wrap_guides": true,
   "soft_wrap": "editor_width",
-
   "ensure_final_newline_on_save": true,
   "format_on_save": "on",
   "use_autoclose": true,
-
-  "file_scan_exclusions": ["**/.git", "**/.DS_Store", "**/Thumbs.db"],
-
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.DS_Store",
+    "**/Thumbs.db"
+  ],
   "git": {
     "blame": {
-      "show_avatar": false,
+      "show_avatar": false
     },
     "git_gutter": "tracked_files",
     "inline_blame": {
       "enabled": true,
-      "show_commit_summary": true,
-    },
+      "show_commit_summary": true
+    }
   },
-
   "indent_guides": {
     "enabled": true,
     "coloring": "indent_aware",
-    "background_coloring": "indent_aware",
+    "background_coloring": "indent_aware"
   },
-
   "preferred_line_length": 88,
   "remove_trailing_whitespace_on_save": true,
   "use_smartcase_search": true,
   "show_whitespaces": "all",
-
   "terminal": {
     "alternate_scroll": "on",
     "copy_on_select": true,
     "font_family": "D2CodingLigature Nerd Font Mono",
     "font_size": 12,
     "toolbar": {
-      "breadcrumbs": false,
-    },
+      "breadcrumbs": false
+    }
   },
-
   "project_panel": {
     "scrollbar": {
-      "show": "auto",
-    },
+      "show": "auto"
+    }
   },
-
   "agent": {
     "always_allow_tool_actions": true,
     "play_sound_when_agent_done": true,
@@ -87,16 +85,14 @@
     "use_modifier_to_send": true,
     "default_model": {
       "provider": "anthropic",
-      "model": "claude-opus-4-6-thinking-latest",
+      "model": "claude-opus-4-6-thinking-latest"
     },
     "inline_assistant_model": {
       "provider": "anthropic",
-      "model": "claude-haiku-4-5",
-    },
+      "model": "claude-haiku-4-5"
+    }
   },
-
-  // editor 시스템 설정
   "cursor_shape": "bar",
   "confirm_quit": false,
-  "auto_update": true,
+  "auto_update": true
 }
