@@ -1,0 +1,174 @@
+Implement the following plan:
+
+# `/commit` Skill Implementation Plan
+
+## Context
+
+Currently there is no active commit skill. The goal is to create a new `/commit` skill modeled after mitsuhiko's concise commit skill (~30 lines), adapted for this project's Korean Conventional Commits rules (`-하다` endings). Both `/commit` manual invocation and natural language triggers (커밋해줘, 변경사항 커밋, etc.) should activate this skill.
+
+## Files to Create (4)
+
+### 1. `agents/claude/skills/commit/SKILL.md`
+
+Core skill file. Korean, ~42 lines, mitsuhiko-style concise.
+
+```markdown
+---
+name: commit
+description: "한국어 Conventional Commits 규칙에 따라 git 커밋을 생성한다. /commit, 커밋해줘, commit, 변경사항 커밋 요청 시 사용한다."
+model: sonnet
+allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*)
+---
+
+# Git Commit
+
+프로젝트의 한국어 Conventional Commits 규칙에 따라 커밋을 생성한다.
+
+## 형식
+
+`<type>(<scope>): <한국어 제목 -하다>`
+
+- **type** (필수): feat, fix, docs, style, refactor, test, chore
+- **scope** (선택): 프로젝트 CLAUDE.md에 정의된 scope를 따른다
+- **제목** (필수): 한국어, `-하다` 종결 어미, 50자 이내, 마침표 없음
+- **본문** (선택): 변경 의도가 불명확할 때만 포함한다. why > what > how 우선순위, 72자 줄바꿈
+
+## 절차
+
+1. 사용자 인자에서 파일 경로나 지시사항을 확인한다
+2. `git status`와 `git diff`로 변경사항을 파악한다
+3. `git log --oneline -20`으로 최근 커밋 스타일과 scope를 확인한다
+4. 스테이징할 파일이 불명확하면 사용자에게 확인한다
+5. 해당 파일만 `git add`로 스테이징한다
+6. heredoc으로 커밋한다:
+
+```bash
+git commit -m "$(cat <<'EOF'
+<type>(<scope>): <한국어 제목>
+
+<본문 — 필요한 경우만>
+EOF
+)"
+```
+
+## 금지 사항
+
+- Co-Authored-By를 추가하지 않는다 (시스템이 자동 처리)
+- `git push`를 실행하지 않는다
+- 사용자 확인 없이 파일을 스테이징하지 않는다
+
+## 참고
+
+커밋 메시지 상세 규칙은 references/gitmessage.md를 따른다.
+```
+
+**Design decisions:**
+- `model: sonnet` — diff analysis + Korean writing quality balance
+- No `Co-Authored-By` — Claude Code system prompt handles this automatically
+- Body optional — follows mitsuhiko pattern, only when intent unclear
+- Local copy of `gitmessage.md` in `references/` — self-contained, no submodule boundary dependency
+- Both manual (`/commit`) and natural language triggers (커밋해줘, 변경사항 커밋, etc.)
+
+### 2. `agents/claude/skills/commit/references/mitsuhiko-commit.md`
+
+Preserve mitsuhiko/agent-stuff commit SKILL.md original with source attribution.
+
+- Source: `https://github.com/mitsuhiko/agent-stuff/blob/main/skills/commit/SKILL.md`
+- Content: fetched via WebFetch (AI-summarized — note this in header)
+
+### 3. `agents/claude/skills/commit/references/antigravity-commit.md`
+
+Preserve sickn33/antigravity-awesome-skills commit SKILL.md original with source attribution.
+
+- Source: `https://github.com/sickn33/antigravity-awesome-skills/blob/main/skills/commit/SKILL.md`
+- Content: fetched via WebFetch (AI-summarized — note this in header)
+
+### 4. `agents/claude/skills/commit/references/gitmessage.md`
+
+Copy of `docs/ai/gitmessage.md` from the dotrc parent repo. The commit skill must be self-contained and not depend on files outside the `agents/` submodule tree. SKILL.md will reference this local copy instead of the parent repo path.
+
+- Source: `/Users/ujuc/.config/dotrc/docs/ai/gitmessage.md`
+- Copy verbatim, add source attribution header
+
+## Files to Modify (2)
+
+### 5. `agents/claude/CLAUDE.md` — Skills table (line 53-56)
+
+Add `commit` row at the top (alphabetical order: c before g):
+
+```markdown
+| Skill                | Triggers                             | Model  |
+| -------------------- | ------------------------------------ | ------ |
+| `commit`             | /commit, 커밋해줘, 변경사항 커밋      | sonnet |
+| `generate-claude-md` | `/generate-claude-md` (manual)       | opus   |
+| `generate-skills`    | 스킬 만들어줘, 새 스킬 추가, generate-skills | opus   |
+```
+
+## Sandbox Considerations
+
+Claude Code sandbox의 `denyWithinAllow`에 dotrc 내 git 내부 경로(`HEAD`, `objects`, `refs`, `hooks`, `config`)가 포함되어 있어 git 쓰기 작업이 차단될 수 있다.
+
+**Strategy:**
+- **File creation** (steps 2-5): Use Write tool — works within sandbox `.` allowlist
+- **File editing** (steps 6-7): Use Edit tool — works within sandbox `.` allowlist
+- **Directory creation** (step 1): Use `mkdir -p` via Bash — works within sandbox
+- **Git read operations** (`git status`, `git diff`, `git log`): Use Bash in sandbox mode — read-only, no issue
+- **Git write operations** (`git add`, `git commit`) (steps 8-9): Use Bash with `dangerouslyDisableSandbox: true` — required because git writes to `.git/objects`, `.git/refs`, `.git/HEAD`
+
+### 6. `agents/claude/skills/generate-skills/references/skill-structure.md` — Add self-containment rule
+
+The `references/` section (line 44-50) currently describes placing reference docs but does NOT mention that skills must be self-contained. Add a rule about copying external dependencies into `references/` so the skill works independently.
+
+Add after line 50 (`- SKILL.md에서 상대 경로로 참조: references/api-guide.md`):
+
+```markdown
+- 스킬 트리 외부의 파일(프로젝트 루트 문서, 다른 서브모듈 등)에 의존하는 경우, 해당 파일을 `references/`에 복사하여 스킬이 단독으로 동작하도록 한다
+```
+
+## Implementation Order
+
+1. Create `agents/claude/skills/commit/references/` directory — `mkdir -p` via Bash
+2. Write `references/mitsuhiko-commit.md` — Write tool
+3. Write `references/antigravity-commit.md` — Write tool
+4. Write `references/gitmessage.md` — Write tool (copy from `docs/ai/gitmessage.md` with source header)
+5. Write `SKILL.md` (Korean, ~42 lines) — Write tool (reference local `references/gitmessage.md`)
+6. Edit `agents/claude/CLAUDE.md` Skills table — Edit tool
+7. Edit `agents/claude/skills/generate-skills/references/skill-structure.md` — Edit tool (add self-containment rule)
+8. Submodule commit: `git -C agents` → `feat(skills): commit 스킬을 추가하다` — Bash (sandbox disabled)
+9. Parent repo commit: `git -C .` → `chore(agents): 서브모듈을 업데이트하다` — Bash (sandbox disabled)
+
+## Critical Files
+
+| File | Action | Repository |
+|------|--------|-----------|
+| `agents/claude/skills/commit/SKILL.md` | Create | agents (submodule) |
+| `agents/claude/skills/commit/references/mitsuhiko-commit.md` | Create | agents (submodule) |
+| `agents/claude/skills/commit/references/antigravity-commit.md` | Create | agents (submodule) |
+| `agents/claude/skills/commit/references/gitmessage.md` | Create (copy) | agents (submodule) |
+| `agents/claude/CLAUDE.md` (line 53-56) | Modify | agents (submodule) |
+| `agents/claude/skills/generate-skills/references/skill-structure.md` (line 50) | Modify | agents (submodule) |
+
+## Gotchas
+
+1. **Sandbox git write restriction**: `git add`/`git commit` must use `dangerouslyDisableSandbox: true` due to denyWithinAllow paths blocking git internals
+2. **Submodule commit order**: Must commit inside `agents/` first, then update parent repo
+3. **No `cd`**: Use `git -C /path` for all git operations (per memory rules)
+4. **Submodule already 3 commits ahead of origin**: Do not push — user will push separately
+5. **Self-containment**: Copy external dependencies into `references/` — skill must work independently of parent repo
+
+## Verification
+
+1. Run `bash agents/claude/skills/generate-skills/scripts/validate-skill.sh agents/claude/skills/commit` (if available)
+2. Check SKILL.md frontmatter: name matches folder, description has WHAT+WHEN, ≤1024 chars
+3. Check `agents/claude/CLAUDE.md` Skills table has commit row
+4. Verify no relative paths to files outside `agents/` tree in SKILL.md
+5. Test `/commit` invocation loads the skill correctly
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/ujuc/.REDACTED.jsonl
+
+If this plan can be broken down into multiple independent tasks, consider using the TeamCreate tool to create a team and parallelize the work.
+
+---
+
+@agents/claude/skills/commit/SKILL.md 에서 references/gitmessage.md 파일을 참고한다고 하였는데. gitmessage.md 파일은 @agents/claude/skills/commit/references/mitsuhiko-commit.md 와 @agents/claude/skills/commit/references/antigravity-commit.md 을 참고해서 새롭게 생성해줘.

@@ -1,0 +1,34 @@
+{
+  "cli_version": "0.4.2",
+  "checkpoint_id": "afbdb52467c6",
+  "session_id": "524c8035-6583-4e25-a007-4b0a972ea26a",
+  "strategy": "manual-commit",
+  "created_at": "2026-02-18T08:33:46.155212Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "agents/claude/CLAUDE.md",
+    "agents/claude/skills/commit/SKILL.md",
+    "agents/claude/skills/commit/references/antigravity-commit.md",
+    "agents/claude/skills/commit/references/gitmessage.md",
+    "agents/claude/skills/commit/references/mitsuhiko-commit.md",
+    "agents/claude/skills/generate-skills/references/skill-structure.md"
+  ],
+  "agent": "Claude Code",
+  "token_usage": {
+    "input_tokens": 22,
+    "cache_creation_tokens": 33974,
+    "cache_read_tokens": 822693,
+    "output_tokens": 4273,
+    "api_call_count": 18
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-02-18T08:33:46.143366Z",
+    "agent_lines": 0,
+    "human_added": 0,
+    "human_modified": 37,
+    "human_removed": 200,
+    "total_committed": 153,
+    "agent_percentage": 0
+  }
+}

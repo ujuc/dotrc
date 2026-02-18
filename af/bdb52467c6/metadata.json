@@ -1,0 +1,31 @@
+{
+  "cli_version": "0.4.2",
+  "checkpoint_id": "afbdb52467c6",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "agents/claude/CLAUDE.md",
+    "agents/claude/skills/commit/SKILL.md",
+    "agents/claude/skills/commit/references/antigravity-commit.md",
+    "agents/claude/skills/commit/references/gitmessage.md",
+    "agents/claude/skills/commit/references/mitsuhiko-commit.md",
+    "agents/claude/skills/generate-skills/references/skill-structure.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/af/bdb52467c6/0/metadata.json",
+      "transcript": "/af/bdb52467c6/0/full.jsonl",
+      "context": "/af/bdb52467c6/0/context.md",
+      "content_hash": "/af/bdb52467c6/0/content_hash.txt",
+      "prompt": "/af/bdb52467c6/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 22,
+    "cache_creation_tokens": 33974,
+    "cache_read_tokens": 822693,
+    "output_tokens": 4273,
+    "api_call_count": 18
+  }
+}
