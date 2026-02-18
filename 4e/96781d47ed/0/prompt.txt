@@ -1,0 +1,64 @@
+Implement the following plan:
+
+# Plan: agents/claude/scripts/ 디렉토리 제거
+
+## Context
+
+`agents/claude/scripts/` 디렉토리에는 markdown 문서 포맷을 검증하는 린터(`lint-docs.sh`)와 이를 git pre-commit hook으로 연결하는 스크립트(`pre-commit-lint`)가 있다. 사용자가 이 스크립트들을 제거하려 하므로, 스크립트 파일뿐 아니라 이를 참조하는 모든 곳을 함께 정리해야 한다.
+
+## 삭제 대상 파일
+
+| 파일 | 설명 |
+| ---- | ---- |
+| `agents/claude/scripts/lint-docs.sh` | Markdown 포맷 린터 |
+| `agents/claude/scripts/pre-commit-lint` | Pre-commit hook 스크립트 |
+| `agents/claude/scripts/` (디렉토리) | 빈 디렉토리 제거 |
+
+## 연관 참조 — 수정 필요
+
+### 1. Git hook symlink (부모 저장소)
+
+- **경로**: `dotrc/.git/hooks/pre-commit` → `claude/scripts/pre-commit-lint` symlink
+- **조치**: symlink 제거
+
+### 2. `agents/CLAUDE.md` (서브모듈 루트)
+
+- **lines 6-7**: Technical Stack에서 `Shell (Bash/Zsh)` — scripts 제거 후 Shell 스택 참조 삭제
+- **lines 22-27**: "Development Commands" 섹션 전체 — lint 명령어 문서 삭제
+- **조치**: Development Commands 섹션을 제거하거나 "No validation scripts" 등으로 변경
+
+### 3. `agents/AGENTS.md` (서브모듈 에이전트 가이드)
+
+- **lines 15-16**: Technical Stack — `Scripts: Bash/Zsh (validation, automation)` 행 삭제
+- **lines 37-39**: Repository Structure 트리 — `scripts/` 디렉토리 항목 삭제
+- **lines 64-70**: "Validation" 하위 섹션 전체 — lint 명령어 문서 삭제
+- **조치**: 해당 항목들 제거
+
+### 4. 연관 없음 확인 완료
+
+- `dotrc/CLAUDE.md` — lint 참조 없음
+- `dotrc/AGENTS.md` — lint 참조 없음 (agents/를 서브모듈로만 언급)
+- `agents/.claude/settings.json` — lint hook 없음 (entire integration만 있음)
+- `agents/.git/modules/hooks/` — pre-commit hook 없음
+
+## 작업 순서
+
+1. **서브모듈 내 파일 삭제**: `agents/claude/scripts/` 디렉토리와 내부 파일 삭제
+2. **서브모듈 문서 수정**:
+   - `agents/CLAUDE.md` — Development Commands 섹션 정리
+   - `agents/AGENTS.md` — Technical Stack, Repository Structure, Validation 섹션 정리
+3. **부모 저장소 git hook 제거**: `.git/hooks/pre-commit` symlink 삭제
+4. **커밋** (서브모듈 먼저, 부모 저장소 다음):
+   - 서브모듈: `chore(claude): scripts 디렉토리를 제거하다`
+   - 부모 저장소: `chore(agents): 서브모듈을 업데이트하다`
+
+## 검증
+
+- `ls agents/claude/scripts/` → 디렉토리 없음 확인
+- `ls -la .git/hooks/pre-commit` → symlink 없음 확인
+- `agents/CLAUDE.md`, `agents/AGENTS.md`에서 `lint-docs`, `pre-commit-lint`, `scripts/` 참조 없음 확인
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/ujuc/.claude/projects/-Users-ujuc--config-dotrc/4dc1e741-f335-4e2d-a933-77c2ee4f023b.jsonl
+
+If this plan can be broken down into multiple independent tasks, consider using the TeamCreate tool to create a team and parallelize the work.
