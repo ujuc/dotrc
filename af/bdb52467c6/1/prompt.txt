@@ -1,0 +1,210 @@
+[@zshrc](file:///Users/ujuc/.config/dotrc/zshrc)
+
+ 에 대한 내용을 수정하려고해.
+1. evalcache를 사용하는 부분들을 전부 제거해줘.
+2. commands를 이용해서 동작하는 부분들을 mise와 같이 동작하도록 수정해줘.
+
+
+<context ref="file:///Users/ujuc/.config/dotrc/zshrc">
+# Zsh configuration
+# All settings in a single file with section separators
+
+# ── Environment ────────────────────────────────────────────
+
+# Global environment (moved from zshenv)
+export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
+export DOTRCDIR=${DOTRCDIR:-$XDG_CONFIG_HOME/dotrc}
+export HOMEBREW_PREFIX=${HOMEBREW_PREFIX:-$(brew --prefix)}
+
+# Ensure path arrays do not contain duplicates.
+typeset -gU path fpath
+
+# Set the list of directories that zsh searches for commands.
+path=(
+    ${HOME}/{,s}bin(N)
+    ${HOME}/.local/{,s}bin(N)
+    /opt/{homebrew,local}/{,s}bin(N)
+    /usr/local/{,s}bin(N)
+    $path
+)
+
+## ENV
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+# amp
+if [[ -d "${HOME}/.amp/bin" ]]; then
+    export PATH="${HOME}/.amp/bin:${PATH}"
+fi
+
+# JetBrains Toolbox CLI scripts
+if [[ -d "${HOME}/Library/Application Support/JetBrains/Toolbox/scripts" ]]; then
+    export PATH="${PATH}:${HOME}/Library/Application Support/JetBrains/Toolbox/scripts"
+fi
+
+# Obsidian CLI
+if [[ -d "/Applications/Obsidian.app" ]]; then
+    export PATH="${PATH}:/Applications/Obsidian.app/Contents/MacOS"
+fi
+
+# ── History ────────────────────────────────────────────────
+
+setopt HIST_IGNORE_ALL_DUPS
+
+# ── Plugins ────────────────────────────────────────────────
+
+# zimfw
+ZIM_HOME=${XDG_CONFIG_HOME}/zim
+ZIM_CONFIG_FILE=${DOTRCDIR}/zimrc
+
+## Initialize zimfw (installed via Homebrew)
+if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE} ]]; then
+    source ${HOMEBREW_PREFIX}/opt/zimfw/share/zimfw.zsh init
+fi
+source ${ZIM_HOME}/init.zsh
+
+zstyle ':zim:zim:zim' use 'degit'
+
+## zsh-autosuggestions
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+
+## zsh-syntax-highlighting
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+## zsh-history-substring-search
+zmodload -F zsh/terminfo +p:terminfo
+# Bind ^[[A/^[[B manually so up/down works both before and after zle-line-init
+for key ('^[[A' '^P' ${terminfo[kcuu1]}) bindkey ${key} history-substring-search-up
+for key ('^[[B' '^N' ${terminfo[kcud1]}) bindkey ${key} history-substring-search-down
+for key ('k') bindkey -M vicmd ${key} history-substring-search-up
+for key ('j') bindkey -M vicmd ${key} history-substring-search-down
+unset key
+
+# ── Tools ──────────────────────────────────────────────────
+
+# starship (always load - needed for prompt)
+if (( $+commands[starship] )); then
+    _evalcache starship init zsh
+fi
+
+# fzf
+# Note: fzf init is fast (~10ms), so eager loading is fine
+if (( $+commands[fzf] )) && [[ -f ${HOME}/.fzf.zsh ]]; then
+    source ${HOME}/.fzf.zsh
+elif (( $+commands[fzf] )); then
+    source <(fzf --zsh)
+fi
+
+# zoxide (lazy loading)
+if (( $+commands[zoxide] )); then
+    # Create wrapper functions that initialize on first use
+    function z zi() {
+        unfunction z zi
+        _evalcache zoxide init zsh
+        $0 "$@"
+    }
+fi
+
+# mise
+if [[ -x "${HOME}/.local/bin/mise" ]]; then
+    eval "$("${HOME}/.local/bin/mise" activate zsh)"
+fi
+
+# ── Aliases ────────────────────────────────────────────────
+
+# System update function
+function update_system() {
+    brew update
+    brew upgrade
+    zimfw update && zimfw upgrade
+    brew cleanup
+    mise self-update && mise up
+    # gh ext upgrade --all
+}
+
+# Benchmark Zsh startup time
+function benchmark_zsh() {
+    ${DOTRCDIR}/scripts/benchmark.sh "$@"
+}
+
+# Profile Zsh startup (show timing per module)
+function profile_zsh() {
+    ${DOTRCDIR}/scripts/profile-startup.zsh
+}
+
+# Update alias
+alias update=update_system
+
+# Zsh optimization aliases
+alias zbench=benchmark_zsh
+alias zprofile=profile_zsh
+
+# Homebrew aliases
+alias bws="brew search"
+alias bwi="brew install"
+
+# Modern CLI tool aliases
+alias ls="eza --icons=auto --group-directories-first --git"
+alias ll="eza -l --git --icons=auto"
+alias lt="eza -l --tree --icons=auto"
+alias cat="bat"
+alias vi="vim"
+
+# ── Local ──────────────────────────────────────────────────
+
+# Work-specific config (gitignored)
+if [[ -f ${HOME}/.zshrc.work ]]; then
+    source ${HOME}/.zshrc.work
+fi
+
+# 1Password CLI plugins
+if [[ -f ${XDG_CONFIG_HOME}/op/plugins.sh ]]; then
+    source ${XDG_CONFIG_HOME}/op/plugins.sh
+fi
+
+</context>
+
+---
+
+Base directory for this skill: /Users/ujuc/.claude/skills/commit
+
+# Git Commit
+
+프로젝트의 한국어 Conventional Commits 규칙에 따라 커밋을 생성한다.
+
+## 형식
+
+`<type>(<scope>): <한국어 제목 -하다>`
+
+- **type** (필수): feat, fix, docs, style, refactor, test, chore
+- **scope** (선택): 프로젝트 CLAUDE.md에 정의된 scope를 따른다
+- **제목** (필수): 한국어, `-하다` 종결 어미, 50자 이내, 마침표 없음
+- **본문** (선택): 변경 의도가 불명확할 때만 포함한다. why > what > how 우선순위, 72자 줄바꿈
+
+## 절차
+
+1. 사용자 인자에서 파일 경로나 지시사항을 확인한다
+2. `git status`와 `git diff`로 변경사항을 파악한다
+3. `git log --oneline -20`으로 최근 커밋 스타일과 scope를 확인한다
+4. 스테이징할 파일이 불명확하면 사용자에게 확인한다
+5. 해당 파일만 `git add`로 스테이징한다
+6. heredoc으로 커밋한다:
+
+```bash
+git commit -m "$(cat <<'EOF'
+<type>(<scope>): <한국어 제목>
+
+<본문 — 필요한 경우만>
+EOF
+)"
+```
+
+## 금지 사항
+
+- Co-Authored-By를 추가하지 않는다 (시스템이 자동 처리)
+- `git push`를 실행하지 않는다
+- 사용자 확인 없이 파일을 스테이징하지 않는다
+
+## 참고
+
+커밋 메시지 상세 규칙은 references/gitmessage.md를 따른다.
