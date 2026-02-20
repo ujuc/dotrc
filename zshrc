@@ -74,32 +74,24 @@ unset key
 
 # ── Tools ──────────────────────────────────────────────────
 
-# starship (always load - needed for prompt)
+# mise (activate first — sets up PATH for managed tools)
+if [[ -x "${HOME}/.local/bin/mise" ]]; then
+    eval "$("${HOME}/.local/bin/mise" activate zsh)"
+fi
+
+# starship
 if (( $+commands[starship] )); then
-    _evalcache starship init zsh
+    eval "$(starship init zsh)"
 fi
 
 # fzf
-# Note: fzf init is fast (~10ms), so eager loading is fine
-if (( $+commands[fzf] )) && [[ -f ${HOME}/.fzf.zsh ]]; then
-    source ${HOME}/.fzf.zsh
-elif (( $+commands[fzf] )); then
+if (( $+commands[fzf] )); then
     source <(fzf --zsh)
 fi
 
-# zoxide (lazy loading)
+# zoxide
 if (( $+commands[zoxide] )); then
-    # Create wrapper functions that initialize on first use
-    function z zi() {
-        unfunction z zi
-        _evalcache zoxide init zsh
-        $0 "$@"
-    }
-fi
-
-# mise
-if [[ -x "${HOME}/.local/bin/mise" ]]; then
-    eval "$("${HOME}/.local/bin/mise" activate zsh)"
+    eval "$(zoxide init zsh)"
 fi
 
 # ── Aliases ────────────────────────────────────────────────

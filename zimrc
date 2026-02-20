@@ -24,12 +24,6 @@ zmodule completion
 
 ## Modules that must be initialized last
 
-# 비동기 로딩용
-zmodule romkatv/zsh-defer
-
-# eval 결과 캐싱
-zmodule mroth/evalcache
-
 # Fish-like syntax highlighting for Zsh.
 # zsh-users/zsh-syntax-highlighting must be sourced after completion
 zmodule zsh-users/zsh-syntax-highlighting
