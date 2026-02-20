@@ -1,6 +1,10 @@
 {
   "agent_servers": {
     "claude": {
+      "default_config_options": {
+        "mode": "plan",
+        "model": "opusplan"
+      },
       "default_model": "default"
     },
     "mistral-vibe": {
@@ -79,7 +83,9 @@
     }
   },
   "agent": {
-    "always_allow_tool_actions": true,
+    "tool_permissions": {
+      "default": "allow"
+    },
     "play_sound_when_agent_done": true,
     "default_profile": "ask",
     "use_modifier_to_send": true,
