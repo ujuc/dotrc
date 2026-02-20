@@ -97,20 +97,9 @@ if (( $+commands[zoxide] )); then
     }
 fi
 
-# mise (lazy loading)
-if (( $+commands[mise] )); then
-    # Create wrapper function that activates on first use
-    function mise() {
-        unfunction mise
-        _evalcache mise activate zsh
-        mise "$@"
-    }
-
-    # But activate immediately if we're in a project directory with mise config
-    if [[ -f .mise.toml || -f .tool-versions || -f mise.toml ]]; then
-        unfunction mise
-        _evalcache mise activate zsh
-    fi
+# mise
+if [[ -x "${HOME}/.local/bin/mise" ]]; then
+    eval "$("${HOME}/.local/bin/mise" activate zsh)"
 fi
 
 # ── Aliases ────────────────────────────────────────────────
