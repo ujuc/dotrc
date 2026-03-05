@@ -12,7 +12,7 @@
     }
   },
   "disable_ai": false,
-  "ui_font_family": "NanumSquare Neo variable",
+  "ui_font_family": "NanumSquare Neo",
   "audio": {
     "experimental.auto_speaker_volume": false,
     "experimental.denoise": false,
