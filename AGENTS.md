@@ -32,6 +32,10 @@ dotrc/
 ├── batrc                  # bat theme config (→ $XDG_CONFIG_HOME/bat/config)
 ├── tigrc                  # Tig vim keybindings (→ $XDG_CONFIG_HOME/tig/config)
 ├── gitmessage             # Git commit message template
+├── docs/
+│   ├── ai/                # AI-related documentation (placeholder)
+│   └── templates/
+│       └── work-template.md  # Work document template
 ├── scripts/
 │   ├── benchmark.sh       # Zsh startup time benchmark
 │   └── profile-startup.zsh  # Per-module startup profiling
@@ -58,21 +62,6 @@ dotrc/
 
 No build or test toolchain. This is a pure configuration repository.
 
-### Validation
-
-```bash
-scripts/benchmark.sh          # Measure Zsh startup time
-scripts/profile-startup.zsh   # Profile per-module startup timing
-```
-
-## Code Style
-
-Conventions not enforceable by linters:
-
-- `zshrc` uses section separators: `# ── Section ──────────────────────────`
-- Lazy loading pattern for heavy tools: create wrapper function that unloads itself on first call
-- Conditional tool setup: `if (( $+commands[tool] ))` guard before tool initialization
-
 ## Git Workflow
 
 - **Branch strategy**: Direct commit to `main`
@@ -94,6 +83,7 @@ feat, fix, docs, style, refactor, test, chore
 | `agents` | Submodule pointer updates |
 | `zed` | Changes to zed/ directory |
 | `scripts` | Changes to scripts/ directory |
+| `docs`    | Changes to docs/ directory       |
 | _(omit)_ | Root-level or multi-file changes |
 
 ### Examples

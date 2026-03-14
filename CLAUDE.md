@@ -12,24 +12,6 @@ Personal macOS development environment configuration. CLI tools, shell settings,
 
 No build or test toolchain. This is a pure configuration repository.
 
-Symlink deployment (manual, per README.md):
-
-```bash
-ln -sf ${DOTRCDIR}/zshrc ${HOME}/.zshrc
-ln -sf ${DOTRCDIR}/starship.toml ${XDG_CONFIG_HOME}/starship.toml
-ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
-ln -sf ${DOTRCDIR}/batrc ${XDG_CONFIG_HOME}/bat/config
-ln -sf ${DOTRCDIR}/tigrc ${XDG_CONFIG_HOME}/tig/config
-ln -sf ${DOTRCDIR}/zed/settings.json ${XDG_CONFIG_HOME}/zed/settings.json
-```
-
-Zsh startup benchmarks:
-
-```bash
-scripts/benchmark.sh          # Measure startup time
-scripts/profile-startup.zsh   # Profile per-module timing
-```
-
 # Work Rules
 
 - Commit directly to `main` (no branches/PRs)
@@ -38,7 +20,7 @@ scripts/profile-startup.zsh   # Profile per-module timing
   <type>(<scope>): <Korean subject ending with -하다>
   ```
 - **Types**: feat, fix, docs, style, refactor, test, chore
-- **Scopes**: zshrc, agents, zed, scripts, or omit for root-level changes
+- **Scopes**: zshrc, agents, zed, scripts, docs, or omit for root-level changes
 
 # Behavioral Guidelines
 
