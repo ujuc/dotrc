@@ -1,11 +1,16 @@
 {
   "agent_servers": {
-    "claude": {
-      "default_config_options": {
-        "mode": "plan",
-        "model": "opusplan"
-      },
-      "default_model": "default"
+    "junie": {
+      "type": "registry"
+    },
+    "pi-acp": {
+      "type": "registry"
+    },
+    "claude-acp": {
+      "type": "registry"
+    },
+    "amp-acp": {
+      "type": "registry"
     },
     "mistral-vibe": {
       "type": "registry"
