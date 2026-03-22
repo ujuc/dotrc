@@ -1,20 +1,6 @@
 {
   "agent_servers": {
-    "junie": {
-      "type": "registry"
-    },
-    "pi-acp": {
-      "type": "registry"
-    },
-    "claude-acp": {
-      "type": "registry"
-    },
-    "amp-acp": {
-      "type": "registry"
-    },
-    "mistral-vibe": {
-      "type": "registry"
-    }
+    
   },
   "disable_ai": false,
   "ui_font_family": "NanumSquare Neo",
@@ -88,6 +74,13 @@
     }
   },
   "agent": {
+    "favorite_models": [
+      {
+        "provider": "anthropic",
+        "model": "claude-opus-4-6-1m-context-thinking-latest",
+        "enable_thinking": false
+      }
+    ],
     "tool_permissions": {
       "default": "allow"
     },
@@ -95,8 +88,9 @@
     "default_profile": "ask",
     "use_modifier_to_send": true,
     "default_model": {
+      "enable_thinking": true,
       "provider": "anthropic",
-      "model": "claude-opus-4-6-thinking-latest"
+      "model": "claude-sonnet-4-6-thinking-latest"
     },
     "inline_assistant_model": {
       "provider": "anthropic",
