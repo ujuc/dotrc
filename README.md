@@ -233,15 +233,6 @@ npm install -g @mariozechner/pi-coding-agent
 ln -sf ${DOTRCDIR}/agents/pi ${HOME}/.pi
 ```
 
-### [Gemini](https://geminicli.com/)
-
-사용할때 연결
-
-```sh
-npm install -g @google/gemini-cli
-ln -sf ${DOTRCDIR}/agents/gemini ${HOME}/.gemini
-```
-
 ## Apps
 
 ### [raycast](https://www.raycast.com/)
