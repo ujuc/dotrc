@@ -197,6 +197,33 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 brew install rtk
 ```
 
+#### Plugins
+
+```sh
+/plugin marketplace add jarrodwatts/claude-hud
+/plugin install claude-hud
+/claude-hud:setup
+
+/plugin marketplace add affaan-m/everything-claude-code
+/plugin install everything-claude-code@everything-claude-code
+
+/plugin install commit-commands
+/plugin install code-review
+/plugin install code-simplifier
+/plugin install feature-dev
+/plugin install ralph-loop
+/plugin install claude-md-management
+```
+
+- [claude-hud](https://github.com/jarrodwatts/claude-hud) - stats line
+- [everything-claude-code](https://github.com/affaan-m/everything-claude-code)
+- commit-commands — git commit
+- code-review — code review
+- code-simplifier — code simplification
+- feature-dev — feature development guide
+- ralph-loop — recurring loop
+- claude-md-management — CLAUDE.md management
+
 ### [Pi](https://github.com/badlogic/pi-mono)
 
 사용할때 연결
