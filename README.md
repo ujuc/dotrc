@@ -130,6 +130,12 @@ git config --global core.whitespace cr-at-eol,fix,trailing-space,-indent-with-no
 git config --global merge.conflictstyle zdiff3
 ```
 
+- Init
+
+```sh
+git config --global init.defaultBranch main
+```
+
 - Commit
 
 ```sh
