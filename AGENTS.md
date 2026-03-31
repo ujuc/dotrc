@@ -44,9 +44,9 @@ dotrc/
 └── agents/                # Git submodule (ujuc/agent-stuff)
     ├── CLAUDE.md          # Submodule-level instructions
     ├── AGENTS.md          # Submodule-level agent guide
+    ├── .claude/           # Project-specific harness (agents, skills)
     ├── claude/            # Claude Code global config (→ ~/.claude)
-    ├── gemini/            # Gemini CLI config (→ ~/.gemini) — placeholder
-    └── pi/                # Pi agent config (→ ~/.pi) — placeholder
+    └── rules/             # Shared agent rules (SOUL.md)
 ```
 
 ### Key Files
