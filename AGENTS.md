@@ -32,10 +32,6 @@ dotrc/
 ├── batrc                  # bat theme config (→ $XDG_CONFIG_HOME/bat/config)
 ├── tigrc                  # Tig vim keybindings (→ $XDG_CONFIG_HOME/tig/config)
 ├── gitmessage             # Git commit message template
-├── docs/
-│   ├── ai/                # AI-related documentation (placeholder)
-│   └── templates/
-│       └── work-template.md  # Work document template
 ├── scripts/
 │   ├── benchmark.sh       # Zsh startup time benchmark
 │   └── profile-startup.zsh  # Per-module startup profiling
