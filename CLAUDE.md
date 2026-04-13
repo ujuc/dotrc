@@ -17,7 +17,7 @@ No build or test toolchain. This is a pure configuration repository.
 - Commit directly to `main` (no branches/PRs)
 - Korean Conventional Commits ending with `-하다`, e.g. `feat(zshrc): starship 프롬프트 설정을 추가하다`
 - **Types**: feat, fix, docs, style, refactor, test, chore
-- **Scopes**: zshrc, agents, zed, scripts, docs, or omit for root-level changes
+- **Scopes**: zshrc, agents, scripts, docs, or omit for root-level changes
 
 # Behavioral Guidelines
 

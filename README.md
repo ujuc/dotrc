@@ -247,17 +247,6 @@ ln -sf ${DOTRCDIR}/agents/pi ${HOME}/.pi
 brew install --cask raycast
 ```
 
-### [Zed](https://zed.dev/)
-
-- [Zed config](https://zed.dev/docs/configuring-zed)
-- [Zed themes](https://zed-themes.com/)
-
-```sh
-brew install --cask zed
-
-ln -sf ${DOTRCDIR}/zed/settings.json ${XDG_CONFIG_HOME}/zed/settings.json
-```
-
 ### [Visual Studio Code](https://code.visualstudio.com/)
 
 ```sh
