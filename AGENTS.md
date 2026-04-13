@@ -23,6 +23,7 @@ Personal macOS development environment configuration repository. Deployed via sy
 | -------- | -------------------------------- |
 | `zshrc` | Changes to zshrc or zimrc |
 | `agents` | Submodule pointer updates |
+| `zed` | Changes to zed/ directory |
 | `scripts` | Changes to scripts/ directory |
 | _(omit)_ | Root-level or multi-file changes |
 
