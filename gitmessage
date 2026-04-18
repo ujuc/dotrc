@@ -1,12 +1,18 @@
-# <type>: <subject>
+# <type>(<scope>): <한국어 제목 -하다>
 ##### Subject 50 characters ################# -> |
 
 
 # Body Message
+# 비어 있지 않다면 아래 두 질문에 답하는 형태로 작성한다:
+#   Why:  왜 이 변경이 필요한가?
+#   How:  어떻게 해결했는가? (핵심만, 구현 디테일은 코드에 맡긴다)
 ######## Body 72 characters ####################################### -> |
 
 
 # Issue Tracker Number or URL
+# 형식: Closes #42  /  Refs #13  /  Acked-by: <이름>
+#   - 토큰은 공백 대신 하이픈을 사용한다 (Acked-by, Reviewed-by)
+#   - 본문과 빈 줄 하나로 구분한다
 
 
 # --- COMMIT END ---
@@ -14,14 +20,36 @@
 # [작성 원칙]  why > what > how | 의도·맥락·협업 중심
 #
 # [형식]
-#   <type>: <한국어 동사형으로 끝내다>  ← 50자 이내, 마침표 없음
+#   <type>(<scope>): <한국어 동사형으로 끝내다>  ← 50자 이내, 마침표 없음
 #   빈 줄
-#   본문: why/what 중심, 72자 이내, "-" 목록 가능
+#   본문: Why / How, 72자 줄바꿈, "-" 목록
 #   빈 줄
-#   이슈 번호 또는 URL
+#   이슈·Footer (Closes #, Refs #, Acked-by:)
 #
 # [타입]
-#   feat · fix · refactor · style · docs · test · chore
+#   feat · fix · refactor · perf · style · docs · test · build · ci · chore
 #
-# [예시]  docs: README.md 파일을 수정하다
+# [Breaking change]
+#   <type>!: 접미사   또는   footer "BREAKING CHANGE: <설명>"
 #
+# [7규칙]
+#   1) 50자 이하              2) -하다 명령형 어미
+#   3) 마침표 없음            4) 제목/본문 사이 공백 줄
+#   5) why > what, how 제외   6) 본문 72자 줄바꿈, "-" 불릿
+#   7) "이 커밋이 적용되면 [제목]" 을 읽어 자연스러운지 확인
+#
+# [예시 — 단일 제목]
+#   chore(agents): 서브모듈 포인터를 업데이트하다
+#
+# [예시 — 본문 포함]
+#   feat(skills): commit 스킬에 제목 50자 자체검증을 추가하다
+#
+#   Why:
+#   - 최근 제목이 70자 이상으로 이탈하여 원칙 회복이 필요하다
+#   - 서브모듈 커밋이 이유 없는 관용어로 반복되고 있다
+#
+#   How:
+#   - Procedure에 제목 길이·body 유무·명령형 테스트 3단 검증을 삽입
+#   - Anti-patterns 섹션으로 실패 사례를 명시화
+#
+#   Refs #12
