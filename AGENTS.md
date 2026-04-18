@@ -20,12 +20,13 @@ Personal macOS development environment configuration repository. Deployed via sy
 - Commit scope maps to directories:
 
 | Scope | When to use |
-| -------- | -------------------------------- |
+| -------- | --------------------------------------------------- |
 | `zshrc` | Changes to zshrc or zimrc |
 | `agents` | Submodule pointer updates |
 | `zed` | Changes to zed/ directory |
 | `scripts` | Changes to scripts/ directory |
-| _(omit)_ | Root-level or multi-file changes |
+| `docs` | Documentation files (CLAUDE.md, AGENTS.md, README.md) |
+| _(omit)_ | Root-level dotfiles or multi-file changes |
 
 ## Boundaries
 
