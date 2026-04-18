@@ -145,3 +145,8 @@ fi
 if [[ -f ${XDG_CONFIG_HOME}/op/plugins.sh ]]; then
     source ${XDG_CONFIG_HOME}/op/plugins.sh
 fi
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/ujuc/.lmstudio/bin"
+# End of LM Studio CLI section
+
