@@ -206,29 +206,47 @@ brew install rtk
 #### Plugins
 
 ```sh
-/plugin marketplace add jarrodwatts/claude-hud
-/plugin install claude-hud
-/claude-hud:setup
-
+# Marketplaces
+/plugin marketplace add anthropics/claude-plugins-official
 /plugin marketplace add affaan-m/everything-claude-code
-/plugin install everything-claude-code@everything-claude-code
+/plugin marketplace add jarrodwatts/claude-hud
+/plugin marketplace add revfactory/harness
+/plugin marketplace add ujuc/amp-plugin-cc
+/plugin marketplace add openai/codex-plugin-cc
+/plugin marketplace add warpdotdev/claude-code-warp
 
-/plugin install commit-commands
-/plugin install code-review
-/plugin install code-simplifier
-/plugin install feature-dev
-/plugin install ralph-loop
-/plugin install claude-md-management
+# Plugins
+/plugin install superpowers@claude-plugins-official
+/plugin install everything-claude-code@everything-claude-code
+/plugin install claude-hud@claude-hud
+/plugin install code-review@claude-plugins-official
+/plugin install code-simplifier@claude-plugins-official
+/plugin install feature-dev@claude-plugins-official
+/plugin install claude-md-management@claude-plugins-official
+/plugin install security-guidance@claude-plugins-official
+/plugin install rust-analyzer-lsp@claude-plugins-official
+/plugin install harness@harness-marketplace
+/plugin install amp-plugin-cc@amp-plugin-cc
+/plugin install codex@openai-codex
+/plugin install warp@claude-code-warp
+
+# claude-hud statusline 설정
+/claude-hud:setup
 ```
 
-- [claude-hud](https://github.com/jarrodwatts/claude-hud) - stats line
-- [everything-claude-code](https://github.com/affaan-m/everything-claude-code)
-- commit-commands — git commit
-- code-review — code review
-- code-simplifier — code simplification
-- feature-dev — feature development guide
-- ralph-loop — recurring loop
-- claude-md-management — CLAUDE.md management
+- [superpowers](https://github.com/anthropics/claude-plugins-official) — workflow skills 및 superpowers framework
+- [everything-claude-code](https://github.com/affaan-m/everything-claude-code) — 다수 스킬·커맨드 모음
+- [claude-hud](https://github.com/jarrodwatts/claude-hud) — statusline
+- code-review — 코드 리뷰 명령
+- code-simplifier — 코드 단순화
+- feature-dev — 기능 개발 가이드
+- claude-md-management — CLAUDE.md 관리
+- security-guidance — 보안 리뷰
+- rust-analyzer-lsp — Rust LSP 통합
+- [harness](https://github.com/revfactory/harness) — 에이전트 하네스 오케스트레이션
+- [amp-plugin-cc](https://github.com/ujuc/amp-plugin-cc) — Amp Code 통합
+- [codex](https://github.com/openai/codex-plugin-cc) — OpenAI Codex 통합 (Stop hook Review Gate)
+- [warp](https://github.com/warpdotdev/claude-code-warp) — Warp terminal 통합
 
 ### [Pi](https://github.com/badlogic/pi-mono)
 
