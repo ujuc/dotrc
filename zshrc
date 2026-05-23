@@ -102,7 +102,7 @@ function update_system() {
     brew upgrade
     zimfw update && zimfw upgrade
     brew cleanup
-    mise self-update && mise up
+    mise self-update -y && mise up
     # gh ext upgrade --all
 }
 
