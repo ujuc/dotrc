@@ -199,8 +199,6 @@ brew install yq
 ```sh
 curl -fsSL https://claude.ai/install.sh | bash
 ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
-
-brew install rtk
 ```
 
 #### Plugins
