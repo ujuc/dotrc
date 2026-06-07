@@ -6,7 +6,10 @@
 # Global environment (moved from zshenv)
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
 export DOTRCDIR=${DOTRCDIR:-$XDG_CONFIG_HOME/dotrc}
-export HOMEBREW_PREFIX=${HOMEBREW_PREFIX:-$(brew --prefix)}
+# Hardcode to avoid forking `brew` on every startup (Apple Silicon default, Intel fallback)
+if [[ -z ${HOMEBREW_PREFIX} ]]; then
+    [[ -d /opt/homebrew ]] && export HOMEBREW_PREFIX=/opt/homebrew || export HOMEBREW_PREFIX=/usr/local
+fi
 
 # Ensure path arrays do not contain duplicates.
 typeset -gU path fpath
@@ -74,9 +77,10 @@ unset key
 
 # ── Tools ──────────────────────────────────────────────────
 
-# mise (activate first — sets up PATH for managed tools)
+# mise — shims mode: skips the per-prompt hook; version auto-switch is resolved by
+# the shims at call time. No [env]/[hooks] in config, so nothing is lost here.
 if [[ -x "${HOME}/.local/bin/mise" ]]; then
-    eval "$("${HOME}/.local/bin/mise" activate zsh)"
+    eval "$("${HOME}/.local/bin/mise" activate --shims zsh)"
 fi
 
 # starship
