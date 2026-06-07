@@ -1,12 +1,14 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-command_timeout = 10000
+# Give up on a slow command (e.g. git status in a huge repo) after 1s instead of stalling the prompt
+command_timeout = 1000
 
 [status]
 disabled = false
 
+# Disabled: cost ~8-14ms per prompt render while rendering nothing most of the time
 [sudo]
-disabled = false
+disabled = true
 
 [time]
 disabled = false
