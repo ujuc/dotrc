@@ -1,13 +1,27 @@
 #!/usr/bin/env bash
-# Benchmark Zsh startup time
-# Measures average startup time over multiple runs
+# Benchmark Zsh startup time.
+# Prefers hyperfine for accurate statistics; falls back to a date-based loop.
 
 set -e
 
 RUNS=${1:-10}
 DOTRCDIR="${DOTRCDIR:-${HOME}/.config/dotrc}"
 
+# ── Preferred path: hyperfine (accurate, warmup-aware) ──────────
+if command -v hyperfine >/dev/null 2>&1; then
+    echo "🏃 Benchmarking Zsh startup with hyperfine (${RUNS} runs)..."
+    echo ""
+    # -N runs the command directly (no intermediate shell), so we time only zsh.
+    hyperfine --warmup 5 --runs "${RUNS}" -N 'zsh -i -c exit'
+    echo ""
+    echo "💡 To profile which modules are slow:"
+    echo "   ${DOTRCDIR}/scripts/profile-startup.zsh"
+    exit 0
+fi
+
+# ── Fallback: date-based loop (coarser; includes date(1) overhead) ──
 echo "🏃 Benchmarking Zsh startup time (${RUNS} runs)..."
+echo "   (tip: 'brew install hyperfine' for more accurate stats)"
 echo ""
 
 # Array to store times
@@ -20,11 +34,11 @@ for i in $(seq 1 ${RUNS}); do
     start=$(gdate +%s%3N 2>/dev/null || date +%s%3N)
     zsh -i -c exit > /dev/null 2>&1
     end=$(gdate +%s%3N 2>/dev/null || date +%s%3N)
-    
+
     elapsed=$((end - start))
     times+=($elapsed)
     total=$((total + elapsed))
-    
+
     printf "  Run %2d: %4d ms\n" $i $elapsed
 done
 
