@@ -102,8 +102,8 @@ fi
 
 # System update function
 function update_system() {
-    brew update
-    brew upgrade
+    brew update --auto-update
+    brew upgrade --greedy -y
     zimfw update && zimfw upgrade
     brew cleanup
     mise self-update -y && mise up
@@ -153,4 +153,3 @@ fi
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/ujuc/.lmstudio/bin"
 # End of LM Studio CLI section
-
