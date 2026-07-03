@@ -15,32 +15,22 @@ fi
 typeset -gU path fpath
 
 # Set the list of directories that zsh searches for commands.
+# (N) drops missing paths, so no existence checks are needed.
 path=(
     ${HOME}/{,s}bin(N)
     ${HOME}/.local/{,s}bin(N)
+    ${HOME}/.amp/bin(N)
     /opt/{homebrew,local}/{,s}bin(N)
     /usr/local/{,s}bin(N)
     $path
+    "${HOME}/Library/Application Support/JetBrains/Toolbox/scripts"(N)
+    /Applications/Obsidian.app/Contents/MacOS(N)
+    ${HOME}/.lmstudio/bin(N)
 )
 
 ## ENV
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
-
-# amp
-if [[ -d "${HOME}/.amp/bin" ]]; then
-    export PATH="${HOME}/.amp/bin:${PATH}"
-fi
-
-# JetBrains Toolbox CLI scripts
-if [[ -d "${HOME}/Library/Application Support/JetBrains/Toolbox/scripts" ]]; then
-    export PATH="${PATH}:${HOME}/Library/Application Support/JetBrains/Toolbox/scripts"
-fi
-
-# Obsidian CLI
-if [[ -d "/Applications/Obsidian.app" ]]; then
-    export PATH="${PATH}:/Applications/Obsidian.app/Contents/MacOS"
-fi
 
 # ── History ────────────────────────────────────────────────
 
@@ -52,13 +42,13 @@ setopt HIST_IGNORE_ALL_DUPS
 ZIM_HOME=${XDG_CONFIG_HOME}/zim
 ZIM_CONFIG_FILE=${DOTRCDIR}/zimrc
 
+zstyle ':zim:zim:zim' use 'degit'
+
 ## Initialize zimfw (installed via Homebrew)
 if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE} ]]; then
     source ${HOMEBREW_PREFIX}/opt/zimfw/share/zimfw.zsh init
 fi
 source ${ZIM_HOME}/init.zsh
-
-zstyle ':zim:zim:zim' use 'degit'
 
 ## zsh-autosuggestions
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
@@ -131,11 +121,15 @@ alias zprofile=profile_zsh
 alias bws="brew search"
 alias bwi="brew install"
 
-# Modern CLI tool aliases
-alias ls="eza --icons=auto --group-directories-first --git"
-alias ll="eza -l --git --icons=auto"
-alias lt="eza -l --tree --icons=auto"
-alias cat="bat"
+# Modern CLI tool aliases (guarded so a fresh machine keeps working defaults)
+if (( $+commands[eza] )); then
+    alias ls="eza --icons=auto --group-directories-first --git"
+    alias ll="eza -l --git --icons=auto"
+    alias lt="eza -l --tree --icons=auto"
+fi
+if (( $+commands[bat] )); then
+    alias cat="bat"
+fi
 alias vi="vim"
 
 # ── Local ──────────────────────────────────────────────────
@@ -149,7 +143,3 @@ fi
 if [[ -f ${XDG_CONFIG_HOME}/op/plugins.sh ]]; then
     source ${XDG_CONFIG_HOME}/op/plugins.sh
 fi
-
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/ujuc/.lmstudio/bin"
-# End of LM Studio CLI section
