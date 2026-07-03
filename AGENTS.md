@@ -10,23 +10,14 @@ Personal macOS development environment configuration repository. Deployed via sy
 
 ## Operational Gotchas
 
-- `agents/` is an independent git submodule (`ujuc/agent-stuff`) — always commit and push inside `agents/` first, then update the parent pointer
-- Each dotfile symlinks to a specific target path (e.g., `zshrc` → `~/.zshrc`, `starship.toml` → `$XDG_CONFIG_HOME/starship.toml`) — adding new files requires documenting the symlink target in README.md
-- `~/.zshrc.work` is gitignored and loaded at the end of `zshrc` — work-specific config goes here, never in tracked files
+- `agents/` is an independent git submodule (`ujuc/agent-stuff`) with its own CLAUDE.md — always commit and push inside `agents/` first, then update the parent pointer
+- Adding new dotfiles requires documenting the symlink target in README.md
+- `~/.zshrc.work` lives outside the repository (untracked) — work-specific config goes there, never in tracked files
 
 ## Non-Obvious Conventions
 
 - `zshrc` has a strict section order: Environment → History → Plugins → Tools → Aliases → Local — preserve this when editing
-- Commit scope maps to directories:
-
-| Scope | When to use |
-| -------- | --------------------------------------------------- |
-| `zshrc` | Changes to zshrc or zimrc |
-| `agents` | Submodule pointer updates |
-| `zed` | Changes to zed/ directory |
-| `scripts` | Changes to scripts/ directory |
-| `docs` | Documentation files (CLAUDE.md, AGENTS.md, README.md) |
-| _(omit)_ | Root-level dotfiles or multi-file changes |
+- Commit rules (types, scopes, `-하다` format) are defined in root `CLAUDE.md` and the `gitmessage` template — do not duplicate here
 
 ## Boundaries
 
