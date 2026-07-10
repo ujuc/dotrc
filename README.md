@@ -270,6 +270,14 @@ ln -sf ${DOTRCDIR}/agents/pi ${HOME}/.pi
 ln -sfn ${DOTRCDIR}/agents/rules/AGENTS.md ${HOME}/.codex/AGENTS.md
 ```
 
+전역 스킬은 Claude 스킬 카탈로그를 스킬별 심링크로 재사용한다 (새 스킬 추가 시 재실행).
+
+```sh
+for d in ${DOTRCDIR}/agents/claude/skills/*/; do
+  [ -f "$d/SKILL.md" ] && ln -sfn "${d%/}" ${HOME}/.codex/skills/$(basename "$d")
+done
+```
+
 ### [Amp](https://ampcode.com/)
 
 ```sh
