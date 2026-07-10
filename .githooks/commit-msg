@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# commit-msg: enforce Korean Conventional Commits — '<type>(<scope>): ...하다'.
+# Types follow dotrc/gitmessage. Bypass in emergencies: git commit --no-verify.
+set -euo pipefail
+
+first_line=$(head -n1 "$1")
+
+case "${first_line}" in
+  Merge\ *|Revert\ *|fixup!*|squash!*|amend!*) exit 0 ;;
+esac
+
+if ! printf '%s' "${first_line}" | grep -qE '^(feat|fix|refactor|perf|style|docs|test|build|ci|chore)(\([a-z0-9-]+\))?!?: .+하다$'; then
+  {
+    echo "commit-msg: first line must be '<type>(<scope>): <한국어 제목 ...하다>'"
+    echo "  types: feat fix refactor perf style docs test build ci chore"
+    echo "  got:   ${first_line}"
+  } >&2
+  exit 1
+fi
+
+if [ "$(printf '%s' "${first_line}" | wc -m)" -gt 50 ]; then
+  echo "commit-msg: warning — subject exceeds 50 chars (allowed, but shorten if possible)" >&2
+fi
+
+exit 0
