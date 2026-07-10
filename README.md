@@ -142,6 +142,13 @@ git config --global init.defaultBranch main
 git config --global commit.template ${DOTRCDIR}/gitmessage
 ```
 
+- Hooks (커밋 메시지 `-하다` 검증)
+
+```sh
+git -C ${DOTRCDIR} config core.hooksPath .githooks
+git -C ${DOTRCDIR}/agents config core.hooksPath .githooks
+```
+
 ### [git-delta](https://github.com/dandavison/delta)
 
 ```sh
@@ -253,6 +260,21 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 ```sh
 npm install -g @mariozechner/pi-coding-agent
 ln -sf ${DOTRCDIR}/agents/pi ${HOME}/.pi
+```
+
+### [Codex](https://developers.openai.com/codex)
+
+전역 지침은 agent-stuff의 공용 `rules/AGENTS.md`를 심링크로 사용한다.
+
+```sh
+ln -sfn ${DOTRCDIR}/agents/rules/AGENTS.md ${HOME}/.codex/AGENTS.md
+```
+
+### [Amp](https://ampcode.com/)
+
+```sh
+mkdir -p ${XDG_CONFIG_HOME}/amp
+ln -sfn ${DOTRCDIR}/agents/rules/AGENTS.md ${XDG_CONFIG_HOME}/amp/AGENTS.md
 ```
 
 ## Apps
