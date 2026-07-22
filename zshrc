@@ -67,10 +67,12 @@ unset key
 
 # ── Tools ──────────────────────────────────────────────────
 
-# mise — shims mode: skips the per-prompt hook; version auto-switch is resolved by
-# the shims at call time. No [env]/[hooks] in config, so nothing is lost here.
+# mise — hook mode: runs hook-env each prompt (cached; recomputes only when the
+# config or working directory changes) so [tools] AND [env] apply to the shell.
+# Needed because [env] like AWS_PROFILE must reach non-mise binaries (e.g. the aws
+# CLI) and be visible in the shell/prompt, not just mise-managed shims.
 if [[ -x "${HOME}/.local/bin/mise" ]]; then
-    eval "$("${HOME}/.local/bin/mise" activate --shims zsh)"
+    eval "$("${HOME}/.local/bin/mise" activate zsh)"
 fi
 
 # starship
