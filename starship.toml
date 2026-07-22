@@ -16,3 +16,12 @@ disabled = false
 [memory_usage]
 disabled = false
 threshold = -1
+
+# aws — surfaces the active AWS profile (set by mise [env], e.g. AWS_PROFILE in the
+# iac repo) so you can see which account you're on before any tofu/terraform apply.
+# Region shown only when actually set, to keep the segment quiet otherwise.
+[aws]
+disabled = false
+format = 'on [$symbol$profile(\($region\))]($style) '
+symbol = "☁️  "
+style = "bold yellow"
