@@ -1,15 +1,7 @@
-# Project Overview
+@AGENTS.md
 
-Personal macOS development environment configuration. Pure configuration repository — no build or test toolchain. Structure, deployment model, and operational gotchas: see [AGENTS.md](./AGENTS.md).
+## Claude Code
 
-# Work Rules
-
-- Commit directly to `main` (no branches/PRs)
-- Korean Conventional Commits ending with `-하다`, e.g. `feat(zshrc): starship 프롬프트 설정을 추가하다`
-- **Types**: follow the `gitmessage` template (authoritative list — do not duplicate here)
-- **Scopes**: zshrc (incl. zimrc), agents, zed, scripts, docs, or omit for root-level changes
-
-# References
-
-- **[AGENTS.md](./AGENTS.md)** — Repository structure, operational gotchas, and boundaries
-- **[agents/CLAUDE.md](./agents/CLAUDE.md)** — AI agent configuration (submodule)
+`agents/claude/settings.json` and `agents/claude/hooks/` have no counterpart in the
+other harnesses — a permission, hook, or model change committed there governs every
+Claude Code session on this machine, not just work in this repository.
