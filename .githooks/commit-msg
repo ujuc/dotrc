@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# commit-msg: enforce Korean Conventional Commits — '<type>(<scope>): ...하다'.
+# commit-msg: enforce Korean Conventional Commits — '<type>(<scope>): ...-다'.
+# Subject must end in a Korean verb declarative (`다`); any verb stem is fine.
 # Types follow dotrc/gitmessage. Bypass in emergencies: git commit --no-verify.
 set -euo pipefail
 
@@ -9,9 +10,10 @@ case "${first_line}" in
   Merge\ *|Revert\ *|fixup!*|squash!*|amend!*) exit 0 ;;
 esac
 
-if ! printf '%s' "${first_line}" | grep -qE '^(feat|fix|refactor|perf|style|docs|test|build|ci|chore)(\([a-z0-9-]+\))?!?: .+하다$'; then
+if ! printf '%s' "${first_line}" | grep -qE '^(feat|fix|refactor|perf|style|docs|test|build|ci|chore)(\([a-z0-9-]+\))?!?: .+다$'; then
   {
-    echo "commit-msg: first line must be '<type>(<scope>): <한국어 제목 ...하다>'"
+    echo "commit-msg: first line must be '<type>(<scope>): <한국어 제목 -다>'"
+    echo "  rule:  subject ends in a Korean verb declarative (추가하다, 걷어내다, 지우다)"
     echo "  types: feat fix refactor perf style docs test build ci chore"
     echo "  got:   ${first_line}"
   } >&2

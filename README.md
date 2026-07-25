@@ -142,7 +142,7 @@ git config --global init.defaultBranch main
 git config --global commit.template ${DOTRCDIR}/gitmessage
 ```
 
-- Hooks (커밋 메시지 `-하다` 검증)
+- Hooks (커밋 메시지 동사형 `-다` 종결 검증)
 
 ```sh
 git -C ${DOTRCDIR} config core.hooksPath .githooks
