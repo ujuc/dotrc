@@ -29,10 +29,20 @@ path=(
 )
 
 ## ENV
-export LC_ALL=en_US.UTF-8
+# LANG only, never LC_ALL: LC_ALL force-overrides every LC_* category and makes
+# per-category overrides (LC_TIME, LC_COLLATE, ...) impossible.
 export LANG=en_US.UTF-8
 
 # ── History ────────────────────────────────────────────────
+
+# zimfw's environment module only defaults HISTFILE (to ~/.zhistory) when it is
+# unset, and macOS /etc/zshrc sets ~/.zsh_history first — so the real location
+# has always come from a file outside this repo. Pin it here instead.
+# Keep the value as ~/.zsh_history: switching to zimfw's default would strand
+# the existing history file.
+# HISTSIZE/SAVEHIST do NOT belong here — zimfw assigns them unconditionally
+# during init in the Plugins section below, so they would be silently clobbered.
+HISTFILE=${HOME}/.zsh_history
 
 setopt HIST_IGNORE_ALL_DUPS
 
@@ -45,10 +55,16 @@ ZIM_CONFIG_FILE=${DOTRCDIR}/zimrc
 zstyle ':zim:zim:zim' use 'degit'
 
 ## Initialize zimfw (installed via Homebrew)
-if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE} ]]; then
-    source ${HOMEBREW_PREFIX}/opt/zimfw/share/zimfw.zsh init
+# Guarded so a fresh machine still gets a usable shell — but noisily, because a
+# silently plugin-less shell is much harder to notice than a missing `eza`.
+if [[ -r ${HOMEBREW_PREFIX}/opt/zimfw/share/zimfw.zsh ]]; then
+    if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZIM_CONFIG_FILE} ]]; then
+        source ${HOMEBREW_PREFIX}/opt/zimfw/share/zimfw.zsh init
+    fi
+    [[ -r ${ZIM_HOME}/init.zsh ]] && source ${ZIM_HOME}/init.zsh
+else
+    print -u2 "zshrc: zimfw not installed — run 'brew install zimfw' (starting without plugins)"
 fi
-source ${ZIM_HOME}/init.zsh
 
 ## zsh-autosuggestions
 ZSH_AUTOSUGGEST_MANUAL_REBIND=1
@@ -94,7 +110,9 @@ fi
 
 # System update function
 function update_system() {
-    brew update --auto-update
+    # Plain `brew update`: --auto-update suppresses tap fetch errors and the
+    # status line (Homebrew cmd/update.sh), which hides failures in a manual run.
+    brew update
     brew upgrade --greedy -y
     zimfw update && zimfw upgrade
     brew cleanup
