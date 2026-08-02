@@ -5,6 +5,7 @@
 저장소를 clone한 뒤 설치할 그룹의 옵션을 지정해 실행한다. 인자 없이 실행하면 도움말을 표시하며, 옵션은 조합할 수 있다. `--all`은 모든 그룹을 설치한다.
 
 ```bash
+./scripts/install.sh --help
 ./scripts/install.sh --cli
 ./scripts/install.sh --apps
 ./scripts/install.sh --fonts
