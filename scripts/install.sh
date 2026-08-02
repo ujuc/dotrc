@@ -131,3 +131,257 @@ while [ "$#" -gt 0 ]; do
     esac
     shift
 done
+
+check_link_destination() {
+    local source=$1 destination=$2 current_target
+
+    if [ -L "$destination" ]; then
+        current_target=$(readlink "$destination")
+        if [ "$current_target" = "$source" ]; then
+            return 0
+        fi
+    elif [ ! -e "$destination" ]; then
+        return 0
+    fi
+
+    printf 'Link conflict: %s\n' "$destination" >&2
+    return 1
+}
+
+visit_selected_links() {
+    local callback=$1 skill failed=0
+
+    if $SELECT_CLI; then
+        "$callback" "$DOTRCDIR/starship.toml" "$XDG_CONFIG_HOME/starship.toml" || failed=1
+        "$callback" "$DOTRCDIR/zshrc" "$HOME/.zshrc" || failed=1
+        "$callback" "$DOTRCDIR/batrc" "$XDG_CONFIG_HOME/bat/config" || failed=1
+        "$callback" "$DOTRCDIR/tigrc" "$XDG_CONFIG_HOME/tig/config" || failed=1
+    fi
+    if $SELECT_APPS; then
+        "$callback" "$DOTRCDIR/zed/settings.json" "$XDG_CONFIG_HOME/zed/settings.json" || failed=1
+        "$callback" "$DOTRCDIR/ghosttyrc" "$XDG_CONFIG_HOME/ghostty/config" || failed=1
+    fi
+    if $SELECT_AGENTS; then
+        "$callback" "$DOTRCDIR/agents/claude" "$HOME/.claude" || failed=1
+        "$callback" "$DOTRCDIR/agents/rules/AGENTS.md" "$HOME/.codex/AGENTS.md" || failed=1
+        "$callback" "$DOTRCDIR/agents/amp/AGENTS.md" "$XDG_CONFIG_HOME/amp/AGENTS.md" || failed=1
+        "$callback" "$DOTRCDIR/agents/amp/settings.json" "$XDG_CONFIG_HOME/amp/settings.json" || failed=1
+        for skill in "$DOTRCDIR"/agents/claude/skills/*; do
+            [ -d "$skill" ] || continue
+            "$callback" "$skill" "$HOME/.codex/skills/$(basename "$skill")" || failed=1
+        done
+    fi
+    return "$failed"
+}
+
+preflight_links() {
+    local conflicts=0
+    visit_selected_links check_link_destination || conflicts=1
+    if [ "$conflicts" -ne 0 ]; then
+        printf 'Link preflight failed; no installation steps were run.\n' >&2
+        exit 1
+    fi
+}
+
+safe_link() {
+    local source=$1 destination=$2
+    if [ ! -e "$source" ]; then
+        record_failure links "Source exists: $source" 1 "test -e $source"
+        return 0
+    fi
+    run_step links "Create parent for $destination" mkdir -p "$(dirname "$destination")"
+    if [ "$LAST_STEP_STATUS" -eq 0 ]; then
+        run_step links "Link $destination" ln -sfn "$source" "$destination"
+    fi
+}
+
+ensure_homebrew() {
+    local shellenv
+    if ! command -v brew >/dev/null 2>&1; then
+        run_shell_step homebrew "Install Homebrew" '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+        if [ "$LAST_STEP_STATUS" -ne 0 ]; then
+            print_summary
+            exit 1
+        fi
+    fi
+
+    if [ -x /opt/homebrew/bin/brew ]; then
+        shellenv=$(/opt/homebrew/bin/brew shellenv)
+        eval "$shellenv"
+    elif [ -x /usr/local/bin/brew ]; then
+        shellenv=$(/usr/local/bin/brew shellenv)
+        eval "$shellenv"
+    fi
+    if ! command -v brew >/dev/null 2>&1; then
+        record_failure homebrew "Find brew after installation" 1 "command -v brew"
+        print_summary
+        exit 1
+    fi
+}
+
+install_formula() {
+    local group=$1 name=$2
+    brew list --formula "$name" >/dev/null 2>&1 && return 0
+    run_step "$group" "Install formula $name" brew install "$name"
+}
+
+install_cask() {
+    local group=$1 name=$2
+    brew list --cask "$name" >/dev/null 2>&1 && return 0
+    run_step "$group" "Install cask $name" brew install --cask "$name"
+}
+
+configure_git() {
+    local key value
+    while IFS='|' read -r key value; do
+        run_step cli "Configure git $key" git config --global "$key" "$value"
+    done <<EOF
+core.autocrlf|input
+core.whitespace|cr-at-eol,fix,trailing-space,-indent-with-non-tab
+merge.conflictstyle|zdiff3
+init.defaultBranch|main
+commit.template|$DOTRCDIR/gitmessage
+core.pager|delta
+interactive.diffFilter|delta --color-only
+delta.line-numbers|true
+delta.side-by-side|true
+delta.navigate|true
+delta.diff-so-fancy|true
+delta.hyperlinks|true
+EOF
+
+    configure_git_identity user.name "Git user name"
+    configure_git_identity user.email "Git user email"
+    run_step cli "Configure root git hooks" git -C "$DOTRCDIR" config core.hooksPath .githooks
+    run_step cli "Configure agents git hooks" git -C "$DOTRCDIR/agents" config core.hooksPath .githooks
+}
+
+configure_git_identity() {
+    local key=$1 prompt=$2 value command_text
+    git config --global --get "$key" >/dev/null 2>&1 && return 0
+    if [ -t 0 ]; then
+        printf '%s: ' "$prompt"
+        IFS= read -r value
+        if [ -n "$value" ]; then
+            run_step cli "Configure git $key" git config --global "$key" "$value"
+            return 0
+        fi
+    fi
+    command_text="git config --global $key '<value>'"
+    printf '[cli] Missing %s; run: %s\n' "$key" "$command_text" >&2
+    record_failure cli "Configure git $key manually" 1 "$command_text"
+}
+
+install_cli() {
+    local item
+    for item in 1password 1password-cli; do install_cask cli "$item"; done
+    for item in gh starship zimfw coreutils bat eza zoxide fzf vim git git-delta tig yq; do
+        install_formula cli "$item"
+    done
+    if ! command -v mise >/dev/null 2>&1; then
+        run_shell_step cli "Install mise" 'curl https://mise.run | sh'
+        export PATH="$HOME/.local/bin:$PATH"
+    fi
+    if command -v mise >/dev/null 2>&1; then
+        run_step cli "Install uv with mise" mise use -g uv
+        run_step cli "Install node with mise" mise use -g node
+    else
+        record_failure cli "Find mise after installation" 1 "command -v mise"
+    fi
+    configure_git
+    if ! gh auth status; then run_step cli "Authenticate GitHub CLI" gh auth login; fi
+    visit_cli_links
+}
+
+visit_cli_links() {
+    safe_link "$DOTRCDIR/starship.toml" "$XDG_CONFIG_HOME/starship.toml"
+    safe_link "$DOTRCDIR/zshrc" "$HOME/.zshrc"
+    safe_link "$DOTRCDIR/batrc" "$XDG_CONFIG_HOME/bat/config"
+    safe_link "$DOTRCDIR/tigrc" "$XDG_CONFIG_HOME/tig/config"
+}
+
+install_apps() {
+    local item machine
+    machine=$(uname -m)
+    if [ "$machine" = arm64 ] && ! pkgutil --pkg-info com.apple.pkg.RosettaUpdateAuto >/dev/null 2>&1; then
+        run_step apps "Install Rosetta" sudo softwareupdate --install-rosetta --agree-to-license
+    fi
+    for item in raycast zed visual-studio-code ghostty fujitsu-scansnap-home google-drive adobe-creative-cloud; do
+        install_cask apps "$item"
+    done
+    install_formula apps ollama
+    if command -v ollama >/dev/null 2>&1; then
+        run_step apps "Pull ollama model gemma3" ollama pull gemma3
+        run_step apps "Pull ollama model qwen3" ollama pull qwen3
+    fi
+    safe_link "$DOTRCDIR/zed/settings.json" "$XDG_CONFIG_HOME/zed/settings.json"
+    safe_link "$DOTRCDIR/ghosttyrc" "$XDG_CONFIG_HOME/ghostty/config"
+}
+
+install_fonts() {
+    local item
+    for item in font-google-sans-code font-cascadia-code font-cascadia-code-nf \
+        font-d2coding-nerd-font font-ibm-plex-sans-kr font-ibm-plex-serif \
+        font-noto-color-emoji font-noto-emoji font-noto-sans-cjk \
+        font-noto-serif-cjk font-nanum-square font-nanum-square-neo \
+        font-nanum-square-round; do
+        install_cask fonts "$item"
+    done
+}
+
+install_agent_links() {
+    local skill
+    safe_link "$DOTRCDIR/agents/claude" "$HOME/.claude"
+    safe_link "$DOTRCDIR/agents/rules/AGENTS.md" "$HOME/.codex/AGENTS.md"
+    safe_link "$DOTRCDIR/agents/amp/AGENTS.md" "$XDG_CONFIG_HOME/amp/AGENTS.md"
+    safe_link "$DOTRCDIR/agents/amp/settings.json" "$XDG_CONFIG_HOME/amp/settings.json"
+    for skill in "$DOTRCDIR"/agents/claude/skills/*; do
+        [ -d "$skill" ] || continue
+        safe_link "$skill" "$HOME/.codex/skills/$(basename "$skill")"
+    done
+}
+
+install_agents() {
+    local item marketplace_json plugin_json
+    if ! command -v claude >/dev/null 2>&1; then
+        run_shell_step agents "Install Claude Code" 'curl -fsSL https://claude.ai/install.sh | bash'
+        export PATH="$HOME/.local/bin:$PATH"
+    fi
+    if command -v npm >/dev/null 2>&1; then
+        run_step agents "Install Pi coding agent" npm install -g @mariozechner/pi-coding-agent
+    else
+        record_failure agents "Install Pi coding agent (npm missing)" 127 "npm install -g @mariozechner/pi-coding-agent"
+    fi
+    if command -v claude >/dev/null 2>&1; then
+        marketplace_json=$(claude plugin marketplace list --json 2>&1)
+        printf '%s\n' "$marketplace_json"
+        for item in anthropics/claude-plugins-official affaan-m/ECC jarrodwatts/claude-hud revfactory/harness ujuc/amp-plugin-cc openai/codex-plugin-cc warpdotdev/claude-code-warp; do
+            printf '%s' "$marketplace_json" | grep -F "$item" >/dev/null 2>&1 || run_step agents "Add marketplace $item" claude plugin marketplace add "$item"
+        done
+        plugin_json=$(claude plugin list --json 2>&1)
+        printf '%s\n' "$plugin_json"
+        for item in superpowers@claude-plugins-official ecc@ecc claude-hud@claude-hud code-review@claude-plugins-official code-simplifier@claude-plugins-official feature-dev@claude-plugins-official claude-md-management@claude-plugins-official security-guidance@claude-plugins-official rust-analyzer-lsp@claude-plugins-official harness@harness-marketplace amp-plugin-cc@amp-plugin-cc codex@openai-codex warp@claude-code-warp; do
+            printf '%s' "$plugin_json" | grep -F "$item" >/dev/null 2>&1 || run_step agents "Install plugin $item" claude plugin install "$item"
+        done
+        printf 'Manual step: run /claude-hud:setup in a Claude session.\n'
+    else
+        record_failure agents "Find Claude after installation" 1 "command -v claude"
+    fi
+    install_agent_links
+}
+
+if $SELECT_AGENTS; then
+    run_step agents "Initialize agent submodule" git -C "$DOTRCDIR" submodule update --init --recursive
+    if [ "$LAST_STEP_STATUS" -ne 0 ]; then
+        print_summary
+        exit 1
+    fi
+fi
+preflight_links
+if $SELECT_CLI || $SELECT_APPS || $SELECT_FONTS; then ensure_homebrew; fi
+$SELECT_CLI && install_cli
+$SELECT_APPS && install_apps
+$SELECT_FONTS && install_fonts
+$SELECT_AGENTS && install_agents
+print_summary
+exit $?
