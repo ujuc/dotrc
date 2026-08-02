@@ -1,5 +1,20 @@
 # MyDotrc
 
+## 자동 설치
+
+저장소를 clone한 뒤 설치할 그룹의 옵션을 지정해 실행한다. 인자 없이 실행하면 도움말을 표시하며, 옵션은 조합할 수 있다. `--all`은 모든 그룹을 설치한다.
+
+```bash
+./scripts/install.sh --cli
+./scripts/install.sh --apps
+./scripts/install.sh --fonts
+./scripts/install.sh --agents
+./scripts/install.sh --cli --agents
+./scripts/install.sh --all
+```
+
+그룹별 설치가 독립적으로 실패해도 나머지 작업은 계속 진행하며, 마지막에 실패 정보와 재실행 명령을 출력한다. 기존 설정과 충돌하는 파일이나 링크는 덮어쓰지 않는다.
+
 ## 설치전 작업
 
 ### [Homebrew](https://brew.sh/)
@@ -213,7 +228,7 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 ```sh
 # Marketplaces
 /plugin marketplace add anthropics/claude-plugins-official
-/plugin marketplace add affaan-m/everything-claude-code
+/plugin marketplace add affaan-m/ECC
 /plugin marketplace add jarrodwatts/claude-hud
 /plugin marketplace add revfactory/harness
 /plugin marketplace add ujuc/amp-plugin-cc
@@ -222,7 +237,7 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 
 # Plugins
 /plugin install superpowers@claude-plugins-official
-/plugin install everything-claude-code@everything-claude-code
+/plugin install ecc@ecc
 /plugin install claude-hud@claude-hud
 /plugin install code-review@claude-plugins-official
 /plugin install code-simplifier@claude-plugins-official
@@ -259,7 +274,6 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 
 ```sh
 npm install -g @mariozechner/pi-coding-agent
-ln -sf ${DOTRCDIR}/agents/pi ${HOME}/.pi
 ```
 
 ### [Codex](https://developers.openai.com/codex)
@@ -337,29 +351,29 @@ ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 
 ```sh
 # google sans
-font-google-sans-code
+brew install --cask font-google-sans-code
 
 # MS cascdia code font https://github.com/microsoft/cascadia-code
-font-cascadia-code
-font-cascadia-code-nf
+brew install --cask font-cascadia-code
+brew install --cask font-cascadia-code-nf
 
 # D2 coding
-font-d2coding-nerd-font
+brew install --cask font-d2coding-nerd-font
 
 # ibm
-font-ibm-plex-sans-kr
-font-ibm-plex-serif
+brew install --cask font-ibm-plex-sans-kr
+brew install --cask font-ibm-plex-serif
 
 # noto
-font-noto-color-emoji
-font-noto-emoji
-font-noto-sans-cjk
-font-noto-serif-cjk
+brew install --cask font-noto-color-emoji
+brew install --cask font-noto-emoji
+brew install --cask font-noto-sans-cjk
+brew install --cask font-noto-serif-cjk
 
 # nanum
-font-nanum-square
-font-nanum-square-neo
-font-nanum-square-round
+brew install --cask font-nanum-square
+brew install --cask font-nanum-square-neo
+brew install --cask font-nanum-square-round
 ```
 
 ## Config
