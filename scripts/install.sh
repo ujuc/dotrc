@@ -194,17 +194,19 @@ preflight_codex_skill_links() {
 }
 
 validate_agents_repo() {
-    local top_level status failure_status
+    local top_level status failure_status expected_top_level expected_display
+    expected_top_level=$(cd "$DOTRCDIR/agents" 2>/dev/null && pwd -P)
+    expected_display=${expected_top_level:-"$DOTRCDIR/agents"}
     top_level=$(git -C "$DOTRCDIR/agents" rev-parse --show-toplevel 2>&1)
     status=$?
-    if [ "$status" -eq 0 ] && [ "$top_level" = "$DOTRCDIR/agents" ]; then
+    if [ "$status" -eq 0 ] && [ -n "$expected_top_level" ] && [ "$top_level" = "$expected_top_level" ]; then
         return 0
     fi
     printf '%s\n' "$top_level" >&2
     failure_status=$status
     [ "$failure_status" -ne 0 ] || failure_status=1
     record_failure agents "Validate initialized agents repository" "$failure_status" \
-        "git -C $DOTRCDIR/agents rev-parse --show-toplevel # expected $DOTRCDIR/agents"
+        "git -C $DOTRCDIR/agents rev-parse --show-toplevel # expected $expected_display"
     return 1
 }
 
