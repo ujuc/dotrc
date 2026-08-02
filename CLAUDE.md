@@ -2,6 +2,7 @@
 
 ## Claude Code
 
-`agents/claude/settings.json` and `agents/claude/hooks/` have no counterpart in the
-other harnesses — a permission, hook, or model change committed there governs every
-Claude Code session on this machine, not just work in this repository.
+Harness-specific configuration is kept separately under `agents/claude/` and
+`agents/amp/`. A permission, hook, plugin, or model-related change committed in
+either directory governs every session of that harness on this machine, not just
+work in this repository.

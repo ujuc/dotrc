@@ -280,9 +280,14 @@ done
 
 ### [Amp](https://ampcode.com/)
 
+전역 공용 규칙은 `amp/AGENTS.md`에서 가져오고, Amp 전용 설정은
+`amp/settings.json`에서 관리한다. 전역 스킬은 Amp가 `~/.claude/skills/`를
+자동으로 읽으므로 별도로 복제하지 않는다.
+
 ```sh
 mkdir -p ${XDG_CONFIG_HOME}/amp
-ln -sfn ${DOTRCDIR}/agents/rules/AGENTS.md ${XDG_CONFIG_HOME}/amp/AGENTS.md
+ln -sfn ${DOTRCDIR}/agents/amp/AGENTS.md ${XDG_CONFIG_HOME}/amp/AGENTS.md
+ln -sfn ${DOTRCDIR}/agents/amp/settings.json ${XDG_CONFIG_HOME}/amp/settings.json
 ```
 
 ## Apps
