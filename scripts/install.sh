@@ -341,8 +341,13 @@ install_agent_links() {
     done
 }
 
+json_has_string_field() {
+    local json=$1 field=$2 value=$3
+    printf '%s' "$json" | grep -E "\"${field}\"[[:space:]]*:[[:space:]]*\"${value}\"" >/dev/null 2>&1
+}
+
 install_agents() {
-    local item marketplace_json plugin_json
+    local item marketplace_json plugin_json marketplace_status plugin_status
     if ! command -v claude >/dev/null 2>&1; then
         run_shell_step agents "Install Claude Code" 'curl -fsSL https://claude.ai/install.sh | bash'
         export PATH="$HOME/.local/bin:$PATH"
@@ -354,14 +359,26 @@ install_agents() {
     fi
     if command -v claude >/dev/null 2>&1; then
         marketplace_json=$(claude plugin marketplace list --json 2>&1)
+        marketplace_status=$?
         printf '%s\n' "$marketplace_json"
+        if [ "$marketplace_status" -ne 0 ]; then
+            record_failure agents "List plugin marketplaces" "$marketplace_status" "claude plugin marketplace list --json"
+        fi
         for item in anthropics/claude-plugins-official affaan-m/ECC jarrodwatts/claude-hud revfactory/harness ujuc/amp-plugin-cc openai/codex-plugin-cc warpdotdev/claude-code-warp; do
-            printf '%s' "$marketplace_json" | grep -F "$item" >/dev/null 2>&1 || run_step agents "Add marketplace $item" claude plugin marketplace add "$item"
+            if [ "$marketplace_status" -ne 0 ] || ! json_has_string_field "$marketplace_json" name "$item"; then
+                run_step agents "Add marketplace $item" claude plugin marketplace add "$item"
+            fi
         done
         plugin_json=$(claude plugin list --json 2>&1)
+        plugin_status=$?
         printf '%s\n' "$plugin_json"
+        if [ "$plugin_status" -ne 0 ]; then
+            record_failure agents "List plugins" "$plugin_status" "claude plugin list --json"
+        fi
         for item in superpowers@claude-plugins-official ecc@ecc claude-hud@claude-hud code-review@claude-plugins-official code-simplifier@claude-plugins-official feature-dev@claude-plugins-official claude-md-management@claude-plugins-official security-guidance@claude-plugins-official rust-analyzer-lsp@claude-plugins-official harness@harness-marketplace amp-plugin-cc@amp-plugin-cc codex@openai-codex warp@claude-code-warp; do
-            printf '%s' "$plugin_json" | grep -F "$item" >/dev/null 2>&1 || run_step agents "Install plugin $item" claude plugin install "$item"
+            if [ "$plugin_status" -ne 0 ] || ! json_has_string_field "$plugin_json" id "$item"; then
+                run_step agents "Install plugin $item" claude plugin install "$item"
+            fi
         done
         printf 'Manual step: run /claude-hud:setup in a Claude session.\n'
     else
