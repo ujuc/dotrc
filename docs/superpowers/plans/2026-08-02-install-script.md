@@ -179,7 +179,7 @@ Apple Silicon에서 `pkgutil --pkg-info com.apple.pkg.RosettaUpdateAuto`가 실�
 
 - [ ] **Step 5: `--agents` 그룹 구현**
 
-링크 검사 전에 `git submodule update --init --recursive`를 필수 전제로 실행한다. Claude가 없으면 공식 설치 명령을 실행하고 `${HOME}/.local/bin`을 `PATH`에 추가한다. npm이 있으면 `npm install -g @mariozechner/pi-coding-agent`를 실행하고 없으면 실패 목록에 해당 명령을 기록한다.
+정적으로 알려진 링크 대상을 먼저 검사한 뒤 `git submodule update --init --recursive`를 필수 전제로 실행하고, 초기화 후 열거할 수 있는 Codex 스킬 링크 대상을 별도로 검사한다. Claude가 없으면 공식 설치 명령을 실행하고 `${HOME}/.local/bin`을 `PATH`에 추가한다. mise가 있으면 `mise exec -- npm install -g @mariozechner/pi-coding-agent`를 실행하고, mise 없이 npm만 있으면 npm을 직접 실행하며, 둘 다 사용할 수 없으면 실패 목록에 해당 명령을 기록한다.
 
 `claude plugin marketplace list --json`과 `claude plugin list --json`에서 기존 이름/ID를 확인해 다음 항목을 하나씩 추가한다.
 
@@ -204,8 +204,9 @@ plugin: superpowers@claude-plugins-official, ecc@ecc,
 
 ```text
 parse_args
-agents 선택 시 submodule 초기화
-preflight_links
+선택 그룹의 정적으로 알려진 모든 링크 대상 preflight
+cli 또는 agents 선택 시 agents submodule 초기화 및 독립 저장소 검증
+agents 선택 시 동적으로 열거한 Codex skill 링크 대상 preflight
 cli/apps/fonts 선택 시 ensure_homebrew
 install_cli -> install_apps -> install_fonts -> install_agents
 print_summary

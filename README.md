@@ -15,7 +15,7 @@
 ./scripts/install.sh --all
 ```
 
-그룹별 설치가 독립적으로 실패해도 나머지 작업은 계속 진행하며, 마지막에 실패 정보와 재실행 명령을 출력한다. 기존 설정과 충돌하는 파일이나 링크는 덮어쓰지 않는다.
+그룹별 설치의 독립적인 항목이 실패해도 가능한 나머지 작업은 계속 진행하며, 마지막에 실패 정보와 재실행 명령을 출력한다. 링크 충돌이나 필수 저장소 같은 전제 조건이 실패하면 변경 전에 안전하게 중단한다. 기존 설정과 충돌하는 파일이나 링크는 덮어쓰지 않는다.
 
 ## 설치전 작업
 
@@ -344,7 +344,7 @@ ollama pull qwen3
 ### [Ghostty](https://ghostty.org)
 
 ```sh
-brew install ghostty
+brew install --cask ghostty
 mkdir -p ${XDG_CONFIG_HOME}/ghostty
 ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 ```

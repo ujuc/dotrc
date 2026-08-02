@@ -7,6 +7,7 @@ SELECT_CLI=false
 SELECT_APPS=false
 SELECT_FONTS=false
 SELECT_AGENTS=false
+AGENTS_REPO_READY=false
 FAILURE_COUNT=0
 FAILURE_GROUPS=()
 FAILURE_LABELS=()
@@ -148,8 +149,8 @@ check_link_destination() {
     return 1
 }
 
-visit_selected_links() {
-    local callback=$1 skill failed=0
+visit_static_selected_links() {
+    local callback=$1 failed=0
 
     if $SELECT_CLI; then
         "$callback" "$DOTRCDIR/starship.toml" "$XDG_CONFIG_HOME/starship.toml" || failed=1
@@ -166,21 +167,55 @@ visit_selected_links() {
         "$callback" "$DOTRCDIR/agents/rules/AGENTS.md" "$HOME/.codex/AGENTS.md" || failed=1
         "$callback" "$DOTRCDIR/agents/amp/AGENTS.md" "$XDG_CONFIG_HOME/amp/AGENTS.md" || failed=1
         "$callback" "$DOTRCDIR/agents/amp/settings.json" "$XDG_CONFIG_HOME/amp/settings.json" || failed=1
-        for skill in "$DOTRCDIR"/agents/claude/skills/*; do
-            [ -d "$skill" ] || continue
-            "$callback" "$skill" "$HOME/.codex/skills/$(basename "$skill")" || failed=1
-        done
     fi
     return "$failed"
 }
 
-preflight_links() {
+preflight_static_links() {
     local conflicts=0
-    visit_selected_links check_link_destination || conflicts=1
+    visit_static_selected_links check_link_destination || conflicts=1
     if [ "$conflicts" -ne 0 ]; then
         printf 'Link preflight failed; no installation steps were run.\n' >&2
         exit 1
     fi
+}
+
+preflight_codex_skill_links() {
+    local skill conflicts=0
+    $SELECT_AGENTS || return 0
+    for skill in "$DOTRCDIR"/agents/claude/skills/*; do
+        [ -d "$skill" ] || continue
+        check_link_destination "$skill" "$HOME/.codex/skills/$(basename "$skill")" || conflicts=1
+    done
+    if [ "$conflicts" -ne 0 ]; then
+        printf 'Codex skill link preflight failed; no package, configuration, or link steps were run.\n' >&2
+        exit 1
+    fi
+}
+
+validate_agents_repo() {
+    local top_level status
+    top_level=$(git -C "$DOTRCDIR/agents" rev-parse --show-toplevel 2>&1)
+    status=$?
+    if [ "$status" -eq 0 ] && [ "$top_level" = "$DOTRCDIR/agents" ]; then
+        return 0
+    fi
+    printf '%s\n' "$top_level" >&2
+    record_failure agents "Validate initialized agents repository" 1 \
+        "git -C $DOTRCDIR/agents rev-parse --show-toplevel # expected $DOTRCDIR/agents"
+    return 1
+}
+
+prepare_agents_repo() {
+    run_step agents "Initialize agent submodule" git -C "$DOTRCDIR" submodule update --init --recursive
+    if [ "$LAST_STEP_STATUS" -ne 0 ]; then
+        return 1
+    fi
+    if validate_agents_repo; then
+        AGENTS_REPO_READY=true
+        return 0
+    fi
+    return 1
 }
 
 safe_link() {
@@ -253,7 +288,11 @@ EOF
     configure_git_identity user.name "Git user name"
     configure_git_identity user.email "Git user email"
     run_step cli "Configure root git hooks" git -C "$DOTRCDIR" config core.hooksPath .githooks
-    run_step cli "Configure agents git hooks" git -C "$DOTRCDIR/agents" config core.hooksPath .githooks
+    if $AGENTS_REPO_READY; then
+        run_step cli "Configure agents git hooks" git -C "$DOTRCDIR/agents" config core.hooksPath .githooks
+    else
+        printf '[cli] Skipping agents hooks: agents is not an initialized independent repository.\n' >&2
+    fi
 }
 
 configure_git_identity() {
@@ -353,7 +392,11 @@ install_agents() {
         export PATH="$HOME/.local/bin:$PATH"
     fi
     if command -v npm >/dev/null 2>&1; then
-        run_step agents "Install Pi coding agent" npm install -g @mariozechner/pi-coding-agent
+        if command -v mise >/dev/null 2>&1; then
+            run_step agents "Install Pi coding agent" mise exec -- npm install -g @mariozechner/pi-coding-agent
+        else
+            run_step agents "Install Pi coding agent" npm install -g @mariozechner/pi-coding-agent
+        fi
     else
         record_failure agents "Install Pi coding agent (npm missing)" 127 "npm install -g @mariozechner/pi-coding-agent"
     fi
@@ -363,23 +406,25 @@ install_agents() {
         printf '%s\n' "$marketplace_json"
         if [ "$marketplace_status" -ne 0 ]; then
             record_failure agents "List plugin marketplaces" "$marketplace_status" "claude plugin marketplace list --json"
+        else
+            for item in anthropics/claude-plugins-official affaan-m/ECC jarrodwatts/claude-hud revfactory/harness ujuc/amp-plugin-cc openai/codex-plugin-cc warpdotdev/claude-code-warp; do
+                if ! json_has_string_field "$marketplace_json" name "$item"; then
+                    run_step agents "Add marketplace $item" claude plugin marketplace add "$item"
+                fi
+            done
         fi
-        for item in anthropics/claude-plugins-official affaan-m/ECC jarrodwatts/claude-hud revfactory/harness ujuc/amp-plugin-cc openai/codex-plugin-cc warpdotdev/claude-code-warp; do
-            if [ "$marketplace_status" -ne 0 ] || ! json_has_string_field "$marketplace_json" name "$item"; then
-                run_step agents "Add marketplace $item" claude plugin marketplace add "$item"
-            fi
-        done
         plugin_json=$(claude plugin list --json 2>&1)
         plugin_status=$?
         printf '%s\n' "$plugin_json"
         if [ "$plugin_status" -ne 0 ]; then
             record_failure agents "List plugins" "$plugin_status" "claude plugin list --json"
+        else
+            for item in superpowers@claude-plugins-official ecc@ecc claude-hud@claude-hud code-review@claude-plugins-official code-simplifier@claude-plugins-official feature-dev@claude-plugins-official claude-md-management@claude-plugins-official security-guidance@claude-plugins-official rust-analyzer-lsp@claude-plugins-official harness@harness-marketplace amp-plugin-cc@amp-plugin-cc codex@openai-codex warp@claude-code-warp; do
+                if ! json_has_string_field "$plugin_json" id "$item"; then
+                    run_step agents "Install plugin $item" claude plugin install "$item"
+                fi
+            done
         fi
-        for item in superpowers@claude-plugins-official ecc@ecc claude-hud@claude-hud code-review@claude-plugins-official code-simplifier@claude-plugins-official feature-dev@claude-plugins-official claude-md-management@claude-plugins-official security-guidance@claude-plugins-official rust-analyzer-lsp@claude-plugins-official harness@harness-marketplace amp-plugin-cc@amp-plugin-cc codex@openai-codex warp@claude-code-warp; do
-            if [ "$plugin_status" -ne 0 ] || ! json_has_string_field "$plugin_json" id "$item"; then
-                run_step agents "Install plugin $item" claude plugin install "$item"
-            fi
-        done
         printf 'Manual step: run /claude-hud:setup in a Claude session.\n'
     else
         record_failure agents "Find Claude after installation" 1 "command -v claude"
@@ -387,14 +432,14 @@ install_agents() {
     install_agent_links
 }
 
-if $SELECT_AGENTS; then
-    run_step agents "Initialize agent submodule" git -C "$DOTRCDIR" submodule update --init --recursive
-    if [ "$LAST_STEP_STATUS" -ne 0 ]; then
+preflight_static_links
+if $SELECT_CLI || $SELECT_AGENTS; then
+    if ! prepare_agents_repo && $SELECT_AGENTS; then
         print_summary
         exit 1
     fi
 fi
-preflight_links
+preflight_codex_skill_links
 if $SELECT_CLI || $SELECT_APPS || $SELECT_FONTS; then ensure_homebrew; fi
 $SELECT_CLI && install_cli
 $SELECT_APPS && install_apps
