@@ -6,6 +6,7 @@
 
 ```bash
 ./scripts/install.sh --help
+./scripts/install.sh -h
 ./scripts/install.sh --cli
 ./scripts/install.sh --apps
 ./scripts/install.sh --fonts
