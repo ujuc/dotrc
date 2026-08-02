@@ -194,14 +194,16 @@ preflight_codex_skill_links() {
 }
 
 validate_agents_repo() {
-    local top_level status
+    local top_level status failure_status
     top_level=$(git -C "$DOTRCDIR/agents" rev-parse --show-toplevel 2>&1)
     status=$?
     if [ "$status" -eq 0 ] && [ "$top_level" = "$DOTRCDIR/agents" ]; then
         return 0
     fi
     printf '%s\n' "$top_level" >&2
-    record_failure agents "Validate initialized agents repository" 1 \
+    failure_status=$status
+    [ "$failure_status" -ne 0 ] || failure_status=1
+    record_failure agents "Validate initialized agents repository" "$failure_status" \
         "git -C $DOTRCDIR/agents rev-parse --show-toplevel # expected $DOTRCDIR/agents"
     return 1
 }
@@ -386,17 +388,15 @@ json_has_string_field() {
 }
 
 install_agents() {
-    local item marketplace_json plugin_json marketplace_status plugin_status
+    local item marketplace_source marketplace_name marketplace_json plugin_json marketplace_status plugin_status
     if ! command -v claude >/dev/null 2>&1; then
         run_shell_step agents "Install Claude Code" 'curl -fsSL https://claude.ai/install.sh | bash'
         export PATH="$HOME/.local/bin:$PATH"
     fi
-    if command -v npm >/dev/null 2>&1; then
-        if command -v mise >/dev/null 2>&1; then
-            run_step agents "Install Pi coding agent" mise exec -- npm install -g @mariozechner/pi-coding-agent
-        else
-            run_step agents "Install Pi coding agent" npm install -g @mariozechner/pi-coding-agent
-        fi
+    if command -v mise >/dev/null 2>&1; then
+        run_step agents "Install Pi coding agent" mise exec -- npm install -g @mariozechner/pi-coding-agent
+    elif command -v npm >/dev/null 2>&1; then
+        run_step agents "Install Pi coding agent" npm install -g @mariozechner/pi-coding-agent
     else
         record_failure agents "Install Pi coding agent (npm missing)" 127 "npm install -g @mariozechner/pi-coding-agent"
     fi
@@ -407,9 +407,18 @@ install_agents() {
         if [ "$marketplace_status" -ne 0 ]; then
             record_failure agents "List plugin marketplaces" "$marketplace_status" "claude plugin marketplace list --json"
         else
-            for item in anthropics/claude-plugins-official affaan-m/ECC jarrodwatts/claude-hud revfactory/harness ujuc/amp-plugin-cc openai/codex-plugin-cc warpdotdev/claude-code-warp; do
-                if ! json_has_string_field "$marketplace_json" name "$item"; then
-                    run_step agents "Add marketplace $item" claude plugin marketplace add "$item"
+            for item in \
+                anthropics/claude-plugins-official\|claude-plugins-official \
+                affaan-m/ECC\|ecc \
+                jarrodwatts/claude-hud\|claude-hud \
+                revfactory/harness\|harness-marketplace \
+                ujuc/amp-plugin-cc\|amp-plugin-cc \
+                openai/codex-plugin-cc\|openai-codex \
+                warpdotdev/claude-code-warp\|claude-code-warp; do
+                marketplace_source=${item%%|*}
+                marketplace_name=${item#*|}
+                if ! json_has_string_field "$marketplace_json" name "$marketplace_name"; then
+                    run_step agents "Add marketplace $marketplace_source" claude plugin marketplace add "$marketplace_source"
                 fi
             done
         fi
