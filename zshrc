@@ -151,6 +151,7 @@ if (( $+commands[bat] )); then
     alias cat="bat"
 fi
 alias vi="vim"
+alias pi="mise x -- pi"
 
 # ── Local ──────────────────────────────────────────────────
 
@@ -163,3 +164,4 @@ fi
 if [[ -f ${XDG_CONFIG_HOME}/op/plugins.sh ]]; then
     source ${XDG_CONFIG_HOME}/op/plugins.sh
 fi
+
