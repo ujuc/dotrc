@@ -7,7 +7,6 @@ SELECT_CLI=false
 SELECT_APPS=false
 SELECT_FONTS=false
 SELECT_AGENTS=false
-AGENTS_REPO_READY=false
 FAILURE_COUNT=0
 FAILURE_GROUPS=()
 FAILURE_LABELS=()
@@ -193,35 +192,6 @@ preflight_codex_skill_links() {
     fi
 }
 
-validate_agents_repo() {
-    local top_level status failure_status expected_top_level expected_display
-    expected_top_level=$(cd "$DOTRCDIR/agents" 2>/dev/null && pwd -P)
-    expected_display=${expected_top_level:-"$DOTRCDIR/agents"}
-    top_level=$(git -C "$DOTRCDIR/agents" rev-parse --show-toplevel 2>&1)
-    status=$?
-    if [ "$status" -eq 0 ] && [ -n "$expected_top_level" ] && [ "$top_level" = "$expected_top_level" ]; then
-        return 0
-    fi
-    printf '%s\n' "$top_level" >&2
-    failure_status=$status
-    [ "$failure_status" -ne 0 ] || failure_status=1
-    record_failure agents "Validate initialized agents repository" "$failure_status" \
-        "git -C $DOTRCDIR/agents rev-parse --show-toplevel # expected $expected_display"
-    return 1
-}
-
-prepare_agents_repo() {
-    run_step agents "Initialize agent submodule" git -C "$DOTRCDIR" submodule update --init --recursive
-    if [ "$LAST_STEP_STATUS" -ne 0 ]; then
-        return 1
-    fi
-    if validate_agents_repo; then
-        AGENTS_REPO_READY=true
-        return 0
-    fi
-    return 1
-}
-
 safe_link() {
     local source=$1 destination=$2
     if [ ! -e "$source" ]; then
@@ -292,11 +262,6 @@ EOF
     configure_git_identity user.name "Git user name"
     configure_git_identity user.email "Git user email"
     run_step cli "Configure root git hooks" git -C "$DOTRCDIR" config core.hooksPath .githooks
-    if $AGENTS_REPO_READY; then
-        run_step cli "Configure agents git hooks" git -C "$DOTRCDIR/agents" config core.hooksPath .githooks
-    else
-        printf '[cli] Skipping agents hooks: agents is not an initialized independent repository.\n' >&2
-    fi
 }
 
 configure_git_identity() {
@@ -444,12 +409,6 @@ install_agents() {
 }
 
 preflight_static_links
-if $SELECT_CLI || $SELECT_AGENTS; then
-    if ! prepare_agents_repo && $SELECT_AGENTS; then
-        print_summary
-        exit 1
-    fi
-fi
 preflight_codex_skill_links
 if $SELECT_CLI || $SELECT_APPS || $SELECT_FONTS; then ensure_homebrew; fi
 $SELECT_CLI && install_cli

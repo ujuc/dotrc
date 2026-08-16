@@ -1,0 +1,27 @@
+[workspace]
+resolver = "3"
+members = [
+    "skill-core",
+    "validate-skill",
+    "init-skill",
+    "register-skill",
+]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.85"
+license = "MIT"
+publish = false
+
+[workspace.dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+owo-colors = "4"
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+strip = "symbols"

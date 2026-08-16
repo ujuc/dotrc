@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# validate-skill — Thin launcher that defers to the Rust workspace under tools/.
+# Usage: validate-skill <skill-directory>
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TOOLS_DIR="${SCRIPT_DIR}/../tools"
+
+if ! command -v cargo >/dev/null 2>&1; then
+  echo "error: cargo not found. Install Rust via rustup: https://rustup.rs" >&2
+  exit 127
+fi
+
+exec cargo run \
+  --manifest-path "${TOOLS_DIR}/Cargo.toml" \
+  --bin validate-skill \
+  --quiet \
+  -- "$@"

@@ -1,0 +1,17 @@
+[package]
+name = "validate-skill"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "validate-skill"
+path = "src/main.rs"
+
+[dependencies]
+skill-core = { path = "../skill-core" }
+anyhow.workspace = true
+clap.workspace = true
+owo-colors.workspace = true

@@ -8,8 +8,6 @@
 - Preserve `zshrc` order: Environment → History → Plugins → Tools → Aliases → Local.
 - Keep work-specific config in `~/.zshrc.work`; never track secrets or work-specific paths.
 
-## `agents/` Submodule
+## `agents/` Configuration
 
-- `agents/` is an independent repository; ask before modifying its contents.
 - Changes under `agents/claude/`, `agents/amp/`, or `agents/rules/` affect live machine-wide configuration. Edit repository paths, never symlink targets.
-- Check `git -C agents status`; commit and push there before updating the parent pointer.

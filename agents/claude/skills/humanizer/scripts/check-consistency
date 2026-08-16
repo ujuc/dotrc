@@ -1,0 +1,103 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = []
+# ///
+"""humanizer safety-net consistency check.
+
+Safety-net values (pipeline agent count, 30/50% over-polish guard, 6-item self-check,
+grade A-D thresholds, max rewrite loops) are duplicated across SKILL.md, quick-rules.md,
+and the sub-agent definitions by design: each runs in an isolated context, so a local copy
+raises compliance. The duplication's risk is drift -- a one-place edit (the historical
+"5인->4인" mismatch) silently desyncs the others. This script asserts the values stay aligned.
+
+A regex can miss a reworded value, so a missing match is reported as a FAIL (never a silent
+pass). Exit 0 = all checks pass. Exit 1 = at least one mismatch. Exit 2 = a target file is missing.
+"""
+
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent          # skills/humanizer
+REFS = ROOT / "references"
+AGENTS = ROOT.parent.parent / "agents"                 # claude/agents
+
+SKILL = ROOT / "SKILL.md"
+QUICK = REFS / "quick-rules.md"
+MONOLITH = AGENTS / "humanize-monolith.md"
+REWRITER = AGENTS / "humanize-rewriter.md"
+NATURAL = AGENTS / "humanize-naturalness-reviewer.md"
+
+
+def load(path: Path) -> list[str] | None:
+    try:
+        return path.read_text(encoding="utf-8").splitlines()
+    except FileNotFoundError:
+        return None
+
+
+def has(lines: list[str], pattern: str) -> bool:
+    rx = re.compile(pattern)
+    return any(rx.search(ln) for ln in lines)
+
+
+FILES = {p: load(p) for p in (SKILL, QUICK, MONOLITH, REWRITER, NATURAL)}
+
+missing = [str(p) for p, lines in FILES.items() if lines is None]
+if missing:
+    for m in missing:
+        print(f"✗ MISSING FILE: {m}")
+    sys.exit(2)
+
+results: list[tuple[str, bool, str]] = []
+
+
+def check(name: str, target: Path, ok: bool, detail: str = "") -> None:
+    results.append((f"{name} [{target.name}]", ok, detail))
+
+
+# 1. pipeline agent count == 4, with no stray "5" pipeline outside the historical note.
+skill_lines = FILES[SKILL]
+has_four = has(skill_lines, r"4(인|-agent)")
+stray_five = [
+    ln.strip()
+    for ln in skill_lines
+    if re.search(r"5(인|-agent)", ln) and "→" not in ln and "->" not in ln
+]
+check("pipeline-count=4", SKILL, has_four and not stray_five,
+      f"four_found={has_four} stray_five={stray_five}")
+
+# 2. over-polish guard: both 30 and 50 present.
+for p in (SKILL, QUICK, MONOLITH, REWRITER):
+    lines = FILES[p]
+    check("over-polish-guard 30/50", p, has(lines, r"\b30\b") and has(lines, r"\b50\b"))
+
+# 3. self-check item count == 6.
+for p in (SKILL, QUICK, MONOLITH):
+    lines = FILES[p]
+    check("self-check=6", p, has(lines, r"(6\s*항|6-item|6개|6/6|^\s*6\.)"))
+
+# 4. max rewrite loops == 3.
+for p in (SKILL, REWRITER, NATURAL):
+    lines = FILES[p]
+    check("max-loops=3", p, has(lines, r"(3회|3차|round 3|3 loops?|최대 3|3 ?rounds?)"))
+
+# 5. grade scale A-D: all four defined (bold ID form).
+for p in (SKILL, QUICK, NATURAL):
+    lines = FILES[p]
+    check("grade-scale A-D", p, all(has(lines, rf"\*\*{g}\*\*") for g in "ABCD"))
+
+failed = [r for r in results if not r[1]]
+for name, ok, detail in results:
+    mark = "✓" if ok else "✗"
+    print(f"{mark} {name}" + (f" -- {detail}" if detail and not ok else ""))
+
+if failed:
+    print(f"\n{len(failed)} consistency check(s) FAILED.")
+    sys.exit(1)
+
+print(f"\nAll {len(results)} consistency checks passed.")
+sys.exit(0)

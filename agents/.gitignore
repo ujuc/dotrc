@@ -1,0 +1,103 @@
+### VisualStudioCode template
+.vscode/*
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+### JetBrains template
+.idea/*
+
+# IntelliJ
+out/
+
+### macOS template
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### Claude Code runtime
+claude/sessions
+claude/debug
+claude/file-history
+claude/ide
+claude/projects
+claude/plugins/*
+!claude/plugins/config.json
+claude/shell-snapshots
+claude/statsig
+claude/todos
+claude/history*
+claude/downloads
+claude/session-env
+claude/plans
+claude/stats-cache.json
+claude/cache
+claude/paste-cache
+claude/telemetry
+claude/tasks
+claude/data
+claude/security_warnings_state*
+claude/chrome
+claude/usage-data
+claude/backups
+claude/hooks/*
+!claude/hooks/*.sh
+claude/mcp-needs*.json
+claude/policy-limits.json
+claude/memory
+claude/homunculus
+claude/metrics
+claude/teams
+claude/session-data
+claude/settings.local.json
+claude/daemon.log
+claude/daemon
+claude/jobs
+claude/security
+claude/daemon*
+claude/remote*
+**/.last_*
+**/.last-*
+**/*log*
+**/.ponytail*
+
+### Manual backups taken before editing config (e.g. settings.json.bak)
+*.bak
+
+### autoresearch runtime artifacts (working dirs created by autoresearch skill)
+**/autoresearch-*/
+
+### Entire agent runtime
+.entire/
+
+### Pi agent runtime
+pi/agent/bin
+pi/agent/sessions/**
+pi/agent/auth.json
+pi/agent/settings.json

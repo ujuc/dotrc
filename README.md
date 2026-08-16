@@ -45,7 +45,7 @@ gh auth login
 ## Repo 환경 작업
 
 ```sh
-gh repo clone ujuc/dotrc ${HOME}/.config/dotrc -- --recurse-submodules
+gh repo clone ujuc/dotrc ${HOME}/.config/dotrc
 ```
 
 ## zsh 설정
@@ -163,7 +163,6 @@ git config --global commit.template ${DOTRCDIR}/gitmessage
 
 ```sh
 git -C ${DOTRCDIR} config core.hooksPath .githooks
-git -C ${DOTRCDIR}/agents config core.hooksPath .githooks
 ```
 
 ### [git-delta](https://github.com/dandavison/delta)
@@ -209,14 +208,7 @@ brew install yq
 
 ## Agent
 
-에이전트 설정은 [ujuc/agent-stuff](https://github.com/ujuc/agent-stuff) 저장소의 git submodule(`agents/`)로 관리됩니다.
-
-> Repo clone 시 `--recurse-submodules` 를 사용하지 않았다면:
->
-> ```sh
-> cd ${DOTRCDIR}
-> git submodule update --init --recursive
-> ```
+에이전트 설정은 이 저장소의 `agents/` 디렉터리에서 함께 관리합니다.
 
 ### [Claude](https://claude.ai/)
 
@@ -280,7 +272,7 @@ npm install -g @mariozechner/pi-coding-agent
 
 ### [Codex](https://developers.openai.com/codex)
 
-전역 지침은 agent-stuff의 공용 `rules/AGENTS.md`를 심링크로 사용한다.
+전역 지침은 `agents/rules/AGENTS.md`를 심링크로 사용한다.
 
 ```sh
 ln -sfn ${DOTRCDIR}/agents/rules/AGENTS.md ${HOME}/.codex/AGENTS.md

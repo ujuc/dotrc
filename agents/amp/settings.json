@@ -1,0 +1,6 @@
+{
+  "amp.notifications.enabled": true,
+  "amp.showCosts": true,
+  "amp.skills.disableClaudeCodeSkills": false,
+  "amp.updates.mode": "auto"
+}
