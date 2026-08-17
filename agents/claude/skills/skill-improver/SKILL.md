@@ -203,8 +203,7 @@ If deeper eval-based optimization is warranted, finish this run first and recomm
 - Auto-fixes are limited to metadata, descriptions, and structural issues.
 - Always show diffs before committing.
 - Do not run the target skill itself (only validate its structure and content).
-- Validator path is `claude/skills/generate-skills/scripts/validate-skill` from the agent-stuff repository root (no `.sh` suffix).
-- When run via the `maintain` skill in `full` mode, check for existing skill-engineer output before running redundant checks.
+- Validator path is `claude/skills/generate-skills/scripts/validate-skill` from the agents configuration root (no `.sh` suffix).
 - Trigger overlap, completeness, and model fitness checks belong to skill-engineer — do not duplicate.
 - Outside target files and the README catalog, the only side effects are a user-confirmed commit and the Phase 6 timestamp.
 

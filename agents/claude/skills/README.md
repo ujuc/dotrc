@@ -23,12 +23,10 @@
 [새 프로젝트]   spec-planner → sprint-contract-negotiator → annotate-plan
                 → implement-plan → qa-evaluator → commit
 [기존 코드]     deep-read → annotate-plan → implement-plan → commit
-[스킬 정비]     skill-improver → generate-skills → maintain
+[스킬 정비]     skill-improver → generate-skills
 [글쓰기]        prompting-assist → humanizer
 [디자인]        frontend-design-evaluator → multi-agent-orchestrator
 ```
-
-`maintain`은 project-scoped (`agent-stuff/.claude/skills/maintain/`)이라 user-scope 카탈로그에는 포함되지 않으나, 워크플로우 단계로는 등장한다.
 
 ## Harness Pipeline
 

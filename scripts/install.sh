@@ -135,6 +135,11 @@ done
 check_link_destination() {
     local source=$1 destination=$2 current_target
 
+    if [ ! -e "$source" ]; then
+        printf 'Link source missing: %s\n' "$source" >&2
+        return 1
+    fi
+
     if [ -L "$destination" ]; then
         current_target=$(readlink "$destination")
         if [ "$current_target" = "$source" ]; then
