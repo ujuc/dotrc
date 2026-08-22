@@ -28,7 +28,7 @@
 - `annotate-plan` is the sole plan writer. `implement-plan` is the sole managed executor and archive caller.
 - QA and design evaluators write separate round reports; `multi-agent-orchestrator` alone synthesizes them and passes a final PASS report back to `implement-plan`.
 - Treat `.harness/` as legacy state. Report it and stop for manual resolution; never migrate or delete it automatically.
-- Adapt Superpowers principles only at contract-pinned versions. Its TDD, debugging, verification, review, and parallel-dispatch skills are optional disciplines; its plan/execution/worktree/branch controllers do not own this workflow.
+- Adapt Superpowers planning and skill-authoring principles only at contract-pinned versions. `generate-skills` remains the local authoring controller; TDD, debugging, verification, review, and parallel dispatch remain optional disciplines. Superpowers plan/execution/worktree/branch controllers do not own this workflow.
 
 ## Ask First
 

@@ -17,10 +17,10 @@ backend, no routing, and no remote API fallback.
 All requests go through `scripts/query.sh`:
 
 ```bash
-bash ~/.claude/skills/gemma/scripts/query.sh "이 문단을 3줄로 요약해줘: ..."
+bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "이 문단을 3줄로 요약해줘: ..."
 
 # Use another installed Ollama model for one call.
-GEMMA_MODEL=gemma4:4b bash ~/.claude/skills/gemma/scripts/query.sh "hello"
+GEMMA_MODEL=gemma4:4b bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "hello"
 ```
 
 stdout contains only the model response. stderr starts with
@@ -57,6 +57,13 @@ not install dependencies or pull models automatically.
 | `GEMMA_MODEL` | `gemma4:26b-mlx` | Ollama model name |
 
 Standard Ollama variables such as `OLLAMA_HOST` continue to work unchanged.
+
+## Harness compatibility
+
+The launcher is harness-neutral shell code stored in the shared `agents/`
+tree. Claude, Amp, Codex, and Pi may use it when they can run Bash and reach
+the dotrc checkout. A harness without shell access or Ollama must skip Gemma;
+delegating skills continue through their primary-model fallback.
 
 ## When to use Gemma vs Claude
 

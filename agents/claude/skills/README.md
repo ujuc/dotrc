@@ -28,7 +28,7 @@
                 → multi-agent-orchestrator 종합 → implement-plan 최종화
 [완료 보관]     docs/{specs,contracts,research,plans,reports}
 [스킬 정비]     skill-improver → generate-skills
-[글쓰기]        prompting-assist → humanizer
+[글쓰기]        prompting-assist → (선택) humanizer 후처리
 ```
 
 `workflow-hooks contract`가 노출하는 `agents/workflow-contract.json`이 경로,
@@ -52,8 +52,10 @@ spec-planner → sprint-contract-negotiator → deep-read? → annotate-plan
 
 Chrome 의존 스킬(`qa-evaluator`, `frontend-design-evaluator`)은 `--chrome` 플래그 또는 `/chrome` 명령으로 활성화한다.
 
-Superpowers 6.3.0의 brainstorming·writing-plans 원칙은 공통 스킬에 맞게
-반영했다. TDD, 체계적 디버깅, 완료 전 검증, 리뷰, 병렬 디스패치는 선택적
+Superpowers 6.3.0의 brainstorming·writing-plans·writing-skills 원칙은 공통
+스킬에 맞게 반영했다. `generate-skills`는 로컬 validator·카탈로그를 유지하며
+행동 기준 변경에 baseline/candidate 검증을 적용한다. TDD, 체계적 디버깅,
+완료 전 검증, 리뷰, 병렬 디스패치는 선택적
 보조 규율로 사용할 수 있지만 `writing-plans`, SDD/`executing-plans`, worktree,
 브랜치 완료 흐름은 관리형 워크플로의 계획·실행 소유권을 대체하지 않는다.
 설치 버전이 계약 핀과 달라지면 `skill-improver`가 경고하며 플러그인 캐시를

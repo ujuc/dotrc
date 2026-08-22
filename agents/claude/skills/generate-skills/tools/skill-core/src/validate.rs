@@ -117,9 +117,9 @@ pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
 
 fn validate_name(fm: &Frontmatter, folder_name: &str, findings: &mut Vec<Finding>) {
     match frontmatter::get_str(fm, "name") {
-        None => findings.push(Finding::warn(
+        None => findings.push(Finding::fail(
             "Frontmatter",
-            "name field is missing (optional; directory name will be used)",
+            "name field is missing (required)",
         )),
         Some(n) => {
             findings.push(Finding::pass("Frontmatter", format!("name field exists: {n}")));
@@ -176,9 +176,9 @@ fn validate_description(fm: &Frontmatter, findings: &mut Vec<Finding>) {
     let combined_len = desc.chars().count() + wtu.chars().count();
 
     if desc.is_empty() {
-        findings.push(Finding::warn(
+        findings.push(Finding::fail(
             "Frontmatter",
-            "description field is missing (recommended for trigger accuracy)",
+            "description field is missing (required)",
         ));
         return;
     }
@@ -343,7 +343,7 @@ fn validate_references(skill_dir: &Path, raw: &str, findings: &mut Vec<Finding>)
     let mut broken: Vec<String> = Vec::new();
 
     for m in ref_path_re().find_iter(raw) {
-        let p = m.as_str().trim_end_matches(|c: char| c == '.' || c == ',' || c == ')');
+        let p = m.as_str().trim_end_matches(['.', ',', ')']);
         if !seen.insert(p.to_string()) {
             continue;
         }
@@ -418,6 +418,22 @@ mod tests {
         let mut findings = Vec::new();
         check_enum(&fm, "model", rules::ALLOWED_MODELS, &mut findings);
         assert!(findings.is_empty());
+    }
+
+    #[test]
+    fn missing_required_name_fails() {
+        let fm = fm_from("---\ndescription: test\n---\n");
+        let mut findings = Vec::new();
+        validate_name(&fm, "test", &mut findings);
+        assert!(findings.iter().any(|f| f.severity == Severity::Fail));
+    }
+
+    #[test]
+    fn missing_required_description_fails() {
+        let fm = fm_from("---\nname: test\n---\n");
+        let mut findings = Vec::new();
+        validate_description(&fm, &mut findings);
+        assert!(findings.iter().any(|f| f.severity == Severity::Fail));
     }
 
     #[test]

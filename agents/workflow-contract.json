@@ -73,7 +73,8 @@
   "superpowers": {
     "adapted_from": {
       "brainstorming": "6.3.0",
-      "writing_plans": "6.3.0"
+      "writing_plans": "6.3.0",
+      "writing_skills": "6.3.0"
     },
     "optional_disciplines": [
       "test-driven-development",

@@ -4,7 +4,7 @@ description: 프로젝트용 CLAUDE.md(Claude 전용 레이어), AGENTS.md(Codex
 when_to_use: "문서 생성/갱신 요청일 때. 트리거: '/generate-agent-docs', '문서 업데이트해줘', '문서 갱신해줘', '문서 최신화', 'CLAUDE.md 업데이트', 'AGENTS.md 갱신', 'rules 생성', 'contributing-docs 추가', 'update the docs', 'update CLAUDE.md', 'refresh AGENTS.md'. 파일명이 없는 포괄 요청은 Stage 0-3의 대상 확인을 먼저 거친다. CLAUDE.md·AGENTS.md 등 에이전트 문서의 단일 파일 요청도 지원하며, README·API 문서·CHANGELOG는 이 스킬을 호출하지 않는다."
 group: docs
 model: opus
-allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch TaskOutput advisor
+allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch TaskOutput advisor Bash(workflow-hooks:*)
 ---
 
 # Agent Docs Generator — Orchestrator
@@ -14,7 +14,9 @@ contributing-docs/, nested CLAUDE.md, `.claude/rules/` — under one governing
 rule: **document only what an agent cannot discover by reading the code.**
 Role split: **AGENTS.md is the primary cross-harness document** (Codex/Amp
 read it natively; Claude Code loads it via the `@AGENTS.md` import), and
-**CLAUDE.md is the Claude Code-specific layer** on top of that import.
+**CLAUDE.md is the Claude Code-specific layer** on top of that import. The
+current Pi adapter loads shared skills and workflow hooks, not AGENTS.md, so do
+not claim Pi receives project instructions unless its host integration does.
 
 ## Pipeline Map
 
@@ -37,6 +39,14 @@ instruction belongs in a doc at all), and references/tdd-agent-loop.md (`T1`
 — whether a testing instruction prescribes process or outcome).
 
 ## Stage 0: Bootstrap & Routing
+
+### Managed workflow boundary
+
+Run `workflow-hooks contract` before project analysis. Stop when `.harness/`
+exists. If `.plans/.implementing` exists, this skill may analyze and propose
+documentation changes but must return them to the active `implement-plan` run
+instead of writing files itself. Without an active implementation flag,
+standalone user-approved surgical updates remain allowed.
 
 This skill is the **"refine over time"** layer on top of the built-in `/init`
 command. `/init` is a user-only slash command — it cannot be invoked
@@ -61,8 +71,10 @@ run:
 2. `WebFetch` the `source_url` in that file's frontmatter (plus
    `secondary_source_url` when CLAUDE.md sizing or `/init` behavior is in
    scope).
-3. Success → use the fetched text; if it differs materially from the cached
-   snapshot, update the cache and bump `last_upstream_check`.
+3. Success → use the fetched text. If it differs materially from the cached
+   snapshot, report the drift and route cache maintenance through a separate
+   `skill-improver generate-agent-docs` run; a project-doc task must not edit
+   this global skill as a side effect.
 4. **Any** failure (tool not loaded, offline, rate limit, layout change) →
    use the cached snapshot **and** tell the user in one line:
    *"best-practices 라이브 로드 실패, 캐시 사용 (last check: <date>)."*
@@ -131,11 +143,12 @@ Skip this confirmation when `$ARGUMENTS` already names a file or target type.
   (ETH Zurich). Every line must justify its existence. The operative
   include/exclude rule lives in the authoritative source (Step 0-1).
 - **Cross-harness role split.** AGENTS.md is the primary project document,
-  consumed by every harness (Codex/Amp natively; Claude Code through the
-  `@AGENTS.md` import that opens CLAUDE.md) — keep it harness-neutral and
-  plain markdown (no frontmatter). CLAUDE.md holds only Claude Code-specific
-  content below the import. The operative placement test lives in
-  stage3-generator.md Common Writing Rules.
+  consumed by Codex/Amp natively and Claude Code through the `@AGENTS.md`
+  import that opens CLAUDE.md — keep it harness-neutral and plain markdown
+  (no frontmatter). Pi support is conditional on its host loading AGENTS.md;
+  the current local Pi adapter does not. CLAUDE.md holds only Claude
+  Code-specific content below the import. The operative placement test lives
+  in stage3-generator.md Common Writing Rules.
 - **Code patterns are discoverable** — style rules are unnecessary; exclude
   them. Write instructions as verifiable success criteria.
 - **Governance** (references/entry-router-guidelines.md): when
@@ -297,6 +310,7 @@ instructions.
 | Emit an instruction to show, or to suppress, the agent's reasoning | Never (W2) — risks `reasoning_extraction` refusals one way, internal-tag leakage the other |
 | Emit a sometimes-relevant multi-step procedure as a CLAUDE.md / AGENTS.md section | Recommend a skill and emit one reference line (C2) — every-session budget is for always-relevant content |
 | Write a Memory / Notes / Session Log / Changelog section into an agent-config file | Delete it (C3) — auto-memory owns that content, and a hand-maintained log fails the prune test as soon as it goes stale |
+| Edit project docs while `.plans/.implementing` exists | Return proposed edits to the active `implement-plan` run; do not become a second executor |
 | Claim completion without Stage 4 output | Report checklist/reviewer results with quoted failures |
 
 ## Gotchas
@@ -331,7 +345,7 @@ case is discovered.
 
 ## Eval Criteria
 
-references/eval-criteria.md defines 6 binary checks — mode routing,
+references/eval-criteria.md defines 7 binary checks — mode routing,
 discoverability discipline, size budgets, reference integrity, blind review,
-instruction-authoring constraints — for any generation or update run.
+instruction-authoring constraints, and managed-workflow ownership — for any generation or update run.
 skill-improver / autoresearch / waza reuse them when optimizing this skill.

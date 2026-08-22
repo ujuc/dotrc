@@ -47,11 +47,11 @@ humanizer v2.0 — {fast|strict|redo} 모드 / run_id: {YYYY-MM-DD-NNN} / 언어
 
 ## Phase 1 — Input capture and run_id
 
-1. Create `_workspace/{YYYY-MM-DD-NNN}/` under cwd. NNN is the day's sequence.
+1. Create `${XDG_STATE_HOME:-$HOME/.local/state}/agents/humanizer/{YYYY-MM-DD-NNN}/`. NNN is the day's sequence. This is runtime state, not a managed workflow artifact.
 2. Save the input text to `01_input.txt`.
 3. Estimate genre from the first 300 chars (an explicit user value wins).
 4. Detect language: Hangul ratio 70%+ → ko, Latin ratio 70%+ → en, else mixed.
-5. On redo, reuse the most recent `_workspace/` subdir when the user signals "이전 거 다시".
+5. On redo, reuse the most recent humanizer state subdirectory when the user signals "이전 거 다시".
 
 ## Fast mode (default)
 
@@ -61,9 +61,9 @@ Call the `humanize-monolith` agent once via the `Agent` tool.
 
 Call arguments:
 ```
-input_path: <abs path>/_workspace/{run_id}/01_input.txt
+input_path: <state root>/agents/humanizer/{run_id}/01_input.txt
 quick_rules_path: <resolved absolute skill path>/references/quick-rules.md
-output_dir: <abs path>/_workspace/{run_id}
+output_dir: <state root>/agents/humanizer/{run_id}
 genre_hint: 칼럼 | 리포트 | 블로그 | 공적 | null
 ```
 
@@ -142,7 +142,7 @@ On a 2nd/3rd rewrite, split versions as `03_rewrite_v2.md` / `03_rewrite_v3.md`.
 
 ## Redo mode (`/humanizer redo [instruction]`)
 
-Identify the most recent `_workspace/{run_id}/` (notice and exit if none). For English/mixed runs, redo the current `final.md` through the inline fast track and re-run its checks. For Korean fast runs lacking strict artifacts, scan `final.md` into `02_detection.json` before Phase B and use `final.md` as the prior candidate; fidelity still compares the new candidate with immutable `01_input.txt`.
+Identify the most recent humanizer state run (notice and exit if none). For English/mixed runs, redo the current `final.md` through the inline fast track and re-run its checks. For Korean fast runs lacking strict artifacts, scan `final.md` into `02_detection.json` before Phase B and use `final.md` as the prior candidate; fidelity still compares the new candidate with immutable `01_input.txt`.
 
 **Parse the user instruction.** In the table, “targeted rerun” means strict Phase B for Korean and the equivalent inline fast edit/check for English or mixed text.
 
@@ -262,6 +262,11 @@ fast and strict tracks.
 - `humanize-naturalness-reviewer` — Strict Phase C-2
 
 These live in `~/.config/dotrc/agents/claude/agents/` (= `~/.claude/agents/`).
+
+When a harness cannot invoke these named Claude agents, use the inline fast
+path and load the same language references directly. Strict mode requires the
+named agents; report that limitation and fall back to fast mode only with the
+user's approval.
 
 ## Consistency check
 

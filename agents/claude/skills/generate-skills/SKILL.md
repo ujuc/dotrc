@@ -30,6 +30,8 @@ Principles that guide every step. See `references/design-principles.md` for the 
 2. **Match degrees of freedom to task fragility** (low / medium / high specificity).
 3. **Progressive disclosure**: split content across three tiers (metadata → body → bundled resources).
 4. **Use subagents** wherever they protect the main context or unlock parallel work. See `references/subagent-guidelines.md` for the decision criteria.
+5. **Create a skill only for reusable, non-obvious behavior.** Put project-specific
+   conventions in project instructions and automate mechanical constraints.
 
 ---
 
@@ -40,11 +42,26 @@ Apply this to every skill created or updated through this workflow.
 - **`description` field → Korean.** This is the only part the user sees. Korean trigger phrases are also matched against `$ARGUMENTS` and the user's natural utterances, so Korean wording is functional, not just stylistic.
 - **SKILL.md body, references/, scripts/, init templates → English.** This content is read by the LLM. English is more token-efficient and avoids translation drift in instructional prose.
 - **Keep Korean verbatim where it has functional value:** trigger keywords used for `$ARGUMENTS` matching (e.g., `업데이트`, `수정`), Korean usage examples in description-writing guides, Korean Conventional Commits examples, and any text the user is expected to read (e.g., user-facing summary blocks defined inside a skill).
+- **Keep target-language corpora and linguistic rulebooks in their analyzed
+  language.** Translating a Korean pattern catalog into English destroys the
+  data the skill must inspect.
 - **When updating a legacy skill** that has Korean prose in the body or references, translate the prose to English while preserving the items above.
 
 ---
 
 ## Step 0: Spec sanity check (before anything else)
+
+### Shared workflow and Superpowers source
+
+Run `workflow-hooks contract` and require a non-empty
+`superpowers.adapted_from.writing_skills` pin. This local skill remains the
+authoring controller: it owns the Rust validator, group catalog, and Waza
+integration. Adapt the pinned Superpowers pressure-testing principles, but do
+not hand control to another skill-generation workflow.
+
+When creating or updating a managed workflow skill, compare every artifact
+path and writer claim with the retained contract. Contract changes and their
+Rust validation must be approved and updated together.
 
 The official skills doc changes often. Verify it before generating, but only
 re-fetch when the local copy is actually stale — `references/frontmatter-spec.md`
@@ -114,6 +131,17 @@ After sending the AskUserQuestion, spawn an Explore subagent to survey existing 
 
 Skip when `$ARGUMENTS` already contains enough information.
 
+### Behavior baseline
+
+Before drafting, classify the target as discipline, technique, pattern, or
+reference. Run the smallest scenario that exposes the current gap without the
+new guidance: three pressure scenarios for discipline skills, otherwise one
+application or retrieval scenario. For updates, run the unchanged skill as the
+baseline. Keep the prompts and observed failure so Step 5 can rerun exactly the
+same cases; if Waza is available for an existing skill, persist this baseline
+through `waza-runner` before editing. If the baseline does not fail, do not add
+speculative guidance.
+
 ---
 
 ## Step 2: Scaffold the structure
@@ -169,8 +197,10 @@ Use `references/frontmatter-spec.md` together with `references/description-examp
 
 1. Set `name` (**required**): same as folder, kebab-case.
 2. Write `description` (**required**) using the **WHAT + WHEN** formula:
-   - WHAT: what the skill does (from Step 1's problem / scenario).
+   - WHAT: the minimum capability label needed for cross-harness discovery.
    - WHEN: when it should trigger (from Step 1's trigger phrases).
+   - Do not summarize the workflow; agents may follow metadata instead of
+     loading the body. Keep process details in the body.
    - If omitted, the first paragraph of the markdown body is used.
 3. Set `group` (**required** — local extension): one of the 8 slugs in
    `references/frontmatter-spec.md` → `group`. Never guess — confirm with the
@@ -241,6 +271,9 @@ Pick instruction specificity per the freedom guide in `references/design-princip
 - Instructions are verifiable (no fuzzy phrasing).
 - No filler (no linter-style preaching, no speculation, no over-explaining).
 - **Redundancy audit**: the body must not restate rules already enforced by dispatched agent definitions, sibling skills, or standard LLM knowledge. Run the audit in `references/redundancy-check.md` whenever the body references an agent file, overlaps with an existing skill, or exceeds 150 lines.
+- **Managed ownership audit**: for workflow skills, verify contract-owned paths,
+  writers, archive behavior, and excluded controllers against
+  `workflow-hooks contract` rather than peer prose.
 
 ---
 
@@ -266,6 +299,8 @@ Using the freshly verified `references/frontmatter-spec.md` from Step 0:
 4. **`description` quality**: WHAT + WHEN coverage, trigger phrasing.
 5. **Structural health**: SKILL.md line count (500-line ceiling), whether content should be split into `references/`.
 6. **Redundancy audit**: detect body content that duplicates dispatched agent definitions, sibling skills, or standard LLM knowledge. Follow `references/redundancy-check.md`. Typical findings: constraints mirrored between skill and agent, prompt templates restating agent rules, generic markdown conventions.
+7. **Managed ownership**: when the skill participates in the managed lifecycle,
+   compare its paths and sole-writer claims with `workflow-hooks contract`.
 
 Summarize the comparison for the user and get approval for the update scope.
 
@@ -299,15 +334,23 @@ First invocation compiles the validator (~6–30s, debug profile); later runs ar
 
 If anything fails, return to the relevant step, fix, and re-run.
 
-### Behavior evaluation (optional)
+### Behavior evaluation
 
 Define binary (yes/no) eval criteria that measure output quality.
 Per `references/eval-guide.md`, write 3–6 yes/no checks under an `## Eval Criteria` section in SKILL.md or in a separate `evals.md`.
-The autoresearch skill reuses these criteria when optimizing autonomously.
+Rerun the exact Step 1 baseline scenarios with the candidate skill. A
+behavior-shaping change is not complete unless the prior failure now passes.
+Purely mechanical metadata or path corrections may mark this step N/A with the
+validator evidence. The autoresearch skill can reuse these criteria later.
 
-### waza baseline measurement (optional)
+### Waza measurement (optional automation)
 
-If `waza` is on PATH, record an initial benchmark so `skill-improver` has a before/after reference. **All waza operations route through the `waza-runner` agent — this skill never invokes the `waza` CLI directly.** Skip cleanly when waza is missing — `waza-runner` prints the install guide and exits without error.
+If `waza` is on PATH, persist the Step 5 candidate run alongside the Step 1
+baseline for an existing skill. A new skill uses the no-guidance transcript as
+its baseline because no runnable skill exists yet. **All waza operations route
+through the `waza-runner` agent — this skill never invokes the `waza` CLI
+directly.** When Waza is unavailable, use fresh-context subagent scenarios and
+report that the evidence was not persisted by Waza.
 
 1. Scaffold the eval suite via the runner:
    ```
@@ -315,11 +358,14 @@ If `waza` is on PATH, record an initial benchmark so `skill-improver` has a befo
    ```
    The runner writes `agents/claude/evals/<skill-name>/eval.yaml` with positive×2 + negative×1 placeholder tasks. An existing `eval.yaml` is preserved — the runner never overwrites.
 2. Refine the auto-generated tasks so triggers and expected outputs match reality. Replace the placeholder prompts and add at least one assertion that exercises the skill's specific behavior. (Human-in-the-loop step.)
-3. Dispatch the runner with a `baseline` label:
+3. Dispatch the candidate using a distinct label from the baseline retained in
+   Step 1:
    ```
-   Agent("waza-runner", "eval <skill-name> --label baseline")
+   Agent("waza-runner", "eval <skill-name> --label candidate")
    ```
-4. The agent prints a Korean summary table and saves JSON to `~/.claude/data/waza/results/<skill-name>-baseline-<ts>.json`. Keep that path in mind — `skill-improver` will compare against it later.
+4. The agent prints a Korean summary table and saves JSON under
+   `~/.claude/data/waza/results/`. Keep the available baseline and candidate
+   paths for `skill-improver`.
 
 ### Independent review (optional)
 
@@ -375,11 +421,15 @@ Skill-specific pitfalls that validator automation cannot catch. Update this sect
 5. **Cargo first-build cost is user-visible.**
    The first invocation of `scripts/validate-skill` or `scripts/init-skill` compiles the Rust workspace (~6–30s). Subsequent runs are near-instant. Users unfamiliar with Rust may interpret the initial pause as a hang — surface this in progress messages if the skill is invoked in an unattended context.
 
+6. **Superpowers is an adapted source, not the controller.** Read the version
+   pinned by `workflow-hooks contract`. Keep local Korean discovery metadata,
+   group registration, validator behavior, and managed-workflow ownership.
+
 ---
 
 ## Eval Criteria
 
-Five binary checks that should pass for any skill produced (or updated) by this workflow. The `autoresearch` skill can reuse these when optimizing autonomously.
+Six binary checks that should pass for any skill produced (or updated) by this workflow. The `autoresearch` skill can reuse these when optimizing autonomously.
 
 ```
 EVAL 1: Frontmatter completeness
@@ -415,4 +465,13 @@ EVAL 5: Validator pass
             command from Step 5 exit with status 0 and no `✗` findings?
   Pass: Exit 0, no error-severity lines.
   Fail: Exit non-zero, or any `✗` finding.
+
+EVAL 6: Behavior evidence
+  Question: Did the unchanged baseline expose the target failure, and does the
+            candidate pass the same scenario without violating the workflow
+            contract?
+  Pass: Baseline failure and candidate success are both recorded, or the
+        change is explicitly mechanical with validator evidence.
+  Fail: Guidance changed without a failing baseline, or managed ownership
+        diverges from `workflow-hooks contract`.
 ```

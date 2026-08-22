@@ -20,6 +20,7 @@ assert_jq() {
 
 result=$("$BIN" contract)
 assert_jq "$result" '.artifacts.spec.path == "spec.md"' "contract is embedded"
+assert_jq "$result" '.superpowers.adapted_from.writing_skills == "6.3.0"' "skill-authoring principles are pinned"
 
 home="$TMP/home"
 mkdir -p "$home/.claude/skills/one" "$home/.claude/skills/two"

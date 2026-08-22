@@ -21,14 +21,14 @@ and final judgment on Claude.
 Always use the bundled launcher:
 
 ```bash
-bash ~/.claude/skills/gemma/scripts/query.sh "<prompt>"
+bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "<prompt>"
 ```
 
 The default model is `gemma4:26b-mlx`. Override it only when the user asks for
 another installed Ollama model:
 
 ```bash
-GEMMA_MODEL=gemma4:4b bash ~/.claude/skills/gemma/scripts/query.sh "<prompt>"
+GEMMA_MODEL=gemma4:4b bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "<prompt>"
 ```
 
 ### Passing Dynamic Input
@@ -42,7 +42,7 @@ PROMPT="Summarize this diff in five bullets:
 
 ---
 $DIFF"
-bash ~/.claude/skills/gemma/scripts/query.sh "$PROMPT"
+bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "$PROMPT"
 ```
 
 When redirecting stderr repeatedly under zsh `noclobber`, clear a unique log
@@ -51,7 +51,7 @@ path first:
 ```bash
 LOG=/tmp/gemma-$$.log
 rm -f "$LOG"
-bash ~/.claude/skills/gemma/scripts/query.sh "$PROMPT" 2>"$LOG"
+bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "$PROMPT" 2>"$LOG"
 ```
 
 ## Process Contract

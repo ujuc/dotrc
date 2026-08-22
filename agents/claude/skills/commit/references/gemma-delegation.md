@@ -2,7 +2,7 @@
 
 > Optional pre-summarization of huge `git diff --cached` output via local Gemma. Used by SKILL.md only when the commit is large enough that delegating saves time.
 
-For very large changes, the commit **body** can be drafted by local Gemma first. The subject (`<type>(<scope>): <한국어 제목>`) is always written by Claude. Gemma helps only with light fact enumeration in the body. Call convention, fallback rules, and result-handling principles follow `../gemma/references/delegation-guide.md`.
+For very large changes, the commit **body** can be drafted by local Gemma first. The subject (`<type>(<scope>): <한국어 제목>`) is always written by Claude. Gemma helps only with light fact enumeration in the body. Call convention, fallback rules, and result-handling principles follow `../../gemma/references/delegation-guide.md`.
 
 ## When to delegate
 
@@ -37,7 +37,7 @@ PROMPT="다음 git diff를 5개 이하의 글머리 기호로 요약해줘. 각 
 $DIFF"
 
 # call local Ollama + quiet fallback
-gemma_summary=$(bash ~/.claude/skills/gemma/scripts/query.sh "$PROMPT" 2>"$LOG") || gemma_summary=""
+gemma_summary=$(bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "$PROMPT" 2>"$LOG") || gemma_summary=""
 ```
 
 - stdout captured to `$gemma_summary`, stderr split to the log file.

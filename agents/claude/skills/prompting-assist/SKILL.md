@@ -1,9 +1,9 @@
 ---
 name: prompting-assist
-description: "사용자가 LLM에 보낼 프롬프트를 개선·리뷰·피드백받고 싶어할 때 사용. Anthropic 공식 프롬프팅 모범 사례에 근거한 체크리스트로 진단하고 개선안을 제시한다. '프롬프트 개선해줘', '이 프롬프트 리뷰해줘', '프롬프팅 팁', '/prompting' 등 명시적 어구에만 발동하며, 일반 대화 속 '프롬프트'라는 단어만으로는 발동하지 않는다."
+description: "사용자가 LLM에 보낼 프롬프트를 개선·리뷰·피드백받고 싶어할 때 사용. Anthropic 공식 프롬프팅 지침과 로컬 워크플로 계약을 구분해 진단한다. '프롬프트 개선해줘', '이 프롬프트 리뷰해줘', '프롬프팅 팁', '/prompting' 등 명시적 어구에만 발동하며, 일반 대화 속 '프롬프트'라는 단어만으로는 발동하지 않는다."
 group: writing
 model: sonnet
-allowed-tools: Read, Edit, AskUserQuestion, ToolSearch, WebFetch
+allowed-tools: Read, Edit, AskUserQuestion, ToolSearch, WebFetch, Bash(workflow-hooks:*)
 ---
 
 # Prompting Assist
@@ -46,17 +46,27 @@ If intent is ambiguous, ask one clarifying question first: "이 프롬프트를 
    - Primary use case: one-shot / agentic / tool-calling / long-context / coding
    - Hard constraints: response length / cost / latency / output format
 
-If the model is unknown, default to the latest available Claude model and state the assumption explicitly.
+If the model is unknown, use current general Claude guidance and state the
+assumption without inventing an exact model version.
+
+For prompts that operate the managed lifecycle, run `workflow-hooks contract`
+and preserve its artifact paths, sole writers, and excluded controllers unless
+the user explicitly asks to redesign that contract.
 
 ### Stage 2: Reference Load
 
-The diagnostic baseline is the **inline checklist in Stage 3** (10 categories). For current, authoritative phrasing and code snippets, **live-fetch** Anthropic's official prompt engineering guide:
+The diagnostic baseline is the **inline checklist in Stage 3**. For current,
+authoritative phrasing and code snippets, **live-fetch** Anthropic's living
+prompting best-practices reference:
 
 ```
-https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview
+https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
 ```
 
-`WebFetch` is a **deferred tool** — load its schema first with `ToolSearch` (query `select:WebFetch`), then fetch. The overview links to per-technique pages (be clear and direct, multishot examples, chain-of-thought, XML tags, system prompts, prefill, prompt chaining, long-context tips); fetch the ones relevant to the failing categories. Reusable code snippets from the guide can be quoted verbatim as improvement examples.
+On Claude Code, `WebFetch` is deferred: load it with `ToolSearch` (query
+`select:WebFetch`) before fetching. Other harnesses use their equivalent web
+read/search tool. If no web tool exists, use the inline checklist and label the
+result offline. Reusable official snippets may be quoted as examples.
 
 On **any** failure (tool not loaded, offline, rate limit, layout change), fall back to the Stage 3 inline checklist and tell the user in one line: "Anthropic 가이드 라이브 페치 실패 — 인라인 체크리스트 기반으로 진단합니다."
 
@@ -64,18 +74,18 @@ On **any** failure (tool not loaded, offline, rate limit, layout change), fall b
 
 Judge pass / fail per checklist category:
 
-| Category | Key question |
-|----------|--------------|
-| Clarity & specificity | Is the desired outcome explicit? Are scope and exceptions clear? |
-| Context & motivation | Is the reason for each constraint stated? |
-| Examples | Are 3–5 examples present for few-shot tasks? Are they wrapped in `<example>`? |
-| Structure | Are content types separated by XML tags? Is long context at the top, query at the bottom? |
-| Role & identity | Does the system prompt assign a role? |
-| Output control | Is the language prescriptive (do) rather than prohibitive (don't)? Is there no reliance on last-turn prefill? |
-| Thinking & effort | Does the effort setting match task difficulty? Is there no aggressive over-trigger wording? |
-| Tool use & agentic | Is the action-vs-suggest intent clear? Is parallel intent marked? |
-| Long-horizon | Is state held in structured files? Are completion criteria verifiable? |
-| Anti-patterns | No test hard-coding, no over-defensive coding, no pressure toward needless abstraction? |
+| Category | Source | Key question |
+|----------|--------|--------------|
+| Clarity & specificity | Anthropic | Is the desired outcome explicit? Are scope and exceptions clear? |
+| Context & motivation | Anthropic | Is the reason for each constraint stated? |
+| Examples | Anthropic | Are representative examples present where behavior is hard to describe? |
+| Structure | Anthropic | Are content types separated clearly, using XML tags when useful? |
+| Role & identity | Anthropic | Does a role add task-relevant context rather than decoration? |
+| Output control | Anthropic | Is the desired output shape stated positively and concretely? |
+| Thinking & effort | Anthropic | Does the effort setting match task difficulty without requesting visible chain-of-thought? |
+| Tool use & agentic | Anthropic | Is action-vs-suggestion intent clear, with tools named when needed? |
+| Managed workflow | Local contract | Does an agentic prompt preserve canonical paths, writers, and approval boundaries? |
+| Engineering restraint | Local rule | Does it avoid test hard-coding, defensive bloat, and needless abstraction pressure? |
 
 For each failing item, record a **short justification + improvement direction**. Cite the checklist category (or a specific section of the fetched Anthropic guide).
 
@@ -98,14 +108,16 @@ Close with a one-line checklist coverage report: "10개 범주 중 7개 합격, 
 ## Constraints
 
 - **Preserve original intent.** Never change what the user is trying to do — only raise quality.
-- **Evidence-backed.** Do not assert anything outside Anthropic's official guidance. Every recommendation maps to a checklist category (or a section of the fetched Anthropic guide).
+- **Evidence-backed.** Attribute Anthropic guidance only to the fetched
+  reference. Label managed-workflow and engineering-restraint recommendations
+  as local contract/rule safeguards rather than Anthropic guidance.
 - **Language preservation.** Keep the prompt's original language in the artifact. Diagnosis and explanation follow the conversation language (default Korean).
 - **Brevity.** Diagnosis report: 1–2 lines per category. Strip filler.
 - **Model-version awareness.** Successive Claude model generations diverge in non-trivial ways. When the target model is unknown, state the assumption and proceed.
 
 ## References
 
-- [Anthropic prompt engineering overview](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview) — primary reference; live-fetch per Stage 2 (per-technique pages are linked from the overview)
+- [Anthropic prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) — living primary reference; live-fetch per Stage 2
 - The **Stage 3 inline checklist** is the offline fallback baseline when the live fetch fails
 
 ## Gotchas
@@ -130,9 +142,11 @@ EVAL 1: Trigger precision
 
 EVAL 2: Reference grounding
   Question: Does every improvement recommendation cite a specific checklist
-            category (or a section of the fetched Anthropic guide)?
-  Pass: Each recommendation has an anchor (category name or §section).
-  Fail: Any recommendation is stated without a reference anchor.
+            category and label official vs local provenance correctly?
+  Pass: Each recommendation has an anchor and only fetched guidance is
+        attributed to Anthropic.
+  Fail: Any recommendation lacks an anchor or presents a local rule as
+        Anthropic guidance.
 
 EVAL 3: Intent preservation
   Question: Does the proposed prompt preserve the user's original goal,

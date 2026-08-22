@@ -1,6 +1,6 @@
 # Eval Criteria — generate-agent-docs
 
-Six binary checks for any generation or update run. Referenced from
+Seven binary checks for any generation or update run. Referenced from
 SKILL.md; skill-improver / autoresearch / waza reuse these when optimizing
 the skill autonomously. Keep each check binary (Pass/Fail) so runs are
 scoreable without human judgment.
@@ -75,4 +75,12 @@ EVAL 6: Instruction-authoring constraints
   Pass: None of the seven rejected patterns appears; every path-bound rule
         states its paths or lives in .claude/rules/ with `paths`.
   Fail: Any rejected pattern survives, or a rule's scope is left implied.
+
+EVAL 7: Managed-workflow ownership
+  Question: Did the run read `workflow-hooks contract`, stop on `.harness/`,
+            and avoid direct writes while `.plans/.implementing` existed?
+  Pass: Standalone writes occurred only without an active implementation;
+        active-run proposals returned to `implement-plan`.
+  Fail: The skill wrote project docs as a competing managed executor or
+        continued through legacy `.harness/` state.
 ```

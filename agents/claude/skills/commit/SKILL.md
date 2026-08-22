@@ -3,7 +3,7 @@ name: commit
 description: "한국어 Conventional Commits 규칙에 따라 git 커밋을 생성한다. 서브모듈 변경 감지·우선 커밋, 문서 자동 업데이트, push, 요약까지 포함하며, 프로젝트에 자체 commit 스킬이 있으면 전체 워크플로를 그쪽에 위임한다. /commit, 커밋해줘, 변경사항 커밋, 커밋하고 푸시해줘 요청 시 사용한다."
 group: docs
 model: sonnet
-allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git -C:*), Bash(git submodule:*), Bash(bash:*), Read, Edit, Glob
+allowed-tools: Bash(git rev-parse:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git -C:*), Bash(git submodule:*), Bash(printf:*), Bash(bash:*), Read, Edit, Glob
 ---
 
 # Git Commit
@@ -26,9 +26,10 @@ rules without editing this user-level skill.
    - Read the file with the Read tool.
    - Announce once to the user (Korean):
      `프로젝트 레벨 commit 스킬을 사용합니다 (<absolute-path>).`
-   - Follow that SKILL.md's body for the rest of this invocation. Treat
-     it as authoritative — its `description`, `allowed-tools`, and body
-     override the user-level rules. Do **not** also run the user-level
+   - Follow that SKILL.md's body for the rest of this invocation. Treat its
+     procedure as authoritative within the tools already granted to the
+     current session; reading frontmatter does not expand tool permissions.
+     Do **not** also run the user-level
      `Format`, `Procedure`, `Doc updates`, `Push`, `Summary`, `Maintenance`,
      `Gemma delegation`, or `Humanizer pass` sections; the project skill
      is intentionally taking over the entire workflow.
@@ -116,6 +117,10 @@ EOF
 
 After staging, inspect documentation only for structural changes or new external dependencies. Skip content-only edits, submodule pointer updates, and internal `style` or `refactor` changes.
 
+If `<repo-root>/.plans/.implementing` exists, do not edit documentation here.
+The active `implement-plan` run owns those changes; commit only its completed,
+already-reviewed output.
+
 - Update `AGENTS.md` only when an undiscoverable workflow, scope policy, deployment target, or cross-repository relationship changed. Do not add directory trees or file tables that the repository exposes directly.
 - Update `README.md` when installation steps, symlink targets, or external dependencies changed.
 - Keep `CLAUDE.md` as an import plus harness-specific rules; do not duplicate `AGENTS.md` content there.
@@ -159,10 +164,11 @@ The summary block is shown to the user, so the labels stay in Korean.
 
 ## Maintenance — rule source sync
 
-`references/gitmessage.md` is the single source of truth for commit rules.
-Whenever it is edited, also update `~/.config/dotrc/gitmessage`
-(the global `commit.template`, used when the user runs `git commit` in an
-editor). Items that must stay aligned across both files:
+Project instructions, a repository `gitmessage`, and its commit hook override
+this skill. `references/gitmessage.md` is the user-level fallback. In the dotrc
+repository, keep that fallback aligned with the root `gitmessage` and
+`.githooks/commit-msg`, which are authoritative for local commits. Items that
+must stay aligned:
 
 - Type list (`feat · fix · refactor · perf · style · docs · test · build · ci · chore`)
 - 50 / 72 character limits

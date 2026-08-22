@@ -27,6 +27,7 @@ AGENTS = ROOT.parent.parent / "agents"                 # claude/agents
 
 SKILL = ROOT / "SKILL.md"
 QUICK = REFS / "quick-rules.md"
+TAXONOMY = REFS / "taxonomy-ko.md"
 MONOLITH = AGENTS / "humanize-monolith.md"
 REWRITER = AGENTS / "humanize-rewriter.md"
 NATURAL = AGENTS / "humanize-naturalness-reviewer.md"
@@ -44,7 +45,7 @@ def has(lines: list[str], pattern: str) -> bool:
     return any(rx.search(ln) for ln in lines)
 
 
-FILES = {p: load(p) for p in (SKILL, QUICK, MONOLITH, REWRITER, NATURAL)}
+FILES = {p: load(p) for p in (SKILL, QUICK, TAXONOMY, MONOLITH, REWRITER, NATURAL)}
 
 missing = [str(p) for p, lines in FILES.items() if lines is None]
 if missing:
@@ -89,6 +90,12 @@ for p in (SKILL, REWRITER, NATURAL):
 for p in (SKILL, QUICK, NATURAL):
     lines = FILES[p]
     check("grade-scale A-D", p, all(has(lines, rf"\*\*{g}\*\*") for g in "ABCD"))
+
+# 6. Rhythm correction may split/merge existing sentences but never invent
+# short or long sentences solely to vary cadence.
+for p in (QUICK, TAXONOMY):
+    lines = FILES[p]
+    check("rhythm-preserves-content", p, has(lines, r"기존 문장.*분리.병합"))
 
 failed = [r for r in results if not r[1]]
 for name, ok, detail in results:

@@ -1,9 +1,10 @@
 ---
 name: autoresearch
 description: "편집 가능한 대상(프롬프트, 설정, 코드 등)을 반복 실행-평가-변이하여 자율적으로 최적화한다. Karpathy의 autoresearch 방법론(execute → score → mutate → keep/discard) 기반."
-when_to_use: "자동 실험, eval 루프, autoresearch 트리거 시. `/autoresearch` 명시 호출로 실행하며, description 매칭 시 자동 호출도 가능하다."
+when_to_use: "사용자가 `/autoresearch` 또는 autoresearch 실행을 명시적으로 요청했을 때만 사용한다. 자동 실험과 eval 루프 요청만으로는 실행하지 않는다."
 group: meta
 model: opus
+disable-model-invocation: true
 argument-hint: "[target-path]"
 allowed-tools: Read, Write, Edit, Bash, AskUserQuestion
 ---
@@ -25,6 +26,17 @@ Take any editable target, define what "good output" looks like as binary yes/no 
 5. Repeats until the score ceiling is hit or the budget is exhausted
 
 **Output:** An improved target file + `results.tsv` log + `changelog.md` of every mutation attempted.
+
+## Managed workflow boundary
+
+Run `workflow-hooks contract` before accepting the target. Stop when `.harness/`
+exists. Never mutate paths owned by the contract (`spec.md`, `.sprint/`,
+`.research/`, `.plans/`, or their durable `docs/` destinations).
+
+When `.plans/.implementing` exists, proceed only when `implement-plan` invoked
+this optimization for a file named in the approved plan. Otherwise stop and
+return the request to `implement-plan`; autoresearch is not a competing
+execution engine.
 
 ---
 
@@ -92,9 +104,9 @@ See [references/eval-guide.md](references/eval-guide.md) for the eval format, ru
 
 Run the target AS-IS before changing anything. This is experiment #0.
 
-1. Create working directory: `autoresearch-{target-name}/` next to the target file (where `{target-name}` is `basename({target})` minus extension).
+1. Create working directory `${XDG_STATE_HOME:-$HOME/.local/state}/agents/autoresearch/{target-name}/{YYYY-MM-DD-NNN}/`, where `{target-name}` is `basename({target})` minus extension and NNN is the day's sequence.
 2. Create `results.tsv` inside the working directory with the header row.
-3. Copy the original file to `autoresearch-{target-name}/{filename}.baseline` (NOT next to the original — keeps cleanup atomic).
+3. Copy the original file to `{working-directory}/{filename}.baseline`.
 4. Run the target `{runs}` times (the value confirmed in context-gathering, default `5`) using `{inputs}` and `{exec}`.
 5. Score every output against every eval in `{evals}`.
 6. Record the baseline score as experiment 0.
@@ -225,13 +237,13 @@ When the loop stops, report to the user:
 
 ## Output Structure
 
-All artifacts live inside the working directory next to the target. Cleanup is one `rm -rf` of the working dir; the original target stays in place (improved version overwrites it).
+Experiment artifacts live in shared user state rather than the target repository. Cleanup is one `rm -rf` of the run directory; the original target stays in place (the improved version overwrites it).
 
 ```
-autoresearch-{target-name}/
-├── results.tsv          # score log for every experiment
-├── changelog.md         # detailed mutation log
-└── {filename}.baseline  # copy of the original target before optimization
+${XDG_STATE_HOME:-$HOME/.local/state}/agents/autoresearch/{target-name}/{run-id}/
+├── results.tsv
+├── changelog.md
+└── {filename}.baseline
 ```
 
 The improved target file is saved back to its original location — only the unchanged baseline copy lives inside the working directory.
@@ -277,7 +289,7 @@ Stopped at experiment 6 after three consecutive 100% experiments; the final resu
 5. **Overfitting to test inputs.** If the target improves on test inputs but degrades on novel inputs, the test inputs lack variety — go back to context gathering.
 6. **Size creep.** Each kept mutation adds complexity. Periodically check if the target has grown significantly and consolidate if needed.
 7. **Sequential by construction.** This skill implements hill-climbing — each mutation is evaluated against the last KEEP. Do not parallelize candidate mutations; that is beam search and changes the algorithm. If the user wants beam search, treat it as a different skill.
-8. **Triggers come from `description` + `/autoresearch`.** This skill has no `disable-model-invocation` flag, so Claude may auto-trigger it from `description` matches, and it can also be run explicitly via `/autoresearch`. There is no separate per-skill "CLAUDE.md Skills table" — skill classification is driven by the `group:` frontmatter field, mirrored in the sibling [`../README.md`](../README.md) catalog table. To adjust triggers, edit this skill's `description` / `when_to_use`.
+8. **Explicit invocation only.** `disable-model-invocation: true` prevents an expensive mutation loop from starting on description matching alone. Run it through `/autoresearch` or an explicit user request; the `group:` field remains mirrored in [`../README.md`](../README.md).
 
 9. **Meta-recursion: target == this skill itself.** When the target file is autoresearch's own `SKILL.md`, the execution method must NOT be `Skill("autoresearch")` — that would invoke this skill within itself and either deadlock or create unbounded recursion. Pick one instead:
    - **Text-based static rubric** — score the SKILL.md content against new evals (clarity, structure, coverage). `runs=1` is sufficient; static text yields deterministic scores.
@@ -329,4 +341,11 @@ EVAL 5: Stop condition honored
   Pass: Final row's `stop_reason` is `user_stop`, `budget_exhausted`,
         or `ceiling_3x`, matching the observed condition.
   Fail: Loop ran past budget or stopped without the matching reason.
+
+EVAL 6: Managed ownership preserved
+  Question: Before mutation, did the run reject contract-owned artifacts and
+            require implement-plan ownership when implementation is active?
+  Pass: Managed artifacts are untouched and active execution has an approved
+        implement-plan caller and plan-listed target.
+  Fail: Autoresearch mutates managed artifacts or bypasses implement-plan.
 ```

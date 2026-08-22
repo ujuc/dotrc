@@ -127,7 +127,8 @@ CLAUDE.md does not carry general project documentation — that lives in
 AGENTS.md (Section B), which Codex and Amp load natively and Claude Code loads
 through the `@AGENTS.md` import (official pattern,
 claude-code-best-practices.md → "AGENTS.md — the official cross-agent
-pattern"). CLAUDE.md holds only:
+pattern"). The local Pi adapter currently loads shared skills and workflow
+hooks, not AGENTS.md. CLAUDE.md holds only:
 
 1. The `@AGENTS.md` import (first content line)
 2. Content meaningful **only** to Claude Code: hooks, skills, subagents,
@@ -198,11 +199,12 @@ pattern"). CLAUDE.md holds only:
 
 ### Overview
 
-The project's main agent documentation, consumed by **every** harness: Codex
-and Amp read AGENTS.md natively; Claude Code loads it via the `@AGENTS.md`
-import in CLAUDE.md (Section A). Points to detailed documents in
-contributing-docs/. Standard-level guidance (format, monorepo nesting,
-lifecycle) lives in references/agents-md-best-practices.md.
+The project's main cross-harness agent documentation. Codex and Amp read
+AGENTS.md natively; Claude Code loads it via the `@AGENTS.md` import in
+CLAUDE.md (Section A). Pi receives it only when the active Pi host integration
+loads AGENTS.md; the local workflow-hooks adapter does not. Points to detailed
+documents in contributing-docs/. Standard-level guidance (format, monorepo
+nesting, lifecycle) lives in references/agents-md-best-practices.md.
 
 ### Generation Principles
 
@@ -215,7 +217,8 @@ lifecycle) lives in references/agents-md-best-practices.md.
   markdown; frontmatter is inert noise to the harnesses that read it. In
   update mode, flag existing frontmatter for removal.
 - **Every-session context**: through native loading (Codex/Amp) and the
-  CLAUDE.md import (Claude), AGENTS.md is loaded in full each session. The
+  CLAUDE.md import (Claude), AGENTS.md is loaded in full each session for those
+  harnesses. Pi requires an equivalent host integration. The
   prune test applies line by line, and the combined CLAUDE.md + AGENTS.md
   budget (Section A) constrains its size — detail belongs in
   contributing-docs/, read on demand.

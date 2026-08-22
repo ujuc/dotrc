@@ -5,7 +5,7 @@ source_urls:
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8.md
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5.md
 secondary_source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md
-last_upstream_check: 2026-07-25
+last_upstream_check: 2026-08-22
 check_interval_days: 14
 ---
 

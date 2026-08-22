@@ -68,9 +68,10 @@ Usability를 담당하며 오케스트레이터만 두 결과를 종합한다.
 `docs/plans/`, `docs/reports/`로 이동한다. `.harness/`는 이전 체계이므로
 감지만 하고 자동 이전·삭제하지 않는다.
 
-Superpowers 6.3.0의 brainstorming과 writing-plans 원칙은 공통 스킬에
-맞게 반영했다. TDD, 체계적 디버깅, 완료 전 검증, 리뷰, 병렬 디스패치는
-선택적 보조 규율이다. Superpowers의 별도 계획·실행·worktree·브랜치 완료
+Superpowers 6.3.0의 brainstorming·writing-plans·writing-skills 원칙은 공통
+스킬에 맞게 반영했다. `generate-skills`는 로컬 validator와 카탈로그를 계속
+소유한다. TDD, 체계적 디버깅, 완료 전 검증, 리뷰, 병렬 디스패치는 선택적
+보조 규율이다. Superpowers의 별도 계획·실행·worktree·브랜치 완료
 흐름은 이 워크플로 안에서 사용하지 않는다. 계약 핀과 설치 버전이 다르면
 `skill-improver`가 읽기 전용으로 경고하고 플러그인 캐시는 수정하지 않는다.
 
