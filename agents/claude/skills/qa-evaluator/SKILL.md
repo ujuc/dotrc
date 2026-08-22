@@ -4,7 +4,7 @@ description: "Chrome 통합으로 실행 중인 웹앱을 실제 사용자처럼
 when_to_use: "QA 테스트, 웹앱 테스트, qa-evaluator, 앱 검증해줘, test the running app, evaluate my build, find bugs 요청 시 사용한다. multi-agent-orchestrator의 Evaluator 단계에서도 호출된다."
 group: verify
 model: sonnet
-allowed-tools: Read Glob Grep Bash advisor ToolSearch mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__tabs_create_mcp mcp__claude-in-chrome__navigate mcp__claude-in-chrome__read_page mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__find mcp__claude-in-chrome__form_input mcp__claude-in-chrome__javascript_tool mcp__claude-in-chrome__read_console_messages mcp__claude-in-chrome__read_network_requests mcp__claude-in-chrome__resize_window mcp__claude-in-chrome__gif_creator
+allowed-tools: Read Write Glob Grep Bash advisor ToolSearch mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__tabs_create_mcp mcp__claude-in-chrome__navigate mcp__claude-in-chrome__read_page mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__find mcp__claude-in-chrome__form_input mcp__claude-in-chrome__javascript_tool mcp__claude-in-chrome__read_console_messages mcp__claude-in-chrome__read_network_requests mcp__claude-in-chrome__resize_window mcp__claude-in-chrome__gif_creator
 ---
 
 # QA Evaluator
@@ -34,12 +34,15 @@ Guard against leniency bias at every step. The evaluator must be adversarial tow
 
 ## Evaluation Process
 
-### 1. Load the Contract
+### 1. Load the Workflow Contract and Acceptance Contract
 
-Check for a sprint contract, feature spec, or requirements document in the project:
+Run `"${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}" contract`. Verify `artifacts.qa_report.writer == "qa-evaluator"` and read its report pattern. If unavailable, stop and report:
 
-- Look for files like `SPRINT.md`, `SPEC.md`, `requirements.md`, `TODO.md`, or issue tracker references.
-- If none exist, ask the user what the app is supposed to do. Establish acceptance criteria before testing.
+```bash
+cargo install --locked --path "$HOME/.config/dotrc/agents/tools/workflow-hooks" --root "$HOME/.local"
+```
+
+For a managed run, read canonical `spec.md`, `.sprint/contract.md`, `.plans/plan-{feature}.md`, and `.plans/.verify-final-{feature}.md`. Stop if `.harness/` exists; it is legacy state that requires manual user resolution and must never be migrated automatically. If no managed contract exists in a standalone run, ask the user for expected behavior and establish explicit criteria before testing.
 
 ### 2. Verify the App is Running
 
@@ -72,7 +75,7 @@ Evaluate across 4 criteria, each scored 1-10:
 | --- | --- |
 | **Product Depth** | Features have real interactive depth. Not display-only stubs. Users can complete meaningful actions. |
 | **Functionality** | Core workflows work end-to-end including edge cases, error handling, and data persistence. |
-| **Visual Design** | Layout, spacing, color harmony, responsive behavior, and visual completeness. |
+| **Functional Usability** | Actions are discoverable, navigation and validation are understandable, and workflows remain usable across supported viewports. Do not score visual identity or aesthetic craft. |
 | **Code Quality** | No console errors, proper API responses, correct HTTP status codes, graceful error handling. |
 
 See [references/evaluation-criteria.md](references/evaluation-criteria.md) for the full scoring rubric.
@@ -85,7 +88,7 @@ For each criterion:
 - List specific PASS/FAIL items with evidence.
 - For every FAIL: state the filename:line (if identifiable from source), function name, expected behavior, and actual behavior.
 
-**Threshold**: Any criterion scoring below 5 = sprint FAIL. Return specific feedback to the Generator with remediation guidance.
+**Verdict rule**: Overall PASS requires every active acceptance criterion to PASS and no Critical or Major issue. Numerical scores are diagnostic only and can never override severity or a failed contracted criterion. Return FAIL feedback to `implement-plan`, not to an independent Generator workflow.
 
 ## Anti-Leniency Rules
 
@@ -99,7 +102,7 @@ These rules are non-negotiable:
 
 ## Output Format
 
-Write the report to stdout by default. When invoked through `multi-agent-orchestrator`, also write it to `.harness/evaluation-report.md` using the orchestrator's standard header (Agent, Timestamp, Phase, Round):
+Write the report to stdout by default. In a managed orchestrator run, write exactly `.plans/.qa-{feature}-r{round}.md` after validating it against the embedded contract. Do not write another evaluator's report or the synthesized evaluation.
 
 ```
 ---
@@ -120,7 +123,7 @@ round: <N>
 | --------------- | ----- | ------- |
 | Product Depth   | X/10  | PASS/FAIL |
 | Functionality   | X/10  | PASS/FAIL |
-| Visual Design   | X/10  | PASS/FAIL |
+| Functional Usability | X/10 | PASS/FAIL |
 | Code Quality    | X/10  | PASS/FAIL |
 
 **Overall**: PASS / FAIL
@@ -140,18 +143,17 @@ round: <N>
 
 (repeat for each issue)
 
-## Recommendations for Generator
+## Recommendations for implement-plan
 - Prioritized list of fixes
 ```
 
-When running standalone (no orchestrator), omit the Agent/Phase/Round header fields and print only the report body.
+For managed output, include the exact feature, round, plan, acceptance contract, final verifier, URL, and per-criterion PASS/FAIL evidence. When running standalone, print only the report body and do not create a managed file.
 
 ## Advisor Escalation
 
 This skill runs on sonnet by default. At the decision points below, call `advisor()` to borrow higher-tier reasoning:
 
-- **Steps 4-5 — borderline scoring**: when any of the 4 criteria (Product Depth / Functionality / Visual Design / Code Quality) lands near 5, making PASS/FAIL wobble. "When in doubt, FAIL" remains the baseline, but check whether a false negative would unnecessarily block the project.
-- **When severity classification is ambiguous**: when it matters whether a bug is labeled Critical vs Major, because that choice sets the next iteration's priority order.
+- **Borderline severity**: when evidence clearly shows a defect but Critical vs Major classification is uncertain and would materially alter remediation order.
 
 How to call: invoke `advisor()` with no parameters. The full current conversation context (Chrome exploration results, issue list) is automatically forwarded to the higher-tier model. Use this as a calibration check against leniency bias — while preserving the evaluator's adversarial stance.
 

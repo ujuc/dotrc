@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "contract_version": "1.0.0",
+  "workflow": {
+    "single_active": true,
+    "plan_writer": "annotate-plan",
+    "execution_engine": "implement-plan",
+    "git_policy": "project-instructions"
+  },
+  "artifacts": {
+    "spec": {
+      "path": "spec.md",
+      "writer": "spec-planner",
+      "context": true
+    },
+    "contract": {
+      "path": ".sprint/contract.md",
+      "writer": "sprint-contract-negotiator",
+      "context": true
+    },
+    "research": {
+      "pattern": ".research/research-*.md",
+      "writer": "deep-read",
+      "context": true
+    },
+    "plan": {
+      "pattern": ".plans/plan-*.md",
+      "writer": "annotate-plan",
+      "context": true
+    },
+    "qa_report": {
+      "pattern": ".plans/.qa-{feature}-r{round}.md",
+      "writer": "qa-evaluator",
+      "context": false
+    },
+    "design_report": {
+      "pattern": ".plans/.design-{feature}-r{round}.md",
+      "writer": "frontend-design-evaluator",
+      "context": false
+    },
+    "evaluation_report": {
+      "pattern": ".plans/.evaluation-{feature}-r{round}.md",
+      "writer": "multi-agent-orchestrator",
+      "context": true
+    },
+    "handoff": {
+      "pattern": ".plans/.handoff-{feature}.md",
+      "writer": "multi-agent-orchestrator",
+      "context": true
+    }
+  },
+  "transient": {
+    "implementation_flag": ".plans/.implementing",
+    "verification_pattern": ".plans/.verify-*.md",
+    "blocker_pattern": ".plans/.blocker-*.md",
+    "debug_pattern": ".plans/.debug-*.md",
+    "plan_baseline_pattern": ".plans/.plan-*.md.prev",
+    "plan_cycle_pattern": ".plans/.plan-*.cycle"
+  },
+  "archive": {
+    "spec": "docs/specs/spec-{feature}.md",
+    "contract": "docs/contracts/contract-{feature}.md",
+    "research_directory": "docs/research",
+    "plan_directory": "docs/plans",
+    "evaluation_report": "docs/reports/report-{feature}.md"
+  },
+  "maintenance": {
+    "skill_improver": {
+      "interval_days": 7,
+      "timestamp": "~/.claude/.last_skill_improver_run"
+    }
+  },
+  "superpowers": {
+    "adapted_from": {
+      "brainstorming": "6.3.0",
+      "writing_plans": "6.3.0"
+    },
+    "optional_disciplines": [
+      "test-driven-development",
+      "systematic-debugging",
+      "verification-before-completion",
+      "requesting-code-review",
+      "receiving-code-review",
+      "dispatching-parallel-agents"
+    ],
+    "excluded_workflow_skills": [
+      "writing-plans",
+      "subagent-driven-development",
+      "executing-plans",
+      "using-git-worktrees",
+      "finishing-a-development-branch"
+    ]
+  }
+}

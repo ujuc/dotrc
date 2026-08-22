@@ -1,179 +1,176 @@
 ---
 name: annotate-plan
-description: "병렬 에이전트로 연구 출처가 추적되는 구현 계획을 생성하고, 사용자 인라인 주석을 반복 처리하여 플랜을 개선한다. 구현 계획 작성, 플랜 만들어줘, annotate-plan, /annotate-plan, 노트 반영해줘, address notes, 주석 처리해, annotations 요청 시 사용한다."
+description: "병렬 분석으로 canonical 구현 계획을 만들고 사용자의 직접 편집과 인라인 주석을 반복 반영한다."
+when_to_use: "구현 계획 작성, 플랜 만들어줘, annotate-plan, /annotate-plan, 노트 반영해줘, address notes, 주석 처리해, annotations 요청 시 사용한다."
 group: analysis
 model: sonnet
 argument-hint: "[feature-name]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, advisor
 ---
 
-# Annotate Plan — Annotation Cycle Planning
+# Annotate Plan — Canonical Plan Writer
 
-Create an implementation plan at `.plans/plan-{feature}.md` and support iterative annotation cycles where the user adds inline notes.
+Create and iteratively refine `.plans/plan-{feature}.md`. This is the only managed plan writer; orchestrators and optional Superpowers skills may provide context or discipline but must not create a competing plan.
 
-## Phase A — Initial Plan Generation
+The planning quality rules are adapted from Superpowers `writing-plans` at the version pinned in `workflow-hooks contract`. This skill does not invoke that workflow or create `docs/superpowers/plans/` state.
 
-### 1. Gather Context
-- Parse `$ARGUMENTS` for feature name; derive `{feature}` as kebab-case slug.
-- Load `.research/research-*.md` if present (deep-read output).
-- Track the exact research files that materially inform the plan. Do not list unrelated files merely because they exist.
-- Check for `spec.md`, `.sprint/contract.md` (harness artifacts).
-- If no research and no spec exist, surface this to the user before dispatching agents — the plan quality will be weaker.
+## Contract Preflight
 
-### 2. Launch 2 Parallel Agents
+Before either phase:
 
-Spawn BOTH agents in a **single message** with two `Agent` tool calls. Sequential dispatch doubles wall-clock time for no benefit.
+1. Run `"${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}" contract`.
+2. Verify `workflow.plan_writer == "annotate-plan"`, `artifacts.plan.writer == "annotate-plan"`, and use the configured plan pattern.
+3. If the command is unavailable, stop and report:
+   ```bash
+   cargo install --locked --path "$HOME/.config/dotrc/agents/tools/workflow-hooks" --root "$HOME/.local"
+   ```
+4. Stop if `.harness/` exists. Ask the user to preserve, manually translate, or remove it; never migrate it automatically.
+5. One checkout has one active workflow. On initial creation, stop if another `.plans/plan-*.md` exists or if the target plan already exists. Never overwrite, rename, or delete active state.
 
-| Agent | `subagent_type` | Focus | Output path |
-|-------|-----------------|-------|-------------|
-| **plan-drafter** | `Plan` (built-in) | Draft implementation plan sections: Goal, Approach, File Changes, Dependencies, Risks, Open Questions | `.plans/.partial/plan.md` |
-| **reference-finder** | `reference-finder` | Find reusable patterns/utilities/tests; emit `file:line` citations | `.plans/.partial/references.md` |
+## Phase A — Initial Plan
 
-Agent prompt template (adapt per role):
-```
-Feature: {feature name}
-Requirements: {from $ARGUMENTS / spec.md, plus every criterion and exclusion from .sprint/contract.md when present}
-Research context: {paste or reference .research/research-*.md path}
-Focus: {role description}
-Output: {partial path}
-Required sections: {see table}
-```
+### 1. Gather Canonical Context
 
-Reference-finder output format and citation rules live in `~/.claude/agents/reference-finder.md`; do not restate them.
+- Derive `{feature}` as a stable kebab-case slug from `$ARGUMENTS`.
+- Read `spec.md` and `.sprint/contract.md` when present.
+- Read only `.research/research-*.md` files that materially inform this feature and record their exact paths.
+- If neither approved product/design context nor research exists, warn the user that plan confidence is lower before dispatch.
+- Treat every active contract criterion and exclusion as mandatory plan input; never silently drop one.
 
-Wait for both agents to finish. Verify each partial exists and is non-empty before merging — if either is missing, re-dispatch that one role rather than merging with a hole.
+### 2. Produce Independent Inputs
 
-### 3. Merge and Write Plan
+Launch both roles in one parallel dispatch and wait for both:
 
-Combine the partials into `.plans/plan-{feature}.md`:
+| Role | Agent | Output | Responsibility |
+|---|---|---|---|
+| plan-drafter | `Plan` | `.plans/.partial/plan.md` | Goal, approach, exact changes/tests, dependencies, risks, questions, todos |
+| reference-finder | `reference-finder` | `.plans/.partial/references.md` | Reusable code, APIs, conventions, and tests with `file:line` citations |
+
+Prompts must include the exact spec/contract/research paths, all criteria and exclusions, and the partial output path. If either output is missing or empty, re-dispatch only that role; never merge an incomplete pair.
+
+### 3. Write the Managed Plan
+
+Merge into the contract-configured path with these headings:
 
 ```markdown
 # Plan: {feature}
 
 ## Goal
-(what and why)
 
 ## Approach
-(high-level strategy)
 
 ## Acceptance Criteria
-(verbatim criteria and exclusions from the active contract, or `No active contract`)
+(verbatim criteria and exclusions, or `No active contract`)
 
-## Research Sources
-(one exact backticked `.research/research-*.md` path per source that informed the plan, or `None`)
+## Workflow Sources
+- Product Spec: `spec.md` or None
+- Sprint Contract: `.sprint/contract.md` or None
+- Research: None
+  OR
+- Research:
+  - `.research/research-example.md`
 
 ## Reference Implementations
-(from reference-finder — existing code to reuse/adapt, with file:line citations)
+(existing code and tests with file:line citations)
 
 ## File Changes
-(exact paths, what changes in each)
+(exact affected paths and exact test paths)
 
 ## Code Snippets
-(key implementation details only)
+(load-bearing signatures or examples only)
 
 ## Dependencies & Ordering
-(which items depend on others)
+(per item: Consumes, Produces, predecessors, and parallel-safety)
 
 ## Risk Assessment
-(what could go wrong)
 
 ## Open Questions
-(unresolved decisions)
 
 ## Todo
-- [ ] Item 1
-- [ ] Item 2
+- [ ] Item 1 — exact implementation paths; exact test paths; verification command
 ```
 
-### 4. Save Baseline and Cleanup
-- Copy plan to `.plans/.plan-{feature}.md.prev` (annotation diff baseline).
-- Initialize cycle counter: write `0` to `.plans/.plan-{feature}.cycle`.
-- Delete `.plans/.partial/` directory.
-- Output: ``` `.plans/plan-{feature}.md` has been created. Review it and add inline notes, then say 'address notes' to start an annotation cycle. ```
+`## Workflow Sources` is machine-readable. Use exact canonical backticked paths or `None`; never add prose to those values.
+
+Every behavior-changing todo must name the test that proves it and the fresh verification command. Every todo must identify exact affected and test paths. Do not leave placeholders such as "add tests", "update as needed", or guessed signatures.
+
+### 4. Phase A Self-Review
+
+Before user delivery, verify and revise:
+
+- every spec requirement and contract criterion/exclusion maps to at least one todo and verification;
+- no placeholders, unresolved template text, or unsupported assumptions remain;
+- file paths, symbols, types, and signatures agree across sections and with inspected code;
+- `Consumes`/`Produces` interfaces make ordering and parallel safety explicit;
+- all behavior changes have named tests and runnable verification commands;
+- Workflow Sources lists only material active sources.
+
+Call `advisor()` only for a load-bearing contradiction between the two partials or an unresolved high-impact planning decision.
+
+### 5. Baseline and Review Gate
+
+- Copy the plan to `.plans/.plan-{feature}.md.prev`.
+- Write `0` to `.plans/.plan-{feature}.cycle`.
+- Remove `.plans/.partial/`.
+- Ask the user to review and directly edit or annotate the plan. Do not proceed to implementation until the user explicitly confirms.
 
 ## Phase B — Annotation Cycle
 
-Triggered when user says: "노트 반영해줘", "address notes", "주석 처리해", "annotations".
+Trigger on requests such as "address notes", "annotations", "노트 반영해줘", or "주석 처리해".
 
-### 1. Detect Annotations
+### 1. Detect Feedback
 
-- Diff `.plans/.plan-{feature}.md.prev` against the current plan to find user additions/edits.
-- Within added or changed diff ranges only, scan for explicit markers: `> ` blockquotes, `NOTE:`, `TODO:`, `FIXME:`, `<!-- ... -->`. Markers already present in `.prev` are not new annotations.
-- If `.plans/.blocker-*.md` or `.plans/.debug-*.md` files exist, treat their contents as annotation sources alongside inline diff markers — this lets `implement-plan`'s failure output feed the next annotation cycle. After incorporating, move the consumed files to `.plans/.partial/` so they are not re-read on the next cycle.
-- Treat unrelated whitespace-only diffs as noise. If no new annotations or blocker/debug artifacts remain, report that and stop without changing the baseline or counter.
+Diff `.plans/.plan-{feature}.md.prev` against the current plan. Every substantive user-added, deleted, or changed diff range is feedback, even when it contains no `NOTE:`, blockquote, TODO, FIXME, or HTML-comment marker. Markers help interpretation; they are not required.
 
-See `references/annotation-guide.md` for the four annotation formats and six feedback-type categories.
+Ignore only whitespace-only changes and generated text unchanged from the baseline. Also consume matching `.plans/.blocker-*.md` and `.plans/.debug-*.md` as feedback sources, then move consumed files to `.plans/.partial/` until the cycle completes.
 
-### 2. Process Each Annotation
+If there is no substantive diff or failure artifact, stop without changing baseline or counter.
 
-For each detected annotation:
-1. Quote the annotation verbatim (with its surrounding section).
-2. Classify the feedback type (per annotation-guide.md).
-3. State how it will be addressed — which sections change, whether it is a local patch or a structural revision.
-4. If an active contract exists and the annotation changes scope, exclusions, or acceptance criteria, stop and require a new archived negotiation workspace; do not alter the contracted plan inline.
-5. Otherwise apply the change with `Edit` (preserve unrelated sections; do not rewrite the whole plan). The updated baseline marks the annotation consumed; do not process unchanged markers on later cycles.
+### 2. Apply Each Annotation
 
-### 3. Update Baseline and Counter
+For each changed range:
 
-- Overwrite `.plans/.plan-{feature}.md.prev` with the current plan.
-- Increment the cycle counter in `.plans/.plan-{feature}.cycle`.
+1. Quote the changed text and surrounding heading.
+2. Classify it using [references/annotation-guide.md](references/annotation-guide.md).
+3. State whether it is a local correction or structural revision and name affected sections.
+4. If it changes scope, exclusions, or acceptance criteria under an active contract, stop. Return to the canonical `.sprint/` negotiation lifecycle after the user archives or explicitly abandons the active contract; never create an arbitrary workspace.
+5. Otherwise edit only affected sections and re-run the Phase A self-review.
 
-### 4. Cycle Limit
+### 3. Finish the Cycle
 
-After the counter reaches 6, surface: "6 annotation cycles complete. Consider moving to implementation with `/implement-plan`." This is a suggestion, not a hard stop — continue if the user explicitly asks.
-
-## Advisor Escalation
-
-Sonnet is the default. Call `advisor()` (no parameters — the full context forwards automatically) only at these decision points:
-
-- **Phase A pre-merge**: plan-drafter and reference-finder disagree on a load-bearing fact (e.g., chosen library, existing helper availability), or Risk Assessment synthesis is ambiguous.
-- **Phase B annotation interpretation**: an annotation is ambiguous, or it is unclear whether the change spans multiple sections versus a localized edit.
-
-Do not call advisor for routine progress updates or for simple Q&A.
+- Replace `.plans/.plan-{feature}.md.prev` with the accepted current plan.
+- Increment `.plans/.plan-{feature}.cycle` by exactly one.
+- Remove consumed feedback from `.plans/.partial/`.
+- After cycle 6, suggest implementation; continue only when the user explicitly requests another cycle.
 
 ## Constraints
 
-- **Do NOT implement code** during this skill. Hand off to `implement-plan` only after the user stops annotating.
-- The plan is a **shared mutable document** — Claude writes, the user annotates, Claude incorporates.
-- Keep `## Research Sources` machine-readable: exact backticked paths only, one per bullet, or a single `None` line.
-- Always wait for user confirmation before proceeding to implementation.
-- Create `.plans/` and `.plans/.partial/` if missing. Never commit `.plans/.partial/`.
-
-## Gotchas
-
-1. **`.prev` baseline drift after manual edits.** If the user edits the plan between cycles without triggering `address notes`, the next diff against `.prev` will surface pre-existing edits as new annotations. When you detect a suspiciously large diff, ask the user to confirm what is new versus carry-over.
-2. **Cycle counter absent on resume.** When a session is resumed, `.plans/.plan-{feature}.cycle` may be missing if Phase A ran in a different checkout. Recreate with `0` on first `address notes` call instead of erroring.
-3. **Annotations inside code blocks.** `NOTE:` / `TODO:` / `FIXME:` markers are valid inside Markdown code blocks too — these are almost never user annotations, they are snippets Claude itself produced. Skip annotations found inside fenced blocks unless the user explicitly points to them.
-4. **Plan bloat across cycles.** Every cycle tends to grow the plan. After cycle 3, suggest trimming stale sections (rejected approaches, resolved open questions) to keep the document focused.
+- Do not implement code.
+- Do not invoke Superpowers `writing-plans`, SDD, or `executing-plans` inside this managed pipeline.
+- Preserve unrelated plan sections during annotations.
+- Never commit `.plans/.partial/` or choose alternate filenames after a collision.
+- Hand off to `implement-plan` only after explicit user approval.
 
 ## Eval Criteria
 
-```
-EVAL 1: Both partials written
-  Question: After Phase A Step 2, do `.plans/.partial/plan.md` and
-            `.plans/.partial/references.md` both exist and have >0 bytes?
-  Pass: Both exist, non-empty.
-  Fail: Either missing or zero-byte.
+```text
+EVAL 1: Contract ownership
+  Pass: the configured plan path is written only by annotate-plan.
+  Fail: a fallback, Superpowers, or orchestrator plan becomes managed state.
 
-EVAL 2: Plan section completeness
-  Question: Does the final `.plans/plan-{feature}.md` contain all eleven
-            headings in the Phase A Step 3 template (Goal, Approach,
-            Acceptance Criteria, Research Sources, Reference Implementations,
-            File Changes, Code Snippets, Dependencies & Ordering,
-            Risk Assessment, Open Questions, Todo)?
-  Pass: All eleven headings present.
-  Fail: Any heading missing.
+EVAL 2: Provenance and coverage
+  Pass: Workflow Sources is exact and every active requirement maps to work and verification.
+  Fail: sources are ambiguous or any criterion/exclusion is dropped.
 
-EVAL 3: Baseline and counter initialized
-  Question: After Phase A Step 4, do `.plans/.plan-{feature}.md.prev`
-            and `.plans/.plan-{feature}.cycle` (containing `0`) both
-            exist?
-  Pass: Both exist with correct contents.
-  Fail: Either missing, or cycle file does not contain `0`.
+EVAL 3: Executability
+  Pass: every todo has exact implementation/test paths, interfaces, dependencies, and commands.
+  Fail: placeholders or guessed signatures remain.
 
 EVAL 4: Annotation round-trip
-  Question: After a Phase B cycle, is the counter incremented by exactly 1,
-            does `.prev` match the plan, and does an immediate no-diff rerun do nothing?
-  Pass: Counter +1, `.prev` byte-matches, no annotation is reprocessed.
-  Fail: Counter/baseline mismatch, or an unchanged annotation is processed again.
+  Pass: marker-free substantive edits are processed, counter increments once, and baseline byte-matches.
+  Fail: direct edits are missed or unchanged feedback is processed again.
+
+EVAL 5: Scope integrity
+  Pass: contract-changing feedback returns to canonical .sprint negotiation.
+  Fail: acceptance scope is edited inline or a second workspace is created.
 ```

@@ -1,7 +1,9 @@
 # Cross-Harness Workflow Hooks and Artifact Archival — Design
 
 Date: 2026-08-22
-Status: Implemented (Rust runtime consolidation)
+Status: Superseded
+
+> Superseded by [Unified Workflow Contract and Superpowers Integration](./2026-08-22-unified-workflow-contract-design.md) and its [implementation plan](../plans/2026-08-22-unified-workflow-contract.md). This document remains a historical record of the first cross-harness hook consolidation.
 
 ## 1. Context
 

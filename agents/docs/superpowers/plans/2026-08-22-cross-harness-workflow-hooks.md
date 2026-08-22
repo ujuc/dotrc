@@ -1,5 +1,7 @@
 # Cross-Harness Workflow Hooks Implementation Plan
 
+> **Status: Superseded.** See the [unified workflow contract design](../specs/2026-08-22-unified-workflow-contract-design.md) and [replacement implementation plan](./2026-08-22-unified-workflow-contract.md). The checked tasks below are retained as historical implementation evidence.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Share the existing workflow hooks across Claude Code, Codex, Amp, and Pi, and archive completed research and plan artifacts into durable project documentation.

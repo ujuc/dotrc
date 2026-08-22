@@ -1,162 +1,103 @@
-# Communication Protocol
+# Canonical Communication Protocol
 
-## Overview
+## Source of Truth
 
-All inter-agent communication in the pipeline is **file-based**. One agent writes a file to the `.harness/` directory; the next agent reads it. There is no direct message passing, no shared memory, and no function return values between agents.
+Run `workflow-hooks contract` before a managed run. Its embedded `agents/workflow-contract.json` defines exact artifact paths, writers, context restoration, archive destinations, cadence, and Superpowers boundaries. This reference explains orchestration behavior but does not override the contract.
 
-This design ensures:
-- Durability: pipeline state survives context resets.
-- Transparency: every agent decision is recorded in a human-readable file.
-- Debuggability: inspect `.harness/` to understand what happened at each stage.
+All managed communication is file-based. Each artifact has one writer; all other stages are read-only consumers. Writers must not create aliases or "latest" copies.
 
-## File Exchange Protocol
+## Active Artifacts
 
-```
-1. product-spec.md     (Planner → Generator, Contract)
-2. contract.md         (Contract → Generator, Evaluator)
-3. evaluation-report.md (Evaluator → Generator)
-4. handoff.md          (Any agent → Next session)
-```
+| Artifact | Exact path or pattern | Sole writer | Readers |
+|---|---|---|---|
+| Product spec | `spec.md` | `spec-planner` | contract, research, planning, implementation, evaluators |
+| Acceptance contract | `.sprint/contract.md` | `sprint-contract-negotiator` | research, planning, implementation, evaluators, synthesis |
+| Research | `.research/research-*.md` | `deep-read` | planning and implementation |
+| Plan | `.plans/plan-*.md` | `annotate-plan` | implementation, evaluators, synthesis |
+| QA report | `.plans/.qa-{feature}-r{round}.md` | `qa-evaluator` | orchestrator synthesis and implementation feedback |
+| Design report | `.plans/.design-{feature}-r{round}.md` | `frontend-design-evaluator` | orchestrator synthesis and implementation feedback |
+| Synthesized report | `.plans/.evaluation-{feature}-r{round}.md` | `multi-agent-orchestrator` | `implement-plan` finalization |
+| Handoff | `.plans/.handoff-{feature}.md` | `multi-agent-orchestrator` | next orchestration session |
 
-## Standard File Header
+Implementation verification, blocker, debug, implementation-flag, plan baseline, and annotation-cycle files use the exact transient patterns returned by `workflow-hooks contract`. Their owners may replace or clean them as specified by their skills; they are never durable workflow records.
 
-Every file in `.harness/` must include this header at the top:
+## Workflow Sources
+
+Every managed plan contains this exact section:
 
 ```markdown
----
-agent: [authoring agent/skill name]
-timestamp: [ISO 8601, e.g., 2026-04-02T14:30:00Z]
-phase: [planning|contracting|building|evaluating]
-round: [integer, starting at 1]
----
+## Workflow Sources
+- Product Spec: `spec.md` or `None (bounded work)`
+- Sprint Contract: `.sprint/contract.md`
+- Research:
+  - `.research/research-{topic}.md` or `None`
 ```
 
-## Directory Structure
+`annotate-plan` owns this section. Archive rejects malformed, non-canonical, missing, or unsafe source paths. Legacy `## Research Sources` remains readable only for pre-contract plans; new plans never emit it.
 
+## Evaluator Rounds
+
+QA and design outputs are separate immutable reports for each round. They never share a path, overwrite a previous round, or synthesize each other.
+
+The orchestrator writes one synthesized report per round only after all selected reports exist. It must:
+
+1. cite every exact source report path;
+2. list every active contract criterion with PASS/FAIL and evidence source;
+3. preserve each selected evaluator's verdict;
+4. return Overall FAIL for any failed criterion, failed evaluator, Critical/Major issue, or missing evidence;
+5. send findings to `implement-plan` without editing source reports.
+
+## Handoff Format
+
+Use `.plans/.handoff-{feature}.md` only when context must reset:
+
+```markdown
+# Handoff: {feature}
+
+## Active Stage
+## Canonical Artifacts
+## Selected Evaluators
+## Latest Evaluation Round
+## Completed Evidence
+## Blockers
+## Runtime Services
+## Next Owner and Action
 ```
-.harness/
-├── product-spec.md          # Planner output
-├── contract.md              # Contract negotiation result
-├── evaluation-report.md     # Latest evaluation report
-├── evaluation-report-1.md   # First round evaluation (archived)
-├── evaluation-report-2.md   # Second round evaluation (archived)
-├── handoff.md               # Context reset state transfer
-└── logs/                    # Optional: agent execution logs
-    ├── planner.log
-    ├── generator.log
-    └── evaluator.log
-```
 
-## File Specifications
+Include exact paths and observed state, not copies of artifact content. A handoff does not grant approval. On resume, cross-check every referenced path and continue only the same active feature.
 
-### product-spec.md
+## Active-State Rules
 
-**Writer:** Planner (spec-planner skill)
-**Readers:** Contract, Generator
+- Only one workflow may be active per checkout.
+- If canonical active artifacts exist, resume that exact workflow or stop. Never create a parallel singleton spec or contract.
+- If state belongs to different features or stages, stop for user resolution; never guess which state wins.
+- If `.harness/` exists, treat it as unsupported legacy state. Stop and ask the user to preserve, manually translate, or remove it. Never migrate or delete it automatically.
+- Missing expected input: stop and name the owning stage that must produce it.
+- Malformed or wrong-writer output: do not repair it as a consumer; return it to its sole writer.
+- A stale final verifier becomes invalid after implementation changes and must be regenerated before evaluation.
 
-Contents:
-- Product vision and goals.
-- Feature list with descriptions.
-- User stories or scenarios.
-- Non-functional product requirements (performance, accessibility).
+## Completion and Archive
 
-Out-of-scope items belong to the negotiated contract, not the product spec.
+Only `implement-plan` invokes archive: immediately after standalone full verification when no evaluators were selected, or in finalization mode with a synthesized PASS report. Archive preflights all inputs and destinations before moving anything.
 
-Must NOT include:
-- Implementation details or tech stack decisions.
-- Code examples or architecture diagrams.
-- Database schemas or API specifications.
+Durable destinations are:
 
-### contract.md
+| Source | Destination |
+|---|---|
+| `spec.md` | `docs/specs/spec-{feature}.md` |
+| `.sprint/contract.md` | `docs/contracts/contract-{feature}.md` |
+| `.research/research-*.md` | `docs/research/` |
+| `.plans/plan-{feature}.md` | `docs/plans/` |
+| final synthesis, when present | `docs/reports/report-{feature}.md` |
 
-**Writer:** Contract (sprint-contract-negotiator skill)
-**Readers:** Generator, Evaluator
-
-Contents:
-- Testable acceptance criteria for each feature.
-- Definition of done for the overall task (or per sprint).
-- Explicitly excluded items (will not be evaluated).
-- Evaluation methodology (how each criterion will be tested).
-
-Must include:
-- At least one externally testable criterion per feature.
-- Clear PASS/FAIL conditions (no ambiguity).
-
-### evaluation-report.md
-
-**Writer:** Evaluator (qa-evaluator and/or frontend-design-evaluator skill)
-**Readers:** Generator (for feedback loop)
-
-Contents:
-- Overall verdict: PASS or FAIL.
-- Per-criterion assessment (from contract.md).
-- Specific issues found with reproduction steps.
-- Severity classification: critical / major / minor / cosmetic.
-- Actionable feedback for the Generator.
-
-Versioning:
-- The latest report is always `evaluation-report.md`.
-- Previous rounds are archived as `evaluation-report-N.md`.
-- Round number in the header must match the filename suffix.
-
-### handoff.md
-
-**Writer:** Any agent before context reset
-**Readers:** Next session's first agent
-
-Contents:
-- Current pipeline phase and round number.
-- Summary of completed work.
-- Remaining work items.
-- All relevant file paths in `.harness/`.
-- Known issues or blockers.
-- Tech stack and configuration details.
-- Running service URLs and ports.
-
-This file must contain enough state for a fresh agent to continue the pipeline without access to previous context.
-
-## File Naming Conventions
-
-| Pattern | Example | Purpose |
-|---------|---------|---------|
-| `product-spec.md` | `.harness/product-spec.md` | Always singular, one per pipeline run |
-| `contract.md` | `.harness/contract.md` | Single contract for current scope |
-| `contract-sprint-N.md` | `.harness/contract-sprint-2.md` | Published copy of immutable `.harness/sprint-N/contract.md` |
-| `evaluation-report.md` | `.harness/evaluation-report.md` | Latest evaluation |
-| `evaluation-report-N.md` | `.harness/evaluation-report-1.md` | Archived evaluation round N |
-| `handoff.md` | `.harness/handoff.md` | Context reset state |
-
-## Error Handling
-
-### Missing File
-
-If an agent expects a file that does not exist:
-
-1. **Do not hallucinate content.** Never proceed with assumed data.
-2. Check if the file was written to a different location (common mistake: project root instead of `.harness/`).
-3. If the file is genuinely missing, report the error and halt the pipeline stage.
-4. Suggest which previous stage needs to be re-run.
-
-### Malformed File
-
-If a file exists but is missing the standard header or required sections:
-
-1. Log a warning but attempt to parse what is available.
-2. If critical information is missing (e.g., contract has no acceptance criteria), halt and request re-generation.
-3. Do not attempt to "fix" another agent's output — request the authoring agent to regenerate.
-
-### Stale File
-
-If a file's timestamp is from a previous pipeline run:
-
-1. Warn the user that artifacts may be from a previous session.
-2. Ask whether to proceed with existing artifacts or re-run from the beginning.
-3. Never silently use stale artifacts — the user must confirm.
+Archive moves the plan last and rolls back completed renames if a later move fails. It removes only feature-owned transients and preserves sibling-feature files.
 
 ## Protocol Invariants
 
-1. **Write before read.** An agent must write its output file before the next agent is invoked.
-2. **One writer per file.** Only the designated agent writes a given file type. Others only read.
-3. **Header is mandatory.** Every file must have the standard header. No exceptions.
-4. **Latest file wins.** When multiple versions exist, the un-numbered file is the current version.
-5. **Archive, do not overwrite.** Before writing a new evaluation report, archive the previous one with a round number suffix.
+1. Contract before action.
+2. One active workflow per checkout.
+3. One writer per managed artifact.
+4. Exact paths; no aliases or inferred latest file.
+5. Explicit approval before implementation.
+6. Independent reports before synthesis.
+7. `implement-plan` is the sole managed executor and archive caller.

@@ -1,147 +1,164 @@
 ---
 name: implement-plan
-description: "주석이 달린 구현 플랜을 지속적 검증·블로커 감지·디버거 연동과 함께 실행하고, 전체 검증 통과 후 연구·계획 산출물을 보관한다. 순차/병렬(worktree) 실행 모드를 지원한다. 구현 시작, 플랜 실행해, implement-plan, 다 구현해, /implement-plan 요청 시 사용한다."
+description: "canonical 구현 계획을 검증 중심으로 실행하고, 선택된 평가가 끝난 뒤 전체 워크플로 산출물을 안전하게 보관한다."
+when_to_use: "구현 시작, 플랜 실행해, implement-plan, 다 구현해, /implement-plan 요청 시 사용한다."
 group: build
 model: sonnet
 argument-hint: "[feature-name]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, AskUserQuestion
 ---
 
-# Implement Plan — Execution Driver
+# Implement Plan — Managed Execution Engine
 
-Execute `.plans/plan-{feature}.md` one item at a time, or in isolated worktrees when items are truly independent. Mark an item complete only after its verifier report has no FAIL.
+Execute the approved `.plans/plan-{feature}.md`, prove each item and the full workflow, and call the canonical archive operation exactly once. This is the only managed execution engine and completion owner.
 
-## Composition
+## Inputs
 
-1. `deep-read` optionally writes `.research/research-*.md`.
-2. `annotate-plan` writes the plan and embeds reusable code under `## Reference Implementations`.
-3. `implement-plan` executes the plan and writes `.plans/.verify-*`, `.plans/.blocker-*`, and `.plans/.debug-*` artifacts.
+The caller may supply:
 
-Return scope corrections to `annotate-plan` Phase B instead of redesigning the plan inline.
+- `{feature}` or an exact active plan path;
+- `evaluators`: the selected independent evaluators, empty for standalone execution;
+- `final_report`: an exact synthesized PASS report path, only when finalizing an evaluator-bearing run.
 
-## 1. Load the Plan
+An orchestrator passes these values but does not execute plan items or archive artifacts itself.
 
-- With `$ARGUMENTS`, open `.plans/plan-{feature}.md` directly.
-- Otherwise glob `.plans/plan-*.md`: use one match, ask the user when there are multiple, and stop when there are none.
-- Parse every unchecked todo, dependency note, affected path, embedded `Acceptance Criteria`, `Research Sources`, and `Reference Implementations`. Map each todo to the criteria it advances; never silently drop an active criterion.
-- Create `.plans/.implementing`. If an existing flag is older than 24 hours or has no matching active plan, remove it and warn once.
+## Contract and State Preflight
 
-## 2. Select a Mode
+1. Run `"${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}" contract`.
+2. Verify `workflow.execution_engine == "implement-plan"`, read all artifact/transient/archive definitions, and confirm the selected plan matches `artifacts.plan.pattern`.
+3. If the command is unavailable, stop and report:
+   ```bash
+   cargo install --locked --path "$HOME/.config/dotrc/agents/tools/workflow-hooks" --root "$HOME/.local"
+   ```
+4. Stop if `.harness/` exists. Ask the user to preserve, manually translate, or remove it; never migrate it automatically.
+5. Resolve one plan: use the requested feature, accept one glob match, ask when multiple plans exist, and stop when none exists.
+6. Parse every unchecked todo, exact affected/test path, `Consumes`/`Produces` dependency, acceptance criterion, exclusion, `## Workflow Sources`, verification command, and reference implementation. Verify every declared source exists at its canonical contract path before editing code.
+7. Read all applicable repository instructions, especially Git policy. Repository rules override generic branch, worktree, commit, merge, and PR advice.
 
-Treat items that touch the same file as sequential even when the plan calls them independent.
+## Finalization-Only Entry
+
+When `final_report` is supplied, do not reimplement completed items:
+
+1. Require all todos checked, `.plans/.verify-final-{feature}.md` present with no FAIL, and no implementation change newer than that final verifier.
+2. Read the exact report. Require an overall PASS, exact references to selected QA/design source reports, and PASS for every active acceptance criterion. A score cannot override a failing criterion or severity.
+3. Confirm the report matches `.plans/.evaluation-{feature}-r{round}.md` and the same selected feature.
+4. Call the archive procedure in [Completion and Archive](#completion-and-archive) with `final_report` and return. Do not run evaluator work or create a second synthesis.
+
+If the report is FAIL, do not enter finalization. Return its findings to normal implementation, remove the stale final verifier before changes, and require a fresh full verifier before another evaluation round.
+
+## Execution Mode
+
+After preflight, create the contract-configured implementation flag. Treat an unmatched stale flag as a conflict to inspect, not permission to delete unknown work.
+
+Choose the simplest mode permitted by repository instructions:
 
 | Condition | Mode |
 |---|---|
-| Fewer than two independent items, or any file overlap | **A — sequential** |
-| Two or more independent items with disjoint file sets and no pre-existing changes in those paths | **B — parallel worktrees** |
-| Mixed graph | Run sequential chains in A, then the disjoint cluster in B |
+| Direct-main policy, fewer than two independent items, file overlap, or uncertain dependency | **Sequential in the current checkout** |
+| Repository permits worktrees and at least two items have disjoint paths and interfaces | **Parallel isolated worktrees** |
+| Mixed graph | Sequential dependency chains, then only the proven-disjoint cluster in worktrees |
 
-## 3A. Sequential Execution
+Never create a branch or worktree merely because a generic workflow recommends it. In this dotfiles repository, execute sequentially on `main`.
 
-For each item in dependency order:
+## Engineering Disciplines
 
-1. Derive a stable unique `{item-slug}` as `{todo-ordinal}-{kebab-summary}` and identify its affected files.
-2. Implement only that item in the main context, following `~/.claude/agents/implementer.md` with the active plan, references, allowed files, and blocker path `.plans/.blocker-{item-slug}.md`.
-3. If that blocker file appears, go to Section 4 before verification. Otherwise launch `verifier` with the item, affected files, mapped acceptance criteria, requested checks, and output path `.plans/.verify-{item-slug}.md`; wait.
-4. Confirm the report contains `build:`, `typecheck:`, `lint:`, `tests:`, and `errors:`.
-5. If any check is `FAIL`, go to Section 4. Otherwise mark the item `- [x]` and continue.
+The contract lists optional Superpowers disciplines. They provide engineering checks, never workflow state or ownership:
 
-Never begin the next item before the current report is complete. This keeps failed edits isolated from later work.
+- For behavior changes, use `test-driven-development` when available. Otherwise preserve red → green → refactor inline and show the failing test before implementation.
+- After a reproducible failure, use `systematic-debugging` when available. Otherwise identify root cause, state one hypothesis, test it, and add a regression test before changing direction.
+- Require fresh verification before checking an item and before any completion claim; `verification-before-completion` may enforce this.
+- Use requesting/receiving review only for an independent code-review pass. Review feedback returns here for execution.
+- Use parallel dispatch only for domains with disjoint files, interfaces, and state.
 
-## 3B. Parallel Worktrees
+Inside this managed pipeline, do not invoke Superpowers `writing-plans`, `subagent-driven-development`, `executing-plans`, `using-git-worktrees` when repository policy forbids it, or `finishing-a-development-branch`. `annotate-plan` and this skill own planning and execution state.
 
-Launch one `implementer` agent per independent item in a single message with `isolation="worktree"` and `run_in_background=true`. Supply:
+## Sequential Execution
 
-- the exact item and active plan path;
-- its affected files and embedded reference excerpts;
-- `{item-slug}` and blocker path `.plans/.blocker-{item-slug}.md`;
-- the completion contract from `~/.claude/agents/implementer.md`.
+For each todo in dependency order:
 
-Each successful agent returns `status`, absolute worktree path, branch, commit SHA, changed files, and check summary. For each result:
+1. Derive `{item-slug}` as `{ordinal}-{kebab-summary}` and map its exact paths, tests, criteria, inputs, and outputs.
+2. For behavior work, run the named test and record the expected failure before implementation.
+3. Implement only that item. Follow repository patterns and write `.plans/.blocker-{item-slug}.md` when the plan cannot be executed without a scope decision.
+4. Run the named focused checks, then launch an independent verifier writing `.plans/.verify-{item-slug}.md`.
+5. Require explicit `build:`, `typecheck:`, `lint:`, `tests:`, and `errors:` results. Any applicable FAIL blocks completion.
+6. Mark `[x]` only after fresh PASS and continue. Never begin the next item while the current one is unresolved.
 
-1. `BLOCKED`: wait for every already-launched sibling to finish, collect all results, copy the blocker into the main checkout, and remove or explicitly retain every sibling worktree before Section 4. Never orphan a live/finished sibling.
-2. `COMPLETE`: launch `verifier` against the returned worktree and write the report to the main checkout's `.plans/.verify-{item-slug}.md`; wait. On FAIL, diagnose and fix inside that worktree before any merge.
-3. When verification has no FAIL, resolve the worktree's current verified SHA and merge it with `git merge --no-ff <commit-sha>`. A worktree commit shares the repository object store, so no fetch or guessed branch is needed.
-4. On a merge conflict, abort the merge and ask the user; never auto-resolve a conflict caused by dependency misclassification.
-5. Mark the item `- [x]` only after verification and merge both succeed.
+## Parallel Worktrees
 
-After a merged or abandoned item, remove its worktree and delete its branch. Do not remove a worktree whose result is still needed for blocker recovery.
+Use only when repository policy allows it and independence is proven from the plan interfaces:
 
-## 4. Blocker and Failure Handling
+1. Launch one implementer per disjoint item in isolated worktrees and require its exact worktree, branch, commit SHA, changed paths, checks, and blocker path.
+2. Wait for all already-launched siblings before handling a blocker; never orphan worktrees.
+3. Verify each returned SHA independently in its worktree. Fix and reverify there.
+4. Integrate only the exact verified SHA using the repository-approved method. On conflict, abort and ask the user; never auto-resolve a dependency-classification failure.
+5. Remove merged or explicitly abandoned worktrees and branches only when project instructions permit those actions.
 
-### Blocker
+## Blockers and Failures
 
-If `.plans/.blocker-{item-slug}.md` exists, show its `## Problem`, `## Attempts`, and `## Proposal` sections. Remove `.plans/.implementing`, stop, and direct the user to `annotate-plan` Phase B (`address notes`). Do not run the debugger for an explicit scope blocker.
+- **Explicit blocker:** show `Problem`, `Attempts`, and `Proposal`; remove the implementation flag; return to `annotate-plan` Phase B. Do not redesign scope inline.
+- **Verifier failure:** create `.plans/.debug-{item-slug}.md` through an independent debugger or the inline systematic-debugging invariant. Apply a fix only after root cause is demonstrated, then rerun the same verifier.
+- **Scope divergence:** never run destructive checkout/reset over main-checkout work. Show the diff and ask whether to keep or revert it. Mark `(RESET)` only after the approved rollback, remove the flag, and return to `annotate-plan`.
+- **Cancellation or failed final verification:** remove the implementation flag and retain source artifacts. Never archive or claim completion.
 
-### Verifier failure
+## Full Verification and Evaluation Handoff
 
-Launch `debugger` with:
+After all todos are checked:
 
-- `.plans/.verify-{item-slug}.md`;
-- affected files;
-- the active plan path;
-- output `.plans/.debug-{item-slug}.md`;
-- for Mode B, the failed worktree root and verified commit SHA.
-
-Wait, show its four required sections, and ask whether to apply the suggested fix. In Mode B, diagnose and apply any approved fix inside the same worktree, commit the corrected item, and verify that new commit before merge. In Mode A, apply inline and rerun the same verifier before marking complete.
-
-### Scope correction
-
-After repeated failure or plan divergence, do **not** run `git checkout -- {files}`: it can erase user work or earlier items. Show the item diff and ask whether to keep it or revert it. A failed worktree may be dropped safely; main-checkout changes require explicit user direction. Mark `- [ ] (RESET)` only after the chosen rollback, remove `.plans/.implementing`, and hand back to `annotate-plan`.
-
-## 5. Completion
-
-When all items are checked:
-
-1. Launch one final `verifier` for the full build/test suite and every active acceptance criterion, writing `.plans/.verify-final-{feature}.md`, and wait.
-2. On FAIL, surface the report and offer debugger or scope correction; do not claim completion.
-3. After a PASS, build normalized archive input with the active plan path and every stable `{item-slug}`, then run:
-   ```bash
-   printf '%s' "$archive_input" | "${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}" archive
+1. Run one fresh full verifier for the build/test suite and every active acceptance criterion. Write `.plans/.verify-final-{feature}.md`.
+2. On FAIL, follow failure handling and do not claim completion.
+3. If `evaluators` is empty, proceed directly to archive with no final report.
+4. If one or more evaluators were selected, keep the active workflow state and implementation flag, and return exactly:
+   ```text
+   AWAITING_EVALUATION
+   feature: {feature}
+   plan: .plans/plan-{feature}.md
+   final_verifier: .plans/.verify-final-{feature}.md
+   evaluators: [selected evaluator names]
    ```
-   The binary preflights every source and destination, moves declared research to `docs/research/`, moves the plan to `docs/plans/`, and removes only this plan's workflow-owned transient files. For a legacy plan without `## Research Sources`, it uses only `.research/research-{feature}.md` when that exact file exists.
-4. If archival fails, remove `.plans/.implementing`, report the binary's exact diagnostic, leave all source artifacts in place, and do not claim workflow completion. Never choose a new filename or overwrite an existing document automatically.
-5. Confirm `.plans/.implementing` is absent. Remove it explicitly on every other terminal path, including blocker, RESET, cancellation, and failed final verification.
-6. Report completed/total items, per-item verification, RESET items, retained worktrees, and archived document paths.
-7. If changes remain uncommitted, suggest `/commit`; pushing remains a separate explicit request.
+   Do not archive. The orchestrator runs independent evaluation and writes the synthesis.
+5. A PASS synthesis re-invokes this skill with its exact `final_report` for finalization-only entry. A FAIL synthesis returns findings to implementation and invalidates the prior final verifier.
 
-## Constraints
+## Completion and Archive
 
-- Never mark `[x]` without a matching completed verifier artifact.
-- Never auto-discard main-checkout changes.
-- Never parallelize overlapping files.
-- Never archive on blocker, RESET, cancellation, or verifier failure.
-- Never overwrite `docs/research/` or `docs/plans/` destinations.
-- Do not commit `.plans/` transient artifacts unless the project explicitly tracks them.
+Build JSON containing `cwd`, exact `plan`, all stable `item_slugs`, and `final_report` only when present. Run:
+
+```bash
+printf '%s' "$archive_input" | \
+  "${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}" archive
+```
+
+The binary preflights every source and destination, rolls back partial file moves, archives the complete declared workflow, and then removes only feature-owned transient state.
+
+Durable outputs are:
+
+- `docs/specs/spec-{feature}.md` when a product spec was declared;
+- `docs/contracts/contract-{feature}.md` when a sprint contract was declared;
+- `docs/research/research-*.md` for declared research;
+- `docs/plans/plan-{feature}.md` always;
+- `docs/reports/report-{feature}.md` only for evaluator-bearing completion.
+
+On archive error, report the exact diagnostic, leave active source state in place, and do not invent a filename or overwrite a destination. Confirm the implementation flag is absent after successful archive. Report item totals, verification evidence, retained worktrees, and exact durable paths. Suggest commit only when changes remain uncommitted; push is always a separate explicit action.
 
 ## Eval Criteria
 
-```
-EVAL 1: Plan state integrity
-  Pass: Every original todo is exactly one of [x], [ ], or [ ] (RESET).
-  Fail: Any todo is lost, duplicated, or has another state.
+```text
+EVAL 1: Ownership
+  Pass: implement-plan is the only execution and archive caller.
+  Fail: an orchestrator or Superpowers controller owns managed execution state.
 
-EVAL 2: Flag lifecycle
-  Pass: `.plans/.implementing` is absent on every terminal path.
-  Fail: The flag remains after completion, blocker handoff, or cancellation.
+EVAL 2: Item integrity
+  Pass: every original todo is [x], [ ], or [ ] (RESET), and every [x] has fresh PASS evidence.
+  Fail: a todo or criterion is lost, duplicated, or checked without verification.
 
-EVAL 3: Verification coverage
-  Pass: Every [x] item has one completed `.plans/.verify-{slug}.md` with no FAIL.
-  Fail: Any completed item lacks a passing report.
+EVAL 3: Repository policy
+  Pass: Git/worktree behavior follows applicable project instructions.
+  Fail: generic branch or worktree advice overrides the repository.
 
-EVAL 4: Worktree reconciliation
-  Pass: Every Mode B merge uses the returned commit SHA and has no conflict.
-  Fail: A branch is guessed, a merge conflicts, or unverified work is marked complete.
+EVAL 4: Evaluation boundary
+  Pass: selected evaluators cause AWAITING_EVALUATION; only synthesized PASS re-entry archives.
+  Fail: execution archives before evaluation or evaluation reimplements work.
 
-EVAL 5: Safe correction
-  Pass: Main-checkout changes are never auto-discarded and RESET hands back to annotate-plan.
-  Fail: Recovery uses destructive checkout/reset or redesigns the plan inline.
-
-EVAL 6: Durable artifact promotion
-  Pass: Final verification has no FAIL, the active plan is under docs/plans,
-        only declared or exact legacy research is under docs/research, and
-        workflow-owned transient files for the plan are absent.
-  Fail: Archival runs before final PASS, moves unrelated research, overwrites a
-        destination, leaves a partial move, or reports completion after an
-        archive error.
+EVAL 5: Durable promotion
+  Pass: all declared canonical sources and optional final report move atomically to contract destinations.
+  Fail: unrelated state moves, a collision is overwritten, or completion is claimed after archive failure.
 ```

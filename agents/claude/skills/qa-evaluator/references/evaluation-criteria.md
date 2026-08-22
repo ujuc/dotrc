@@ -28,18 +28,18 @@ Measures whether core workflows execute correctly including edge cases.
 
 **Key test**: What happens with empty inputs, extremely long strings, special characters, and rapid repeated submissions?
 
-## Visual Design
+## Functional Usability
 
-Measures layout, spacing, color harmony, responsiveness, and visual completeness.
+Measures whether users can discover and complete workflows, understand validation and navigation, and operate the product across supported viewports. Visual identity, originality, typography, spacing craft, and color harmony belong to `frontend-design-evaluator`.
 
 | Score | Description |
 | ----- | ----------- |
-| 1-3 | Broken layout. Overlapping elements, invisible text, missing styles. Unusable on any viewport size. |
-| 4-5 | Layout functions but feels unfinished. Inconsistent spacing, misaligned elements, poor color choices. Responsive breakpoints missing or broken. |
-| 6-7 | Clean, consistent layout. Good spacing and color harmony. Responsive behavior works for common viewport sizes. Minor visual polish issues. |
-| 8-10 | Visually polished. Consistent design language. Smooth transitions. Works perfectly across all viewport sizes. Attention to micro-details (loading states, empty states, hover effects). |
+| 1-3 | Primary actions are undiscoverable or blocked. Navigation, labels, validation, or viewport behavior prevents task completion. |
+| 4-5 | Main actions can be completed, but confusing navigation, feedback, or responsive behavior causes repeated mistakes. |
+| 6-7 | Primary workflows are understandable across common viewports with only minor discoverability or feedback issues. |
+| 8-10 | Users can predict, discover, complete, and recover from every contracted workflow without functional confusion across supported viewports. |
 
-**Key test**: Resize the browser to mobile, tablet, and desktop widths. Do all elements remain usable?
+**Key test**: Can a user unfamiliar with the implementation find the primary action, understand system feedback, recover from errors, and complete the task at each supported viewport?
 
 ## Code Quality
 

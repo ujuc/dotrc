@@ -7,6 +7,10 @@
 - Put shared logic in one authoritative skill's `references/` and link to it instead of copying.
 - Do not track plugin-generated `learned/` content.
 - Use `opus` for planning or orchestration, `sonnet` for deterministic execution, and `haiku` for mechanical rendering. Use `sonnet` with `advisor()` for independent review when needed.
-- Shared artifacts live at `.plans/plan-*.md`, `.research/research-*.md`, `.sprint/contract.md`, and `spec.md`.
+- Read the machine-readable workflow surface with `workflow-hooks contract`; `agents/workflow-contract.json` is canonical for artifact paths, writers, archive destinations, cadence, and Superpowers pins.
+- The managed lifecycle is `spec.md` → `.sprint/contract.md` → `.research/research-*.md` when needed → `.plans/plan-*.md` → `implement-plan` → optional separate QA/design reports → orchestrator synthesis → `implement-plan` finalization.
+- Keep one active workflow per checkout. `annotate-plan` is the only plan writer, `implement-plan` is the only managed executor/archive caller, and evaluators never synthesize or archive.
+- Completed artifacts move to `docs/{specs,contracts,research,plans,reports}/`; `.harness/` is legacy state that requires manual resolution, never automatic migration.
+- Adapted Superpowers planning principles may inform skills at contract-pinned versions. Use its TDD/debugging/verification/review/parallel skills only as optional disciplines; do not invoke competing plan, execution, worktree, or branch-finishing controllers inside the managed workflow.
 - Chrome-dependent skills must load deferred tool schemas with `ToolSearch` before calling them.
 - `skill-improver` runs through the SessionStart cadence hook; do not also schedule it with cron.

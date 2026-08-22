@@ -10,15 +10,15 @@ Quality evaluation criteria for Planner-generated specs. Use these to self-evalu
 
 | Grade | Description |
 |-------|-------------|
-| Excellent | Spec envisions a full product with 10+ features, explores non-obvious capabilities, and imagines the product at maturity |
-| Good | Spec covers 6-9 features with reasonable breadth beyond the obvious interpretation |
-| Weak | Spec is a thin wrapper around the input — only 3-5 features that anyone would list |
+| Excellent | Spec covers the complete approved direction, including non-obvious capabilities that materially improve user value |
+| Good | Spec covers the approved core and its important supporting capabilities without filler |
+| Weak | Spec is a thin wrapper around the input or omits capabilities needed for the stated product outcome |
 | Fail | Spec is narrower than the input prompt or adds no new insight |
 
 **Why it matters**: From the blog — "I prompted it to be ambitious about scope." A narrow spec produces a narrow product. The Planner's job is to envision the full possibility space.
 
 **Red flags**:
-- Feature count under 6 for a non-trivial product
+- Capability breadth is unexplained or mismatched to the approved direction
 - No features beyond what was explicitly mentioned in the input
 - "MVP" or "minimal" language that constrains scope prematurely
 
@@ -91,12 +91,12 @@ If any criterion scores Weak or below, revise the spec before proceeding to the 
 
 Before delivering the spec, verify:
 
-- [ ] Feature count is appropriate for product complexity (typically 8-15)
+- [ ] Capability breadth matches the approved product complexity without count-driven filler
 - [ ] Every feature has at least one user story with a value clause
 - [ ] Overview can be understood by a non-technical stakeholder
 - [ ] Data model is conceptual, not schema-level
 - [ ] AI integration was explicitly considered (even if conclusion is "not applicable")
-- [ ] Sprint breakdown follows dependency order, not arbitrary grouping
+- [ ] Dependency/value grouping follows real ordering constraints, not arbitrary stages
 - [ ] No implementation details leaked into feature descriptions
 - [ ] Visual design direction references concrete existing products
 - [ ] Exclusions section is not needed (Planner defines what IS in scope; contract defines what is NOT)

@@ -1,6 +1,6 @@
 ---
 name: skill-improver
-description: "스킬/에이전트 정의를 테스트 시나리오 기반으로 자동 개선한다. 7일 주기로 세션 시작 시 비차단 알림이 뜨고, 심층 최적화가 필요하면 별도 autoresearch 실행을 안내한다. /skill-improver, skill-improver, 스킬 개선해줘, 스킬 최적화, 스킬 테스트해줘, test skills 요청 시 사용한다."
+description: "스킬/에이전트 정의를 테스트 시나리오 기반으로 자동 개선한다. 공통 워크플로 계약의 주기에 따라 비차단 알림이 뜨고, 심층 최적화가 필요하면 별도 autoresearch 실행을 안내한다. /skill-improver, skill-improver, 스킬 개선해줘, 스킬 최적화, 스킬 테스트해줘, test skills 요청 시 사용한다."
 group: meta
 model: sonnet
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bash:*), Bash(git:*), Bash(date:*), Agent, advisor
@@ -9,13 +9,13 @@ argument-hint: "[skill-name ...]"
 
 # Skill Improver
 
-Test-driven improvement loop for skills and agent definitions. Validates structure and semantics, auto-fixes safe issues, and re-verifies — up to 3 iterations per target. Runs on a 7-day cadence via the session-start protocol.
+Test-driven improvement loop for skills and agent definitions. Validates structure and semantics, auto-fixes safe issues, and re-verifies — up to 3 iterations per target. Cadence and adapted Superpowers versions come from the shared workflow contract.
 
 ## Periodic Execution
 
 This skill is meant to run regularly, not just on demand.
 
-- The SessionStart command runs `$HOME/.local/bin/workflow-hooks hook`. Its cadence policy reads `~/.claude/.last_skill_improver_run`; when the date is older than 7 days (or the file is missing), it injects context telling the active harness to surface a non-blocking prompt offering a full sweep.
+- The SessionStart command runs `$HOME/.local/bin/workflow-hooks hook`. Its cadence policy reads the interval and timestamp path embedded from `agents/workflow-contract.json`; when due, it injects context telling the active harness to surface a non-blocking prompt offering a full sweep.
 - **On decline**: the active agent writes today's date so the prompt does not repeat next session.
 - **On accept**: the cadence policy does not write the timestamp; Phase 6 of this skill writes it only on successful completion. If the run crashes mid-flight (Phase 0–5 errors), the user is re-prompted next session — this is the desired "failed runs re-prompt" behavior (Gotcha #4).
 
@@ -33,13 +33,21 @@ Record a target-type policy mismatch as **B.7 — language policy drift** and as
 
 ## Phase 0 — Pre-flight Checks
 
-1. **Toolchain**: check `cargo` is installed (validate-skill is a Rust binary):
+1. **Shared contract**: run the installed policy surface and retain its JSON for this run:
+   ```bash
+   workflow_bin=${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}
+   contract_json=$($workflow_bin contract) || exit 1
+   ```
+   Validate `maintenance.skill_improver.interval_days`, `maintenance.skill_improver.timestamp`, and every `superpowers.adapted_from` pin. Never hard-code local substitutes when these keys exist.
+2. **Toolchain**: check `cargo` and `jq` are installed (`validate-skill` is a Rust binary and the contract is JSON):
    ```bash
    command -v cargo &>/dev/null || { echo "cargo required: https://rustup.rs"; exit 1; }
+   command -v jq &>/dev/null || { echo "jq is required to read the workflow contract"; exit 1; }
    ```
-2. **Repository resolution**: resolve `repo_root` as `${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents`; verify its `AGENTS.md` and `claude/skills/`. Invocation CWD may be any project.
-3. **Validator path**: confirm `<repo_root>/claude/skills/generate-skills/scripts/validate-skill` exists. Use `repo_root` for every scan and command; do not require or mutate the caller's CWD.
-4. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking.
+3. **Repository resolution**: resolve `repo_root` as `${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents`; verify its `AGENTS.md` and `claude/skills/`. Invocation CWD may be any project.
+4. **Validator path**: confirm `<repo_root>/claude/skills/generate-skills/scripts/validate-skill` exists. Use `repo_root` for every scan and command; do not require or mutate the caller's CWD.
+5. **Superpowers compatibility**: read `<repo_root>/claude/plugins/installed_plugins.json` without modifying it. Compare the user-scope `superpowers@claude-plugins-official` version with all `superpowers.adapted_from` versions in the contract. If missing or mismatched, emit a non-blocking warning that adapted assumptions need review; do not edit the plugin cache, installed manifest, pins, or skills automatically.
+6. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking.
 
 If any toolchain/path/repo check fails, report the issue with an actionable fix and stop — do not proceed to Phase 1.
 
@@ -53,6 +61,7 @@ If any toolchain/path/repo check fails, report the issue with an actionable fix 
    - Body: core procedure steps, constraints, prohibited actions.
    - Referenced file paths in the body (`references/`, `scripts/`, agent paths).
    - Trigger keywords from the description.
+   - For managed workflow skills, ownership and paths from the retained workflow contract rather than prose inferred from peer skills.
 5. Summarize each target's intent in 1 line for Phase 2.
 
 ## Phase 2 — Test Scenario Generation
@@ -71,6 +80,7 @@ Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single exe
 | **B.5 Reference integrity** | All file paths in the body point to existing files | Glob/Read each referenced path. Flag broken references. **Skip for agent files** unless body explicitly mentions external paths |
 | **B.6 catalog sync** | A structurally valid **user-scope** `claude/skills/` skill is listed under its group in `<repo_root>/claude/skills/README.md` | Dimension A owns group validity. Project-scope `.claude/skills/` targets are SKIP. |
 | **B.7 Language policy** | Skill metadata/body follows the skill policy; agent language is preserved; triggers stay intact | Apply the target-type rules above and compare edits with the original trigger tokens |
+| **B.8 Workflow ownership** | Managed skills use contract paths, one-writer ownership, lifecycle, cadence, and Superpowers boundary | Compare workflow claims with the retained contract; flag conflicts as manual design issues |
 
 > **Scope boundary**: trigger completeness, trigger uniqueness, and model fitness checks belong to the `skill-engineer` agent. Do not duplicate them here. To run those checks, dispatch `Agent("skill-engineer", "<target> [--check trigger|overlap|model|all]")` either inline (after Phase 5 passes) or as a standalone follow-up.
 
@@ -146,6 +156,7 @@ For each FAIL result:
 - Body language translations (B.7 prose drift).
 - **Missing `group` field** — guessing from directory name or description risks wrong placement (e.g., a `frontend-*` skill might belong to `verify` or `build`). Surface the failure with the 8-slug list and ask the user to choose.
 - Any structural issue requiring design decisions.
+- Workflow-contract ownership or pinned-Superpowers drift (B.8); update the approved contract and implementation together in a separate workflow.
 
 When fixability classification is ambiguous, call `advisor()` to decide. Misclassifying can damage the skill's intent.
 
@@ -177,10 +188,13 @@ If any fixes were applied:
 3. Commit following Korean conventional commit rules:
    `refactor(skills): skill-improver로 <target> 스킬을 개선하다`
 
-After the report (with or without fixes), update the periodic-run timestamp:
+After the report (with or without fixes), update the periodic-run timestamp at the path returned by `maintenance.skill_improver.timestamp` (expand a leading `~/`, create its parent, and do not use a hard-coded fallback):
 
 ```bash
-date -u +%Y-%m-%d > ~/.claude/.last_skill_improver_run
+timestamp_path=$(jq -er '.maintenance.skill_improver.timestamp' <<<"$contract_json")
+case "$timestamp_path" in "~/"*) timestamp_path="$HOME/${timestamp_path#\~/}" ;; esac
+mkdir -p "$(dirname "$timestamp_path")"
+date -u +%Y-%m-%d > "$timestamp_path"
 ```
 
 This signals to the session-start protocol that skill-improver has run today, preventing repeat notifications next session. **Do not write the timestamp earlier in the workflow** — failed runs (Phase 0–5 errors) should re-prompt next session.
@@ -205,6 +219,8 @@ If deeper eval-based optimization is warranted, finish this run first and recomm
 - Do not run the target skill itself (only validate its structure and content).
 - Validator path is `claude/skills/generate-skills/scripts/validate-skill` from the agents configuration root (no `.sh` suffix).
 - Trigger overlap, completeness, and model fitness checks belong to skill-engineer — do not duplicate.
+- Treat `workflow-hooks contract` as authoritative for managed workflow ownership, maintenance cadence, and adapted Superpowers pins.
+- Plugin manifests and caches are read-only compatibility evidence; never update them from this skill.
 - Outside target files and the README catalog, the only side effects are a user-confirmed commit and the Phase 6 timestamp.
 
 ## Gotchas
@@ -220,6 +236,8 @@ If deeper eval-based optimization is warranted, finish this run first and recomm
 5. **Agent definition files lack `references/` siblings**: B.5 reference-integrity must skip agent files unless the body explicitly mentions external paths.
 
 6. **Spec staleness ≠ blocker**: Phase 0's spec freshness check is informational. Stale `frontmatter-spec.md` only means new fields might be unknown; it does not invalidate existing checks. Warn the user but continue.
+
+7. **Superpowers version drift ≠ automatic upgrade**: the contract pins versions whose principles were adapted, not a command to install that version. Warn on mismatch and review upstream differences separately. Never modify `claude/plugins/` during a skill-improver run.
 
 
 ## Eval Criteria
@@ -254,9 +272,9 @@ EVAL 4: Iteration ceiling
   Fail: Continues past 3 or silently gives up.
 
 EVAL 5: Timestamp update
-  Question: After Phase 6 completes (with or without fixes), does
-            ~/.claude/.last_skill_improver_run contain today's UTC date?
-  Pass: File contains YYYY-MM-DD matching today.
+  Question: After Phase 6 completes (with or without fixes), does the timestamp
+            path from maintenance.skill_improver contain today's UTC date?
+  Pass: The contract-configured file contains YYYY-MM-DD matching today.
   Fail: File missing, stale, or contains malformed date.
 
 EVAL 6: Group field enforcement

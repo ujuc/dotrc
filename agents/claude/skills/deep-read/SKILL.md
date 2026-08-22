@@ -4,12 +4,25 @@ description: "코드베이스 영역을 깊이 분석하여 구조화된 리서�
 group: analysis
 model: sonnet
 argument-hint: "[target-path]"
-allowed-tools: Read, Glob, Grep, Bash, Agent, advisor
+allowed-tools: Read, Write, Glob, Grep, Bash, Agent, advisor
 ---
 
 # Deep Read — Codebase Research
 
 Deeply analyze a code area and produce a structured research document at `.research/research-{topic}.md`.
+
+## Contract Preflight
+
+Before dispatching researchers:
+
+1. Run `"${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}" contract`.
+2. Verify `artifacts.research.writer == "deep-read"` and derive the output from its configured pattern.
+3. If the command is unavailable, stop and report:
+   ```bash
+   cargo install --locked --path "$HOME/.config/dotrc/agents/tools/workflow-hooks" --root "$HOME/.local"
+   ```
+4. Stop if `.harness/` exists. Ask the user to preserve, manually translate, or remove it; never migrate it automatically.
+5. Stop if the target research output already exists. Do not add a date suffix or overwrite it. Also stop if an active plan belongs to another feature; one checkout may have only one active managed workflow.
 
 ## Workflow
 
@@ -17,6 +30,7 @@ Deeply analyze a code area and produce a structured research document at `.resea
 - Parse `$ARGUMENTS` for the target (directory, module, or feature area).
 - If no target is given, ask the user what to analyze.
 - Derive `{topic}` deterministically: make the target repository-relative, drop a leading container component (`src`, `packages`, `apps`, or `libs`), join the remaining path components with hyphens, then kebab-case the result (for example, `src/auth` → `auth`, `packages/api/routes` → `api-routes`). If the user supplied a natural-language topic, slugify that instead.
+- Resolve `.research/research-{topic}.md` against the contract pattern and apply the collision checks above before creating `.research/.partial/`.
 
 ### 2. Launch 3 Parallel Researcher Agents
 
@@ -90,11 +104,12 @@ Do not call advisor for routine Q&A or progress updates.
 ## Constraints
 - Observation and documentation only. No code modifications during merge. Per-agent rules are enforced by `~/.claude/agents/researcher.md`.
 - Create `.research/` if missing. Never commit `.research/.partial/`.
+- Only this skill writes the managed research artifact. An orchestrator may invoke it but must not synthesize or rename its output.
 
 ## Gotchas
 
 1. **Background agents can silently fail.** `run_in_background: true` returns before the subagent writes its output. Always verify each `.partial/*.md` exists and is non-empty before merging — if any is missing, re-dispatch that single role rather than merging with a hole.
-2. **Topic slug collisions overwrite prior research.** Re-running `deep-read src/auth` twice overwrites `.research/research-auth.md`. If the user intends an update-over-time workflow, append a date suffix (`research-auth-2026-04-18.md`) or confirm overwrite.
+2. **Topic slug collisions are active-state conflicts.** Re-running `deep-read src/auth` must stop when `.research/research-auth.md` exists. Finish/archive or explicitly abandon the active workflow before creating replacement research.
 3. **Large targets hit subagent context limits.** For directories over ~50 files, instruct each researcher to stream findings to its output file as it goes, not accumulate in memory. Consider narrowing `Target:` to a subfolder per role if an agent reports truncation.
 4. **Merge drift when partials use different heading levels.** The Required sections in the Step 2 table are enforced — if a partial omits `# Architecture Overview`, the merge mapping breaks silently. Grep each partial for the required headings before merging; if any is missing, re-prompt that one agent with stricter instructions.
 

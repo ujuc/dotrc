@@ -1,10 +1,10 @@
 ---
 name: frontend-design-evaluator
-description: "Chrome에서 실행 중인 프론트엔드 결과물을 Design Quality, Originality, Craft, Functionality 4가지 기준으로 평가하고 Generator-Evaluator 루프용 개선 지시를 생성한다."
+description: "Chrome에서 실행 중인 프론트엔드 결과물을 Design Quality, Originality, Craft, Visual Usability 기준으로 평가한다."
 when_to_use: "디자인 평가, UI 리뷰, frontend-design-evaluator, 디자인 검수해줘, evaluate this design, rate my frontend, AI slop check 요청 시 사용한다. 루프의 판별자(evaluator)로도 호출된다."
 group: verify
 model: sonnet
-allowed-tools: Read ToolSearch advisor mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__tabs_create_mcp mcp__claude-in-chrome__navigate mcp__claude-in-chrome__read_page mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__javascript_tool mcp__claude-in-chrome__resize_window
+allowed-tools: Read Write Bash ToolSearch advisor mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__tabs_create_mcp mcp__claude-in-chrome__navigate mcp__claude-in-chrome__read_page mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__javascript_tool mcp__claude-in-chrome__resize_window
 ---
 
 # Frontend Design Evaluator
@@ -26,6 +26,16 @@ Before starting the first evaluation:
 
 Do NOT evaluate from source code, Figma exports, or static screenshots. Runtime styles (CSS-in-JS, dynamic themes, media queries) are invisible outside the browser.
 
+## Contract Preflight
+
+Run `"${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}" contract`. Verify `artifacts.design_report.writer == "frontend-design-evaluator"` and read its report pattern. If unavailable, stop and report:
+
+```bash
+cargo install --locked --path "$HOME/.config/dotrc/agents/tools/workflow-hooks" --root "$HOME/.local"
+```
+
+For a managed run, read canonical `spec.md`, `.sprint/contract.md`, `.plans/plan-{feature}.md`, and `.plans/.verify-final-{feature}.md`. Stop if `.harness/` exists; ask the user to resolve that legacy state manually and never migrate it. This skill owns only design evaluation. `qa-evaluator` owns functional acceptance, and `multi-agent-orchestrator` owns synthesis.
+
 ## Evaluation Criteria
 
 Design Quality and Originality carry 2x weight because technical polish without vision produces forgettable interfaces.
@@ -35,12 +45,12 @@ Design Quality and Originality carry 2x weight because technical polish without 
 | **Design Quality** | 2x | Cohesive mood: do colors, typography, layout, and images form one identity? |
 | **Originality** | 2x | Intentional human choices vs. template/AI patterns. |
 | **Craft** | 1x | Hierarchy, spacing, contrast, color harmony — fundamentals. |
-| **Functionality** | 1x | Usability independent of aesthetics: primary action, navigation, states. |
+| **Visual Usability** | 1x | Visual affordance, hierarchy, readability, responsive composition, and state legibility. Do not retest business behavior or functional acceptance. |
 
 Full 1–10 rubric per criterion: see [references/design-criteria.md](references/design-criteria.md).
 
 ```
-weighted_score = (design_quality * 2 + originality * 2 + craft + functionality) / 6
+weighted_score = (design_quality * 2 + originality * 2 + craft + visual_usability) / 6
 ```
 
 ## Evaluation Process
@@ -54,6 +64,8 @@ weighted_score = (design_quality * 2 + originality * 2 + craft + functionality) 
    - 5: a well-filled Tailwind template
    - 7: portfolio site with distinct identity
    - 9: Awwwards / FWA-tier craft
+
+For a managed verdict, PASS requires weighted average ≥ 7, every design criterion ≥ 7, and no Critical or Major visual-usability issue. Scores never override a severe issue. Functional failures discovered incidentally are evidence links for QA, not design-owned acceptance judgments.
 
 ## Iteration Directive
 
@@ -84,7 +96,7 @@ Replace every bracketed placeholder with concrete content before emitting the di
 | Design Quality   | 2x     | X/10  | +/-/= |
 | Originality      | 2x     | X/10  | +/-/= |
 | Craft            | 1x     | X/10  | +/-/= |
-| Functionality    | 1x     | X/10  | +/-/= |
+| Visual Usability | 1x     | X/10  | +/-/= |
 | **Weighted Avg** |        | X/10  |       |
 
 ### AI Slop Detection
@@ -100,8 +112,8 @@ Replace every bracketed placeholder with concrete content before emitting the di
 ### Craft Assessment
 <typography, spacing, color, contrast>
 
-### Functionality Assessment
-<usability, IA clarity, action discoverability>
+### Visual Usability Assessment
+<affordance, hierarchy, state legibility, responsive composition>
 
 ### Iteration Directive
 <refine / pivot / polish with specifics>
@@ -111,6 +123,8 @@ Replace every bracketed placeholder with concrete content before emitting the di
 2. <second>
 3. <third>
 ```
+
+Write stdout only for standalone evaluation. In a managed orchestrator run, write exactly `.plans/.design-{feature}-r{round}.md` after validating it against the embedded contract. Include exact feature, round, plan, acceptance contract, final verifier, URL, evidence, criterion verdicts, and Overall PASS/FAIL. Do not write QA or synthesized evaluation files.
 
 ## Advisor Escalation
 
@@ -127,4 +141,4 @@ Treat advisor as an inflation guard, not a default — it is expensive.
 - **Mobile viewport is not optional.** Evaluate at 375px unless the app declares desktop-only. Broken mobile caps Design Quality at 5.
 - **Loading states matter.** A blank white flash on navigation is a Craft deduction.
 - **Originality ≠ novelty.** A well-executed classic design scores high if choices are intentional. Score "a designer made deliberate choices," not "I have never seen this before."
-- **Don't let the Generator see this rubric verbatim.** If the Generator optimizes to the rubric's language, it will reward-hack the vocabulary instead of the design.
+- **Keep feedback outcome-focused.** Return evidence and concrete visual outcomes to `implement-plan`; do not ask it to optimize for rubric vocabulary.

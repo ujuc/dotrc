@@ -31,7 +31,7 @@ User Stories:
 ### 3. [Feature Name]
 ...
 
-[Continue for all features — aim for 8-15 total]
+[Continue for every capability needed by the approved product direction. Do not add filler to meet a fixed count.]
 
 ## Data Model
 
@@ -66,18 +66,16 @@ Example: "Aseprite for the tool palette density, Figma for the collaboration UX,
 - [Opportunity 1]: [How AI adds value to this feature]
 - [Opportunity 2]: [How AI adds value to this feature]
 
-## Sprint Plan
+## Dependency & Value Ordering
 
-| Sprint | Features | Focus |
-|--------|----------|-------|
-| 1 | [Feature 1, Feature 2] | Core foundation — minimum viable interaction loop |
-| 2 | [Feature 3, Feature 4, Feature 5] | Primary user workflows |
-| 3 | [Feature 6, Feature 7, Feature 8] | Power features and polish |
-| 4 | [Feature 9, Feature 10] | AI integration and advanced features |
-| 5 | [Remaining features] | Edge cases, performance, and launch readiness |
+| Stage | Capabilities | Dependency / user value rationale |
+|-------|--------------|-----------------------------------|
+| 1 | [Capability group] | [Why this must come first] |
+| 2 | [Capability group] | [What it consumes and enables] |
+| ... | [Only as many stages as the scope needs] | [Ordering rationale] |
 
-### Sprint Ordering Rationale
-[1-2 sentences explaining why features are ordered this way — usually based on dependency chains and user value delivery]
+### Ordering Rationale
+[Explain the dependency chain and how each stage creates user value. This is not a schedule or implementation plan.]
 ```
 
 ## Example: Filling the Template
@@ -86,7 +84,7 @@ For the blog's "RetroForge" tile map editor, the spec included:
 
 **Overview excerpt**: A browser-based retro game level editor for creating tile-based maps, placing entity spawn points, defining animations, and exporting game-ready data.
 
-**Features included** (15 total across the full product):
+**Capabilities included** (an example of a broad product vision, not a required count):
 1. Tile palette with selectable tiles
 2. Interactive map grid with click-to-place
 3. Rectangle fill tool for bulk tile placement
@@ -103,10 +101,10 @@ For the blog's "RetroForge" tile map editor, the spec included:
 14. Keyboard shortcuts
 15. Real-time animation preview
 
-**Sprint breakdown**:
+**Example dependency grouping**:
 - Sprint 1: Features 1-4 (core editing loop)
 - Sprint 2: Features 5-8 (creation workflows)
 - Sprint 3: Features 9-12 (power user features)
 - Sprint 4: Features 13-15 (polish and preview)
 
-Note how the spec describes features at the product level without prescribing rendering technology, state libraries, or file schemas.
+Note how the example's size follows its approved product direction. Smaller architectural products can have fewer capabilities; scope fit and clarity matter more than count. The spec remains at product level without prescribing rendering technology, state libraries, or file schemas.

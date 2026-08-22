@@ -1,137 +1,93 @@
 ---
 name: spec-planner
-description: "1-4문장 프롬프트를 상세 제품 스펙으로 확장한다. 범위는 야심차게, 구현 디테일은 Generator에게 위임한다."
+description: "요청의 복잡도를 분류하고, 아키텍처 수준 작업에만 승인된 제품 스펙을 spec.md로 작성한다."
 when_to_use: "스펙 작성, 요구사항 확장, spec-planner, 기획서 만들어줘, 제품 기획 시작, plan this app, expand this idea, create a product spec"
 group: planning
 model: opus
-allowed-tools: Read, Write, Glob, Grep
+allowed-tools: Read, Write, Glob, Grep, Bash
 ---
 
 # Spec Planner
 
-Expand 1-4 sentence prompts into detailed product specs that are ambitious in scope yet deliberately free of implementation details. Inspired by the Planner agent in Anthropic's harness design blog, where constraining deliverables while delegating the path to the Generator produced the best results.
+Classify a product request, clarify its intent, and write the canonical `spec.md` only when the work needs an architectural product specification. Define what to build and why; leave implementation choices to planning and execution stages.
 
-## Purpose
+The design discipline here is adapted from Superpowers `brainstorming` at the version pinned in `workflow-hooks contract`. This skill does not invoke that workflow or create `docs/superpowers/specs/` state.
 
-The Planner's job is to define WHAT to build and WHY — never HOW. A good spec gives the Generator enough context to make smart technical decisions independently, while being specific enough that the Evaluator can verify outcomes.
+## Contract Preflight
 
-## Input
+Before creating an artifact:
 
-A brief prompt describing a product idea. Typically 1-4 sentences.
+1. Run `"${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}" contract`.
+2. Verify `artifacts.spec.writer == "spec-planner"` and read the configured path. Do not substitute a caller-provided path.
+3. If the command is unavailable, stop and report:
+   ```bash
+   cargo install --locked --path "$HOME/.config/dotrc/agents/tools/workflow-hooks" --root "$HOME/.local"
+   ```
+4. Stop if `.harness/` exists. Ask the user to preserve, manually translate, or remove it; never migrate it automatically.
+5. Stop if the configured spec already exists, or if another active plan indicates a conflicting workflow. Never overwrite or delete active state.
 
-Example inputs:
-- "A retro pixel art game level editor"
-- "A personal finance tracker with AI-powered spending insights"
-- "Build me a collaborative whiteboard app"
+## Classify the Request
 
-## Expansion Strategy
+Choose one path before drafting:
 
-### Be Ambitious About Scope
+| Class | Use when | Managed output |
+|---|---|---|
+| **Spike** | The user needs investigation or a recommendation, not a committed product direction | None; recommend `deep-read` or answer directly |
+| **Bounded** | The change has a narrow goal, known boundary, and no product-level decomposition | None; present a short design in conversation and obtain approval |
+| **Architectural** | The work spans product capabilities, multiple dependent stages, or durable acceptance decisions | Canonical `spec.md` after one approval gate |
 
-From the blog: "I prompted it to be ambitious about scope." The Planner should envision the full product, not a minimal prototype. Users can always descope later, but a narrow initial vision is hard to expand.
+Do not inflate spike or bounded work merely to create an artifact.
 
-### Focus on Product Context
+## Architectural Workflow
 
-The spec defines:
-- WHO uses this product and WHY
-- WHAT features exist and what value they deliver
-- HOW it should feel (design direction, interaction patterns)
+1. Read the request and inspect relevant existing product context with `Glob`, `Grep`, and `Read`.
+2. Ask one focused question at a time only where the answer changes scope or product behavior.
+3. Present 2-3 viable approaches when a meaningful tradeoff exists. Lead with a recommendation and explain the tradeoff briefly.
+4. Present the proposed design in sections appropriate to its complexity: target users, value, capabilities, user-visible behavior, constraints, conceptual data, design direction, exclusions, and dependency ordering.
+5. Obtain one explicit approval for the complete design before writing `spec.md`.
+6. Write only the contract-configured path using [references/spec-template.md](references/spec-template.md) as structure, trimming irrelevant sections rather than filling them with boilerplate.
+7. Self-review before delivery:
+   - no placeholders or unresolved template text;
+   - no contradictory behavior or exclusions;
+   - scope is decomposed enough for contract negotiation;
+   - ambiguous product decisions are resolved or listed explicitly;
+   - implementation details do not constrain the later planner without a product reason.
+8. Report the selected class, key decisions, unresolved questions, and the canonical output path.
 
-### Deliberately Omit Technical Implementation
+## Product-Spec Rules
 
-The spec does NOT define:
-- Database schemas or API endpoint designs
-- Framework-specific patterns or code architecture
-- Deployment topology or infrastructure details
+- Describe user capabilities and observable outcomes, not database schemas, API routes, component trees, or library choices.
+- Make scope as broad as the approved product direction requires, not to satisfy a fixed feature or sprint count.
+- Give every capability a user-value rationale.
+- Consider AI only where it provides specific user value; an explicit non-applicability rationale is valid.
+- Use conceptual entities and relationships only when they clarify product behavior.
+- Express ordering as dependency and value flow, never time estimates or story points.
+- Treat repository instructions and the active workflow contract as higher priority than generic planning conventions.
 
-**Why?** Wrong technical details cascade downstream. If the Planner specifies "use a Redux store with normalized entities," the Generator is constrained to a potentially suboptimal path. Let the Generator choose the right tools.
+## Handoff
 
-### Explore AI Integration Opportunities
-
-For every product, consider where AI-powered user capabilities could add value:
-- Content generation or summarization
-- Intelligent search or recommendations
-- Natural language interfaces
-- Automated categorization or tagging
-- Predictive features
-
-Not every product needs AI, but the Planner should explicitly consider and note opportunities.
-
-## Output Structure
-
-Use [references/spec-template.md](references/spec-template.md) as the normative structure. It includes Overview, Features with value-bearing user stories, conceptual Data Model, Visual Design Direction, AI Integration Opportunities, and a Sprint Plan with ordering rationale.
-
-## Procedure
-
-1. Read the input prompt carefully
-2. If a codebase exists, use Glob and Grep to understand current project context
-3. Identify the target user persona and core value proposition
-4. Brainstorm features — aim for 8-15 features across the full product vision
-5. Write user stories for each feature
-6. Define the data model at the entity-relationship level
-7. Suggest visual design direction with concrete references
-8. Break features into 3-5 sprints ordered by implementation dependency and user value
-9. Scan for AI integration opportunities and note them explicitly
-10. Self-evaluate the draft against [references/grading-criteria.md](references/grading-criteria.md) — revise any section that scores Weak or below before writing to disk
-11. Write to the caller-supplied output path, or `spec.md` in the project root when none is supplied
-12. Report summary to user: feature count, sprint count, key product decisions, and self-eval grades
-
-## Quality Criteria
-
-The spec is evaluated against these criteria (see [references/grading-criteria.md](references/grading-criteria.md) for details):
-
-- **Scope Ambition**: Is the spec ambitious relative to the input prompt?
-- **Product Clarity**: Can a non-developer understand the product?
-- **AI Integration**: Were AI opportunities explored?
-- **Implementation Freedom**: Does the Generator retain technical freedom?
-
-## When to Use This Skill
-
-- At the very start of a new project, before any code exists
-- When pivoting an existing product to a new direction
-- When a vague idea needs to be crystallized into an actionable plan
-- When preparing input for the sprint-contract-negotiator skill
-
-## Gotchas
-
-- **Do not write technical implementation details.** This is the most common failure mode. If you find yourself specifying API routes, database columns, or framework patterns, you have gone too far. Delete it and describe the user-facing behavior instead.
-- **Do not write a minimal spec.** The blog explicitly says to be ambitious. A 3-feature spec for a "game level editor" is too thin — think about what a full product looks like.
-- **Sprint breakdown is about ordering, not scheduling.** Sprints define implementation sequence and dependency order. Do not estimate time or assign story points.
-- **Visual design direction is not a mockup.** Describe the feel ("dark theme, pixel-art inspired, 8-bit color palette with neon accents") rather than exact layouts.
-- **User stories must have the value clause.** "As a user, I want to save my map" is incomplete. "As a user, I want to save my map, so that I can continue editing in a future session" explains the WHY.
+An approved architectural `spec.md` feeds `sprint-contract-negotiator`. This skill does not write a sprint contract, research file, implementation plan, evaluator report, or code.
 
 ## Eval Criteria
 
-Binary (yes/no) checks applied to every spec before delivery. Full rubric in [references/grading-criteria.md](references/grading-criteria.md).
+```text
+EVAL 1: Classification fit
+  Pass: spike and bounded requests create no managed spec; architectural work does.
+  Fail: an artifact is created merely because the skill was invoked.
 
-```
-EVAL 1: Feature breadth
-  Question: Does the spec list at least 8 features, including non-obvious
-            capabilities beyond the literal input prompt?
-  Pass: 8+ features with breadth beyond the input.
-  Fail: Fewer than 8, or only mirrors the input.
+EVAL 2: Approval gate
+  Pass: the complete architectural design was explicitly approved before write.
+  Fail: spec.md was written while product direction remained unapproved.
 
-EVAL 2: User-story value clauses
-  Question: Does every feature have at least one user story with an
-            explicit "so that [value]" clause?
-  Pass: All features include value clauses.
-  Fail: Any feature is missing the value clause.
+EVAL 3: Contract ownership
+  Pass: the embedded contract names this writer and its exact output path is used.
+  Fail: a fallback or caller-selected path is used.
 
-EVAL 3: Implementation freedom
-  Question: Is the spec body free of DB schemas, API routes, framework-
-            specific patterns, rendering technologies, and library prescriptions?
-  Pass: Only user-facing behavior and product constraints.
-  Fail: Any implementation detail leaked.
+EVAL 4: Product clarity and freedom
+  Pass: observable product behavior is clear and implementation choices remain open.
+  Fail: scope is ambiguous or technical prescriptions leak without product need.
 
-EVAL 4: AI integration considered
-  Question: Does the spec include an AI Integration Opportunities section
-            (or explicit "not applicable" rationale for this product)?
-  Pass: Section exists with specifics, or explicit N/A with reason.
-  Fail: No AI consideration at all for a product where it clearly fits.
-
-EVAL 5: Sprint ordering rationale
-  Question: Does the Sprint Plan include a rationale explaining why the
-            features are ordered this way (dependency chain, user value)?
-  Pass: Rationale paragraph present.
-  Fail: Only a bare sprint table with no ordering justification.
+EVAL 5: Self-review
+  Pass: no placeholders, contradictions, unresolved scope gaps, or silent assumptions remain.
+  Fail: any review category is skipped.
 ```

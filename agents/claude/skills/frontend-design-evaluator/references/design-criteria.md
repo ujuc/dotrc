@@ -60,22 +60,22 @@ Evaluates technical execution of design fundamentals.
 - Do hover/focus/active states exist and feel intentional?
 - Is there sufficient contrast for accessibility (WCAG AA minimum)?
 
-## Functionality (Weight: 1x)
+## Visual Usability (Weight: 1x)
 
-Evaluates usability independent of visual aesthetics.
+Evaluates whether visual hierarchy, affordances, responsive composition, and state presentation make the interface understandable. Functional acceptance and business behavior remain QA-owned.
 
 | Score | Description |
 | ----- | ----------- |
-| 1-3 | Users cannot identify primary actions. Navigation is confusing or broken. Information architecture is absent. Critical features are hidden. |
-| 4-5 | Primary actions are findable but secondary navigation is confusing. Some dead ends in user flows. Labels are unclear or ambiguous. Error states provide no guidance. |
-| 6-7 | Clear information architecture. Most users can complete tasks without confusion. Error messages are helpful. Navigation is predictable. Some edge cases in user flows are rough. |
-| 8-10 | Intuitive interface. Progressive disclosure prevents overwhelm. Accessibility is considered (keyboard navigation, screen reader support). Empty states guide users. Breadcrumbs and contextual cues keep users oriented. |
+| 1-3 | Visual hierarchy obscures primary actions, affordances are misleading, or responsive composition makes content unreadable. |
+| 4-5 | Primary actions are visually findable, but hierarchy, labels, state treatment, or small-screen composition is inconsistent. |
+| 6-7 | Affordances, hierarchy, state presentation, and responsive layout are clear with minor visual ambiguity. |
+| 8-10 | Visual cues make actions, state, priority, and navigation immediately legible across supported viewports and accessibility modes. |
 
 ### What to Look For
 
 - Can you identify the primary action within 3 seconds of page load?
-- Is the navigation predictable (does clicking "Settings" take you to settings)?
-- Do form fields have labels, placeholders, and validation feedback?
-- Are loading states, empty states, and error states all designed?
-- Can the interface be navigated with keyboard alone?
-- Do links look different from buttons? Do they behave as expected?
+- Does the hierarchy make primary and secondary actions visually distinct?
+- Do labels, focus treatment, validation, and states remain legible?
+- Are loading, empty, success, and error states visually designed and distinguishable?
+- Does responsive composition preserve reading order and action visibility?
+- Do links and buttons look like their respective interaction roles? QA verifies their behavior.

@@ -10,6 +10,7 @@
 ## Configuration Boundaries
 
 - `claude/CLAUDE.md`, `claude/settings.json`, `amp/`, `codex/hooks.json`, and `pi/extensions/` affect every local session for their harness. Keep runtime state and secrets outside tracked files.
+- `workflow-contract.json` is the canonical harness-neutral contract for managed artifact paths, sole writers, archive destinations, maintenance cadence, and adapted Superpowers versions. Keep the Rust embedded contract and validator in sync with it.
 - `tools/workflow-hooks/` is the canonical cross-harness hook policy and native Claude/Codex event translator. Install its Rust binary at `~/.local/bin/workflow-hooks`; keep Amp and Pi adapters limited to native event and result translation.
 - `hooks/test-workflow-hooks.sh` is the black-box contract suite for the installed policy surface; do not add runtime shell wrappers around the binary.
 - `claude/` is symlinked to `~/.claude`; files inside it must not reference outside the tree with relative paths.
@@ -20,6 +21,14 @@
 - `rules/AGENTS.md` is shared by Claude, Amp, Codex, and Pi. Keep it self-contained, harness-neutral, and under 8 KB. Sync its Agent Identity with `rules/SOUL.md`.
 - Repository-root `.claude/<type>/` is project-local; `agents/claude/<type>/` is user-global. Put reusable agents and skills under `agents/claude/`.
 - Amp loads `~/.claude/skills/` directly, and the Pi extension contributes the same path. Do not duplicate portable skills under harness directories.
+
+## Managed Workflow
+
+- Keep one active workflow per checkout: `spec.md` → `.sprint/contract.md` → optional `.research/research-*.md` → `.plans/plan-*.md` → implementation/evaluation → durable `docs/{specs,contracts,research,plans,reports}/`.
+- `annotate-plan` is the sole plan writer. `implement-plan` is the sole managed executor and archive caller.
+- QA and design evaluators write separate round reports; `multi-agent-orchestrator` alone synthesizes them and passes a final PASS report back to `implement-plan`.
+- Treat `.harness/` as legacy state. Report it and stop for manual resolution; never migrate or delete it automatically.
+- Adapt Superpowers principles only at contract-pinned versions. Its TDD, debugging, verification, review, and parallel-dispatch skills are optional disciplines; its plan/execution/worktree/branch controllers do not own this workflow.
 
 ## Ask First
 

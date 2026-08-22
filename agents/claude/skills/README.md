@@ -20,42 +20,44 @@
 ## 워크플로우 색인
 
 ```
-[새 프로젝트]   spec-planner → sprint-contract-negotiator → annotate-plan
-                → implement-plan → docs/{research,plans} → qa-evaluator → commit
-[기존 코드]     deep-read → annotate-plan → implement-plan
-                → docs/{research,plans} → commit
+[아키텍처 작업] spec-planner → sprint-contract-negotiator → deep-read(필요 시)
+                → annotate-plan → 승인 → implement-plan
+[범위가 작은 작업] 승인된 간단 설계 → sprint-contract-negotiator
+                → annotate-plan → 승인 → implement-plan
+[독립 평가]     qa-evaluator / frontend-design-evaluator
+                → multi-agent-orchestrator 종합 → implement-plan 최종화
+[완료 보관]     docs/{specs,contracts,research,plans,reports}
 [스킬 정비]     skill-improver → generate-skills
 [글쓰기]        prompting-assist → humanizer
-[디자인]        frontend-design-evaluator → multi-agent-orchestrator
 ```
 
-`annotate-plan`은 실제 사용한 연구 경로를 계획에 기록하고, `implement-plan`은
-모든 항목과 최종 검증이 통과한 뒤 해당 연구와 계획만 장기 문서로 이동한다.
+`workflow-hooks contract`가 노출하는 `agents/workflow-contract.json`이 경로,
+작성자, 보관 위치, 유지보수 주기와 Superpowers 기준 버전의 단일 진실이다.
+한 체크아웃에서는 하나의 워크플로만 활성화한다. `annotate-plan`만 계획을
+작성하고 `implement-plan`만 코드를 실행하고 완료 산출물을 보관한다.
 
-## Harness Pipeline
+## Managed Pipeline
 
-Planner·Contract·Generator가 기본 파이프라인을 이루고 QA·Design Evaluator는 필요할 때 추가된다 (`build` / `verify` / `planning`에 분포):
+QA와 Design Evaluator는 같은 안정 빌드를 서로 독립적으로 평가하고 라운드별
+별도 보고서를 작성한다. 오케스트레이터만 모든 계약 기준과 보고서를 종합하며,
+PASS 종합 보고서를 받은 `implement-plan`이 최종 보관을 수행한다. 평가가
+필요하지 않은 작업은 전체 검증 직후 `implement-plan`이 바로 보관한다.
 
 ```
-[User Prompt]
-    │
-    ▼
-[spec-planner] ── Product spec
-    │
-    ▼
-[sprint-contract-negotiator] ── Done criteria
-    │
-    ▼
-[Generator] ── Implementation
-    │
-    ├── [qa-evaluator] ── Functional QA
-    └── [frontend-design-evaluator] ── Design QA
-    │
-    ▼
-[multi-agent-orchestrator] orchestrates the selected stages
+spec-planner → sprint-contract-negotiator → deep-read? → annotate-plan
+    → user approval → implement-plan
+       ├─ no evaluator → archive
+       └─ QA/design reports → orchestrator synthesis → implement-plan → archive
 ```
 
 Chrome 의존 스킬(`qa-evaluator`, `frontend-design-evaluator`)은 `--chrome` 플래그 또는 `/chrome` 명령으로 활성화한다.
+
+Superpowers 6.3.0의 brainstorming·writing-plans 원칙은 공통 스킬에 맞게
+반영했다. TDD, 체계적 디버깅, 완료 전 검증, 리뷰, 병렬 디스패치는 선택적
+보조 규율로 사용할 수 있지만 `writing-plans`, SDD/`executing-plans`, worktree,
+브랜치 완료 흐름은 관리형 워크플로의 계획·실행 소유권을 대체하지 않는다.
+설치 버전이 계약 핀과 달라지면 `skill-improver`가 경고하며 플러그인 캐시를
+자동 수정하지 않는다.
 
 ## Skill Structure Convention
 

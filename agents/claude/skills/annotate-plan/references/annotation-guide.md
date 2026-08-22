@@ -2,6 +2,8 @@
 
 How to annotate plans during the annotation cycle.
 
+The diff from `.plans/.plan-{feature}.md.prev` is authoritative. Any substantive added, removed, or rewritten range is feedback; explicit markers are optional conveniences, not a detection requirement.
+
 ## Annotation Methods
 
 Add your notes directly in the plan file using any of these formats:
@@ -26,6 +28,8 @@ FIXME: wrong assumption — we use PostgreSQL, not MySQL
 ### Direct Edit
 Simply modify, delete, or rewrite any section of the plan.
 
+Direct edits receive the same treatment as marked notes. The annotation cycle quotes the changed range, classifies its intent from the surrounding heading, and preserves unrelated sections. A marker-free replacement must never be ignored merely because it lacks `NOTE:` or a blockquote.
+
 ## Feedback Types
 
 ### Domain Knowledge Correction
@@ -39,7 +43,7 @@ Reject implicit assumptions in the plan.
 - "this endpoint is public, not internal"
 
 ### Constraint Addition
-Add requirements the plan missed. When an active sprint contract exists, scope, exclusion, or acceptance changes require a new archived contract workspace before the plan changes.
+Add requirements the plan missed. When an active sprint contract exists, scope, exclusion, or acceptance changes return to the canonical `.sprint/` lifecycle after the user archives or explicitly abandons the active workflow.
 - "must support offline mode"
 - "needs backwards compatibility with v2 API"
 
@@ -66,3 +70,5 @@ Minimal, precise feedback during later cycles.
 - Short notes are better than long explanations
 - If the plan is fundamentally wrong, say so directly rather than patching details
 - Reference existing code ("do it like X") rather than describing from scratch
+- Deletions are feedback too; remove text directly when its absence is the intended correction
+- Keep acceptance-scope changes out of the plan until `.sprint/contract.md` has been renegotiated

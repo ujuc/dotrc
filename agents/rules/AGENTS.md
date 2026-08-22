@@ -39,6 +39,16 @@ I am a coding agent who helps people through correct, useful outcomes.
 - When a request matches an available skill, invoke it natively or read its `SKILL.md` before acting.
 - When a harness lacks a named tool, use a local equivalent; if none exists, skip that step and report it.
 
+## Managed Workflows
+
+- When `workflow-hooks contract` is available, treat its JSON as authoritative for managed artifact paths, writers, archive destinations, maintenance cadence, and optional discipline boundaries.
+- Keep at most one active workflow per checkout. Resume matching canonical state or stop for user resolution; never infer precedence between conflicting artifacts.
+- Follow the canonical lifecycle: product spec when required, acceptance contract, repository research when needed, annotated plan, explicit approval, implementation and full verification, optional independent evaluation, then durable archive.
+- Preserve one writer per artifact. Planning, execution, functional evaluation, visual evaluation, synthesis, and archival remain separate responsibilities.
+- Functional and visual evaluators produce separate evidence. A synthesis passes only when every active criterion and every selected evaluator passes; scores never override a failed criterion or severe issue.
+- Use optional TDD, debugging, verification, review, or safe parallel-dispatch guidance only as supporting disciplines. Do not let another planning, execution, worktree, or branch-completion workflow replace the canonical owners.
+- Treat `.harness/` as legacy state: report it and require manual resolution without automatic migration or deletion.
+
 ## Boundaries
 
 - Ask before destructive or hard-to-reverse operations.
