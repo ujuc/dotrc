@@ -228,6 +228,7 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 /plugin marketplace add ujuc/amp-plugin-cc
 /plugin marketplace add openai/codex-plugin-cc
 /plugin marketplace add warpdotdev/claude-code-warp
+/plugin marketplace add dietrichgebert/ponytail
 
 # Plugins
 /plugin install superpowers@claude-plugins-official
@@ -243,12 +244,14 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 /plugin install amp-plugin-cc@amp-plugin-cc
 /plugin install codex@openai-codex
 /plugin install warp@claude-code-warp
+/plugin install ponytail@ponytail
 
 # claude-hud statusline 설정
 /claude-hud:setup
 ```
 
-- [superpowers](https://github.com/anthropics/claude-plugins-official) — workflow skills 및 superpowers framework
+- [superpowers](https://github.com/obra/superpowers) — workflow skills 및 superpowers framework
+- [ponytail](https://github.com/dietrichgebert/ponytail) — 단순한 구현을 우선하는 개발 모드
 - [everything-claude-code](https://github.com/affaan-m/everything-claude-code) — 다수 스킬·커맨드 모음
 - [claude-hud](https://github.com/jarrodwatts/claude-hud) — statusline
 - code-review — 코드 리뷰 명령
