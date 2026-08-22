@@ -176,7 +176,7 @@
   "spinnerTipsEnabled": false,
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
-  "advisorModel": "opus",
+  "advisorModel": "fable",
   "askUserQuestionTimeout": "5m",
   "tui": "fullscreen",
   "skipWorkflowUsageWarning": true,
