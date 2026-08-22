@@ -21,12 +21,16 @@
 
 ```
 [새 프로젝트]   spec-planner → sprint-contract-negotiator → annotate-plan
-                → implement-plan → qa-evaluator → commit
-[기존 코드]     deep-read → annotate-plan → implement-plan → commit
+                → implement-plan → docs/{research,plans} → qa-evaluator → commit
+[기존 코드]     deep-read → annotate-plan → implement-plan
+                → docs/{research,plans} → commit
 [스킬 정비]     skill-improver → generate-skills
 [글쓰기]        prompting-assist → humanizer
 [디자인]        frontend-design-evaluator → multi-agent-orchestrator
 ```
+
+`annotate-plan`은 실제 사용한 연구 경로를 계획에 기록하고, `implement-plan`은
+모든 항목과 최종 검증이 통과한 뒤 해당 연구와 계획만 장기 문서로 이동한다.
 
 ## Harness Pipeline
 

@@ -61,7 +61,7 @@ shape.
 
 | Harness | Adapter | Native events |
 | --- | --- | --- |
-| Claude Code | Existing `agents/claude/hooks/*.sh` wrappers | `SessionStart`, `UserPromptSubmit`, `PostToolUse`, `PreCompact` |
+| Claude Code | Existing `agents/claude/hooks/*.sh` wrappers | `SessionStart`, `UserPromptSubmit`, `PostToolUse`; `SessionStart(source=compact)` restores context |
 | Codex | `agents/codex/hook-adapter.sh` and `hooks.json` | `SessionStart`, `UserPromptSubmit`, `PostToolUse`; `SessionStart(source=compact)` restores context |
 | Amp | `agents/amp/plugins/workflow-hooks.ts` | `session.start`, `agent.start`, `tool.result`; active artifact pointers are injected at each `agent.start` because Amp has no compaction event |
 | Pi | `agents/pi/extensions/workflow-hooks.ts` | `session_start`, `before_agent_start`, `tool_result`, `session_compact`, `context` |
@@ -117,6 +117,8 @@ archive source artifacts.
   interpreted as success.
 - Archive conflicts never overwrite existing docs and never partially move a
   source set.
+- Claude and Codex restore context after compaction through `SessionStart`
+  because their pre-compaction events do not inject model context.
 - Amp's lack of a compaction hook is handled by concise per-turn artifact
   pointers rather than an unsupported emulation.
 

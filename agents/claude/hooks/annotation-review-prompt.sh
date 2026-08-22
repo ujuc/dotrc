@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
-# PostToolUse hook: remind to wait for user review on research/plan files
+# Claude PostToolUse adapter for the shared annotation-review policy.
+set -euo pipefail
+
+CORE="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/hooks/workflow-hooks.sh"
 INPUT=$(cat)
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+[ -x "$CORE" ] || exit 0
 
-# Only trigger for research/plan artifacts
-case "$FILE_PATH" in
-  */.research/*.md|*/.plans/plan-*.md) ;;
-  *) exit 0 ;;
-esac
+NORMALIZED=$(jq -n \
+  --arg cwd "$(jq -r '.cwd // "."' <<<"$INPUT")" \
+  --arg file "$(jq -r '.tool_input.file_path // empty' <<<"$INPUT")" \
+  '{cwd:$cwd,files:[$file] | map(select(length > 0))}')
+RESULT=$(printf '%s' "$NORMALIZED" | "$CORE" annotation) || exit 0
+MESSAGE=$(jq -r '.message // empty' <<<"$RESULT")
+[ -n "$MESSAGE" ] || exit 0
 
-jq -n '{
+jq -n --arg message "$MESSAGE" '{
   "hookSpecificOutput": {
     "hookEventName": "PostToolUse",
-    "suppressOutput": false,
-    "systemMessage": "You just wrote a research/plan document. Prompt the user to review it before proceeding. Do NOT move to implementation until the user confirms."
+    "additionalContext": $message
   }
 }'

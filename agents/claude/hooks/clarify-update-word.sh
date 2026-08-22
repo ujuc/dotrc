@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# UserPromptSubmit hook: when the prompt contains '업데이트' or '변경사항',
-# inject a reminder to clarify commit-vs-content intent. Injection only — never blocks.
+# Claude UserPromptSubmit adapter for the shared clarification policy.
 set -euo pipefail
 
-prompt=$(jq -r '.prompt // empty' 2>/dev/null || true)
+CORE="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/hooks/workflow-hooks.sh"
+INPUT=$(cat)
+[ -x "$CORE" ] || exit 0
 
-case "${prompt}" in
-  *업데이트*|*변경사항*)
-    echo "Reminder: prompt contains '업데이트/변경사항' — per shared guidance, confirm whether the user means 'commit' or 'update content' before proceeding."
-    ;;
-esac
+NORMALIZED=$(jq -n --arg prompt "$(jq -r '.prompt // empty' <<<"$INPUT")" '{prompt:$prompt}')
+RESULT=$(printf '%s' "$NORMALIZED" | "$CORE" clarify) || exit 0
+MESSAGE=$(jq -r '.message // empty' <<<"$RESULT")
+[ -n "$MESSAGE" ] && printf '%s\n' "$MESSAGE"
 
 exit 0

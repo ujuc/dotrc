@@ -1,0 +1,54 @@
+{
+  "description": "Shared dotrc workflow hooks for Codex.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/dotrc/agents/codex/hook-adapter.sh cadence",
+            "timeout": 30,
+            "additionalContextLimit": 1000
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/dotrc/agents/codex/hook-adapter.sh context",
+            "timeout": 30,
+            "additionalContextLimit": 1000
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/dotrc/agents/codex/hook-adapter.sh clarify",
+            "timeout": 30,
+            "additionalContextLimit": 500
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/dotrc/agents/codex/hook-adapter.sh post-tool",
+            "timeout": 30,
+            "additionalContextLimit": 1000
+          }
+        ]
+      }
+    ]
+  }
+}

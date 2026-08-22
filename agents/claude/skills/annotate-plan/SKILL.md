@@ -1,6 +1,6 @@
 ---
 name: annotate-plan
-description: "병렬 에이전트로 구현 계획을 생성하고, 사용자 인라인 주석을 반복 처리하여 플랜을 개선한다. 구현 계획 작성, 플랜 만들어줘, annotate-plan, /annotate-plan, 노트 반영해줘, address notes, 주석 처리해, annotations 요청 시 사용한다."
+description: "병렬 에이전트로 연구 출처가 추적되는 구현 계획을 생성하고, 사용자 인라인 주석을 반복 처리하여 플랜을 개선한다. 구현 계획 작성, 플랜 만들어줘, annotate-plan, /annotate-plan, 노트 반영해줘, address notes, 주석 처리해, annotations 요청 시 사용한다."
 group: analysis
 model: sonnet
 argument-hint: "[feature-name]"
@@ -16,6 +16,7 @@ Create an implementation plan at `.plans/plan-{feature}.md` and support iterativ
 ### 1. Gather Context
 - Parse `$ARGUMENTS` for feature name; derive `{feature}` as kebab-case slug.
 - Load `.research/research-*.md` if present (deep-read output).
+- Track the exact research files that materially inform the plan. Do not list unrelated files merely because they exist.
 - Check for `spec.md`, `.sprint/contract.md` (harness artifacts).
 - If no research and no spec exist, surface this to the user before dispatching agents — the plan quality will be weaker.
 
@@ -57,6 +58,9 @@ Combine the partials into `.plans/plan-{feature}.md`:
 
 ## Acceptance Criteria
 (verbatim criteria and exclusions from the active contract, or `No active contract`)
+
+## Research Sources
+(one exact backticked `.research/research-*.md` path per source that informed the plan, or `None`)
 
 ## Reference Implementations
 (from reference-finder — existing code to reuse/adapt, with file:line citations)
@@ -131,6 +135,7 @@ Do not call advisor for routine progress updates or for simple Q&A.
 
 - **Do NOT implement code** during this skill. Hand off to `implement-plan` only after the user stops annotating.
 - The plan is a **shared mutable document** — Claude writes, the user annotates, Claude incorporates.
+- Keep `## Research Sources` machine-readable: exact backticked paths only, one per bullet, or a single `None` line.
 - Always wait for user confirmation before proceeding to implementation.
 - Create `.plans/` and `.plans/.partial/` if missing. Never commit `.plans/.partial/`.
 
@@ -151,12 +156,12 @@ EVAL 1: Both partials written
   Fail: Either missing or zero-byte.
 
 EVAL 2: Plan section completeness
-  Question: Does the final `.plans/plan-{feature}.md` contain all nine
+  Question: Does the final `.plans/plan-{feature}.md` contain all eleven
             headings in the Phase A Step 3 template (Goal, Approach,
-            Acceptance Criteria, Reference Implementations, File Changes,
-            Code Snippets, Dependencies & Ordering, Risk Assessment,
-            Open Questions, Todo)?
-  Pass: All ten headings present.
+            Acceptance Criteria, Research Sources, Reference Implementations,
+            File Changes, Code Snippets, Dependencies & Ordering,
+            Risk Assessment, Open Questions, Todo)?
+  Pass: All eleven headings present.
   Fail: Any heading missing.
 
 EVAL 3: Baseline and counter initialized

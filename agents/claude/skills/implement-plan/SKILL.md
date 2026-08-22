@@ -1,6 +1,6 @@
 ---
 name: implement-plan
-description: "주석이 달린 구현 플랜을 지속적 검증·블로커 감지·디버거 연동과 함께 실행한다. 순차/병렬(worktree) 실행 모드를 지원한다. 구현 시작, 플랜 실행해, implement-plan, 다 구현해, /implement-plan 요청 시 사용한다."
+description: "주석이 달린 구현 플랜을 지속적 검증·블로커 감지·디버거 연동과 함께 실행하고, 전체 검증 통과 후 연구·계획 산출물을 보관한다. 순차/병렬(worktree) 실행 모드를 지원한다. 구현 시작, 플랜 실행해, implement-plan, 다 구현해, /implement-plan 요청 시 사용한다."
 group: build
 model: sonnet
 argument-hint: "[feature-name]"
@@ -23,7 +23,7 @@ Return scope corrections to `annotate-plan` Phase B instead of redesigning the p
 
 - With `$ARGUMENTS`, open `.plans/plan-{feature}.md` directly.
 - Otherwise glob `.plans/plan-*.md`: use one match, ask the user when there are multiple, and stop when there are none.
-- Parse every unchecked todo, dependency note, affected path, embedded `Acceptance Criteria`, and `Reference Implementations`. Map each todo to the criteria it advances; never silently drop an active criterion.
+- Parse every unchecked todo, dependency note, affected path, embedded `Acceptance Criteria`, `Research Sources`, and `Reference Implementations`. Map each todo to the criteria it advances; never silently drop an active criterion.
 - Create `.plans/.implementing`. If an existing flag is older than 24 hours or has no matching active plan, remove it and warn once.
 
 ## 2. Select a Mode
@@ -95,15 +95,24 @@ When all items are checked:
 
 1. Launch one final `verifier` for the full build/test suite and every active acceptance criterion, writing `.plans/.verify-final-{feature}.md`, and wait.
 2. On FAIL, surface the report and offer debugger or scope correction; do not claim completion.
-3. Remove `.plans/.implementing` on every terminal path.
-4. Report completed/total items, per-item verification, RESET items, and any retained worktrees.
-5. If changes remain uncommitted, suggest `/commit`; pushing remains a separate explicit request.
+3. After a PASS, build normalized archive input with the active plan path and every stable `{item-slug}`, then run:
+   ```bash
+   CORE="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/hooks/workflow-hooks.sh"
+   printf '%s' "$archive_input" | "$CORE" archive
+   ```
+   The helper preflights every source and destination, moves declared research to `docs/research/`, moves the plan to `docs/plans/`, and removes only this plan's workflow-owned transient files. For a legacy plan without `## Research Sources`, it uses only `.research/research-{feature}.md` when that exact file exists.
+4. If archival fails, remove `.plans/.implementing`, report the helper's exact diagnostic, leave all source artifacts in place, and do not claim workflow completion. Never choose a new filename or overwrite an existing document automatically.
+5. Confirm `.plans/.implementing` is absent. Remove it explicitly on every other terminal path, including blocker, RESET, cancellation, and failed final verification.
+6. Report completed/total items, per-item verification, RESET items, retained worktrees, and archived document paths.
+7. If changes remain uncommitted, suggest `/commit`; pushing remains a separate explicit request.
 
 ## Constraints
 
 - Never mark `[x]` without a matching completed verifier artifact.
 - Never auto-discard main-checkout changes.
 - Never parallelize overlapping files.
+- Never archive on blocker, RESET, cancellation, or verifier failure.
+- Never overwrite `docs/research/` or `docs/plans/` destinations.
 - Do not commit `.plans/` transient artifacts unless the project explicitly tracks them.
 
 ## Eval Criteria
@@ -128,4 +137,12 @@ EVAL 4: Worktree reconciliation
 EVAL 5: Safe correction
   Pass: Main-checkout changes are never auto-discarded and RESET hands back to annotate-plan.
   Fail: Recovery uses destructive checkout/reset or redesigns the plan inline.
+
+EVAL 6: Durable artifact promotion
+  Pass: Final verification has no FAIL, the active plan is under docs/plans,
+        only declared or exact legacy research is under docs/research, and
+        workflow-owned transient files for the plan are absent.
+  Fail: Archival runs before final PASS, moves unrelated research, overwrites a
+        destination, leaves a partial move, or reports completion after an
+        archive error.
 ```

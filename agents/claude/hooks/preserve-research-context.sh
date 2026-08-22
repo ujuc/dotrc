@@ -1,21 +1,19 @@
 #!/usr/bin/env bash
-# PreCompact hook: inject active research/plan file paths as system context
+# Claude SessionStart(source=compact) adapter for active artifact context.
+set -euo pipefail
+
+CORE="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/hooks/workflow-hooks.sh"
 INPUT=$(cat)
-CWD=$(echo "$INPUT" | jq -r '.cwd // "."')
+[ -x "$CORE" ] || exit 0
 
-FILES=""
-for f in "$CWD"/.research/*.md "$CWD"/.plans/plan-*.md; do
-  [ -f "$f" ] || continue
-  TITLE=$(head -5 "$f" | grep -m1 '^#' | sed 's/^#* //')
-  FILES="$FILES\n- $f: $TITLE"
-done
+NORMALIZED=$(jq -n --arg cwd "$(jq -r '.cwd // "."' <<<"$INPUT")" '{cwd:$cwd}')
+RESULT=$(printf '%s' "$NORMALIZED" | "$CORE" context) || exit 0
+MESSAGE=$(jq -r '.message // empty' <<<"$RESULT")
+[ -n "$MESSAGE" ] || exit 0
 
-[ -z "$FILES" ] && exit 0
-
-jq -n --arg files "$FILES" '{
+jq -n --arg message "$MESSAGE" '{
   "hookSpecificOutput": {
-    "hookEventName": "PreCompact",
-    "suppressOutput": false,
-    "systemMessage": ("Active research/plan artifacts:" + $files + "\nRefer to these files for context after compaction.")
+    "hookEventName": "SessionStart",
+    "additionalContext": $message
   }
 }'

@@ -1,50 +1,20 @@
 #!/usr/bin/env bash
-# PostToolUse hook: run typecheck after edits during implement-plan execution
+# Claude PostToolUse adapter for the shared implementation typecheck policy.
+set -euo pipefail
+
+CORE="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/hooks/workflow-hooks.sh"
 INPUT=$(cat)
-CWD=$(echo "$INPUT" | jq -r '.cwd // "."')
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+[ -x "$CORE" ] || exit 0
 
-# Only active during implement-plan (flag file check)
-[ -f "$CWD/.plans/.implementing" ] || exit 0
-[ -n "$FILE_PATH" ] || exit 0
+NORMALIZED=$(jq -n \
+  --arg cwd "$(jq -r '.cwd // "."' <<<"$INPUT")" \
+  --arg file "$(jq -r '.tool_input.file_path // empty' <<<"$INPUT")" \
+  '{cwd:$cwd,files:[$file] | map(select(length > 0))}')
+RESULT=$(printf '%s' "$NORMALIZED" | "$CORE" typecheck) || exit 0
 
-EXT="${FILE_PATH##*.}"
-DIR=$(dirname "$FILE_PATH")
-ERRORS=""
+if [ "$(jq -r '.block // false' <<<"$RESULT")" = true ]; then
+  jq -r '.message' <<<"$RESULT" >&2
+  exit 2
+fi
 
-case "$EXT" in
-  py)
-    # Find nearest pyproject.toml and run mypy
-    CHECK_DIR="$DIR"
-    while [ "$CHECK_DIR" != "/" ]; do
-      [ -f "$CHECK_DIR/pyproject.toml" ] && break
-      CHECK_DIR=$(dirname "$CHECK_DIR")
-    done
-    ERRORS=$(cd "$CHECK_DIR" && mypy "$FILE_PATH" 2>&1) || true
-    ;;
-  rs)
-    CHECK_DIR="$DIR"
-    while [ "$CHECK_DIR" != "/" ]; do
-      [ -f "$CHECK_DIR/Cargo.toml" ] && break
-      CHECK_DIR=$(dirname "$CHECK_DIR")
-    done
-    ERRORS=$(cd "$CHECK_DIR" && cargo check 2>&1) || true
-    ;;
-  go)
-    ERRORS=$(cd "$DIR" && go vet ./... 2>&1) || true
-    ;;
-  ts|tsx)
-    # Skip — handled by existing TypeScript tooling
-    exit 0
-    ;;
-  *)
-    exit 0
-    ;;
-esac
-
-# If no errors, silent pass
-[ -z "$ERRORS" ] && exit 0
-
-# Feed errors back to Claude for auto-fix
-echo "$ERRORS" >&2
-exit 2
+exit 0
