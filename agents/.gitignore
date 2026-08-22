@@ -67,7 +67,6 @@ claude/chrome
 claude/usage-data
 claude/backups
 claude/hooks/*
-!claude/hooks/*.sh
 claude/mcp-needs*.json
 claude/policy-limits.json
 claude/memory

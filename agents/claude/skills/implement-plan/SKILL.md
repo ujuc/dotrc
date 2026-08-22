@@ -97,11 +97,10 @@ When all items are checked:
 2. On FAIL, surface the report and offer debugger or scope correction; do not claim completion.
 3. After a PASS, build normalized archive input with the active plan path and every stable `{item-slug}`, then run:
    ```bash
-   CORE="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/hooks/workflow-hooks.sh"
-   printf '%s' "$archive_input" | "$CORE" archive
+   printf '%s' "$archive_input" | "${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}" archive
    ```
-   The helper preflights every source and destination, moves declared research to `docs/research/`, moves the plan to `docs/plans/`, and removes only this plan's workflow-owned transient files. For a legacy plan without `## Research Sources`, it uses only `.research/research-{feature}.md` when that exact file exists.
-4. If archival fails, remove `.plans/.implementing`, report the helper's exact diagnostic, leave all source artifacts in place, and do not claim workflow completion. Never choose a new filename or overwrite an existing document automatically.
+   The binary preflights every source and destination, moves declared research to `docs/research/`, moves the plan to `docs/plans/`, and removes only this plan's workflow-owned transient files. For a legacy plan without `## Research Sources`, it uses only `.research/research-{feature}.md` when that exact file exists.
+4. If archival fails, remove `.plans/.implementing`, report the binary's exact diagnostic, leave all source artifacts in place, and do not claim workflow completion. Never choose a new filename or overwrite an existing document automatically.
 5. Confirm `.plans/.implementing` is absent. Remove it explicitly on every other terminal path, including blocker, RESET, cancellation, and failed final verification.
 6. Report completed/total items, per-item verification, RESET items, retained worktrees, and archived document paths.
 7. If changes remain uncommitted, suggest `/commit`; pushing remains a separate explicit request.

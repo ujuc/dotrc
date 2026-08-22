@@ -1,4 +1,5 @@
 import type { PluginAPI } from '@ampcode/plugin'
+import { homedir } from 'node:os'
 
 export const description =
   'Shares dotrc workflow reminders, artifact context, and implementation type checks with Amp.'
@@ -10,8 +11,7 @@ type HookResult = {
 }
 
 export default function (amp: PluginAPI) {
-  const configHome = process.env.XDG_CONFIG_HOME ?? `${process.env.HOME}/.config`
-  const core = `${process.env.DOTRCDIR ?? `${configHome}/dotrc`}/agents/hooks/workflow-hooks.sh`
+  const core = process.env.WORKFLOW_HOOKS_BIN ?? `${homedir()}/.local/bin/workflow-hooks`
   const cadence = new Map<string, string>()
 
   async function runHook(action: HookAction, input: Record<string, unknown>): Promise<HookResult> {

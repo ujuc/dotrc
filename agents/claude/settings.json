@@ -52,20 +52,11 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup|resume|clear",
+        "matcher": "startup|resume|clear|compact",
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/skill-improver-cadence.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/preserve-research-context.sh"
+            "command": "~/.local/bin/workflow-hooks hook"
           }
         ]
       }
@@ -75,7 +66,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/clarify-update-word.sh"
+            "command": "~/.local/bin/workflow-hooks hook"
           }
         ]
       }
@@ -86,16 +77,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/annotation-review-prompt.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/polyglot-typecheck.sh",
+            "command": "~/.local/bin/workflow-hooks hook",
             "timeout": 30
           }
         ]

@@ -3,22 +3,11 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "startup|resume|clear",
+        "matcher": "startup|resume|clear|compact",
         "hooks": [
           {
             "type": "command",
-            "command": "~/.config/dotrc/agents/codex/hook-adapter.sh cadence",
-            "timeout": 30,
-            "additionalContextLimit": 1000
-          }
-        ]
-      },
-      {
-        "matcher": "compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.config/dotrc/agents/codex/hook-adapter.sh context",
+            "command": "~/.local/bin/workflow-hooks hook",
             "timeout": 30,
             "additionalContextLimit": 1000
           }
@@ -30,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.config/dotrc/agents/codex/hook-adapter.sh clarify",
+            "command": "~/.local/bin/workflow-hooks hook",
             "timeout": 30,
             "additionalContextLimit": 500
           }
@@ -43,7 +32,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.config/dotrc/agents/codex/hook-adapter.sh post-tool",
+            "command": "~/.local/bin/workflow-hooks hook",
             "timeout": 30,
             "additionalContextLimit": 1000
           }

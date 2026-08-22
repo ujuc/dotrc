@@ -15,9 +15,9 @@ Test-driven improvement loop for skills and agent definitions. Validates structu
 
 This skill is meant to run regularly, not just on demand.
 
-- The SessionStart hook `~/.claude/hooks/skill-improver-cadence.sh` reads `~/.claude/.last_skill_improver_run`. If the date is older than 7 days (or the file is missing), it injects context telling Claude to surface a non-blocking prompt offering to run a full sweep.
-- **On decline**: the session-start hook writes today's date so the prompt does not repeat next session.
-- **On accept**: the session-start hook does NOT write the timestamp; Phase 6 of this skill writes it only on successful completion. If the run crashes mid-flight (Phase 0–5 errors), the user is re-prompted next session — this is the desired "failed runs re-prompt" behavior (Gotcha #4).
+- The SessionStart command runs `$HOME/.local/bin/workflow-hooks hook`. Its cadence policy reads `~/.claude/.last_skill_improver_run`; when the date is older than 7 days (or the file is missing), it injects context telling the active harness to surface a non-blocking prompt offering a full sweep.
+- **On decline**: the active agent writes today's date so the prompt does not repeat next session.
+- **On accept**: the cadence policy does not write the timestamp; Phase 6 of this skill writes it only on successful completion. If the run crashes mid-flight (Phase 0–5 errors), the user is re-prompted next session — this is the desired "failed runs re-prompt" behavior (Gotcha #4).
 
 To force an immediate run regardless of cadence: invoke `Skill("skill-improver")` directly.
 

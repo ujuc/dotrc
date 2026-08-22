@@ -9,8 +9,7 @@ type HookResult = {
   block?: boolean
 }
 
-const configHome = process.env.XDG_CONFIG_HOME ?? join(homedir(), '.config')
-const core = join(process.env.DOTRCDIR ?? join(configHome, 'dotrc'), 'agents/hooks/workflow-hooks.sh')
+const core = process.env.WORKFLOW_HOOKS_BIN ?? join(homedir(), '.local/bin/workflow-hooks')
 
 function runHook(action: HookAction, input: Record<string, unknown>): Promise<HookResult> {
   return new Promise((resolve) => {
