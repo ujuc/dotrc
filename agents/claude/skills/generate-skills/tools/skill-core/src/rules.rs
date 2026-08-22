@@ -45,14 +45,7 @@ pub const ALLOWED_MODELS: &[&str] = &["opus", "sonnet", "haiku", "inherit"];
 /// in its `group` field. The catalog table in `skills/README.md` mirrors it.
 /// See `frontmatter-spec.md` "group" section.
 pub const ALLOWED_GROUPS: &[&str] = &[
-    "planning",
-    "analysis",
-    "build",
-    "verify",
-    "docs",
-    "writing",
-    "llm",
-    "meta",
+    "planning", "analysis", "build", "verify", "docs", "writing", "llm", "meta",
 ];
 
 pub const ALLOWED_EFFORTS: &[&str] = &["low", "medium", "high", "xhigh", "max"];

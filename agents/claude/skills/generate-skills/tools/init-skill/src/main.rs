@@ -56,10 +56,7 @@ TODO: Describe how to verify the output.
 ";
 
 #[derive(Parser)]
-#[command(
-    name = "init-skill",
-    about = "Scaffold a new Claude skill directory."
-)]
+#[command(name = "init-skill", about = "Scaffold a new Claude skill directory.")]
 struct Args {
     /// Skill name in kebab-case (e.g. my-new-skill)
     name: String,
@@ -184,10 +181,6 @@ fn print_summary(skill_dir: &Path, name: &str, group: &str, optional_dirs: &[&st
         skill_dir.display()
     );
     println!("  3. Register in the catalog group map:");
-    println!(
-        "     bash agents/claude/skills/generate-skills/scripts/register-skill \\"
-    );
-    println!(
-        "       agents/claude/skills/README.md --name {name} --group {group}"
-    );
+    println!("     bash agents/claude/skills/generate-skills/scripts/register-skill \\");
+    println!("       agents/claude/skills/README.md --name {name} --group {group}");
 }

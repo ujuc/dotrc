@@ -22,13 +22,25 @@ pub struct Finding {
 
 impl Finding {
     pub fn pass(section: &'static str, message: impl Into<String>) -> Self {
-        Self { severity: Severity::Pass, section, message: message.into() }
+        Self {
+            severity: Severity::Pass,
+            section,
+            message: message.into(),
+        }
     }
     pub fn fail(section: &'static str, message: impl Into<String>) -> Self {
-        Self { severity: Severity::Fail, section, message: message.into() }
+        Self {
+            severity: Severity::Fail,
+            section,
+            message: message.into(),
+        }
     }
     pub fn warn(section: &'static str, message: impl Into<String>) -> Self {
-        Self { severity: Severity::Warn, section, message: message.into() }
+        Self {
+            severity: Severity::Warn,
+            section,
+            message: message.into(),
+        }
     }
 }
 
@@ -40,10 +52,16 @@ pub struct ValidationReport {
 
 impl ValidationReport {
     pub fn errors(&self) -> usize {
-        self.findings.iter().filter(|f| f.severity == Severity::Fail).count()
+        self.findings
+            .iter()
+            .filter(|f| f.severity == Severity::Fail)
+            .count()
     }
     pub fn warnings(&self) -> usize {
-        self.findings.iter().filter(|f| f.severity == Severity::Warn).count()
+        self.findings
+            .iter()
+            .filter(|f| f.severity == Severity::Warn)
+            .count()
     }
     pub fn has_errors(&self) -> bool {
         self.errors() > 0
@@ -76,7 +94,10 @@ pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
             "Structure",
             format!("SKILL.md not found ({})", skill_file.display()),
         ));
-        return Ok(ValidationReport { findings, skill_dir: skill_dir.to_path_buf() });
+        return Ok(ValidationReport {
+            findings,
+            skill_dir: skill_dir.to_path_buf(),
+        });
     }
     findings.push(Finding::pass("Structure", "SKILL.md exists"));
 
@@ -94,11 +115,17 @@ pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
         Ok(p) => p,
         Err(e) => {
             findings.push(Finding::fail("Frontmatter", format!("parse error: {e}")));
-            return Ok(ValidationReport { findings, skill_dir: skill_dir.to_path_buf() });
+            return Ok(ValidationReport {
+                findings,
+                skill_dir: skill_dir.to_path_buf(),
+            });
         }
     };
     let fm = &parsed.frontmatter;
-    findings.push(Finding::pass("Frontmatter", "opening --- delimiter on line 1"));
+    findings.push(Finding::pass(
+        "Frontmatter",
+        "opening --- delimiter on line 1",
+    ));
 
     validate_name(fm, &folder_name, &mut findings);
     validate_description(fm, &mut findings);
@@ -112,7 +139,10 @@ pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
     validate_references(skill_dir, &parsed.raw, &mut findings);
     validate_body_length(parsed.body_lines, &mut findings);
 
-    Ok(ValidationReport { findings, skill_dir: skill_dir.to_path_buf() })
+    Ok(ValidationReport {
+        findings,
+        skill_dir: skill_dir.to_path_buf(),
+    })
 }
 
 fn validate_name(fm: &Frontmatter, folder_name: &str, findings: &mut Vec<Finding>) {
@@ -122,7 +152,10 @@ fn validate_name(fm: &Frontmatter, folder_name: &str, findings: &mut Vec<Finding
             "name field is missing (required)",
         )),
         Some(n) => {
-            findings.push(Finding::pass("Frontmatter", format!("name field exists: {n}")));
+            findings.push(Finding::pass(
+                "Frontmatter",
+                format!("name field exists: {n}"),
+            ));
 
             if rules::is_kebab_case(n) {
                 findings.push(Finding::pass("Frontmatter", "name is kebab-case"));
@@ -136,7 +169,11 @@ fn validate_name(fm: &Frontmatter, folder_name: &str, findings: &mut Vec<Finding
             if n.len() <= rules::NAME_MAX_LEN {
                 findings.push(Finding::pass(
                     "Frontmatter",
-                    format!("name length is {} chars (max {})", n.len(), rules::NAME_MAX_LEN),
+                    format!(
+                        "name length is {} chars (max {})",
+                        n.len(),
+                        rules::NAME_MAX_LEN
+                    ),
                 ));
             } else {
                 findings.push(Finding::fail(
@@ -158,13 +195,19 @@ fn validate_name(fm: &Frontmatter, folder_name: &str, findings: &mut Vec<Finding
                 ));
             }
 
-            if rules::RESERVED_NAME_PREFIXES.iter().any(|p| n.starts_with(p)) {
+            if rules::RESERVED_NAME_PREFIXES
+                .iter()
+                .any(|p| n.starts_with(p))
+            {
                 findings.push(Finding::fail(
                     "Frontmatter",
                     format!("name must not start with reserved prefix: '{n}'"),
                 ));
             } else {
-                findings.push(Finding::pass("Frontmatter", "name does not use reserved prefix"));
+                findings.push(Finding::pass(
+                    "Frontmatter",
+                    "name does not use reserved prefix",
+                ));
             }
         }
     }
@@ -207,7 +250,10 @@ fn validate_xml_tags(fm: &Frontmatter, findings: &mut Vec<Finding>) {
         return;
     };
     if xml_re().is_match(&serialized) {
-        findings.push(Finding::fail("Frontmatter", "XML tags found in frontmatter"));
+        findings.push(Finding::fail(
+            "Frontmatter",
+            "XML tags found in frontmatter",
+        ));
     } else {
         findings.push(Finding::pass("Frontmatter", "no XML tags in frontmatter"));
     }
@@ -218,7 +264,10 @@ fn validate_known_keys(fm: &Frontmatter, findings: &mut Vec<Finding>) {
         .filter(|k| !rules::ALLOWED_KEYS.contains(k))
         .collect();
     if unknown.is_empty() {
-        findings.push(Finding::pass("Frontmatter", "all frontmatter keys are allowed"));
+        findings.push(Finding::pass(
+            "Frontmatter",
+            "all frontmatter keys are allowed",
+        ));
     } else {
         findings.push(Finding::warn(
             "Frontmatter",
@@ -239,7 +288,10 @@ fn check_enum(fm: &Frontmatter, key: &str, allowed: &[&str], findings: &mut Vec<
         return;
     };
     if allowed.contains(&value) {
-        findings.push(Finding::pass("Values", format!("{key} value '{value}' is valid")));
+        findings.push(Finding::pass(
+            "Values",
+            format!("{key} value '{value}' is valid"),
+        ));
     } else {
         findings.push(Finding::fail(
             "Values",
@@ -282,7 +334,10 @@ fn validate_agent_context(fm: &Frontmatter, findings: &mut Vec<Finding>) {
     }
     match frontmatter::get_str(fm, "context") {
         Some("fork") => {
-            findings.push(Finding::pass("Values", "agent is paired with context: fork"));
+            findings.push(Finding::pass(
+                "Values",
+                "agent is paired with context: fork",
+            ));
         }
         Some(other) => findings.push(Finding::fail(
             "Values",
@@ -313,7 +368,10 @@ fn validate_allowed_tools(fm: &Frontmatter, findings: &mut Vec<Finding>) {
             }
         }
         Value::Sequence(_) => {
-            findings.push(Finding::pass("Values", "allowed-tools format is valid (list)"));
+            findings.push(Finding::pass(
+                "Values",
+                "allowed-tools format is valid (list)",
+            ));
         }
         _ => findings.push(Finding::fail(
             "Values",

@@ -112,8 +112,7 @@ fn register(readme: &Path, name: &str, group: &str) -> Result<Outcome> {
         out.pop();
     }
 
-    fs::write(readme, out)
-        .with_context(|| format!("failed to write {}", readme.display()))?;
+    fs::write(readme, out).with_context(|| format!("failed to write {}", readme.display()))?;
     Ok(Outcome::Added)
 }
 
@@ -201,8 +200,7 @@ mod tests {
 
     #[test]
     fn appends_into_empty_cell() {
-        let body =
-            "| slug | label | skills |\n| --- | --- | --- |\n| `llm` | 🤖 외부 LLM | |\n";
+        let body = "| slug | label | skills |\n| --- | --- | --- |\n| `llm` | 🤖 외부 LLM | |\n";
         let path = tmpfile("empty", body);
         let outcome = register(&path, "gemma", "llm").unwrap();
         assert!(matches!(outcome, Outcome::Added));
