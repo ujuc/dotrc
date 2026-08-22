@@ -143,16 +143,20 @@ alias bws="brew search"
 alias bwi="brew install"
 
 # Modern CLI tool aliases (guarded so a fresh machine keeps working defaults)
-if (( $+commands[eza] )); then
-    alias ls="eza --icons=auto --group-directories-first --git"
-    alias ll="eza -l --git --icons=auto"
-    alias lt="eza -l --tree --icons=auto"
-fi
-if (( $+commands[bat] )); then
-    alias cat="bat"
-fi
-alias vi="vim"
-alias pi="mise x -- pi"
+function alias_if_command_exists() {
+    local command_name=$1
+    shift
+    (( $+commands[$command_name] )) && alias "$@"
+}
+
+alias_if_command_exists eza \
+    "ls=eza --icons=auto --group-directories-first --git" \
+    "ll=eza -l --git --icons=auto" \
+    "lt=eza -l --tree --icons=auto"
+alias_if_command_exists bat "cat=bat"
+alias_if_command_exists vim "vi=vim"
+alias_if_command_exists mise "pi=mise x -- pi"
+unfunction alias_if_command_exists
 
 # ── Local ──────────────────────────────────────────────────
 
