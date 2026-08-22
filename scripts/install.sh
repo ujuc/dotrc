@@ -386,7 +386,8 @@ install_agents() {
                 revfactory/harness\|harness-marketplace \
                 ujuc/amp-plugin-cc\|amp-plugin-cc \
                 openai/codex-plugin-cc\|openai-codex \
-                warpdotdev/claude-code-warp\|claude-code-warp; do
+                warpdotdev/claude-code-warp\|claude-code-warp \
+                dietrichgebert/ponytail\|ponytail; do
                 marketplace_source=${item%%|*}
                 marketplace_name=${item#*|}
                 if ! json_has_string_field "$marketplace_json" name "$marketplace_name"; then
@@ -400,7 +401,7 @@ install_agents() {
         if [ "$plugin_status" -ne 0 ]; then
             record_failure agents "List plugins" "$plugin_status" "claude plugin list --json"
         else
-            for item in superpowers@claude-plugins-official ecc@ecc claude-hud@claude-hud code-review@claude-plugins-official code-simplifier@claude-plugins-official feature-dev@claude-plugins-official claude-md-management@claude-plugins-official security-guidance@claude-plugins-official rust-analyzer-lsp@claude-plugins-official harness@harness-marketplace amp-plugin-cc@amp-plugin-cc codex@openai-codex warp@claude-code-warp; do
+            for item in superpowers@claude-plugins-official ecc@ecc claude-hud@claude-hud code-review@claude-plugins-official code-simplifier@claude-plugins-official feature-dev@claude-plugins-official claude-md-management@claude-plugins-official security-guidance@claude-plugins-official rust-analyzer-lsp@claude-plugins-official harness@harness-marketplace amp-plugin-cc@amp-plugin-cc codex@openai-codex warp@claude-code-warp ponytail@ponytail; do
                 if ! json_has_string_field "$plugin_json" id "$item"; then
                     run_step agents "Install plugin $item" claude plugin install "$item"
                 fi
