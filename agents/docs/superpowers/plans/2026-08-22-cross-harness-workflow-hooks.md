@@ -4,11 +4,19 @@
 
 **Goal:** Share the existing workflow hooks across Claude Code, Codex, Amp, and Pi, and archive completed research and plan artifacts into durable project documentation.
 
-**Architecture:** A Bash core receives normalized JSON and owns all deterministic policy. Claude and Codex use shell adapters, while Amp and Pi use thin native TypeScript adapters that invoke the same core. Planning skills declare source relationships and call a deterministic archive action only after final verification passes.
+**Architecture:** A Rust binary receives JSON and owns deterministic policy, artifact archival, and compatible Claude/Codex event translation. Amp and Pi use thin native TypeScript adapters that invoke the same executable. Planning skills declare source relationships and call a deterministic archive action only after final verification passes.
 
-**Tech Stack:** Bash 3.2+, jq, Claude Code command hooks, Codex hooks JSON, Amp Plugin API, Pi Extension API.
+**Tech Stack:** Rust 2024 (MSRV 1.85), serde_json, Claude Code command hooks, Codex hooks JSON, Amp Plugin API, Pi Extension API.
 
 **Spec:** `agents/docs/superpowers/specs/2026-08-22-cross-harness-workflow-hooks-design.md`
+
+> **Runtime consolidation note:** The checked tasks below record the original
+> Bash implementation. It was subsequently replaced by
+> `agents/tools/workflow-hooks/`, installed as `~/.local/bin/workflow-hooks`.
+> References below to deleted shell runtime files are historical, not current
+> operating instructions. The spec and `agents/README.md` are authoritative.
+
+## Historical Implementation Record
 
 ## Global Constraints
 

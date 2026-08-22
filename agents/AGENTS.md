@@ -1,7 +1,7 @@
 ## Work Rules
 
 - Work only on `main`; do not create branches or PRs.
-- Scopes follow directories: `amp`, `claude`, `codex`, `hooks`, `pi`, `rules`, `skills`.
+- Scopes follow directories: `amp`, `claude`, `codex`, `hooks`, `pi`, `rules`, `skills`, `tools`.
 - The root `gitmessage` and `.githooks/commit-msg` define commit types and subject format.
 - After changing `agents/claude/skills/<name>/`, run `bash agents/claude/skills/generate-skills/scripts/validate-skill agents/claude/skills/<name>` from the repository root, then run `skill-improver`.
 - For suites under `agents/claude/evals/<skill>/`, follow `agents/claude/agents/waza-runner.md`; never invoke the `waza` CLI directly.
@@ -10,7 +10,8 @@
 ## Configuration Boundaries
 
 - `claude/CLAUDE.md`, `claude/settings.json`, `amp/`, `codex/hooks.json`, and `pi/extensions/` affect every local session for their harness. Keep runtime state and secrets outside tracked files.
-- `hooks/workflow-hooks.sh` is the canonical cross-harness hook policy. Keep Claude, Codex, Amp, and Pi adapters limited to event and result translation.
+- `tools/workflow-hooks/` is the canonical cross-harness hook policy and native Claude/Codex event translator. Install its Rust binary at `~/.local/bin/workflow-hooks`; keep Amp and Pi adapters limited to native event and result translation.
+- `hooks/test-workflow-hooks.sh` is the black-box contract suite for the installed policy surface; do not add runtime shell wrappers around the binary.
 - `claude/` is symlinked to `~/.claude`; files inside it must not reference outside the tree with relative paths.
 - `claude/` mixes tracked configuration with ignored runtime state. Follow `.gitignore`; write ignored state only when a checked-in hook or workflow owns that path.
 - Do not reference or modify `claude/deplicated/`; treat `claude/plugins/` as read-only.

@@ -8,10 +8,11 @@
 
 | 경로 | 역할 |
 | --- | --- |
-| `claude/` | Claude 전역 설정, 에이전트, 훅, 스킬 |
-| `hooks/` | Claude, Codex, Amp, Pi가 공유하는 훅 정책과 계약 테스트 |
+| `claude/` | Claude 전역 설정, 에이전트, 스킬 |
+| `hooks/` | 공용 워크플로 훅의 셸 계약 테스트 |
+| `tools/workflow-hooks/` | 공용 훅 정책과 Claude/Codex 이벤트 변환을 구현하는 Rust CLI |
 | `amp/` | Amp 전용 전역 지침, 설정, 플러그인 어댑터 |
-| `codex/` | Codex 전역 훅 설정과 셸 어댑터 |
+| `codex/` | Codex 전역 훅 설정 |
 | `pi/` | Pi 전역 extension 어댑터 |
 | `rules/` | Claude, Amp, Codex, Pi가 공유하는 지침과 에이전트 정체성 |
 | `docs/` | 설계 및 구현 기록 |
@@ -22,6 +23,7 @@
 | 원본 | 심링크 대상 |
 | --- | --- |
 | `claude/` | `~/.claude` |
+| `tools/workflow-hooks/` | `~/.local/bin/workflow-hooks`에 빌드 설치 |
 | `rules/AGENTS.md` | `~/.codex/AGENTS.md` |
 | `amp/AGENTS.md` | `~/.config/amp/AGENTS.md` |
 | `amp/settings.json` | `~/.config/amp/settings.json` |
@@ -39,10 +41,12 @@ Amp는 `~/.claude/skills/`를 직접 읽고 Pi extension도 같은 경로를 등
 
 ```sh
 scripts/install.sh --agents
+cargo install --locked --path agents/tools/workflow-hooks --root "$HOME/.local"
 ```
 
-네이티브 훅 어댑터는 다음 파일 심링크로 배포한다. 기존 파일이나 다른 대상의
-심링크가 있으면 덮어쓰지 말고 먼저 충돌을 해결한다.
+Rust 바이너리를 먼저 설치한 뒤 네이티브 훅 어댑터를 다음 파일 심링크로
+배포한다. 기존 파일이나 다른 대상의 심링크가 있으면 덮어쓰지 말고 먼저
+충돌을 해결한다.
 
 ```sh
 mkdir -p ${HOME}/.codex ${XDG_CONFIG_HOME:-${HOME}/.config}/amp/plugins ${HOME}/.pi/agent/extensions
@@ -71,7 +75,8 @@ Codex에서는 새 명령 훅이나 변경된 훅을 `/hooks`에서 검토하고
 - `claude/`에는 추적하는 설정과 무시하는 런타임 상태가 함께 존재한다.
   런타임 파일을 강제로 추가하지 않는다.
 - 공용 규칙은 `rules/`에 두고 도구별 설정은 `claude/` 또는 `amp/`에 둔다.
-- 공용 훅 정책은 `hooks/workflow-hooks.sh`에 두고 하네스 어댑터에는 복제하지 않는다.
+- 공용 훅 정책은 `tools/workflow-hooks/`에 두고 Amp/Pi 어댑터에는 복제하지 않는다.
+- `hooks/test-workflow-hooks.sh`는 Rust 바이너리의 블랙박스 계약 테스트로만 유지한다.
 - 토큰, 자격 증명, 장비별 경로는 추적하지 않는다.
 - 스킬을 변경한 뒤 해당 스킬을 검증한다.
 

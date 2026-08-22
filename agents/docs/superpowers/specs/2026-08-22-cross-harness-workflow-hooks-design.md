@@ -1,7 +1,7 @@
 # Cross-Harness Workflow Hooks and Artifact Archival — Design
 
 Date: 2026-08-22
-Status: Approved
+Status: Implemented (Rust runtime consolidation)
 
 ## 1. Context
 
@@ -39,41 +39,54 @@ instead of promoting them to durable project documentation.
 
 ## 4. Architecture
 
-### 4.1 Shared hook core
+### 4.1 Shared hook runtime
 
-`agents/hooks/workflow-hooks.sh` is the canonical policy implementation. It
-accepts a normalized JSON object on standard input and exposes one subcommand per
-policy. It emits a small JSON result containing optional model-visible context,
-user-visible notice text, or blocking diagnostics.
+`agents/tools/workflow-hooks/` is the canonical Rust implementation. The
+installed `~/.local/bin/workflow-hooks` executable accepts JSON on standard input
+and exposes direct policy subcommands plus a native `hook` entry point for the
+compatible Claude Code and Codex command-hook schemas. It emits small JSON
+results containing optional model-visible context, user-visible notice text, or
+blocking diagnostics.
 
-The core owns:
+The binary owns:
 
 - cadence date calculation and skill count;
 - Korean update-word detection;
 - research and plan path classification;
 - active artifact title collection;
 - language-specific type-check command selection and execution.
+- Claude/Codex event translation and Codex `apply_patch` path extraction;
+- verified artifact archival and rollback.
 
-Harness adapters own only event translation and the harness-specific output
-shape.
+One compiled executable replaces the former Bash policy and shell adapters,
+removing runtime dependencies on Bash and jq. Amp and Pi retain TypeScript files
+only because their native extension APIs require event registration; those files
+translate events and result shapes without duplicating policy.
 
 ### 4.2 Harness adapters
 
 | Harness | Adapter | Native events |
 | --- | --- | --- |
-| Claude Code | Existing `agents/claude/hooks/*.sh` wrappers | `SessionStart`, `UserPromptSubmit`, `PostToolUse`; `SessionStart(source=compact)` restores context |
-| Codex | `agents/codex/hook-adapter.sh` and `hooks.json` | `SessionStart`, `UserPromptSubmit`, `PostToolUse`; `SessionStart(source=compact)` restores context |
+| Claude Code | `workflow-hooks hook` configured in `agents/claude/settings.json` | `SessionStart`, `UserPromptSubmit`, `PostToolUse`; `SessionStart(source=compact)` restores context |
+| Codex | `workflow-hooks hook` configured in `agents/codex/hooks.json` | `SessionStart`, `UserPromptSubmit`, `PostToolUse`; `SessionStart(source=compact)` restores context |
 | Amp | `agents/amp/plugins/workflow-hooks.ts` | `session.start`, `agent.start`, `tool.result`; active artifact pointers are injected at each `agent.start` because Amp has no compaction event |
 | Pi | `agents/pi/extensions/workflow-hooks.ts` | `session_start`, `before_agent_start`, `tool_result`, `session_compact`, `context` |
 
-Codex's `apply_patch` payload is converted into a list of paths from the patch
+The binary converts Codex's `apply_patch` payload into paths from supported patch
 headers. Amp uses `filesModifiedByToolCall()`. Pi uses the built-in `write` and
-`edit` tool inputs.
+`edit` tool inputs. Both TypeScript adapters invoke direct policy subcommands on
+the same binary.
 
 Pi's extension also contributes `~/.claude/skills/` through
 `resources_discover`, preserving one portable skill source.
 
 ### 4.3 Deployment
+
+Build and install the executable with:
+
+```bash
+cargo install --locked --path agents/tools/workflow-hooks --root "$HOME/.local"
+```
 
 Tracked sources are deployed with file symlinks:
 
@@ -83,6 +96,8 @@ Tracked sources are deployed with file symlinks:
 | `agents/amp/plugins/workflow-hooks.ts` | `~/.config/amp/plugins/workflow-hooks.ts` |
 | `agents/pi/extensions/workflow-hooks.ts` | `~/.pi/agent/extensions/workflow-hooks.ts` |
 
+Claude and Codex execute `~/.local/bin/workflow-hooks hook`. Amp and Pi resolve
+the same path by default and accept `WORKFLOW_HOOKS_BIN` as a test override.
 Codex requires the user to review changed command hooks through `/hooks` before
 it runs them. Amp and Pi adapters use their global native extension locations.
 
@@ -124,23 +139,24 @@ archive source artifacts.
 
 ## 7. Verification
 
-1. Run shell syntax checks for the shared core and Claude/Codex wrappers.
-2. Exercise every core subcommand with normalized JSON fixtures.
+1. Run Rust formatting, unit tests, Clippy, and a release build.
+2. Exercise every policy subcommand and native command-hook conversion with the
+   shell black-box contract suite.
 3. Verify Codex hook JSON and feature availability, then inspect discovery with
    the installed symlink; trust remains a manual `/hooks` action.
 4. Load the Amp plugin through Amp's plugin loader.
 5. Start Pi with the extension in a no-inference command and confirm it loads.
 6. Validate `annotate-plan` and `implement-plan` with the repository skill
    validator, then run `skill-improver` as required by repository guidance.
-7. Run a temporary archive fixture covering success, legacy fallback, missing
-   sources, and destination collisions without touching real project artifacts.
+7. Keep archive fixtures covering success, legacy fallback, missing sources,
+   invalid item slugs, and destination collisions isolated from real artifacts.
 8. Run `git diff --check` and review only requested files before committing.
 
 ## 8. Rollout
 
-1. Add the shared core and convert Claude hooks into adapters.
-2. Add Codex, Amp, and Pi native adapters.
-3. Add the deployment symlinks and document them in `agents/README.md`.
-4. Update the planning skills and their pipeline documentation.
-5. Validate each adapter and the archival contract.
-6. Commit implementation separately from this design record.
+1. Build and install the Rust executable.
+2. Point Claude and Codex command hooks directly at its `hook` entry point.
+3. Point Amp and Pi native adapters at its policy subcommands.
+4. Remove the superseded runtime shell scripts and retain one shell contract
+   test.
+5. Validate each harness loader and the archival contract.
