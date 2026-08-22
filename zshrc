@@ -32,6 +32,7 @@ path=(
 # LANG only, never LC_ALL: LC_ALL force-overrides every LC_* category and makes
 # per-category overrides (LC_TIME, LC_COLLATE, ...) impossible.
 export LANG=en_US.UTF-8
+export EDITOR='zed --wait'
 
 # ── History ────────────────────────────────────────────────
 
@@ -164,4 +165,3 @@ fi
 if [[ -f ${XDG_CONFIG_HOME}/op/plugins.sh ]]; then
     source ${XDG_CONFIG_HOME}/op/plugins.sh
 fi
-
