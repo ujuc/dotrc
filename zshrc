@@ -20,6 +20,7 @@ path=(
     ${HOME}/{,s}bin(N)
     ${HOME}/.local/{,s}bin(N)
     ${HOME}/.amp/bin(N)
+    ${HOME}/.bun/bin(N)
     /opt/{homebrew,local}/{,s}bin(N)
     /usr/local/{,s}bin(N)
     $path
@@ -155,7 +156,6 @@ alias_if_command_exists eza \
     "lt=eza -l --tree --icons=auto"
 alias_if_command_exists bat "cat=bat"
 alias_if_command_exists vim "vi=vim"
-alias_if_command_exists mise "pi=mise x -- pi"
 unfunction alias_if_command_exists
 
 # ── Local ──────────────────────────────────────────────────

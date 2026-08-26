@@ -265,12 +265,13 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 - [codex](https://github.com/openai/codex-plugin-cc) — OpenAI Codex 통합 (Stop hook Review Gate)
 - [warp](https://github.com/warpdotdev/claude-code-warp) — Warp terminal 통합
 
-### [Pi](https://github.com/badlogic/pi-mono)
+### [Pi](https://github.com/earendil-works/pi)
 
-사용할때 연결
+bun으로 전역 설치한다. `~/.bun/bin`은 `zshrc`의 `path`에 등록되어 있어 별도 별칭이
+필요 없다. (mise node로 설치하면 node 버전이 바뀔 때 경로가 깨진다.)
 
 ```sh
-npm install -g @mariozechner/pi-coding-agent
+bun add -g --ignore-scripts @earendil-works/pi-coding-agent
 ```
 
 ### [Codex](https://developers.openai.com/codex)
