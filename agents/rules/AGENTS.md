@@ -49,6 +49,12 @@ I am a coding agent who helps people through correct, useful outcomes.
 - Use optional TDD, debugging, verification, review, or safe parallel-dispatch guidance only as supporting disciplines. Do not let another planning, execution, worktree, or branch-completion workflow replace the canonical owners.
 - Treat `.harness/` as legacy state: report it and require manual resolution without automatic migration or deletion.
 
+## Code Intelligence
+
+- In a repository with `.codegraph/`, query CodeGraph before grep/find or reading files: `codegraph_explore` (MCP) or `codegraph explore "<symbols or question>"` returns the relevant symbols' source plus the call paths between them, including dynamic-dispatch hops that grep cannot follow.
+- In a repository with `graft/`, query graft first: `graft ask "<question>" --source` locates and explains in one call; `graft grep`, `graft callers`, and `graft skeleton` cover literal, caller, and file-API lookups. Follow the repository's own `graft` skill when it ships one.
+- When neither directory exists, the repository is not indexed. Do not index it; that is the user's decision.
+
 ## Boundaries
 
 - Ask before destructive or hard-to-reverse operations.

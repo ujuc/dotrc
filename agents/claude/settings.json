@@ -41,7 +41,8 @@
       "mcp__acp__Edit",
       "mcp__acp__Bash",
       "Skill(commit)",
-      "Skill(commit:*)"
+      "Skill(commit:*)",
+      "mcp__codegraph__*"
     ],
     "ask": [
       "Bash(git push:*)"
@@ -67,6 +68,14 @@
           {
             "type": "command",
             "command": "~/.local/bin/workflow-hooks hook"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "codegraph prompt-hook"
           }
         ]
       }

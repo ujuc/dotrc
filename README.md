@@ -302,6 +302,64 @@ ln -sfn ${DOTRCDIR}/agents/amp/AGENTS.md ${XDG_CONFIG_HOME}/amp/AGENTS.md
 ln -sfn ${DOTRCDIR}/agents/amp/settings.json ${XDG_CONFIG_HOME}/amp/settings.json
 ```
 
+### [CodeGraph](https://github.com/colbymchenry/codegraph)
+
+전역 CLI는 번들 설치 스크립트를 쓴다. 자체 런타임을 포함해
+`~/.codegraph/versions/`에 설치되고 `~/.local/bin/codegraph` 심링크가 걸리므로
+node 버전과 무관하다.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+```
+
+새 터미널에서 하네스에 MCP 서버를 연결한다. Claude Code의 경우
+`~/.claude.json`의 `mcpServers`, `agents/claude/settings.json`의
+`mcp__codegraph__*` 권한과 `codegraph prompt-hook`,
+`agents/claude/CLAUDE.md`의 `CODEGRAPH_START` 블록이 함께 갱신된다.
+
+```sh
+codegraph install
+```
+
+설치 스크립트는 하네스 지침 파일에 `CODEGRAPH_START` 블록을 직접 써 넣는다.
+이 저장소는 같은 내용을 `agents/rules/AGENTS.md`의 `Code Intelligence`에서
+관리하므로, `codegraph install`·`upgrade` 뒤에 다시 주입된 블록은 지운다.
+`~/.codex/AGENTS.md` 심링크도 실제 파일로 덮어쓰므로 `scripts/install.sh`를
+다시 실행해 링크를 복구한다.
+
+인덱스는 저장소마다 따로 만든다. `.codegraph/`는 로컬 산출물이라 커밋하지 않는다.
+
+```sh
+codegraph init      # 최초 인덱싱
+codegraph sync      # 변경분 반영
+codegraph upgrade   # CLI 갱신
+```
+
+### [graft](https://github.com/NanoNets/context-graph-engine)
+
+npm 패키지지만 mise node에 설치하면 node 버전이 바뀔 때 경로가 깨지므로
+Pi와 같이 bun 전역 설치를 쓴다.
+
+```sh
+bun add -g @nanonets/graft
+```
+
+bun은 native 의존성(tree-sitter 언어 바인딩)의 postinstall을 막지만, graft가
+WASM 파서로 대체하므로 그대로 동작한다 (0.13.0에서 TypeScript·Python 파싱 확인).
+
+저장소마다 `graft init`으로 그래프를 만들고 에이전트 연결을 붙인다.
+`graft/`는 재생성 가능한 로컬 캐시라 `.gitignore`에 자동 등록되며,
+커밋 대상은 `init`이 만든 `.claude/` 설정과 `.mcp.json` 항목이다.
+
+```sh
+graft init          # 그래프 빌드 + 에이전트 연결 (--dry-run 으로 미리 확인)
+graft build         # 그래프 재생성 (체크아웃한 사람이 각자 실행)
+```
+
+개념 노드와 심볼 요약을 만드는 `graft build --deep`은 LLM 키가 필요하다
+(`GRAFT_PROVIDER`, `GRAFT_API_KEY`, `GRAFT_MODEL`). 기본 `graft build`는
+tree-sitter 기반이라 키 없이 동작한다.
+
 ## Apps
 
 ### [raycast](https://www.raycast.com/)
