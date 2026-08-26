@@ -26,7 +26,6 @@ path=(
     $path
     "${HOME}/Library/Application Support/JetBrains/Toolbox/scripts"(N)
     /Applications/Obsidian.app/Contents/MacOS(N)
-    ${HOME}/.lmstudio/bin(N)
 )
 
 ## ENV
