@@ -27,7 +27,7 @@
 [독립 평가]     qa-evaluator / frontend-design-evaluator
                 → multi-agent-orchestrator 종합 → implement-plan 최종화
 [완료 보관]     docs/{specs,contracts,research,plans,reports}
-[스킬 정비]     skill-improver → generate-skills
+[스킬 정비]     로컬 세션 기록 → skill-improver → generate-skills
 [글쓰기]        prompting-assist → (선택) humanizer 후처리
 ```
 
@@ -59,7 +59,10 @@ Superpowers 6.3.0의 brainstorming·writing-plans·writing-skills 원칙은 공�
 보조 규율로 사용할 수 있지만 `writing-plans`, SDD/`executing-plans`, worktree,
 브랜치 완료 흐름은 관리형 워크플로의 계획·실행 소유권을 대체하지 않는다.
 설치 버전이 계약 핀과 달라지면 `skill-improver`가 경고하며 플러그인 캐시를
-자동 수정하지 않는다.
+자동 수정하지 않는다. `skill-improver`는 정적 점검(A–D)에 더해 로컬 세션 기록을
+요약·채점하는 Dimension E를 수행한다. 트랜스크립트는 기기 밖으로 나가지 않고,
+관찰된 실패가 `references/change-bar.md`의 기준을 통과할 때만 동작 수정을
+제안한다.
 
 ## Skill Structure Convention
 

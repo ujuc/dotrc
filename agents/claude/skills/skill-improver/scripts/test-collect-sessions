@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# Self-check for collect-sessions, condense.jq, and inventory.jq.
+# Builds a synthetic session history in a scratch dir and asserts the parts
+# that silently rot: tag extraction, malformed-line tolerance, sidechain and
+# noise filtering, the skills/commands split, and the digest cap.
+#
+#   bash test-collect-sessions      # exits non-zero on the first failure
+set -euo pipefail
+
+here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+root=$(mktemp -d "${TMPDIR:-/tmp}/collect-sessions-test-XXXXXX")
+trap 'rm -rf "$root"' EXIT
+
+fail=0
+check() { # check <description> <condition-description-only-on-failure>
+  if eval "$2"; then printf '  ok   %s\n' "$1"
+  else printf '  FAIL %s\n' "$1"; fail=1; fi
+}
+
+# --- fixture -----------------------------------------------------------------
+mkdir -p "$root/home/projects/-test-proj"
+session="$root/home/projects/-test-proj/aaaaaaaa-0000-0000-0000-000000000001.jsonl"
+sid=aaaaaaaa-0000-0000-0000-000000000001
+
+{
+  printf '{"type":"user","sessionId":"%s","cwd":"/test/proj","gitBranch":"main","isSidechain":false,"timestamp":"2026-08-01T00:00:00Z","message":{"content":"fix the failing import"}}\n' "$sid"
+  echo '{ this line is not valid json'
+  printf '{"type":"user","sessionId":"%s","message":{"content":"<command-name>/commit</command-name>"}}\n' "$sid"
+  printf '{"type":"user","sessionId":"%s","message":{"content":"<local-command-stdout>noise that must not be scored</local-command-stdout>"}}\n' "$sid"
+  printf '{"type":"assistant","sessionId":"%s","isSidechain":false,"message":{"content":[{"type":"thinking","thinking":"dropped"},{"type":"tool_use","name":"Skill","input":{"skill":"commit"}}]}}\n' "$sid"
+  printf '{"type":"assistant","sessionId":"%s","isSidechain":false,"message":{"content":[{"type":"tool_use","name":"Bash","input":{"command":"cargo test"}}]}}\n' "$sid"
+  printf '{"type":"assistant","sessionId":"%s","isSidechain":false,"message":{"content":[{"type":"tool_use","name":"Read","input":{"file_path":"/test/proj/main.rs"}}]}}\n' "$sid"
+  printf '{"type":"user","sessionId":"%s","message":{"content":[{"type":"tool_result","is_error":true,"content":[{"type":"text","text":"error: cannot find value"}]}]}}\n' "$sid"
+  printf '{"type":"assistant","sessionId":"%s","isSidechain":true,"message":{"content":[{"type":"tool_use","name":"Grep","input":{"pattern":"sidechain-must-be-filtered"}}]}}\n' "$sid"
+  printf '{"type":"assistant","sessionId":"%s","cwd":"/test/proj/sub/scratch","isSidechain":false,"timestamp":"2026-08-01T00:05:00Z","message":{"content":[{"type":"text","text":"done"}]}}\n' "$sid"
+} >"$session"
+
+# A second session, long enough to exercise the 400-line digest cap.
+long="$root/home/projects/-test-proj/bbbbbbbb-0000-0000-0000-000000000002.jsonl"
+lid=bbbbbbbb-0000-0000-0000-000000000002
+printf '{"type":"user","sessionId":"%s","cwd":"/other/proj","message":{"content":"start"}}\n' "$lid" >"$long"
+i=0
+while [ "$i" -lt 500 ]; do
+  printf '{"type":"assistant","sessionId":"%s","isSidechain":false,"message":{"content":[{"type":"tool_use","name":"Bash","input":{"command":"step %d"}}]}}\n' "$lid" "$i" >>"$long"
+  i=$((i + 1))
+done
+
+# --- run ---------------------------------------------------------------------
+out="$root/report"
+CLAUDE_CONFIG_DIR="$root/home" bash "$here/collect-sessions" \
+  --out "$out" --since 2020-01-01 --max 10 >"$root/stdout.txt"
+
+digest="$out/transcripts/$sid.txt"
+inv="$out/inventory.json"
+meta=$(jq -c --arg id "$sid" '.sessions[] | select(.session_id == $id)' "$inv")
+
+echo "collect-sessions self-check:"
+check "digest written"                  '[ -s "$digest" ]'
+check "human turn kept"                 'grep -q "^USR fix the failing import$" "$digest"'
+check "slash command tagged"            'grep -q "^CMD commit$" "$digest"'
+check "tool call and target captured"   'grep -q "^USE Bash | cargo test$" "$digest"'
+check "skill dispatch captured"         'grep -q "^USE Skill | commit$" "$digest"'
+check "failed result captured"          'grep -q "^ERR .*cannot find value" "$digest"'
+check "thinking dropped"                '! grep -q "dropped" "$digest"'
+check "sidechain filtered"              '! grep -q "sidechain-must-be-filtered" "$digest"'
+check "local-command noise filtered"    '! grep -q "noise that must not be scored" "$digest"'
+check "malformed line survived"         '[ "$(grep -c "^" "$digest")" -ge 6 ]'
+
+check "inventory records the session"   '[ -n "$meta" ]'
+check "cwd is the launch dir"           '[ "$(jq -r .cwd <<<"$meta")" = "/test/proj" ]'
+check "tool errors counted"             '[ "$(jq -r .tool_errors <<<"$meta")" = "1" ]'
+check "skills_used from Skill tool"     '[ "$(jq -c .skills_used <<<"$meta")" = "[\"commit\"]" ]'
+check "commands_used kept separate"     '[ "$(jq -c .commands_used <<<"$meta")" = "[\"commit\"]" ]'
+check "sidechain tool not counted"      '! jq -e ".tools | index(\"Grep\")" <<<"$meta" >/dev/null'
+
+long_digest="$out/transcripts/$lid.txt"
+check "long digest capped at 400"       '[ "$(grep -c "^" "$long_digest")" -le 401 ]'
+check "elision is announced"            'grep -q "lines elided" "$long_digest"'
+check "pre-cap length recorded"         '[ "$(jq -r ".sessions[] | select(.session_id == \"$lid\") | .digest_lines" "$inv")" -gt 400 ]'
+
+# --project must filter on the session cwd, not the file location.
+out2="$root/report2"
+CLAUDE_CONFIG_DIR="$root/home" bash "$here/collect-sessions" \
+  --out "$out2" --since 2020-01-01 --project /test/proj >/dev/null
+check "--project filters by cwd"        '[ "$(jq -r ".sessions | length" "$out2/inventory.json")" = "1" ]'
+
+[ "$fail" -eq 0 ] && echo "all checks passed" || echo "FAILURES above"
+exit "$fail"

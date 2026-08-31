@@ -1,15 +1,17 @@
 ---
 name: skill-improver
-description: "스킬/에이전트 정의를 테스트 시나리오 기반으로 자동 개선한다. 공통 워크플로 계약의 주기에 따라 비차단 알림이 뜨고, 심층 최적화가 필요하면 별도 autoresearch 실행을 안내한다. /skill-improver, skill-improver, 스킬 개선해줘, 스킬 최적화, 스킬 테스트해줘, test skills 요청 시 사용한다."
+description: "스킬/에이전트 정의를 테스트 시나리오와 최근 세션 기록에서 관찰된 실패를 근거로 자동 개선한다. 공통 워크플로 계약의 주기에 따라 비차단 알림이 뜨고, 심층 최적화가 필요하면 별도 autoresearch 실행을 안내한다. /skill-improver, skill-improver, 스킬 개선해줘, 스킬 최적화, 스킬 테스트해줘, test skills 요청 시 사용한다."
 group: meta
 model: sonnet
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bash:*), Bash(git:*), Bash(date:*), Agent, advisor
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bash:*), Bash(git:*), Bash(date:*), Bash(jq:*), Bash(mktemp:*), Bash(diff:*), Agent, advisor
 argument-hint: "[skill-name ...]"
 ---
 
 # Skill Improver
 
-Test-driven improvement loop for skills and agent definitions. Validates structure and semantics, auto-fixes safe issues, and re-verifies — up to 3 iterations per target. Cadence and adapted Superpowers versions come from the shared workflow contract.
+Test-driven improvement loop for skills and agent definitions. Validates structure and semantics, scores recent real sessions for the failures those definitions caused, auto-fixes safe issues, and re-verifies — up to 3 iterations per target. Cadence and adapted Superpowers versions come from the shared workflow contract.
+
+Dimensions A–D ask whether a skill is well-formed; **Dimension E asks whether it worked**, by scoring condensed digests of local session history. Structural findings are lint and are fixed on sight. Behavioral findings must clear the change bar in [`references/change-bar.md`](references/change-bar.md) — proposing nothing, with a stated reason, is a valid outcome.
 
 ## Periodic Execution
 
@@ -38,7 +40,11 @@ Record a target-type policy mismatch as **B.7 — language policy drift** and as
    workflow_bin=${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}
    contract_json=$($workflow_bin contract) || exit 1
    ```
-   Validate `maintenance.skill_improver.interval_days`, `maintenance.skill_improver.timestamp`, and every `superpowers.adapted_from` pin. Never hard-code local substitutes when these keys exist.
+   Validate `maintenance.skill_improver.interval_days`, `maintenance.skill_improver.timestamp`, and every `superpowers.adapted_from` pin. Never hard-code local substitutes when these keys exist. Resolve the timestamp path once here; Phase 6 writes it:
+   ```bash
+   timestamp_path=$(jq -er '.maintenance.skill_improver.timestamp' <<<"$contract_json")
+   case "$timestamp_path" in "~/"*) timestamp_path="$HOME/${timestamp_path#\~/}" ;; esac
+   ```
 2. **Toolchain**: check `cargo` and `jq` are installed (`validate-skill` is a Rust binary and the contract is JSON):
    ```bash
    command -v cargo &>/dev/null || { echo "cargo required: https://rustup.rs"; exit 1; }
@@ -63,10 +69,22 @@ If any toolchain/path/repo check fails, report the issue with an actionable fix 
    - Trigger keywords from the description.
    - For managed workflow skills, ownership and paths from the retained workflow contract rather than prose inferred from peer skills.
 5. Summarize each target's intent in 1 line for Phase 2.
+6. **Evidence collection** (run-level, once per sweep): create the run's scratch directory and condense recent sessions into it.
+
+   ```bash
+   REPORT_DIR=$(mktemp -d "${TMPDIR:-/tmp}/skill-improver-XXXXXXXX")
+   bash "<repo_root>/claude/skills/skill-improver/scripts/collect-sessions" --out "$REPORT_DIR"
+   ```
+
+   Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded. A manual run can narrow with `--since YYYY-MM-DD` or `--project PATH`. Do **not** derive the window from `timestamp_path` — the cadence prompt writes that file on decline as well as on completion, so it marks "last asked", not "last examined".
+
+   `bash scripts/test-collect-sessions` self-checks the collector against a synthetic history; run it after touching `condense.jq` or `inventory.jq`.
+
+   Read `$REPORT_DIR/inventory.json` only. **Never read a raw `.jsonl`** — a single session file reaches 1.3 MB. If `sessions_sampled` is 0, or the collector fails, record Dimension E as SKIP for every target and continue; missing evidence is not a failure. Every artifact of this run stays under `REPORT_DIR`; nothing is written into a user project.
 
 ## Phase 2 — Test Scenario Generation
 
-Generate tests using a **test category matrix** with three skill dimensions plus a mode-specific dimension D for agents.
+Generate tests using a **test category matrix**: three skill dimensions, a mode-specific dimension D for agents, and dimension E for observed behavior in both modes.
 
 ### Dimension A — Structural (skill mode only)
 
@@ -86,12 +104,29 @@ Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single exe
 
 ### Dimension C — Type-specific (skills)
 
-- **Skills with scripts** (`scripts/` directory exists): run `--help` and expect exit 0; when arguments are required, also run with no args and expect a clear usage error rather than a crash.
+- **Skills with scripts** (`scripts/` directory exists): for each *executable* under `scripts/`, run `--help` and expect exit 0; when arguments are required, also run with no args and expect a clear usage error rather than a crash. Data files such as `*.jq` are not entry points — they are exercised by their launcher's self-check.
 - **Pipeline skills** (skills that reference other skill names): verify referenced skill names exist as actual skill directories.
 
 ### Dimension D — Agent-specific (agent mode only)
 
 See "Agent Definition Mode" section below for the full check list. Quick summary: `model` field present, description follows WHAT + WHEN, body has a clear role statement, structured-output spec when applicable.
+
+### Dimension E — Evidence (run-level, both modes)
+
+Scored **once per sweep**, not once per target: read every digest in
+`$REPORT_DIR/transcripts/` against [`references/evidence-rubric.md`](references/evidence-rubric.md), then attribute each
+finding to a target using that file's attribution rules. Each target's Dimension E
+row reports only the findings attributed to it — SKIP when there are none, which
+is the common case and not a defect.
+
+| Test | What it checks | How |
+|------|----------------|-----|
+| **E.1 Observed failure** | A session scored below 0.5 did work this target owns | Score each digest, attribute, cite session id + one-line paraphrase |
+| **E.2 Coverage** | The target actually fires where its domain appears | `skills_used` / `commands_used` vs the Phase 1 catalog; a never-firing skill is a trigger finding for `skill-engineer`, never a WHEN-clause auto-fix |
+
+E.1 findings do **not** become edits by themselves — Phase 4 puts them through
+the change bar first. Record the run-level score summary
+(`sessions_sampled`, failed sessions, `skill_coverage`) for the Phase 6 report.
 
 For complex skills (multi-agent-orchestrator, autoresearch, etc.), call `advisor()` after generating semantic tests to review whether scenarios capture the skill's intent adequately.
 
@@ -115,7 +150,7 @@ When the target is an agent `.md` file (not a `SKILL.md`):
 
 ## Phase 3 — Test Execution & Capture
 
-Execute tests in order: Dimension A → B → C/D.
+Execute tests in order: Dimension A → B → C/D → E. Dimension E is scored once for the whole sweep (Phase 2) and then reported per target.
 
 For each test:
 
@@ -125,7 +160,7 @@ For each test:
    - **PASS**: result matches expectations.
    - **FAIL**: result does not match expectations.
    - **WARN**: non-critical issue detected (e.g., optional field missing).
-   - **SKIP**: test not applicable to this target type.
+   - **SKIP**: test not applicable to this target type, or no evidence was attributed to it.
 
 **Early exit**: if Dimension A produces 3+ errors, skip remaining dimensions for that target — structural problems must be fixed first.
 
@@ -137,6 +172,13 @@ For each FAIL result:
 
 1. Analyze the error pattern.
 2. Classify fixability and apply fixes.
+
+**Two tracks, two bars.** A/B/C/D failures are lint against a known-correct spec
+— fix them from the table below. E failures are claims about how an agent
+behaves; run each through [`references/change-bar.md`](references/change-bar.md) before writing anything, and
+draft into `$REPORT_DIR/proposed/<target>/` with a `diff -u` rather than editing
+the target in place. If a finding does not clear the bar, propose nothing and
+record why — that is the expected outcome for most findings.
 
 ### Auto-fixable (apply with Edit tool)
 
@@ -157,13 +199,15 @@ For each FAIL result:
 - **Missing `group` field** — guessing from directory name or description risks wrong placement (e.g., a `frontend-*` skill might belong to `verify` or `build`). Surface the failure with the 8-slug list and ask the user to choose.
 - Any structural issue requiring design decisions.
 - Workflow-contract ownership or pinned-Superpowers drift (B.8); update the approved contract and implementation together in a separate workflow.
+- Every E.1 behavioral edit: draft it, diff it, and let the user accept it. Evidence justifies a proposal, never an unattended rewrite of a procedure.
+- E.2 coverage gaps: record the suggestion and route it to `skill-engineer`. A never-firing skill is a WHEN-clause problem, and the WHEN clause is out of this skill's reach.
 
 When fixability classification is ambiguous, call `advisor()` to decide. Misclassifying can damage the skill's intent.
 
 ## Phase 5 — Re-verification (max 3 iterations)
 
 1. After applying fixes, rerun the target's full original test matrix, including previously passing checks.
-2. **Regression guard**: if a fix introduces a NEW failure, immediately revert the fix and reclassify it as manual.
+2. **Regression guard**: if a fix introduces a NEW failure, immediately revert the fix and reclassify it as manual. For an E-track edit, discard the draft under `$REPORT_DIR/proposed/` — the target file was never touched, so there is nothing to unwind.
 3. If all re-run tests PASS → proceed to Phase 6.
 4. If failures remain and iteration count < 3 → return to Phase 4.
 5. If iteration count reaches 3 → call `advisor()` to decide whether to continue, stop, or reconsider whether the test scenario itself is wrong.
@@ -179,7 +223,17 @@ Output a changelog table:
 |--------|-------|------------|--------|---------|
 | commit | 6/6 PASS | 1 | Clean | no changes needed |
 | generate-skills | 5/7 PASS | 2 | Improved | description enriched, group verified |
+
+Evidence: 9 sessions sampled since 2026-08-24, 2 failed, coverage 0.44
+  - aaaaaaaa → deep-read: three re-reads of the same file (cleared the bar, diff below)
+  - bbbbbbbb → commit: one ordering slip (no change — the skill already states the rule)
+  - qa-evaluator never fired in 9 sessions → trigger suggestion, routed to skill-engineer
 ```
+
+Report the evidence block even when it is empty: `0 failed sessions` and `no
+change proposed` are results. Name `$REPORT_DIR` so the user can inspect the
+digests and drafts, and leave it in place — it is a `mktemp` directory the OS
+reclaims.
 
 If any fixes were applied:
 
@@ -188,11 +242,9 @@ If any fixes were applied:
 3. Commit following Korean conventional commit rules:
    `refactor(skills): skill-improver로 <target> 스킬을 개선하다`
 
-After the report (with or without fixes), update the periodic-run timestamp at the path returned by `maintenance.skill_improver.timestamp` (expand a leading `~/`, create its parent, and do not use a hard-coded fallback):
+After the report (with or without fixes), update the periodic-run timestamp at `timestamp_path`, resolved in Phase 0 from the contract:
 
 ```bash
-timestamp_path=$(jq -er '.maintenance.skill_improver.timestamp' <<<"$contract_json")
-case "$timestamp_path" in "~/"*) timestamp_path="$HOME/${timestamp_path#\~/}" ;; esac
 mkdir -p "$(dirname "$timestamp_path")"
 date -u +%Y-%m-%d > "$timestamp_path"
 ```
@@ -206,6 +258,7 @@ This skill runs on sonnet by default. Call `advisor()` (no parameters — full c
 1. **Phase 2 — semantic test quality review**: after generating tests for complex skills (multi-agent-orchestrator, autoresearch, etc.), review whether scenarios capture cross-skill interactions and intent adequately.
 2. **Phase 4 — fixability classification ambiguity**: when a failure sits on the boundary between auto-fixable and manual.
 3. **Phase 5 — failures remain after 3 iterations**: to decide whether to keep auto-fixing, stop and escalate, or reconsider the test scenario.
+4. **Phase 4 — an E.1 finding sitting on the change bar**: when a behavioral edit is arguable — one occurrence, a contested attribution, or a rule that may already be stated elsewhere. Editing another agent's instructions on weak evidence is the expensive mistake here.
 
 ## Deep Optimization Handoff
 
@@ -221,7 +274,9 @@ If deeper eval-based optimization is warranted, finish this run first and recomm
 - Trigger overlap, completeness, and model fitness checks belong to skill-engineer — do not duplicate.
 - Treat `workflow-hooks contract` as authoritative for managed workflow ownership, maintenance cadence, and adapted Superpowers pins.
 - Plugin manifests and caches are read-only compatibility evidence; never update them from this skill.
-- Outside target files and the README catalog, the only side effects are a user-confirmed commit and the Phase 6 timestamp.
+- Outside target files and the README catalog, the only side effects are a user-confirmed commit and the Phase 6 timestamp — plus the run's `mktemp` scratch directory, which is never written into a user project.
+- Session history is read-only and stays local. Never upload, commit, or paste a digest, a raw `.jsonl`, or any line of either. Cite evidence as a session id plus a one-line paraphrase; the sampled sessions come from other repositories, including work ones.
+- Evidence justifies a proposal, never an unattended behavioral edit. Structural lint is fixed on sight; anything Dimension E motivates is drafted, diffed, and accepted by the user.
 
 ## Gotchas
 
@@ -237,7 +292,15 @@ If deeper eval-based optimization is warranted, finish this run first and recomm
 
 6. **Spec staleness ≠ blocker**: Phase 0's spec freshness check is informational. Stale `frontmatter-spec.md` only means new fields might be unknown; it does not invalidate existing checks. Warn the user but continue.
 
-7. **Superpowers version drift ≠ automatic upgrade**: the contract pins versions whose principles were adapted, not a command to install that version. Warn on mismatch and review upstream differences separately. Never modify `claude/plugins/` during a skill-improver run.
+7. **Raw transcripts are unreadable by design**: a single `.jsonl` session reaches 1.3 MB and one malformed line aborts a plain `jq` pass. Always go through `scripts/collect-sessions`, which condenses ~50:1, reads line-by-line with `fromjson? // empty`, and caps a long digest at 400 lines with an explicit elision marker. Reading a session file directly is the one way this skill can blow its own context.
+
+8. **`commands_used` is not `skills_used`**: the collector reads slash invocations from `<command-name>` tags, which also capture built-in CLI commands (`/clear`, `/compact`, `/model`, `/effort`). Filter against the Phase 1 catalog before computing coverage, or every session looks covered.
+
+9. **No evidence is a SKIP, not a FAIL**: a fresh machine, a `--since` window with no sessions, or a missing `~/.claude/projects` all yield `sessions_sampled: 0`. Dimension E reports SKIP and the sweep continues on A–D. Never treat absent evidence as a passing grade either — say the sample was empty.
+
+10. **The bar is meant to reject**: most E.1 findings should end in "no change proposed" with a stated reason. A sweep that rewrites a procedure from one bad session has done more damage than the session did.
+
+11. **Superpowers version drift ≠ automatic upgrade**: the contract pins versions whose principles were adapted, not a command to install that version. Warn on mismatch and review upstream differences separately. Never modify `claude/plugins/` during a skill-improver run.
 
 
 ## Eval Criteria
@@ -287,7 +350,26 @@ EVAL 6: Group field enforcement
   Fail: skill-improver auto-fills a guessed group, or treats it as a
         warning without surfacing it.
 
-EVAL 7: Single-entry-point compliance
+EVAL 7: Evidence-gated behavioral edits
+  Question: Does every behavioral (non-lint) edit cite a failed conversation,
+            and does a sweep with zero failed conversations propose zero
+            behavioral edits?
+  Pass: Each E-track diff names a session id and its rubric label; with no
+        failed sessions, the report says "no change proposed" and no
+        procedure text was touched.
+  Fail: A procedure edit lands with no cited session, or the run invents
+        behavioral edits from a clean sample.
+
+EVAL 8: Transcript containment
+  Question: Does the run read session history only through
+            scripts/collect-sessions, keep every artifact under the mktemp
+            REPORT_DIR, and cite sessions by id plus paraphrase?
+  Pass: No raw .jsonl read, nothing written into a user project, no digest
+        line quoted in the report or in any committed file.
+  Fail: A .jsonl is read directly, an artifact lands in a repository, or
+        transcript content is quoted.
+
+EVAL 9: Single-entry-point compliance
   Question: Across all SKILL.md / agent files, is `waza-runner.md` the
             only file that contains a direct `waza <subcommand>` call?
   Pass: rg -n "waza\s+(new|run|dev|quality|coverage)" the agents tree

@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+# Collect recent Claude Code sessions and condense them for Dimension E.
+#
+#   collect-sessions --out DIR [--since YYYY-MM-DD] [--max N] [--scan N]
+#                              [--project PATH]... [--include-sidechains]
+#
+# Writes DIR/transcripts/<session-id>.txt (condensed digests) and
+# DIR/inventory.json (per-session counts, tools, and skills used).
+#
+# Everything stays on this machine. DIR is expected to be a mktemp scratch
+# directory: condensed transcripts are never committed, quoted, or uploaded.
+set -euo pipefail
+
+here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+projects_dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/projects"
+
+out=""; since=""; max=12; scan=60; sidechains=0; projects=""
+
+# A very long session would otherwise dominate the scoring context on its own.
+digest_cap=400
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --out)                out=$2;      shift 2 ;;
+    --since)              since=$2;    shift 2 ;;
+    --max)                max=$2;      shift 2 ;;
+    --scan)               scan=$2;     shift 2 ;;
+    --project)            projects="$projects$2\n"; shift 2 ;;
+    --include-sidechains) sidechains=1; shift ;;
+    -h|--help)            sed -n '2,11p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *) echo "collect-sessions: unknown argument: $1" >&2; exit 2 ;;
+  esac
+done
+
+[ -n "$out" ] || { echo "collect-sessions: --out DIR is required" >&2; exit 2; }
+command -v jq >/dev/null || { echo "collect-sessions: jq is required" >&2; exit 1; }
+[ -d "$projects_dir" ] || { echo "collect-sessions: no session history at $projects_dir" >&2; exit 1; }
+
+# Default window: 45 days, matching skill-doctor's lookback. Callers pass the
+# last successful run date instead when they have one.
+[ -n "$since" ] || since=$(date -u -v-45d +%F 2>/dev/null || date -u -d '45 days ago' +%F)
+
+# BSD and GNU stat disagree on the mtime format flag; pick once.
+if stat -f '%m' . >/dev/null 2>&1; then stat_fmt=(-f '%m %N'); else stat_fmt=(-c '%Y %n'); fi
+
+mkdir -p "$out/transcripts"
+: >"$out/.sessions.ndjson"
+
+scanned=0; sampled=0
+while read -r file; do
+  [ -n "$file" ] || continue
+  [ "$scanned" -lt "$scan" ] || break
+  scanned=$((scanned + 1))
+
+  meta=$(jq -nR -f "$here/inventory.jq" "$file") || continue
+  id=$(jq -r '.session_id' <<<"$meta")
+  cwd=$(jq -r '.cwd' <<<"$meta")
+  [ -n "$id" ] || continue
+
+  # A session with no human turn or almost no tool work has nothing to score.
+  jq -e '.user_turns >= 1 and .tool_calls >= 3' <<<"$meta" >/dev/null || continue
+
+  if [ -n "$projects" ]; then
+    match=0
+    while IFS= read -r prefix; do
+      [ -n "$prefix" ] || continue
+      case "$cwd" in "$prefix"|"$prefix"/*) match=1 ;; esac
+    done <<<"$(printf '%b' "$projects")"
+    [ "$match" -eq 1 ] || continue
+  fi
+
+  digest="$out/transcripts/$id.txt"
+  jq -rR --arg sidechains "$sidechains" -f "$here/condense.jq" "$file" >"$digest"
+
+  # Keep both ends of an over-long digest: setup mistakes cluster at the start,
+  # corrections and late verification at the end. Say what was dropped.
+  lines=$(wc -l <"$digest" | tr -d ' ')
+  if [ "$lines" -gt "$digest_cap" ]; then
+    half=$((digest_cap / 2))
+    { head -n "$half" "$digest"
+      echo "--- $((lines - digest_cap)) lines elided: digest capped at $digest_cap ---"
+      tail -n "$half" "$digest"
+    } >"$digest.part" && mv "$digest.part" "$digest"
+  fi
+
+  jq -c --arg path "$digest" --argjson full "$lines" \
+     '. + {digest: $path, digest_lines: $full}' <<<"$meta" >>"$out/.sessions.ndjson"
+
+  sampled=$((sampled + 1))
+  [ "$sampled" -lt "$max" ] || break
+done < <(find "$projects_dir" -type f -name '*.jsonl' -newermt "$since" -exec stat "${stat_fmt[@]}" {} + \
+         | sort -rn | cut -d' ' -f2-)
+
+jq -s --arg generated "$(date -u +%FT%TZ)" --arg since "$since" \
+      --argjson scanned "$scanned" --argjson sampled "$sampled" \
+   '{generated_at: $generated, window_since: $since,
+     sessions_scanned: $scanned, sessions_sampled: $sampled, sessions: .}' \
+   "$out/.sessions.ndjson" >"$out/inventory.json"
+rm -f "$out/.sessions.ndjson"
+
+echo "collect-sessions: sampled $sampled of $scanned scanned sessions since $since -> $out"
