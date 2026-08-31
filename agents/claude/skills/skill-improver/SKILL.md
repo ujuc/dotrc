@@ -52,7 +52,11 @@ Record a target-type policy mismatch as **B.7 — language policy drift** and as
    ```
 3. **Repository resolution**: resolve `repo_root` as `${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents`; verify its `AGENTS.md` and `claude/skills/`. Invocation CWD may be any project.
 4. **Validator path**: confirm `<repo_root>/claude/skills/generate-skills/scripts/validate-skill` exists. Use `repo_root` for every scan and command; do not require or mutate the caller's CWD.
-5. **Superpowers compatibility**: read `<repo_root>/claude/plugins/installed_plugins.json` without modifying it. Compare the user-scope `superpowers@claude-plugins-official` version with all `superpowers.adapted_from` versions in the contract. If missing or mismatched, emit a non-blocking warning that adapted assumptions need review; do not edit the plugin cache, installed manifest, pins, or skills automatically.
+5. **Superpowers compatibility**: read `<repo_root>/claude/plugins/installed_plugins.json` without modifying it — entries live under `.plugins`, not at the root, and each key holds an array of per-scope installs:
+   ```bash
+   jq -r '.plugins["superpowers@claude-plugins-official"][] | select(.scope=="user") | .version' <file>
+   ```
+   Compare that version with all `superpowers.adapted_from` versions in the contract. If missing or mismatched, emit a non-blocking warning that adapted assumptions need review; do not edit the plugin cache, installed manifest, pins, or skills automatically.
 6. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking.
 
 If any toolchain/path/repo check fails, report the issue with an actionable fix and stop — do not proceed to Phase 1.
