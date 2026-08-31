@@ -113,7 +113,12 @@
     "gopls-lsp@claude-plugins-official": false,
     "fable-advisor@fable-advisor": true,
     "ponytail@ponytail": true,
-    "claudish-to-english@gvzdv-plugins": true
+    "claudish-to-english@gvzdv-plugins": true,
+    "code-review@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "harness@harness-marketplace": true,
+    "warp@claude-code-warp": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -156,6 +161,12 @@
       "source": {
         "source": "github",
         "repo": "gvzdv/claudish-to-english"
+      }
+    },
+    "harness-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "revfactory/harness"
       }
     }
   },
