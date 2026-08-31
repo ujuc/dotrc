@@ -104,7 +104,7 @@ Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single exe
 
 ### Dimension C — Type-specific (skills)
 
-- **Skills with scripts** (`scripts/` directory exists): for each *executable* under `scripts/`, run `--help` and expect exit 0; when arguments are required, also run with no args and expect a clear usage error rather than a crash. Data files such as `*.jq` are not entry points — they are exercised by their launcher's self-check.
+- **Skills with scripts** (`scripts/` directory exists): for each *executable* under `scripts/`, run it directly (`./script --help`) so its shebang applies — forcing `bash` misreads a `uv run` PEP 723 script as shell and fails — and expect exit 0; when arguments are required, also run with no args and expect a clear usage error rather than a crash. Data files such as `*.jq` are not entry points — they are exercised by their launcher's self-check.
 - **Pipeline skills** (skills that reference other skill names): verify referenced skill names exist as actual skill directories.
 
 ### Dimension D — Agent-specific (agent mode only)
@@ -246,7 +246,7 @@ After the report (with or without fixes), update the periodic-run timestamp at `
 
 ```bash
 mkdir -p "$(dirname "$timestamp_path")"
-date -u +%Y-%m-%d > "$timestamp_path"
+date -u +%Y-%m-%d >| "$timestamp_path"   # >| : the file already exists and zsh sets noclobber
 ```
 
 This signals to the session-start protocol that skill-improver has run today, preventing repeat notifications next session. **Do not write the timestamp earlier in the workflow** — failed runs (Phase 0–5 errors) should re-prompt next session.
@@ -280,7 +280,7 @@ If deeper eval-based optimization is warranted, finish this run first and recomm
 
 ## Gotchas
 
-1. **cargo dependency**: `validate-skill` is a Rust binary launched via `scripts/validate-skill`. First invocation compiles the workspace (~6–30s). Phase 0 must check `cargo`, not `bash` or `yq`. The launcher lost its `.sh` suffix in 2026-04 — older docs may still reference `validate-skill.sh`.
+1. **cargo dependency**: `validate-skill` is a Rust binary launched via `generate-skills/scripts/validate-skill`. First invocation compiles the workspace (~6–30s). Phase 0 must check `cargo`, not `bash` or `yq`. The launcher lost its `.sh` suffix in 2026-04 — older docs may still reference `validate-skill.sh`.
 
 2. **Description enrichment risk**: auto-generating a WHAT clause can accidentally remove trigger keywords the user placed intentionally. Always show the diff for description changes and never touch the WHEN clause.
 
