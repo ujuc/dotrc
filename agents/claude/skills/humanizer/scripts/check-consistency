@@ -31,6 +31,8 @@ TAXONOMY = REFS / "taxonomy-ko.md"
 MONOLITH = AGENTS / "humanize-monolith.md"
 REWRITER = AGENTS / "humanize-rewriter.md"
 NATURAL = AGENTS / "humanize-naturalness-reviewer.md"
+DETECTOR = AGENTS / "humanize-detector.md"
+FIDELITY = AGENTS / "humanize-fidelity-auditor.md"
 
 
 def load(path: Path) -> list[str] | None:
@@ -45,7 +47,8 @@ def has(lines: list[str], pattern: str) -> bool:
     return any(rx.search(ln) for ln in lines)
 
 
-FILES = {p: load(p) for p in (SKILL, QUICK, TAXONOMY, MONOLITH, REWRITER, NATURAL)}
+FILES = {p: load(p) for p in (SKILL, QUICK, TAXONOMY, MONOLITH, REWRITER, NATURAL,
+                              DETECTOR, FIDELITY)}
 
 missing = [str(p) for p, lines in FILES.items() if lines is None]
 if missing:
@@ -96,6 +99,19 @@ for p in (SKILL, QUICK, NATURAL):
 for p in (QUICK, TAXONOMY):
     lines = FILES[p]
     check("rhythm-preserves-content", p, has(lines, r"기존 문장.*분리.병합"))
+
+# 7. Tense-injection guard (A-16): completing a sentence must not add tense the
+# source lacks. Anchored on the canonical example so a reworded copy still counts.
+for p in (SKILL, QUICK, MONOLITH, REWRITER, FIDELITY):
+    check("tense-injection-guard", p, has(FILES[p], r"지연 가능성"))
+
+# 8. Protected tokens include code-adjacent strings (paths, identifiers, commit messages).
+for p in (SKILL, QUICK, MONOLITH, REWRITER, DETECTOR, FIDELITY):
+    check("protected-code-strings", p, has(FILES[p], r"(커밋 메시지|commit messages)"))
+
+# 9. Reverse guard: brevity prescriptions must not manufacture a noun-phrase ending.
+for p in (SKILL, QUICK, MONOLITH, REWRITER, NATURAL):
+    check("noun-ending-reverse-guard", p, has(FILES[p], r"명사형 종결"))
 
 failed = [r for r in results if not r[1]]
 for name, ok, detail in results:

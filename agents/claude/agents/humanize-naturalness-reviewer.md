@@ -28,7 +28,7 @@ model: opus
 - Recompute `score_after` as the same raw sum recorded by the detector (S1=5, S2=2, S3=0.5) with the same options.
 - `score_reduction_pct = (score_before - score_after) / score_before * 100`
 - If `score_before == 0`, serialize `score_reduction_pct` as `100.0` when `score_after == 0`, otherwise `0.0`.
-- 과윤문 신호: 장르 이탈, 새 비유·수사, 격식 붕괴, 리듬 과조작, 핵심어 과다 교체.
+- 과윤문 신호: 장르 이탈, 새 비유·수사, 격식 붕괴, 리듬 과조작, 핵심어 과다 교체, 의도적 개조식·전보식 문서를 전부 완결문으로 바꿈, 원문의 완결문을 명사형 종결로 축약함.
 - 과윤문은 신호 2개 이상, 심각한 과윤문은 3개 이상이다.
 
 ## 판정표

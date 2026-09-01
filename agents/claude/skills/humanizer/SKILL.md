@@ -173,6 +173,16 @@ violation triggers immediate rollback, in both the monolith and strict tracks. G
 drifts (a column does not become an essay); register is preserved (formal stays formal — an
 AI tell is grammar and rhetoric, not formality itself).
 
+Completing an incomplete sentence never injects tense the source lacks. A tenseless event noun
+phrase gets its predicate restored and nothing more: `일부 요청 지연 가능성` →
+`일부 요청의 지연 가능성이 있습니다`, never `지연될 가능성` or `지연되었을 가능성`. Words that
+carry decision strength (`검토`, `예정`, `가능성`, `방향`, `판단`) survive unchanged.
+
+The reverse holds too. Brevity prescriptions (`줄임`, `삭제`, `종결만 직결`) must never truncate a
+complete sentence into a `명사형 종결` — `검토했습니다` → `검토.` manufactures the very A-16 tell
+this skill removes, and turns a stated fact into an ambiguous label. Shortening happens inside a
+completed sentence, never by dropping its predicate.
+
 ### Change-rate guard
 
 - change rate = Levenshtein distance(final candidate, immutable `01_input.txt`) / original length, across all rounds.
@@ -187,6 +197,9 @@ AI tell is grammar and rhetoric, not formality itself).
 - Legal/regulatory text.
 - Math/chemistry/statistics notation.
 - Industry-standard English acronyms (LLM, GPU, MCP, API, SDK, etc.).
+- Code, identifiers, commands, paths, API fields, logs, error messages, and commit messages
+  (`retry_count`, `/etc/app.yaml`) — spelling, case, and punctuation stay byte-identical.
+- Decision-strength wording (`검토`, `예정`, `가능성`, `방향`, `판단`).
 
 ### 6-item self-check (immediately after rewrite)
 
@@ -276,4 +289,4 @@ by design. Run `scripts/check-consistency` after changing any of them to catch d
 
 ## Acknowledgements
 
-The strict pipeline, fast monolith, rulebooks, and sub-agent definitions are adapted from [`epoko77-ai/im-not-ai`](https://github.com/epoko77-ai/im-not-ai) v1.5 under the MIT License. See [`LICENSE-THIRD-PARTY`](./LICENSE-THIRD-PARTY) for provenance and local changes.
+The strict pipeline, fast monolith, rulebooks, and sub-agent definitions are adapted from [`epoko77-ai/im-not-ai`](https://github.com/epoko77-ai/im-not-ai) v1.5 under the MIT License. Taxonomy patterns `A-16` and `A-17`, the protected-token expansion, and the tense-injection guard are adapted from [`snflkd/fluent-korean`](https://github.com/snflkd/fluent-korean), also MIT. See [`LICENSE-THIRD-PARTY`](./LICENSE-THIRD-PARTY) for provenance and local changes.
