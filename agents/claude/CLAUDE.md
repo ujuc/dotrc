@@ -13,3 +13,6 @@
 ## Compaction
 
 - Preserve modified files, latest verification results, pending approvals, and unanswered questions; the compact `SessionStart` hook restores `.research/` and `.plans/` pointers after compaction.
+
+<!-- CODEGRAPH_START -->
+<!-- CODEGRAPH_END -->
