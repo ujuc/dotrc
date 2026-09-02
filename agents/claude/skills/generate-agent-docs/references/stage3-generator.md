@@ -92,6 +92,8 @@ the freshest copy of it; the rules below are the operative shorthand.
   path-scoped
 - No auto-generated summaries: Do not include LLM-generated summaries of code as-is
 - A must-run-every-time rule (e.g., lint before commit) belongs in a **hook**, not a CLAUDE.md line — recommend the hook instead
+- **One rule per bullet**: a line that carries two or more independent
+  instructions is split; compound rules drop clauses at execution time
 - **Instruction-authoring constraints**: apply the [W] rules in
   model-prompting-guides.md. The three that reject a line outright: never
   instruct self-verification or re-checking (W1), never command reasoning
