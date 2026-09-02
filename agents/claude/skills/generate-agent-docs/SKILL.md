@@ -171,8 +171,7 @@ Skip this confirmation when `$ARGUMENTS` already names a file or target type.
   (references/context-engineering-claude5.md): four additive constraints on
   *what* gets documented — C1 anchor an instruction to an observable signal
   instead of forbidding a behavior outright (its Reconciliation section names
-  the prohibitions that still survive under this repo's Rule Authoring
-  Policy), C2 turn a sometimes-relevant multi-step procedure into a skill plus
+  the three prohibition shapes that still survive), C2 turn a sometimes-relevant multi-step procedure into a skill plus
   one reference line, C3 never emit memory-management lines (auto-memory owns
   that now), C4 place a finding across four layers, not two.
 - **Testing instructions: outcome over process**

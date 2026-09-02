@@ -124,9 +124,8 @@ would only cost context:
 
 ## Reconciliation — which prohibitions survive C1
 
-C1 collides with the Rule Authoring Policy in
-`~/.config/dotrc/agents/rules/AGENTS.md`, which explicitly permits a bare "don't"
-in three cases. The policy wins, narrowly:
+C1 does not delete every prohibition. A bare "don't" is kept in three cases,
+and the exception is narrow:
 
 - A prohibition **survives** when it is a regression guard for a violation that
   actually happened, a safety boundary (destructive or irreversible actions), or
