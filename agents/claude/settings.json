@@ -182,6 +182,14 @@
   "spinnerTipsEnabled": false,
   "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "low"
+    },
+    "claude-opus-5": {
+      "effortLevel": "high"
+    }
+  },
   "advisorModel": "fable",
   "askUserQuestionTimeout": "5m",
   "tui": "fullscreen",
