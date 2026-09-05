@@ -1,18 +1,13 @@
-id: positive-trigger-002
-name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
-tags:
-  - positive-trigger
+id: paired-update
+name: paired-update
+description: Decision probe; mock scores do not prove skill execution.
+tags: [decision-probe]
 inputs:
-  prompt: "I need assistance with generate claude md-related work"
-expected:
-  should_trigger: true
+  prompt: "Existing CLAUDE.md combines 'Use a disposable database for integration tests.' and Claude-specific '/context checks loaded memory.' AGENTS.md is absent. I approve moving shared rules to AGENTS.md first and updating CLAUDE.md. Show final contents and ordered changes without requesting the same approval again."
 graders:
   - type: text
-    name: contains-keywords
+    name: scoped-response
     config:
       contains:
-        - "claude"
-        - "generate"
-        - "md"
-
+        - "AGENTS.md"
+        - "@AGENTS.md"

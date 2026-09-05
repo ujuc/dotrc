@@ -1,0 +1,13 @@
+id: cache-ownership
+name: cache-ownership decision probe
+description: Decision-only probe; mock output is not behavior evidence.
+tags: [decision-probe]
+inputs:
+  prompt: "During a project documentation update a live upstream response differs from the bundled cache. State which guidance is used and whether the skill cache and timestamp change. Do not perform writes."
+graders:
+  - type: text
+    name: decision-terms
+    config:
+      contains:
+        - "session"
+        - "cache"

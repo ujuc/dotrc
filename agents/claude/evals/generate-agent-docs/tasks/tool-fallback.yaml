@@ -1,0 +1,12 @@
+id: tool-fallback
+name: tool-fallback decision probe
+description: Decision probe; mock output is not behavioral evidence.
+inputs:
+  prompt: "A host has native web and interactive text questions but no ToolSearch, WebFetch or advisor. A .md source fails on MIME; HTML works. State the fetch and unresolved-question handling without claiming missing tools ran."
+graders:
+  - type: text
+    name: decision-terms
+    config:
+      contains:
+        - "HTML"
+        - "question"

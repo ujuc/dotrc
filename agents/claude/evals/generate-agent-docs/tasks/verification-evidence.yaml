@@ -1,0 +1,12 @@
+id: verification-evidence
+name: verification-evidence decision probe
+description: Decision probe; mock output is not behavioral evidence.
+inputs:
+  prompt: "Checklist gets only final file paths and update flag, with no baseline or confirmed user decisions. State the preservation status. Also state final status for fast multi-file output and for a third checklist run still failing."
+graders:
+  - type: text
+    name: decision-terms
+    config:
+      contains:
+        - "UNVERIFIED"
+        - "PARTIAL"

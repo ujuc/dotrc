@@ -11,6 +11,16 @@ check_interval_days: 14
 
 # Model Prompting Guides — Instruction-Authoring Constraints
 
+## Scope and precedence
+
+The cached findings below are model- or study-specific evidence, not universal
+rules for every harness. Apply them as local authoring defaults after explicit
+user/repository requirements. Preserve confirmed team TDD, nondefault conventions,
+concrete test commands and safety boundaries. Prior explicit decisions suffice;
+no repeated interview is required. Missing evidence in a blind review never
+licenses removing a team policy. Project-doc runs do not modify this cache or
+its date; use native fetch equivalents under SKILL.md's capability mapping.
+
 CLAUDE.md, AGENTS.md, and `.claude/rules/` are long-lived instruction
 documents loaded in full every session — they *are* system-prompt content.
 So the subset of Anthropic's per-model prompting guides that governs **how
@@ -35,7 +45,7 @@ Every rule below is tagged by consumer. Do not mix them:
 
 ## [W] Guardrails for generated docs
 
-### W1 — Never write self-verification or double-check instructions
+### W1 — Avoid redundant self-check scaffolding
 
 Opus 5: *"If your prompt contains explicit verification instructions
 ("include a final verification step for any non-trivial task," "use a
@@ -46,8 +56,10 @@ adds separate verification steps."* Also: *"Avoid instructing re-checks it
 already performs ("double-check your answer," "re-verify before
 responding")."*
 
-Reject candidate lines of that shape. A must-run-every-time gate belongs in a
-**hook**, not a documented instruction. See D1 for the Fable 5 counterpoint.
+Omit generic candidate lines of that shape by default. Preserve named test
+commands, explicit team gates and mandated verification. Recommend hooks when
+appropriate without deleting the requirement before an authorized replacement.
+See D1 for the model-specific counterpoint.
 
 ### W2 — Never command reasoning visibility, in either direction
 
@@ -71,8 +83,8 @@ one item to another, and it does not infer requests you didn't make ... If
 you need Claude to apply an instruction broadly, state the scope explicitly."*
 
 A rule with an implied scope silently narrows. Name the paths, directories,
-or file types it covers — and when the scope is path-bound, prefer a
-`.claude/rules/` file with `paths` over prose scoping.
+or file types it covers. Shared path-bound rules stay in AGENTS.md (nested when
+appropriate); only Claude-specific rules prefer `.claude/rules/` with `paths`.
 
 ### W4 — Carry the reason when the rule is not self-evident
 
@@ -94,7 +106,7 @@ Opus 5 *"delegates to subagents more readily than prior models ... it
 multiplies cost and time when applied to small tasks"*; Fable 5 *"dispatches
 parallel subagents more readily ... Use subagents frequently."* Both want an
 explicit bar for when delegation is warranted. Emit it through the existing
-conditional Workflow Orchestration block (stage3-generator.md Section B) —
+conditional orchestration guidance (stage3-generator.md Section A) —
 never as a second, competing policy.
 
 ### W7 — Agent-memory notes: one lesson per file
@@ -138,9 +150,9 @@ The reconciliation that holds for both turns on **whose work is verified**:
 
 | Shape | Verdict |
 |-------|---------|
-| An agent verifies **another agent's** output | Writer-verifier — Opus 5 endorses it (*"effective writer-verifier patterns"*). Generate mode Stage 3 → Stage 4 sits here; keep as is. |
-| An agent verifies **its own** output | What Opus 5 warns about. Update mode U3 (orchestrator edits) → Stage 4 sits here; see update-mode.md U3. |
-| A generated project doc instructs either | Never write it (W1). Use a hook. |
+| A fresh-context agent verifies another writer's output | The independent checklist role applies in both generate and update mode; provide its required evidence. |
+| A writer checks its own output because delegation is unavailable | Direct fallback, not independent review. Report the missing role and partial verification under stage4-verifier.md. |
+| A generated project doc instructs either | Apply W1's scoped default; explicit project verification requirements remain valid. |
 
 ### D2 — Effort and thinking defaults differ per tier
 

@@ -6,6 +6,16 @@ check_interval_days: 90  # a published article, not a living doc page — same l
 
 # TDD in the Agent Loop — Testing-Instruction Constraint
 
+## Scope and precedence
+
+The cached findings below are model- or study-specific evidence, not universal
+rules for every harness. Apply them as local authoring defaults after explicit
+user/repository requirements. Preserve confirmed team TDD, nondefault conventions,
+concrete test commands and safety boundaries. Prior explicit decisions suffice;
+no repeated interview is required. Missing evidence in a blind review never
+licenses removing a team policy. Project-doc runs do not modify this cache or
+its date; use native fetch equivalents under SKILL.md's capability mapping.
+
 Birgitta Böckeler's evaluation (martinfowler.com, *exploring-gen-ai* series)
 found that mandating TDD inside an agent's autonomous loop produced no
 measurable quality gain — Opus-judged rankings favored non-TDD runs, mutation
@@ -64,8 +74,8 @@ rewrite toward the outcome the team actually wants verified.
 
 The rewrite must not itself violate W1: never rewrite a TDD mandate into
 self-verification scaffolding ("add a final verification step", "use a
-subagent to verify"). A genuine must-run gate stays a **hook**
-recommendation, per stage3-generator.md Common Writing Rules.
+subagent to verify"). A concrete required test gate stays documented; a hook
+may be recommended without removing the team requirement.
 
 ---
 
@@ -78,7 +88,7 @@ outside it and survive:
 | --- | --- |
 | **Human-writes-tests split**: "implement against the existing failing tests in `tests/`; never modify test files" | Survives — the human checkpoint the article finds missing is present here; the failure evidence does not reach this mode. |
 | **Outcome requirement**: "every change lands with passing tests", "the CI gate is `make test`" | Survives — states what must be true of the result, not how the agent sequences its work. |
-| **Explicit team decision confirmed in the Stage 2 interview** | Survives — record it as a human-written team rule (the human-written-gotcha +4% evidence, SKILL.md Generation Philosophy). The confirmation must come from Stage 2, never inferred from Stage 1. If the team's TDD procedure is multi-step, C2 still applies — recommend a skill plus one reference line, not an inline runbook. |
+| **Explicit team decision confirmed in the Stage 2 interview** | Survives — record it as a human-written team rule (explicit user policy takes precedence over the study default). An explicit current or prior user decision is sufficient; never infer approval from code or force a repeated interview. If the team's TDD procedure is multi-step, C2 still applies — recommend a skill plus one reference line, not an inline runbook. |
 | **Test-quality monitoring bar**: mutation-score threshold, files-per-change trend | Survives — this is the article's own recommendation. |
 
 Test to apply: does the line prescribe *how the agent must sequence its work*
@@ -88,12 +98,11 @@ Test to apply: does the line prescribe *how the agent must sequence its work*
 
 ## Update mode
 
-Existing docs predate this rule, so U2 Axis 2 flags agent-directed TDD
-process mandates — as a **confirmation request, not a removal
-recommendation** (SKILL.md Gotcha 6): a hand-written TDD section may be a
-deliberate team decision, which is exactly the Reconciliation's third
-survivor. The user's answer to the flag *is* the Stage 2 confirmation; a
-declined mandate is rewritten per the T1 rewrite targets.
+U2 in update-mode.md preserves existing team TDD and prior explicit decisions.
+When intent is materially unresolved, ask about the proposed change rather than
+automatically removing the rule. Rewrite only when the user's authorization
+covers it. Missing interview evidence in a blind review is not a rejection of
+the team's policy.
 
 ---
 
@@ -101,6 +110,6 @@ declined mandate is rewritten per the T1 rewrite targets.
 
 | Article point | Owner in this skill |
 | --- | --- |
-| Must-run gate becomes a hook | claude-code-best-practices.md / stage3-generator.md Common Writing Rules |
+| Preserve team gates; recommend automation | claude-code-best-practices.md / stage3-generator.md Common Writing Rules |
 | No self-verification scaffolding in docs | model-prompting-guides.md W1 |
 | Multi-step procedure becomes a skill + one reference line | context-engineering-claude5.md C2 |

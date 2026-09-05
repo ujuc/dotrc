@@ -6,6 +6,16 @@ check_interval_days: 90  # a published post, not a living doc page — long gate
 
 # Context Engineering for Claude 5 — Additive Rules
 
+## Scope and precedence
+
+The cached findings below are model- or study-specific evidence, not universal
+rules for every harness. Apply them as local authoring defaults after explicit
+user/repository requirements. Preserve confirmed team TDD, nondefault conventions,
+concrete test commands and safety boundaries. Prior explicit decisions suffice;
+no repeated interview is required. Missing evidence in a blind review never
+licenses removing a team policy. Project-doc runs do not modify this cache or
+its date; use native fetch equivalents under SKILL.md's capability mapping.
+
 Anthropic's *"The new rules of context engineering for Claude 5 generation
 models"* states how agent-configuration files should be shaped for the current
 model generation. Most of it already governs this skill (see "Already owned
@@ -75,8 +85,9 @@ instead"* — from an aside into the default architecture.
 decisions, session logs, or learnings into CLAUDE.md / AGENTS.md, and any line
 describing the `#` hotkey workflow. In update mode, flag an existing "Memory",
 "Notes", "Session Log", or "Changelog" section in an agent-config file for
-removal — auto-memory owns that content now, and a hand-maintained log fails the
-prune test the moment it goes stale.
+review. Do not infer memory support for every harness, and do not delete
+intentional project policy because a section is called Notes. Avoid generating
+session logs into instruction documents unless explicitly requested.
 
 ### C4 — Four context layers, not two
 
@@ -89,7 +100,7 @@ deciding where a Stage 1/2 finding goes:
 | System prompt / harness | What product the agent operates inside | **Out of scope** — never emitted into a project file |
 | CLAUDE.md / AGENTS.md | Brief repo purpose + gotchas | The skill's primary output; keep lightweight |
 | Skills | Sometimes-relevant procedures, team opinions | Recommend one instead of a section (C2) |
-| References (`@`-mentions, linked files) | In-depth current material, read on demand | contributing-docs/; prefer a code-form spec over prose |
+| Linked references | In-depth material read on demand | contributing-docs/; prefer an existing executable spec. CLAUDE.md @imports load in full, not on demand. |
 
 The CLAUDE.md row is the skill's existing core rule, stated upstream as:
 
@@ -115,7 +126,7 @@ would only cost context:
 | Article point | Owner in this skill |
 | --- | --- |
 | Gotcha-weighted, prune-tested CLAUDE.md | claude-code-best-practices.md (include/exclude table, prune test) |
-| Size discipline / over-specified CLAUDE.md | claude-code-best-practices.md (200-line ceiling, failure pattern) |
+| Size discipline / over-specified CLAUDE.md | claude-code-best-practices.md (upstream recommendation and local budgets) |
 | Advisory rule → deterministic hook | claude-code-best-practices.md |
 | `/doctor` rightsizing an existing CLAUDE.md | claude-code-best-practices.md (`/init` behavior section) — the article points at it too; that entry stays authoritative for the exact command surface |
 | Teach tools through interface design, not examples | **Out of scope** — this skill writes docs, not tool definitions |

@@ -1,22 +1,21 @@
 name: generate-agent-docs-eval
-description: Auto-generated eval for generate-agent-docs.
+description: Decision-probe smoke suite; run behavior-cases.md separately for artifact evidence.
 skill: generate-agent-docs
-version: "1.0"
+version: "2.0"
 config:
   trials_per_task: 1
   timeout_seconds: 300
   parallel: false
   executor: mock
-  model: claude-sonnet-4.6
 metrics:
   - name: task_completion
     weight: 0.7
     threshold: 0.8
-    description: Did the skill complete trigger and anti-trigger checks?
+    description: Text-probe coverage only; mock completion is not behavioral success.
   - name: efficiency
     weight: 0.3
     threshold: 0.7
-    description: Did the skill stay within behavior limits?
+    description: Probe token budget only; not a quality score.
 graders:
   - type: behavior
     name: token-budget

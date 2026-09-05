@@ -1,0 +1,12 @@
+id: workflow-boundary
+name: workflow-boundary decision probe
+description: Decision probe; mock output is not behavioral evidence.
+inputs:
+  prompt: "Compare two fixture repositories: .plans/.implementing exists in one and .harness/ exists in the other. State allowed write behavior under generate-agent-docs. Do not alter actual files."
+graders:
+  - type: text
+    name: decision-terms
+    config:
+      contains:
+        - "proposals"
+        - "stop"

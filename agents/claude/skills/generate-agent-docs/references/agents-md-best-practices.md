@@ -7,7 +7,7 @@ check_interval_days: 30  # the standard site changes rarely; re-fetch only when 
 # AGENTS.md Standard — Best Practices
 
 Authoritative guidance from the agents.md standard site for writing the
-cross-harness AGENTS.md file (stage3-generator.md Section B). Freshness policy:
+cross-harness AGENTS.md file (stage3-generator.md Section A). Freshness policy:
 re-fetch `source_url` only when `today - last_upstream_check >
 check_interval_days`; on fetch failure use this snapshot and say so in one line.
 
@@ -25,8 +25,8 @@ below.
 > "AGENTS.md is just standard Markdown. Use any headings you like; the agent
 > simply parses the text you provide."
 
-- No required fields, no frontmatter, no rigid structure — this is why
-  Section B mandates plain markdown and flags YAML frontmatter for removal.
+- No required fields or rigid structure. This skill defaults to plain Markdown;
+  review existing frontmatter before proposing a structural change.
 
 ### Recommended content
 
@@ -53,18 +53,24 @@ even though a standard one does not.
 
 ### Lifecycle
 
-- "Treat AGENTS.md as living documentation" — matches Section B's codesmell
-  principle (entries are removed as the code improves).
+- "Treat AGENTS.md as living documentation" — review obsolete entries as the
+  code improves, preserving explicit project policy and authorized scope.
 - Migration: existing docs can be renamed to AGENTS.md with a
   backward-compatible symlink for the old name.
 
 ---
 
-## Reconciliation with this skill's stricter filter
+## Reconciliation with this skill's defaults
+
+AGENTS.md is the shared source and is written before its Claude companion.
+Preserve explicit repository and user requirements, including concrete test
+commands and nondefault conventions. The standard's lack of required fields is
+not a prohibition on all frontmatter; plain Markdown is this skill's default.
+Never remove intentional existing content without authorized scope.
 
 The standard *permits* broader content ("code style guidelines", "build and
 test commands") than this skill emits. The skill's discoverability/prune
-filter **still governs**:
+filter applies only where no explicit project requirement takes precedence:
 
 - Style rules a linter enforces and commands readable from
   package.json/Makefile stay excluded — the standard allows them, but they

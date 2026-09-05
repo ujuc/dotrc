@@ -1,86 +1,55 @@
 # Eval Criteria — generate-agent-docs
 
-Seven binary checks for any generation or update run. Referenced from
-SKILL.md; skill-improver / autoresearch / waza reuse these when optimizing
-the skill autonomously. Keep each check binary (Pass/Fail) so runs are
-scoreable without human judgment.
+Evaluate six binary properties below. For a run that cannot establish a
+property, record UNVERIFIED or an allowed SKIP rather than manufacturing a
+binary answer. Overall PASS requires all applicable properties on final bytes;
+fast or unavailable blind review yields PARTIAL, not fully verified completion.
 
-```
-EVAL 1: Mode routing
-  Question: Does the run pick the correct branch per the Stage 0 routing
-            precedence — keyword OR any existing managed target routes to
-            update, while no keyword + no managed target routes to generate
-            after the /init recommendation — and identify the right files?
-  Pass: Chosen branch matches the precedence table; the file list matches targets.
-  Fail: Any existing managed file was regenerated from scratch, the branch is
-        wrong, or the file list drifts from stated intent.
+1. **Target routing and shared ownership**
+   Pass: targets and dependencies are resolved before routing; shared
+   supporting files and AGENTS.md precede importing CLAUDE.md; existing files
+   receive surgical edits; common rules have one shared source. Import-only
+   CLAUDE.md is valid. Explicit file restrictions are respected.
+   Fail: a broken import, unapproved companion, standalone shared CLAUDE.md,
+   regenerated existing file, or duplicated/Claude-only shared rule remains.
 
-EVAL 2: Discoverability & placement discipline
-  Question: Every line in the generated/modified output passes the
-            "Can an agent discover this by reading the code?" test AND
-            sits on the right side of the cross-harness split —
-            harness-neutral project content in AGENTS.md /
-            contributing-docs/, Claude-only content in CLAUDE.md (below
-            the @AGENTS.md import) / rules/ — AND on the right context
-            layer (context-engineering-claude5.md C4): a sometimes-relevant
-            multi-step procedure is a recommended skill plus one reference
-            line, not an inline section (C2).
-  Pass: No discoverable content anywhere; no Claude-only content
-        (hooks, skills, plan mode, tool names) in AGENTS.md; no
-        project-general content in CLAUDE.md; no sometimes-relevant
-        procedure written out inline.
-  Fail: One or more lines restate facts readable from package.json,
-        source tree, or standard linter rules — or content sits on the
-        wrong side of the harness split, or a sometimes-relevant
-        procedure is spelled out inline instead of delegated to a skill.
+2. **Authorization and preservation**
+   Pass: existing explicit approval is reused; original snapshots/diffs prove
+   unrelated bytes and migrated meaning are preserved. New material scope or
+   destructive changes receive required authorization.
+   Fail: repeated per-file approval after an unchanged approved patch, scope
+   expansion, unapproved deletion, or lost team exception.
 
-EVAL 3: Size budgets
-  Question: CLAUDE.md + imported AGENTS.md combined ≤ 100 lines soft /
-            200 hard (official ceiling, source:
-            claude-code-best-practices.md), nested CLAUDE.md
-            ≤ 50 lines (hard 100), individual rule file ≤ 50 lines. Every
-            retained line passes the prune test.
-  Pass: Produced files stay within soft limits, or within hard limits
-        with a user-approved rationale; no line fails the prune test.
-  Fail: Any file exceeds the hard limit without user approval, or a line
-        survives that would not cause a mistake if removed.
+3. **Grounded content and scoped policy**
+   Pass: facts and decisions support retained rules; explicit team conventions,
+   TDD and test gates survive generic defaults. Upstream per-file sizing,
+   local combined budgets and model-specific findings are distinguished.
+   Fail: unsupported facts or policy deletion, or local defaults presented as
+   universal official requirements. Budget excess is reported with rationale,
+   not hidden by moving common requirements into Claude-only files.
 
-EVAL 4: Reference integrity
-  Question: All cross-file references (CLAUDE.md → @AGENTS.md import,
-            AGENTS.md → contributing-docs/, nested → parent,
-            rules/ `paths` globs) resolve to existing paths.
-  Pass: Every reference is a live path.
-  Fail: Any reference is broken or a glob targets non-existent paths.
+4. **Reference and execution integrity**
+   Pass: final imports/shared links resolve; intended future globs are evaluated
+   using their confirmed scope; effective fetched/cached guidance is supplied
+   downstream. Project-doc runs leave global skill files and dates unchanged.
+   Fail: broken references, fabricated fetch/role results, or incidental cache
+   maintenance. Tool equivalents and fallback notices must match real actions.
 
-EVAL 5: Blind reviewer
-  Question: When output is more than a single root CLAUDE.md, were all
-            grounded Phase 3 Reviewer FAILs resolved before final output?
-  Pass: Reviewer reports no FAIL, or every reported FAIL was fixed.
-  Fail: A grounded Reviewer FAIL remains at skill completion.
+5. **Verification evidence and final status**
+   Pass: checklist receives originals/diffs, decisions, facts, scope and
+   effective guidance; blind review sees documents only and evaluates only
+   observable properties; final patches are checked. Required unresolved
+   FAIL/UNVERIFIED prevents PASS; skipped blind review is PARTIAL.
+   Fail: unsupported preservation/confirmation claims, blind deletion of an
+   unobserved team exception, unchecked final patch, unbounded repair loop,
+   or fully verified completion with failed/unavailable required checks.
 
-EVAL 6: Instruction-authoring constraints
-  Question: Is every produced/retained line free of the patterns
-            model-prompting-guides.md rejects — self-verification or
-            re-check instructions (W1), commands about showing or
-            suppressing reasoning (W2), severity/confidence filter bars
-            (W5), effort or thinking configuration (D2) — and does every
-            scoped rule name its scope rather than implying it (W3)?
-            Also free of the two line shapes
-            context-engineering-claude5.md rejects — an absolute
-            prohibition that fails its Reconciliation test (C1) and any
-            memory / notes / session-log / changelog instruction (C3) —
-            and of the shape tdd-agent-loop.md rejects: an agent-directed
-            TDD / test-first process mandate covered by none of its
-            Reconciliation's four survivors (T1)?
-  Pass: None of the seven rejected patterns appears; every path-bound rule
-        states its paths or lives in .claude/rules/ with `paths`.
-  Fail: Any rejected pattern survives, or a rule's scope is left implied.
+6. **Managed boundary and trigger scope**
+   Pass: workflow-hooks contract is read, legacy .harness/ stops the run,
+   active implementation receives proposals rather than competing writes.
+   README/API/CHANGELOG and skill-review requests do not launch generation.
+   Fail: competing managed execution, ignored legacy state, or unrelated
+   document generation triggered by reviewing this skill.
 
-EVAL 7: Managed-workflow ownership
-  Question: Did the run read `workflow-hooks contract`, stop on `.harness/`,
-            and avoid direct writes while `.plans/.implementing` existed?
-  Pass: Standalone writes occurred only without an active implementation;
-        active-run proposals returned to `implement-plan`.
-  Fail: The skill wrote project docs as a competing managed executor or
-        continued through legacy `.harness/` state.
-```
+Artifact tests and decision probes belong to the checked-in evaluation suite.
+Mock keyword results are not evidence for any filesystem property.

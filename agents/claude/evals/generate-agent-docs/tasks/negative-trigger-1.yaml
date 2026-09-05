@@ -1,18 +1,15 @@
-id: negative-trigger-001
-name: Negative Trigger 1
-description: Auto-generated negative-trigger task.
-tags:
-  - negative-trigger
+id: review-not-generation
+name: review-not-generation
+description: Decision probe; mock scores do not prove skill execution.
+tags: [decision-probe]
 inputs:
-  prompt: "Tell me a short joke about coffee."
-expected:
-  should_trigger: false
+  prompt: "First request: Update README.md only. Second independent request: Review generate-agent-docs and plan improvements. For each, classify whether to launch agent-document generation. Do not generate document contents. Explain briefly in English."
 graders:
   - type: text
-    name: omits-skill-keywords
+    name: scoped-response
     config:
+      contains:
+        - "README"
+        - "review"
       not_contains:
-        - "claude"
-        - "generate"
-        - "md"
-
+        - "@AGENTS.md"

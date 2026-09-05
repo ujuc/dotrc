@@ -1,18 +1,14 @@
-id: positive-trigger-001
-name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
-tags:
-  - positive-trigger
+id: paired-setup
+name: paired-setup
+description: Decision probe; mock scores do not prove skill execution.
+tags: [decision-probe]
 inputs:
-  prompt: "Use generate-agent-docs to help me complete this task"
-expected:
-  should_trigger: true
+  prompt: "Create agent instructions for a project used by Claude and Codex. Shared rule: integration tests use a disposable database. Claude rule: /context checks loaded memory. Give the ordered files and exact document contents."
 graders:
   - type: text
-    name: contains-keywords
+    name: scoped-response
     config:
       contains:
-        - "claude"
-        - "generate"
-        - "md"
-
+        - "AGENTS.md"
+        - "@AGENTS.md"
+        - "disposable"

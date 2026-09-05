@@ -7,6 +7,11 @@
 
 ---
 
+Use SKILL.md's capability mapping for all tool/model examples below. When
+independent roles are unavailable, analyze directly and record coverage gaps.
+Do not assume Claude tool names exist in another host. Preserve original target
+contents, evidence paths and user decisions for the Stage 4 handoff.
+
 ## Complexity Assessment
 
 Run a quick glob before spawning agents to determine whether the project is complex or simple.
@@ -201,8 +206,8 @@ For every detected fact, classify it:
 
 | Class | Definition | Action |
 |-------|-----------|--------|
-| **Discoverable** | An agent can learn this by reading code or config files (e.g., "uses TypeScript", "test command is `npm test`") | Exclude from CLAUDE.md candidates |
-| **Undiscoverable** | Requires explicit documentation for an agent to know (e.g., "this monorepo package must always be released together", "never modify generated files in dist/") | Include in CLAUDE.md candidates |
+| **Discoverable** | Readable from code/config | Usually omit; retain explicit team requirements or necessary non-obvious command selection |
+| **Undiscoverable** | Requires project context beyond code | Shared candidates go to AGENTS.md; only Claude-specific additions go to CLAUDE.md |
 
 ### Step 3: Separate Facts from Assumptions
 
@@ -213,7 +218,12 @@ For every detected fact, classify it:
 
 Enumerate items that Stage 1 could not determine. These become Stage 2 interview questions.
 
-### Step 5: Prepare Nested CLAUDE.md Candidate Table
+### Step 5: Prepare Nested Instruction Candidates
+
+For shared package differences, propose nested AGENTS.md first; its selected
+Claude companion imports it. Existing shared ancestor coverage can suffice when
+only Claude-specific differences remain. Do not classify general build/test
+commands as Claude-only content.
 
 If the structure-explorer detected monorepo packages or submodules, prepare this table for the Stage 2 interview:
 
@@ -221,7 +231,7 @@ If the structure-explorer detected monorepo packages or submodules, prepare this
 |------|------|-------------------|-------------|
 | e.g., packages/core | monorepo package | No | Yes — if package has distinct agent workflow rules |
 | e.g., tools/cli | monorepo package | Yes (12 lines) | Update — existing file is outdated |
-| e.g., infra/ | submodule | No | No — infra rules belong in root CLAUDE.md |
+| e.g., infra/ | submodule | No | Inspect independent checkout scope; shared rules belong in AGENTS.md |
 
 ### Step 6: Present Summary to User
 

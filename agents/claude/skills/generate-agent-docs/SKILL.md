@@ -1,7 +1,7 @@
 ---
 name: generate-agent-docs
-description: 프로젝트용 CLAUDE.md(Claude 전용 레이어), AGENTS.md(Codex·Amp 겸용 크로스하네스 주 문서), contributing-docs/, .claude/rules/ 파일을 발견 불가능 정보 원칙에 따라 생성하거나 업데이트한다. 파일명을 특정하지 않은 포괄적인 '문서 업데이트' 요청도 대상을 한 줄로 확인한 뒤 여기서 처리한다. (구 명칭 generate-claude-md)
-when_to_use: "문서 생성/갱신 요청일 때. 트리거: '/generate-agent-docs', '문서 업데이트해줘', '문서 갱신해줘', '문서 최신화', 'CLAUDE.md 업데이트', 'AGENTS.md 갱신', 'rules 생성', 'contributing-docs 추가', 'update the docs', 'update CLAUDE.md', 'refresh AGENTS.md'. 파일명이 없는 포괄 요청은 Stage 0-3의 대상 확인을 먼저 거친다. CLAUDE.md·AGENTS.md 등 에이전트 문서의 단일 파일 요청도 지원하며, README·API 문서·CHANGELOG는 이 스킬을 호출하지 않는다."
+description: "Claude·Codex 공통 AGENTS.md, Claude 전용 CLAUDE.md와 관련 에이전트 문서를 생성·갱신한다. 문서 업데이트, CLAUDE.md 업데이트, AGENTS.md 갱신 요청에 사용한다. (구 명칭 generate-claude-md)"
+when_to_use: "문서 생성/갱신 요청일 때. 트리거: '/generate-agent-docs', '문서 업데이트해줘', '문서 갱신해줘', '문서 최신화', 'CLAUDE.md 업데이트', 'AGENTS.md 갱신', 'rules 생성', 'contributing-docs 추가', 'update the docs', 'update CLAUDE.md', 'refresh AGENTS.md'. 파일명이 없는 포괄 요청은 Stage 0-2의 대상 확인을 먼저 거친다. CLAUDE.md·AGENTS.md 등 에이전트 문서의 단일 파일 요청도 지원하며, README·API 문서·CHANGELOG는 이 스킬을 호출하지 않는다. 에이전트 문서 생성이 아닌 이 스킬 자체의 분석·리뷰·개선 계획 요청에는 생성 파이프라인을 실행하지 않는다."
 group: docs
 model: opus
 allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch TaskOutput advisor Bash(workflow-hooks:*)
@@ -11,12 +11,34 @@ allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFet
 
 Generate or refine project documentation — root CLAUDE.md, AGENTS.md,
 contributing-docs/, nested CLAUDE.md, `.claude/rules/` — under one governing
-rule: **document only what an agent cannot discover by reading the code.**
+rule: **keep necessary shared instructions in AGENTS.md and Claude-specific
+additions in CLAUDE.md; prefer non-obvious guidance and preserve explicit policy.**
 Role split: **AGENTS.md is the primary cross-harness document** (Codex/Amp
 read it natively; Claude Code loads it via the `@AGENTS.md` import), and
 **CLAUDE.md is the Claude Code-specific layer** on top of that import. The
 current Pi adapter loads shared skills and workflow hooks, not AGENTS.md, so do
 not claim Pi receives project instructions unless its host integration does.
+
+## Active harness capabilities
+
+The Claude tool/model names below are examples, not prerequisites. Resolve
+capabilities against the active harness before dispatching; never invoke a
+nonexistent tool or unsupported model alias.
+
+| Capability | Claude example | Equivalent or fallback |
+| --- | --- | --- |
+| Read/search/edit | Read, Glob, Grep, Edit, Write | Native file tools or shell reads and patch edits |
+| Fetch sources | ToolSearch then deferred WebFetch | Available web tool; try equivalent official HTML URL if markdown MIME fails |
+| Clarify intent | AskUserQuestion | Native user-input tool or ordinary interactive question |
+| Independent roles | Agent + TaskOutput | Fresh-context subagents with supplied inputs; otherwise direct work with independence marked unavailable |
+| Advisor | advisor() | Available independent reviewer; if absent, record skipped consultation and unresolved evidence |
+| Model selection | opus / sonnet | Inherit session unless that alias is supported and permitted |
+
+A missing question tool does not imply a headless session. Ask in normal text
+when interactive. In headless runs, use confirmed facts and existing
+authorization only; leave dependent writes pending if a material choice is
+unresolved. Direct self-review never counts as an independent review.
+
 
 ## Pipeline Map
 
@@ -29,7 +51,7 @@ Execute stages strictly in order. Update mode swaps in U1–U3
 | 1 | Analyze project; classify discoverable vs undiscoverable | 3 Explore agents (complex) or direct reads (simple); update adds U1 audit | references/stage1-analyzer.md |
 | 2 | Interview user on unresolved items | Orchestrator via AskUserQuestion; update adds U2 drift report | this file + references/update-mode.md |
 | 3 | Write files | 1 general-purpose agent; update mode: U3 surgical edits by orchestrator | references/stage3-generator.md |
-| 4 | Verify: checklist → fix loop → blind review | sonnet subagents + advisor | references/stage4-verifier.md |
+| 4 | Verify: evidence checklist → bounded repair → selected blind review → final check | Independent roles when available | references/stage4-verifier.md |
 
 Three reference files cut across Stages 3–4, constraining every documented
 instruction while Stage 4 rejects the lines that violate them:
@@ -57,20 +79,18 @@ generate a starter CLAUDE.md ... then refine over time."*
 ### Step 0-1 — Load authoritative guidance (live fetch, loud fallback)
 
 references/claude-code-best-practices.md is the **single authoritative
-source** for the ✅ include / ❌ exclude table, the prune test (*"Would
-removing this cause Claude to make mistakes? If not, cut it"*), the 200-line
-ceiling, `@import` semantics, the AGENTS.md import pattern, the
+source** for the ✅ include / ❌ exclude table, the prune test, the upstream per-file size recommendation and separately
+labeled local budgets, `@import` semantics, the AGENTS.md import pattern, the
 `.claude/rules/` `paths` format, and the over-specified CLAUDE.md failure
 pattern. Its upstream changes often, so fetch live on every
 run:
 
-1. Call `ToolSearch` with query `select:WebFetch`. WebFetch is a **deferred
-   tool**: `allowed-tools` only pre-grants permission — until the schema is
-   loaded, calling it fails with a validation error that is *not* a network
-   error.
-2. `WebFetch` the `source_url` in that file's frontmatter (plus
-   `secondary_source_url` when CLAUDE.md sizing or `/init` behavior is in
-   scope).
+1. Use the active harness's fetch capability. In Claude, load deferred WebFetch
+   with ToolSearch only when those tools exist; elsewhere use the native
+   equivalent. If a markdown URL fails by content type, try its official HTML
+   equivalent before cache fallback.
+2. Fetch the reference's source_url and secondary_source_url when sizing or
+   /init behavior is relevant. Record the effective text and source status.
 3. Success → use the fetched text. If it differs materially from the cached
    snapshot, report the drift and route cache maintenance through a separate
    `skill-improver generate-agent-docs` run; a project-doc task must not edit
@@ -93,97 +113,73 @@ Same loud-fallback rule on failure.
 | references/context-engineering-claude5.md | Claude 5 context-engineering rules C1–C4 (judgment framing, skill-over-section, no memory lines, four-layer placement) | 90d |
 | references/tdd-agent-loop.md | Agent-loop TDD findings T1 (conditional reject of agent-directed TDD process mandates + survivor list) | 90d |
 
-### Step 0-2 — Route generate vs update
+### Step 0-2 — Select targets and resolve dependencies
 
-Two signals: update keywords and whether any selected target already exists. **Existing selected content always routes to update mode.** Selected targets include root or nested CLAUDE.md, AGENTS.md, contributing-docs/, and `.claude/rules/`.
+AGENTS.md is the primary source for shared Claude/Codex instructions. For joint
+Claude/Codex setup, select AGENTS.md and CLAUDE.md as the default pair. Create or
+update AGENTS.md first; CLAUDE.md starts with `@AGENTS.md` and adds only
+Claude-specific content. An import-only CLAUDE.md is valid.
 
-| Signal | Branch |
-|--------|--------|
-| `$ARGUMENTS` contains `업데이트` / `수정` / `갱신` / `update` / `refresh` | **Update mode** (U1→U3 refine path) |
-| No keyword + any selected target exists | **Update mode** — preserve existing structure; never regenerate it |
-| No keyword + none of the selected targets exists | **Generate mode** (full Stage 1→4), after the recommendation below |
+Explicit file restrictions take precedence. AGENTS.md-only updates do not touch
+CLAUDE.md when its import is already valid. A CLAUDE.md-only request with no
+AGENTS.md requires resolving the missing prerequisite before writing; never
+create an unapproved companion, broken import, or standalone alternative.
+A previously authorized paired setup already covers the prerequisite: do not
+ask again. Include shared supporting documents only when requested or needed
+within that authorized scope.
 
-- **No-baseline recommendation**: state in one line that no baseline was found
-  and that running `/init` first (the official "/init then refine" workflow)
-  is preferred, then ask whether to proceed with full generation now or
-  re-invoke after `/init`. Render the prompt in the user's language. If the
-  user proceeds, run Stage 1→4 as the standalone fallback.
-- **Light refine for rich baselines**: if the existing CLAUDE.md came from
-  `/init`'s `CLAUDE_CODE_NEW_INIT=1` flow (it already did subagent exploration
-  + interview), skip heavy Stage 1 exploration and apply only this skill's
-  differentiators: discoverability filter, AGENTS.md, contributing-docs/,
-  rules/, blind review.
+| Request | Selected targets |
+| --- | --- |
+| Joint Claude/Codex setup | AGENTS.md first, then CLAUDE.md |
+| AGENTS.md alone | AGENTS.md only |
+| CLAUDE.md alone | CLAUDE.md; inspect AGENTS.md dependency before writing |
+| contributing-docs | Selected documents and authorized AGENTS.md index changes |
+| rules | Selected .claude/rules/ files |
+| Generic 문서 / docs / 문서 업데이트해줘 / update the docs | Clarify whether agent documentation is intended; reuse an already established scope |
+| Empty arguments | Ask for targets unless session context already establishes them |
 
-### Step 0-3 — Identify targets
+README, API docs, CHANGELOG, and reviewing or improving this skill are not
+agent-document generation requests. Hand those tasks back to their owning
+workflow without launching this pipeline.
 
-| Keyword in `$ARGUMENTS` | Target |
-|-------------------------|--------|
-| `CLAUDE.md` alone | Root CLAUDE.md only |
-| `AGENTS.md` alone | AGENTS.md only |
-| `contributing-docs` | contributing-docs/ plus an AGENTS.md index update only when needed |
-| `rules` | `.claude/rules/` only |
-| `업데이트` with no specific file name | All 5 file types |
-| Generic `문서` / `docs` with no file named | All 5 file types — after the confirmation below |
+### Step 0-3 — Route by selected file state
 
-Empty `$ARGUMENTS` → ask which of the five managed target types to handle, then apply Step 0-2 to that selected set. Never infer all targets from bare `/generate-agent-docs`.
+Inventory the selected targets before analysis. Existing selected content
+always receives update-mode surgical edits (U1–U3); missing selected files use
+Stage 3 creation rules. Mixed runs preserve existing content while creating only
+authorized additions. Unselected files do not change mode or authorize writes.
 
-**Generic-request confirmation.** "문서 업데이트해줘" / "update the docs" does
-not say *which* docs, and this skill is expensive to aim at the wrong target.
-Before Stage 1, state in one line what it covers — root CLAUDE.md, AGENTS.md,
-contributing-docs/, nested CLAUDE.md, and `.claude/rules/` — and ask whether that is the target. If
-the user meant README, API docs, a CHANGELOG, or any other project document,
-hand the task back rather than generating agent docs they did not ask for.
-Skip this confirmation when `$ARGUMENTS` already names a file or target type.
+Update keywords (업데이트 / 수정 / 갱신 / update / refresh) request refinement.
+If all selected files are absent, explain that generation is needed and proceed
+when the user's request already authorizes it; ask only if intent remains unclear.
+
+An existing CLAUDE.md is a baseline regardless of how it was produced.
+For an empty joint setup, proceed with AGENTS.md first; /init is optional
+Claude-specific assistance, never a prerequisite or a new approval gate.
+Use a light audit when existing evidence already answers Stage 1 questions;
+do not infer how a baseline was created from its style alone.
 
 ## Generation Philosophy
 
-- **Undiscoverable information only.** AGENTS.md is a diagnostic list of
-  problems the code has not yet solved. Research evidence: auto-generated
-  context → success rate −2–3%, cost +20%; human-written gotchas → +4%
-  (ETH Zurich). Every line must justify its existence. The operative
-  include/exclude rule lives in the authoritative source (Step 0-1).
-- **Cross-harness role split.** AGENTS.md is the primary project document,
-  consumed by Codex/Amp natively and Claude Code through the `@AGENTS.md`
-  import that opens CLAUDE.md — keep it harness-neutral and plain markdown
-  (no frontmatter). Pi support is conditional on its host loading AGENTS.md;
-  the current local Pi adapter does not. CLAUDE.md holds only Claude
-  Code-specific content below the import. The operative placement test lives
-  in stage3-generator.md Common Writing Rules.
-- **Code patterns are discoverable** — style rules are unnecessary; exclude
-  them. Write instructions as verifiable success criteria.
-- **Governance** (references/entry-router-guidelines.md): when
-  autonomous-agent safeguards are required, reflect the Entry Router CORE
-  rules in AGENTS.md Boundaries and CLAUDE.md behavioral guidelines.
-- **Workflow-usage policy — document conditionally**: when Stage 1/2 reveal
-  large-scale parallel/adversarial orchestration (eval harnesses,
-  rule-compliance verification, claim-source cross-checking, bulk triage,
-  multi-agent pipelines), have Section B emit its short "Workflow
-  Orchestration" policy block into AGENTS.md (harness-neutral phrasing).
-  Otherwise **omit it** — it fails the prune test and burns the size budget.
-- **Instruction-authoring constraints**
-  (references/model-prompting-guides.md): a documented instruction is
-  system-prompt content, so the per-model prompting guides govern how it may be
-  phrased. Its `[W]` rules reject three shapes outright — self-verification
-  scaffolding, reasoning-visibility commands, severity filter bars — and
-  require every scoped rule to name its scope. Its `[S]` rules govern this
-  skill's own upkeep and must never reach a project file.
-- **Claude 5 context-engineering rules**
-  (references/context-engineering-claude5.md): four additive constraints on
-  *what* gets documented — C1 anchor an instruction to an observable signal
-  instead of forbidding a behavior outright (its Reconciliation section names
-  the three prohibition shapes that still survive), C2 turn a sometimes-relevant multi-step procedure into a skill plus
-  one reference line, C3 never emit memory-management lines (auto-memory owns
-  that now), C4 place a finding across four layers, not two.
-- **Testing instructions: outcome over process**
-  (references/tdd-agent-loop.md): mandating TDD inside an agent's loop showed
-  no quality gain at 3–8.5× token cost (Böckeler, martinfowler.com), so T1
-  rejects agent-directed test-first/TDD process lines by default and rewrites
-  them as outcome-based verification (named test command, mutation-score bar,
-  static analysis). Its Reconciliation lists the four survivors —
-  human-writes-tests splits, outcome requirements, an explicit team decision
-  confirmed in Stage 2, test-quality monitoring bars.
-- **Soul** (references/SOUL.md): the agent-identity seed used when generating
-  project files — a static copy, not a pointer to the live identity file.
+AGENTS.md owns shared instructions; CLAUDE.md imports that source and adds only
+Claude-specific content. Write shared facts once and preserve their meaning
+during migration. Do not use a standalone CLAUDE.md as a missing-dependency
+workaround.
+
+Apply the include/prune guidance and policy precedence in
+references/claude-code-best-practices.md. Keep non-obvious gotchas and explicit
+team requirements; exclude redundant source summaries and standard conventions.
+Local optimization defaults never override the user's project rules.
+
+Read references/model-prompting-guides.md for scoped writing rules [W],
+references/context-engineering-claude5.md for placement defaults C1–C4, and
+references/tdd-agent-loop.md for testing defaults and preserved exceptions.
+These model/research findings are not universal requirements across harnesses.
+
+Use references/entry-router-guidelines.md only for relevant governance.
+references/SOUL.md is an optional static seed when identity content is requested;
+do not copy it automatically or replace it with a live global identity file.
+Include orchestration policy only when the project's actual work needs it.
 
 ## Stage 1: Project Analysis
 
@@ -230,14 +226,15 @@ project is a large monorepo (5+ packages) with unresolved questions, spawn
 Explore-Deep (`model: sonnet`) in the background. Skip when Stage 1 results
 suffice.
 
-**Non-interactive session**: if AskUserQuestion is unavailable (headless
-run), skip the interview, generate from confirmed facts only, and list every
-unresolved question in the final report. Never write assumptions into
-generated files.
+**Unavailable question tool**: use a normal interactive question or a native
+equivalent. In genuinely headless runs, use only confirmed facts and existing
+authorization; keep dependent writes pending when a material choice remains.
+Never invent interview answers. Prior explicit user decisions need no repeat.
 
-**Update mode**: run U1 (audit) and U2 (drift comparison) in this stage
-(references/update-mode.md). Present the U2 comparison report and confirm the
-update scope with the user.
+**Update mode**: run U1 after Stage 1 and U2 during this stage
+(references/update-mode.md). Show proposed changes and apply those already
+authorized by the user's request or prior selection. Ask only about unresolved
+scope, material policy changes, or destructive actions requiring approval.
 
 **advisor() gate ②**: user answers contradict Stage 1 detection, or update
 mode surfaces 10+ drift items.
@@ -247,39 +244,35 @@ mode surfaces 10+ drift items.
 **Reference**: references/stage3-generator.md (dispatch prompt template,
 per-file rules A–E, common writing rules).
 
-Spawn one general-purpose agent (`model: sonnet`) using the dispatch prompt
-template. The agent Reads the rule files itself; the orchestrator pastes into
-the prompt only the live-fetched authoritative constraints, the Stage 1
-summary, the Stage 2 answers, and the target list.
+Use one writer via the capability mapping and the reference's dispatch inputs.
+Provide effective guidance, confirmed facts, prior decisions, selected targets
+and original contents. Use direct writing only when delegation is unavailable,
+and report that limitation.
 
 **5 possible targets**: root CLAUDE.md, AGENTS.md, contributing-docs/,
 nested CLAUDE.md, `.claude/rules/`. Generate only the applicable ones.
 
-**Update mode**: run U3 instead (references/update-mode.md) — the
-orchestrator applies surgical Edits, one user-confirmed change at a time.
-Never regenerate whole files.
+**Update mode**: run U3 instead (references/update-mode.md): preserve original
+text outside authorized changes. Write shared supporting documents and AGENTS.md
+before the CLAUDE.md that imports it. Do not regenerate existing files.
 
 ## Stage 4: Verification
 
-**Reference**: references/stage4-verifier.md (verifier dispatch template,
-verification checklist, anti-patterns, reviewer prompt). The checklist's
-size/staleness items enforce the authoritative prune test and 200-line
-ceiling from Step 0-1.
+Follow references/stage4-verifier.md as the single owner of the checklist,
+bounded repair loop, blind-review inputs and final status rules.
 
-1. **Verifier** (`model: sonnet`): apply the verification checklist line by
-   line via the dispatch template.
-2. **Fix loop**: the orchestrator fixes FAIL items, then re-verifies.
-   Maximum **3 verification runs total** (initial + up to 2 fix rounds).
-   If FAILs remain, call advisor once, then report them and proceed.
-3. **Blind Reviewer** (`model: sonnet`, consults advisor): spawn when output
-   exceeds a single root CLAUDE.md. Pass generated file contents **only** —
-   no Stage 1/2 results, no verifier output (Gotcha 3). Apply its grounded
-   FAIL fixes once before final output.
+Provide the checklist verifier with originals/diffs, selected scope, confirmed
+facts, prior decisions and exceptions, effective guidance, final paths and
+ordered writes. Missing required evidence is UNVERIFIED, not PASS.
 
-Report verification results to the user; for each FAIL, quote the line and
-the reason.
+Run at most three checklist passes. Persistent required FAIL/UNVERIFIED is
+incomplete verification. Blind review sees only documents and checks only
+document-visible properties; it cannot revoke an unobserved team decision.
+Fast-mode or unavailable blind review is disclosed as PARTIAL verification.
 
-**advisor() gate ③**: Verifier FAIL persists after the 2 fix rounds.
+Apply grounded blind fixes within authorization once, then check the affected
+criteria and final references. Never claim fully verified completion for
+unchecked final bytes, skipped independent review or unresolved defects.
 
 ## Advisor Escalation Summary
 
@@ -299,18 +292,18 @@ instructions.
 |-------------------|------------|
 | Regenerate any existing managed agent-doc target from scratch | Route to update mode and preserve its structure |
 | Put project-general content in CLAUDE.md, or Claude-only content in AGENTS.md | Apply the placement test (stage3-generator.md Common Writing Rules) — AGENTS.md is cross-harness, CLAUDE.md is `@AGENTS.md` + Claude-only |
-| Call WebFetch before loading its schema | `ToolSearch` `select:WebFetch` first (Step 0-1) |
+| Assume a Claude tool exists in another host | Use the active capability map before source fetching or role dispatch |
 | Use the cached best-practices without saying so | Announce the fallback in one line |
 | Give the blind Reviewer anything beyond the generated files | Generated file contents only |
-| Apply an update-mode edit the user has not seen | Show the exact change; get per-file confirmation (U3) |
+| Expand an update beyond existing authorization | Present the new scope or destructive change; reuse prior approval for unchanged scope (U3) |
 | Tell a Stage 1 Explore agent to write a file | Explore is read-only — findings return as final messages |
-| Write a "double-check your work" line or pre-response checklist into a generated doc | Delete it (model-prompting-guides.md W1) — it causes over-verification; a real must-run gate becomes a hook |
+| Add generic self-check scaffolding | Apply W1; preserve concrete team test gates and recommend automation without erasing policy |
 | Emit a TDD or test-first process mandate aimed at the agent's own loop | Rewrite as outcome-based verification (tdd-agent-loop.md T1) — keep it only as one of T1's Reconciliation survivors, e.g. a team decision confirmed in Stage 2 |
 | Emit an instruction to show, or to suppress, the agent's reasoning | Never (W2) — risks `reasoning_extraction` refusals one way, internal-tag leakage the other |
 | Emit a sometimes-relevant multi-step procedure as a CLAUDE.md / AGENTS.md section | Recommend a skill and emit one reference line (C2) — every-session budget is for always-relevant content |
-| Write a Memory / Notes / Session Log / Changelog section into an agent-config file | Delete it (C3) — auto-memory owns that content, and a hand-maintained log fails the prune test as soon as it goes stale |
+| Add session logs or treat a Notes heading as grounds for deletion | Apply scoped C3; preserve intentional project policy and do not assume every host has auto-memory |
 | Edit project docs while `.plans/.implementing` exists | Return proposed edits to the active `implement-plan` run; do not become a second executor |
-| Claim completion without Stage 4 output | Report checklist/reviewer results with quoted failures |
+| Claim full verification with missing evidence or skipped review | Report FAIL, UNVERIFIED or PARTIAL with the actual checklist, blind-review and final-check results |
 
 ## Gotchas
 
@@ -328,12 +321,10 @@ case is discovered.
 3. **Blind Reviewer independence is the whole point.** If Phase 1/2 output or
    Stage 1/2 context leaks into the Reviewer prompt, the review becomes
    confirmation and the FAIL filter loses its value.
-4. **`model: opus` is an orchestrator hint, not a pipeline default.** Stage
-   1/3/4 subagents explicitly request `model: sonnet` for cost; the Stage 4
-   Reviewer additionally consults advisor() (opus per `advisorModel`) on
-   low-confidence findings. Model aliases (`opus`/`sonnet`) resolve to the
-   current generation at runtime — never hardcode version IDs. `effort` is
-   inherited from the session, never pinned in frontmatter.
+4. **Model names are host-specific hints.** Use supported aliases only; inherit
+   the session otherwise. Missing advisor or independent roles must be reported,
+   never fabricated. Effort remains inherited.
+
 5. **`disable-model-invocation` is intentionally unset.** The skill is
    invasive (writes/edits several project files); auto-invocation can still
    fire from vague phrasing in `description` and `when_to_use`. If false positives
@@ -344,7 +335,7 @@ case is discovered.
 
 ## Eval Criteria
 
-references/eval-criteria.md defines 7 binary checks — mode routing,
-discoverability discipline, size budgets, reference integrity, blind review,
-instruction-authoring constraints, and managed-workflow ownership — for any generation or update run.
+references/eval-criteria.md defines 6 checks: target/shared ownership,
+authorization/preservation, grounded policy, reference/execution integrity,
+verification evidence/status, and managed/trigger boundaries.
 skill-improver / autoresearch / waza reuse them when optimizing this skill.

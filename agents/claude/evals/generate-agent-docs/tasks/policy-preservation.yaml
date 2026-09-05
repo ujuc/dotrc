@@ -1,0 +1,12 @@
+id: policy-preservation
+name: policy-preservation decision probe
+description: Decision probe; mock output is not behavioral evidence.
+inputs:
+  prompt: "A user explicitly requires team TDD, tabs in Makefiles and a named integration-test gate. How should shared AGENTS.md and Claude-only CLAUDE.md preserve them? Distinguish official size advice from local budgets."
+graders:
+  - type: text
+    name: decision-terms
+    config:
+      contains:
+        - "AGENTS.md"
+        - "local"

@@ -1,0 +1,13 @@
+id: target-scope
+name: target-scope decision probe
+description: Decision-only probe; mock output is not behavior evidence.
+tags: [decision-probe]
+inputs:
+  prompt: "A user uses Claude and Codex together and requests shared instructions first. AGENTS.md and CLAUDE.md are both absent. State the ordered write targets. Then consider an explicit CLAUDE.md-only restriction with absent AGENTS.md and state whether writing can proceed. Do not create actual files."
+graders:
+  - type: text
+    name: decision-terms
+    config:
+      contains:
+        - "AGENTS.md"
+        - "CLAUDE.md"
