@@ -44,9 +44,7 @@
       "Skill(commit:*)",
       "mcp__codegraph__*"
     ],
-    "ask": [
-      "Bash(git push:*)"
-    ],
+    "ask": [],
     "defaultMode": "auto",
     "disableBypassPermissionsMode": "disable"
   },
