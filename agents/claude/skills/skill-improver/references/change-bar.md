@@ -9,7 +9,10 @@ This bar governs **behavioral edits motivated by Dimension E** — changes to a
 skill's procedure, constraints, or guidance, proposed because a real session
 went wrong.
 
-It does **not** govern the Phase 4 auto-fix table. Broken reference paths,
+It does **not** replace explicit user-directed authoring work or require a second
+approval for an already accepted exact proposal. Keep source-consistency fixes
+separate from claims of observed behavior improvement. It does **not** govern
+the Phase 4 auto-fix table. Broken reference paths,
 catalog drift, and missing frontmatter fields are mechanical lint against a
 known-correct spec; gating them behind conversation evidence would stop what
 already works.
@@ -72,7 +75,8 @@ Never edit a target file directly from an evidence finding.
 
 1. Write the full improved file to `$REPORT_DIR/proposed/<target>/<file>`.
 2. `diff -u <current> <proposed>` and keep the diff with the suggestion.
-3. Show the diff and apply only what the user accepts.
+3. Show the diff and apply only accepted scope. A prior explicit acceptance
+   remains valid; request a new decision only for a materially changed proposal.
 
 The scratch draft is also the regression guard: when re-verification fails,
 discard the draft instead of unwinding a partially applied edit.

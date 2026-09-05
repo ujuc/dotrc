@@ -1,6 +1,7 @@
 # Skill Design Principles
 
-> Seven core principles that guide all skill creation.
+> Seven design defaults, subject to explicit user/repository requirements and
+> the authority, scope and evidence rules in quality-criteria.md.
 
 ---
 
@@ -24,7 +25,8 @@ crowds out the instructions that actually steer it.
 - Supporting documents: README.md, CHANGELOG.md, CONTRIBUTING.md
 
 **The test:** Does this token change Claude's behavior? If not, remove it. When
-unsure whether the model already knows something, assume it does and cut it.
+unsure, inspect its purpose and evidence. Preserve explicit team test gates,
+nondefault conventions and safety boundaries; do not erase them as generic advice.
 
 ---
 
@@ -95,8 +97,9 @@ Some skills need user-specific context before they can run. Use a `config.json` 
 
 **Pattern:**
 1. Check for `config.json` in the skill directory (or `${CLAUDE_PLUGIN_DATA}`)
-2. If missing or incomplete, ask the user via AskUserQuestion
-3. Store responses in `config.json` for future runs
+2. If missing or incomplete, use the host's question capability or normal text
+3. Store approved non-secret preferences only in an authorized state location;
+   a reusable global skill directory is not a project-specific data store
 
 **Example:** A standup-post skill needs to know which Slack channel to post to. On first run, it asks the user and saves the choice.
 
@@ -115,7 +118,9 @@ Skills can store data across runs using `${CLAUDE_PLUGIN_DATA}` — a stable fol
 - JSON files (structured data)
 - SQLite database (complex queries)
 
-**Why not the skill directory?** Data stored in the skill directory may be deleted when the skill is upgraded. Always use `${CLAUDE_PLUGIN_DATA}` for persistent data.
+**Why not the skill directory?** Data stored in the skill directory may be deleted when the skill is upgraded. Use `${CLAUDE_PLUGIN_DATA}` when the host provides it; otherwise resolve an
+explicitly authorized host-appropriate state location. Do not invent a plugin
+variable or write another project's runtime data into global skill sources.
 
 **Example:** A standup-post skill keeps `standups.log` with every post. On next run, Claude reads its own history and reports what changed since yesterday.
 

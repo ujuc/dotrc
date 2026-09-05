@@ -1,5 +1,5 @@
 name: generate-skills-eval
-description: Auto-generated eval for generate-skills.
+description: Trigger/decision probes; see behavior-cases.md for scoped evidence and limitations.
 skill: generate-skills
 version: "1.0"
 config:
@@ -12,11 +12,11 @@ metrics:
   - name: task_completion
     weight: 0.7
     threshold: 0.8
-    description: Did the skill complete trigger and anti-trigger checks?
+    description: Probe text checks only; not proof of workflow execution.
   - name: efficiency
     weight: 0.3
     threshold: 0.7
-    description: Did the skill stay within behavior limits?
+    description: Probe budget only; not a behavior quality score.
 graders:
   - type: behavior
     name: token-budget

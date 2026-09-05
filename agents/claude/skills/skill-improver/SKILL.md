@@ -13,6 +13,18 @@ Test-driven improvement loop for skills and agent definitions. Validates structu
 
 Dimensions A–D ask whether a skill is well-formed; **Dimension E asks whether it worked**, by scoring condensed digests of local session history. Structural findings are lint and are fixed on sight. Behavioral findings must clear the change bar in [`references/change-bar.md`](references/change-bar.md) — proposing nothing, with a stated reason, is a valid outcome.
 
+## Scope and available capabilities
+
+Read `references/quality-checks.md` for authority, evidence and portability
+checks. Reuse selected targets and existing approval; a post-edit check is one
+targeted batch, not a periodic full sweep. Self-maintenance uses this run's
+bounded re-verification and must not recursively invoke either controller.
+
+Claude tool/model names below are examples: use the active host's equivalents.
+If advisor/delegation is unavailable, report it; never invent an independent
+review. A missing question tool permits normal interactive text questions, not
+assumed answers. Preserve explicit project policy over general model defaults.
+
 ## Periodic Execution
 
 This skill is meant to run regularly, not just on demand.
@@ -103,6 +115,9 @@ Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single exe
 | **B.6 catalog sync** | A structurally valid **user-scope** `claude/skills/` skill is listed under its group in `<repo_root>/claude/skills/README.md` | Dimension A owns group validity. Project-scope `.claude/skills/` targets are SKIP. |
 | **B.7 Language policy** | Skill metadata/body follows the skill policy; agent language is preserved; triggers stay intact | Apply the target-type rules above and compare edits with the original trigger tokens |
 | **B.8 Workflow ownership** | Managed skills use contract paths, one-writer ownership, lifecycle, cadence, and Superpowers boundary | Compare workflow claims with the retained contract; flag conflicts as manual design issues |
+| **B.9 Authority/scope** | Approval reuse, explicit policy, side-effect ownership | Apply references/quality-checks.md |
+| **B.10 Evidence contract** | Verifier inputs, evidence levels, final status | Apply references/quality-checks.md; inspect available suites without running the target |
+| **B.11 Host/source integrity** | Capability fallbacks and scoped source claims | Apply references/quality-checks.md; check section/role references too |
 
 > **Scope boundary**: trigger completeness, trigger uniqueness, and model fitness checks belong to the `skill-engineer` agent. Do not duplicate them here. To run those checks, dispatch `Agent("skill-engineer", "<target> [--check trigger|overlap|model|all]")` either inline (after Phase 5 passes) or as a standalone follow-up.
 
@@ -165,6 +180,7 @@ For each test:
    - **FAIL**: result does not match expectations.
    - **WARN**: non-critical issue detected (e.g., optional field missing).
    - **SKIP**: test not applicable to this target type, or no evidence was attributed to it.
+   - **UNVERIFIED**: applicable claim lacks required evidence; never count as PASS.
 
 **Early exit**: if Dimension A produces 3+ errors, skip remaining dimensions for that target — structural problems must be fixed first.
 
@@ -177,8 +193,9 @@ For each FAIL result:
 1. Analyze the error pattern.
 2. Classify fixability and apply fixes.
 
-**Two tracks, two bars.** A/B/C/D failures are lint against a known-correct spec
-— fix them from the table below. E failures are claims about how an agent
+**Two tracks, two bars.** Only mechanical A/B/C/D failures matching the safe
+fix table are lint. Semantic authority, scope, evidence or workflow findings
+require judgment and use the manual track; do not auto-rewrite them as formatting. E failures are claims about how an agent
 behaves; run each through [`references/change-bar.md`](references/change-bar.md) before writing anything, and
 draft into `$REPORT_DIR/proposed/<target>/` with a `diff -u` rather than editing
 the target in place. If a finding does not clear the bar, propose nothing and
@@ -206,15 +223,20 @@ record why — that is the expected outcome for most findings.
 - Every E.1 behavioral edit: draft it, diff it, and let the user accept it. Evidence justifies a proposal, never an unattended rewrite of a procedure.
 - E.2 coverage gaps: record the suggestion and route it to `skill-engineer`. A never-firing skill is a WHEN-clause problem, and the WHEN clause is out of this skill's reach.
 
-When fixability classification is ambiguous, call `advisor()` to decide. Misclassifying can damage the skill's intent.
+When fixability is ambiguous, use an available advisor or independent equivalent.
+If none exists, report the unresolved classification and leave the proposed
+behavior change unapplied; local reasoning is not an independent review.
 
 ## Phase 5 — Re-verification (max 3 iterations)
 
 1. After applying fixes, rerun the target's full original test matrix, including previously passing checks.
 2. **Regression guard**: if a fix introduces a NEW failure, immediately revert the fix and reclassify it as manual. For an E-track edit, discard the draft under `$REPORT_DIR/proposed/` — the target file was never touched, so there is nothing to unwind.
-3. If all re-run tests PASS → proceed to Phase 6.
+3. If all required audit checks PASS, with optional/inapplicable evidence clearly
+   SKIP/UNVERIFIED → proceed to Phase 6. Do not claim behavior beyond its evidence.
 4. If failures remain and iteration count < 3 → return to Phase 4.
-5. If iteration count reaches 3 → call `advisor()` to decide whether to continue, stop, or reconsider whether the test scenario itself is wrong.
+5. At iteration 3, stop repairs and report remaining failures. Consult an available
+   advisor once if useful; absence is disclosed. Do not start another loop or
+   update the successful-run timestamp while a required failure remains.
 
 ## Phase 6 — Summary & Commit
 
@@ -242,7 +264,8 @@ reclaims.
 If any fixes were applied:
 
 1. Show the full diff to the user.
-2. Ask for confirmation before committing.
+2. Commit only if explicitly requested; reuse a still-applicable request rather
+   than asking again. Otherwise leave the changes uncommitted.
 3. Commit following Korean conventional commit rules:
    `refactor(skills): skill-improver로 <target> 스킬을 개선하다`
 
@@ -261,7 +284,8 @@ This skill runs on sonnet by default. Call `advisor()` (no parameters — full c
 
 1. **Phase 2 — semantic test quality review**: after generating tests for complex skills (multi-agent-orchestrator, autoresearch, etc.), review whether scenarios capture cross-skill interactions and intent adequately.
 2. **Phase 4 — fixability classification ambiguity**: when a failure sits on the boundary between auto-fixable and manual.
-3. **Phase 5 — failures remain after 3 iterations**: to decide whether to keep auto-fixing, stop and escalate, or reconsider the test scenario.
+3. **Phase 5 — failures remain after 3 iterations**: stop repairs, report failures,
+   and optionally review the test scenario; do not extend the repair loop.
 4. **Phase 4 — an E.1 finding sitting on the change bar**: when a behavioral edit is arguable — one occurrence, a contested attribution, or a rule that may already be stated elsewhere. Editing another agent's instructions on weak evidence is the expensive mistake here.
 
 ## Deep Optimization Handoff
@@ -333,10 +357,12 @@ EVAL 3: Regression guard effectiveness
   Fail: New failure persists in final report.
 
 EVAL 4: Iteration ceiling
-  Question: Does the skill stop auto-fixing at iteration 3 and escalate to
-            advisor() instead of looping indefinitely?
-  Pass: Exits the loop at 3, advisor() is invoked.
-  Fail: Continues past 3 or silently gives up.
+  Question: Does the skill stop auto-fixing at iteration 3, report actual
+            advisor availability and leave unsuccessful runs undated?
+  Pass: Stops repairs at 3, reports unresolved failures and actual advisor
+        availability; required failure leaves the timestamp unchanged.
+  Fail: Continues past 3, invents consultation or records an unsuccessful run
+        as completed.
 
 EVAL 5: Timestamp update
   Question: After Phase 6 completes (with or without fixes), does the timestamp
@@ -355,9 +381,9 @@ EVAL 6: Group field enforcement
         warning without surfacing it.
 
 EVAL 7: Evidence-gated behavioral edits
-  Question: Does every behavioral (non-lint) edit cite a failed conversation,
-            and does a sweep with zero failed conversations propose zero
-            behavioral edits?
+  Question: Does every E-track behavioral proposal cite an attributable failed
+            conversation, and does a sweep with zero such failures propose zero
+            E-track edits? Separate explicit user-directed authoring work.
   Pass: Each E-track diff names a session id and its rubric label; with no
         failed sessions, the report says "no change proposed" and no
         procedure text was touched.

@@ -1,0 +1,10 @@
+id: quality-evidence-boundary
+name: Quality evidence boundary
+description: Decision-only quality probe; no maintenance or file edits.
+inputs:
+  prompt: "Review this hypothetical evidence only; do not run maintenance, tools, or write files. A skill has valid frontmatter and its mock runner echoes expected keywords. No behavior was executed. Can behavior be marked PASS? Explain the evidence boundary, using UNVERIFIED for the missing behavior evidence."
+graders:
+  - type: text
+    name: missing-evidence-status
+    config:
+      contains: ["UNVERIFIED"]

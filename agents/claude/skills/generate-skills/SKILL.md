@@ -9,6 +9,12 @@ argument-hint: "[skill-name]"
 
 # Skill creation / update workflow
 
+Read `references/quality-criteria.md` before authoring. It governs authority,
+selected write scope, native tool equivalents and evidence levels, including
+updates to this skill. Reuse existing user approval and managed-plan decisions.
+Claude tool/model names below are host-specific examples; map available
+capabilities and report missing independent roles rather than inventing them.
+
 ## Mode detection
 
 Inspect `$ARGUMENTS` to choose a mode:
@@ -26,7 +32,7 @@ If `$ARGUMENTS` is empty, ask the user via AskUserQuestion which mode and which 
 
 Principles that guide every step. See `references/design-principles.md` for the full version.
 
-1. **Concise is key — aggressively cut what the model already knows.** The context window is shared, and a skill earns its tokens only by supplying what the model cannot derive from training or from reading the code. Restating model-known conventions, generic best practices, or standard tool behavior is pure overhead — telling the model what it already knows changes nothing. When in doubt, assume it knows and cut it.
+1. **Concise is key — aggressively cut what the model already knows.** The context window is shared, and a skill earns its tokens only by supplying what the model cannot derive from training or from reading the code. Restating model-known conventions, generic best practices, or standard tool behavior is pure overhead — telling the model what it already knows changes nothing. Preserve explicit project requirements; prune generic defaults when unnecessary.
 2. **Match degrees of freedom to task fragility** (low / medium / high specificity).
 3. **Progressive disclosure**: split content across three tiers (metadata → body → bundled resources).
 4. **Use subagents** wherever they protect the main context or unlock parallel work. See `references/subagent-guidelines.md` for the decision criteria.
@@ -82,10 +88,11 @@ carries its own freshness metadata in YAML frontmatter.
    WebFetch `spec_url` for the standard's own field rules. Checking only
    `source_url` leaves every **[SPEC]** rule unverified.
 4. Diff against the "Field Reference" section in `references/frontmatter-spec.md`.
-5. **If changes are detected**: update both the field content and
-   `last_upstream_check` (set to today's date). Surface the diff to the user
-   if the change set is non-trivial before rewriting.
-6. **If unchanged**: just bump `last_upstream_check` to today's date.
+5. Use verified guidance in-session and report drift. Update this reference and
+   its check date only when cache maintenance is explicitly in the selected
+   write scope. Another project's skill task must not change this global cache.
+6. Record fetched/cached status; unchanged source content alone does not authorize
+   a freshness-date write outside that scope.
 
 ### What to compare
 
@@ -139,8 +146,9 @@ new guidance: three pressure scenarios for discipline skills, otherwise one
 application or retrieval scenario. For updates, run the unchanged skill as the
 baseline. Keep the prompts and observed failure so Step 5 can rerun exactly the
 same cases; if Waza is available for an existing skill, persist this baseline
-through `waza-runner` before editing. If the baseline does not fail, do not add
-speculative guidance.
+through `waza-runner` before editing. If baseline behavior passes, do not invent a failure. A reproduced instruction
+contradiction may justify a scoped consistency correction; otherwise avoid
+speculative guidance and retain the evidence level.
 
 ---
 
@@ -302,20 +310,22 @@ Using the freshly verified `references/frontmatter-spec.md` from Step 0:
 7. **Managed ownership**: when the skill participates in the managed lifecycle,
    compare its paths and sole-writer claims with `workflow-hooks contract`.
 
-Summarize the comparison for the user and get approval for the update scope.
+Summarize the comparison and reuse any already approved update scope. Resolve
+only material unanswered choices or changes beyond that authorization.
 
 ---
 
 ## Step U3: Apply updates (update mode)
 
-For the approved scope, edit with the Edit tool:
+For the approved scope, use the active harness's patch/edit tool:
 
 1. Add / modify / remove frontmatter fields.
 2. Rewrite `description` if needed.
 3. Reshape body sections if needed.
 
-Show the change to the user before each edit and confirm.
-When done, proceed to Step 5 (validation).
+Apply already approved changes without per-file reconfirmation. Present new
+scope or destructive changes only when existing authorization does not cover
+them. When done, proceed to Step 5.
 
 ---
 
@@ -339,9 +349,11 @@ If anything fails, return to the relevant step, fix, and re-run.
 Define binary (yes/no) eval criteria that measure output quality.
 Per `references/eval-guide.md`, write 3–6 yes/no checks under an `## Eval Criteria` section in SKILL.md or in a separate `evals.md`.
 Rerun the exact Step 1 baseline scenarios with the candidate skill. A
-behavior-shaping change is not complete unless the prior failure now passes.
-Purely mechanical metadata or path corrections may mark this step N/A with the
-validator evidence. The autoresearch skill can reuse these criteria later.
+behavior-shaping change needs evidence at the level its claim requires. Record
+structure, decision replay, artifact application and live integration separately.
+Mock scores never prove behavior. For consistency corrections, show removal of
+the reproduced contradiction without inventing a failed baseline. Purely
+mechanical corrections may mark behavior N/A with structural evidence. The autoresearch skill can reuse these criteria later.
 
 ### Waza measurement (optional automation)
 
@@ -384,7 +396,8 @@ When in doubt, follow the trigger-tuning guide in `references/review-checklist.m
 
 ### Registration
 
-Once validation passes, register the skill in the catalog group map in `${DOTRCDIR}/agents/claude/skills/README.md`. The `group:` frontmatter is the single source of truth; the README table mirrors it and must stay in sync. Use the `register-skill` launcher — it is idempotent (re-running is a no-op) and errors if the skill is already listed under a different group:
+Once validation passes, register only selected user-scope skills when registration
+is in scope; project-local skills never enter the global catalog. The map is in `${DOTRCDIR}/agents/claude/skills/README.md`. The `group:` frontmatter is the single source of truth; the README table mirrors it and must stay in sync. Use the `register-skill` launcher — it is idempotent (re-running is a no-op) and errors if the skill is already listed under a different group:
 
 ```bash
 DOTRCDIR="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}"
@@ -395,6 +408,10 @@ bash "${DOTRCDIR}/agents/claude/skills/generate-skills/scripts/register-skill" \
 ```
 
 The `--group` value must match the skill's `group:` frontmatter. Manual edit is still valid for layout changes the launcher can't produce (e.g. reordering entries within a row).
+
+If repository policy requires post-edit skill-improver, run one targeted batch
+for the changed skills. Re-verification inside that run is sufficient; never
+recursively invoke authoring or maintenance after self-edits.
 
 ### Distribution (optional)
 
@@ -467,11 +484,12 @@ EVAL 5: Validator pass
   Fail: Exit non-zero, or any `✗` finding.
 
 EVAL 6: Behavior evidence
-  Question: Did the unchanged baseline expose the target failure, and does the
-            candidate pass the same scenario without violating the workflow
-            contract?
-  Pass: Baseline failure and candidate success are both recorded, or the
-        change is explicitly mechanical with validator evidence.
-  Fail: Guidance changed without a failing baseline, or managed ownership
-        diverges from `workflow-hooks contract`.
+  Question: Does exact-input baseline/candidate evidence support the claimed
+            behavior or source-consistency change at its stated evidence level,
+            without violating the workflow contract?
+  Pass: Same-input evidence supports the claimed level; a reproduced source
+        contradiction is repaired without fabricating behavior failure;
+        mechanical changes have validator evidence.
+  Fail: Mock/static/simulation evidence is presented as live behavior, an
+        unsupported PASS is claimed, or managed ownership diverges.
 ```
