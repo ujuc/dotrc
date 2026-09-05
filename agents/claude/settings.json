@@ -118,7 +118,8 @@
     "code-simplifier@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "harness@harness-marketplace": true,
-    "warp@claude-code-warp": true
+    "warp@claude-code-warp": true,
+    "i-have-adhd@i-have-adhd": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -167,6 +168,12 @@
       "source": {
         "source": "github",
         "repo": "revfactory/harness"
+      }
+    },
+    "i-have-adhd": {
+      "source": {
+        "source": "github",
+        "repo": "ayghri/i-have-adhd"
       }
     }
   },

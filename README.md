@@ -229,6 +229,7 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 /plugin marketplace add openai/codex-plugin-cc
 /plugin marketplace add warpdotdev/claude-code-warp
 /plugin marketplace add dietrichgebert/ponytail
+/plugin marketplace add ayghri/i-have-adhd
 
 # Plugins
 /plugin install superpowers@claude-plugins-official
@@ -245,6 +246,7 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 /plugin install codex@openai-codex
 /plugin install warp@claude-code-warp
 /plugin install ponytail@ponytail
+/plugin install i-have-adhd@i-have-adhd
 
 # claude-hud statusline 설정
 /claude-hud:setup
@@ -264,6 +266,7 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 - [amp-plugin-cc](https://github.com/ujuc/amp-plugin-cc) — Amp Code 통합
 - [codex](https://github.com/openai/codex-plugin-cc) — OpenAI Codex 통합 (Stop hook Review Gate)
 - [warp](https://github.com/warpdotdev/claude-code-warp) — Warp terminal 통합
+- [i-have-adhd](https://github.com/ayghri/i-have-adhd) — ADHD 친화 출력 형식
 
 ### [Pi](https://github.com/earendil-works/pi)
 
