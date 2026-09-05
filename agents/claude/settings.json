@@ -48,6 +48,7 @@
     "defaultMode": "auto",
     "disableBypassPermissionsMode": "disable"
   },
+  "model": "claude-fable-5-1[1m]",
   "hooks": {
     "SessionStart": [
       {
@@ -182,7 +183,7 @@
   "effortLevel": "xhigh",
   "modelSettings": {
     "claude-fable-5-1": {
-      "effortLevel": "low"
+      "effortLevel": "high"
     },
     "claude-opus-5": {
       "effortLevel": "high"
