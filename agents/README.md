@@ -12,29 +12,37 @@
 | `claude/` | Claude 전역 설정, 에이전트, 스킬 |
 | `hooks/` | 공용 워크플로 훅의 셸 계약 테스트 |
 | `tools/workflow-hooks/` | 공용 훅 정책과 Claude/Codex 이벤트 변환을 구현하는 Rust CLI |
-| `amp/` | Amp 전용 전역 지침, 설정, 플러그인 어댑터 |
-| `codex/` | Codex 전역 훅 설정 |
-| `pi/` | Pi 전역 extension 어댑터 |
+| `amp/` | Amp 전역 설정, 지침, 플러그인 어댑터 (통짜 심링크 원본) |
+| `codex/` | Codex 전역 설정, 훅, 스킬 (통짜 심링크 원본) |
+| `pi/` | Pi 전역 설정, extension 어댑터 (통짜 심링크 원본) |
 | `rules/` | Claude, Amp, Codex, Pi가 공유하는 지침과 에이전트 정체성 |
 | `docs/` | 설계 및 구현 기록 |
-| `.gitignore` | `claude/` 아래에 생성되는 런타임 파일 제외 |
+| `.gitignore` | `claude/`, `codex/`, `amp/`, `pi/` 아래에 생성되는 런타임 파일 제외 |
 
 ## 배포 경로
+
+최상위 디렉터리 단위로만 심링크한다. 파일 하나씩 개별로 심링크하지 않는다.
 
 | 원본 | 심링크 대상 |
 | --- | --- |
 | `claude/` | `~/.claude` |
+| `codex/` | `~/.codex` |
+| `amp/` | `~/.config/amp` |
+| `pi/` | `~/.pi` |
 | `tools/workflow-hooks/` | `~/.local/bin/workflow-hooks`에 빌드 설치 |
-| `rules/AGENTS.md` | `~/.codex/AGENTS.md` |
-| `amp/AGENTS.md` | `~/.config/amp/AGENTS.md` |
-| `amp/settings.json` | `~/.config/amp/settings.json` |
-| `amp/plugins/workflow-hooks.ts` | `~/.config/amp/plugins/workflow-hooks.ts` |
-| `codex/hooks.json` | `~/.codex/hooks.json` |
-| `pi/extensions/workflow-hooks.ts` | `~/.pi/agent/extensions/workflow-hooks.ts` |
-| `claude/skills/<name>/` | `~/.codex/skills/<name>/` |
+
+`codex/`, `amp/`, `pi/`는 디렉터리 전체가 심링크되므로, 그 안의 개별 파일
+(`hooks.json`, `AGENTS.md`, `plugins/workflow-hooks.ts`, `agent/extensions/workflow-hooks.ts`
+등)은 별도 심링크 없이 자동으로 배포된다. `codex/AGENTS.md`와 `codex/skills`는
+`rules/AGENTS.md`, `claude/skills`를 가리키는 레포 내부 상대 심링크다 (레포 밖으로
+나가지 않으므로 다른 머신에서도 그대로 동작한다).
 
 Amp는 `~/.claude/skills/`를 직접 읽고 Pi extension도 같은 경로를 등록하므로
-별도의 하네스별 스킬 사본을 두지 않는다.
+별도의 하네스별 스킬 사본을 두지 않는다. `codex/`, `pi/`에는 각 도구가 생성하는
+런타임 상태(세션, 캐시, sqlite, 인증 파일 등)가 함께 존재하므로, 파일을 하나씩
+열거하는 대신 화이트리스트 방식을 쓴다: `codex/*` + `!codex/AGENTS.md` `!codex/README.md`
+`!codex/hooks.json` `!codex/skills`, `pi/agent/*` + `!pi/agent/extensions`. 새로운 런타임 파일
+종류가 느어누어도 패턴을 더 늘릴 필요 없이 그대로 제외된다.
 
 ## 공통 워크플로 계약
 
@@ -84,29 +92,10 @@ scripts/install.sh --agents
 cargo install --locked --path agents/tools/workflow-hooks --root "$HOME/.local"
 ```
 
-Rust 바이너리를 먼저 설치한 뒤 네이티브 훅 어댑터를 다음 파일 심링크로
-배포한다. 기존 파일이나 다른 대상의 심링크가 있으면 덮어쓰지 말고 먼저
-충돌을 해결한다.
-
-```sh
-mkdir -p ${HOME}/.codex ${XDG_CONFIG_HOME:-${HOME}/.config}/amp/plugins ${HOME}/.pi/agent/extensions
-
-link_file() {
-  source=$1 destination=$2
-  if [ -L "$destination" ] && [ "$(readlink "$destination")" = "$source" ]; then
-    return
-  fi
-  if [ -e "$destination" ] || [ -L "$destination" ]; then
-    printf 'conflict: %s\n' "$destination" >&2
-    return 1
-  fi
-  ln -s "$source" "$destination"
-}
-
-link_file "${DOTRCDIR}/agents/codex/hooks.json" "${HOME}/.codex/hooks.json"
-link_file "${DOTRCDIR}/agents/amp/plugins/workflow-hooks.ts" "${XDG_CONFIG_HOME:-${HOME}/.config}/amp/plugins/workflow-hooks.ts"
-link_file "${DOTRCDIR}/agents/pi/extensions/workflow-hooks.ts" "${HOME}/.pi/agent/extensions/workflow-hooks.ts"
-```
+`scripts/install.sh --agents`가 `claude/`, `codex/`, `amp/`, `pi/`를 각각
+`~/.claude`, `~/.codex`, `~/.config/amp`, `~/.pi`에 통짜 심링크하므로, 그 안의
+`hooks.json`, `plugins/workflow-hooks.ts`, `agent/extensions/workflow-hooks.ts`도
+자동으로 배포된다. Rust 바이너리(`workflow-hooks`)만 위 명령으로 별도 설치한다.
 
 Codex에서는 새 명령 훅이나 변경된 훅을 `/hooks`에서 검토하고 신뢰해야 실행된다.
 

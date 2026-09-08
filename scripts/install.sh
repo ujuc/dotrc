@@ -2,6 +2,7 @@
 set -uo pipefail
 
 DOTRCDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+DOTRC_AGENTS_DIR="${DOTRCDIR}/agents"
 XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-"${HOME}/.config"}
 SELECT_CLI=false
 SELECT_APPS=false
@@ -167,10 +168,10 @@ visit_static_selected_links() {
         "$callback" "$DOTRCDIR/ghosttyrc" "$XDG_CONFIG_HOME/ghostty/config" || failed=1
     fi
     if $SELECT_AGENTS; then
-        "$callback" "$DOTRCDIR/agents/claude" "$HOME/.claude" || failed=1
-        "$callback" "$DOTRCDIR/agents/rules/AGENTS.md" "$HOME/.codex/AGENTS.md" || failed=1
-        "$callback" "$DOTRCDIR/agents/amp/AGENTS.md" "$XDG_CONFIG_HOME/amp/AGENTS.md" || failed=1
-        "$callback" "$DOTRCDIR/agents/amp/settings.json" "$XDG_CONFIG_HOME/amp/settings.json" || failed=1
+        "$callback" "$DOTRC_AGENTS_DIR/claude" "$HOME/.claude" || failed=1
+        "$callback" "$DOTRC_AGENTS_DIR/codex" "$HOME/.codex" || failed=1
+        "$callback" "$DOTRC_AGENTS_DIR/amp" "$XDG_CONFIG_HOME/amp" || failed=1
+        "$callback" "$DOTRC_AGENTS_DIR/pi" "$HOME/.pi" || failed=1
     fi
     return "$failed"
 }
@@ -180,19 +181,6 @@ preflight_static_links() {
     visit_static_selected_links check_link_destination || conflicts=1
     if [ "$conflicts" -ne 0 ]; then
         printf 'Link preflight failed; no installation steps were run.\n' >&2
-        exit 1
-    fi
-}
-
-preflight_codex_skill_links() {
-    local skill conflicts=0
-    $SELECT_AGENTS || return 0
-    for skill in "$DOTRCDIR"/agents/claude/skills/*; do
-        [ -d "$skill" ] || continue
-        check_link_destination "$skill" "$HOME/.codex/skills/$(basename "$skill")" || conflicts=1
-    done
-    if [ "$conflicts" -ne 0 ]; then
-        printf 'Codex skill link preflight failed; no package, configuration, or link steps were run.\n' >&2
         exit 1
     fi
 }
@@ -343,15 +331,10 @@ install_fonts() {
 }
 
 install_agent_links() {
-    local skill
-    safe_link "$DOTRCDIR/agents/claude" "$HOME/.claude"
-    safe_link "$DOTRCDIR/agents/rules/AGENTS.md" "$HOME/.codex/AGENTS.md"
-    safe_link "$DOTRCDIR/agents/amp/AGENTS.md" "$XDG_CONFIG_HOME/amp/AGENTS.md"
-    safe_link "$DOTRCDIR/agents/amp/settings.json" "$XDG_CONFIG_HOME/amp/settings.json"
-    for skill in "$DOTRCDIR"/agents/claude/skills/*; do
-        [ -d "$skill" ] || continue
-        safe_link "$skill" "$HOME/.codex/skills/$(basename "$skill")"
-    done
+    safe_link "$DOTRC_AGENTS_DIR/claude" "$HOME/.claude"
+    safe_link "$DOTRC_AGENTS_DIR/codex" "$HOME/.codex"
+    safe_link "$DOTRC_AGENTS_DIR/amp" "$XDG_CONFIG_HOME/amp"
+    safe_link "$DOTRC_AGENTS_DIR/pi" "$HOME/.pi"
 }
 
 json_has_string_field() {
@@ -410,7 +393,6 @@ install_agents() {
 }
 
 preflight_static_links
-preflight_codex_skill_links
 if $SELECT_CLI || $SELECT_APPS || $SELECT_FONTS; then ensure_homebrew; fi
 $SELECT_CLI && install_cli
 $SELECT_APPS && install_apps

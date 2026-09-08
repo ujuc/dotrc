@@ -214,7 +214,7 @@ brew install yq
 
 ```sh
 curl -fsSL https://claude.ai/install.sh | bash
-ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
+ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 ```
 
 #### Plugins
@@ -248,34 +248,34 @@ bun으로 전역 설치한다. `~/.bun/bin`은 `zshrc`의 `path`에 등록되어
 
 ```sh
 bun add -g --ignore-scripts @earendil-works/pi-coding-agent
+ln -sf ${DOTRC_AGENTS_DIR}/pi ${HOME}/.pi
 ```
+
+전역 지침(`AGENTS.md`)과 `agent/extensions/workflow-hooks.ts`는 `agents/pi/` 디렉터리 전체가
+`~/.pi`로 심링크되므로 자동으로 배포된다. `agent/` 아래에서는 `extensions/`만 추적하고,
+나머지 Pi 런타임 상태는 `agents/.gitignore`의 화이트리스트(`pi/agent/*` + `!pi/agent/extensions`)로 제외한다.
 
 ### [Codex](https://developers.openai.com/codex)
 
-전역 지침은 `agents/rules/AGENTS.md`를 심링크로 사용한다.
+`agents/codex/` 디렉터리 전체를 `~/.codex`로 통째로 심링크한다.
 
 ```sh
-ln -sfn ${DOTRCDIR}/agents/rules/AGENTS.md ${HOME}/.codex/AGENTS.md
+ln -sfn ${DOTRC_AGENTS_DIR}/codex ${HOME}/.codex
 ```
 
-전역 스킬은 Claude 스킬 카탈로그를 스킬별 심링크로 재사용한다 (새 스킬 추가 시 재실행).
-
-```sh
-for d in ${DOTRCDIR}/agents/claude/skills/*/; do
-  [ -f "$d/SKILL.md" ] && ln -sfn "${d%/}" ${HOME}/.codex/skills/$(basename "$d")
-done
-```
+디렉터리 내부에서 `AGENTS.md`는 `agents/rules/AGENTS.md`에 대한 상대 심링크이고,
+`skills`는 `agents/claude/skills`에 대한 상대 심링크다 (전역 스킬 재사용, 새 스킬 추가 시
+별도 작업 불필요). `codex/` 안에서는 `AGENTS.md`, `README.md`, `hooks.json`, `skills`만 추적하고,
+나머지 Codex 런타임 상태(인증, 캐시, sqlite, tmp 등)는 `agents/.gitignore`의
+화이트리스트(`codex/*` + 개별 `!허용파일`)로 제외한다.
 
 ### [Amp](https://ampcode.com/)
 
-전역 공용 규칙은 `amp/AGENTS.md`에서 가져오고, Amp 전용 설정은
-`amp/settings.json`에서 관리한다. 전역 스킬은 Amp가 `~/.claude/skills/`를
-자동으로 읽으므로 별도로 복제하지 않는다.
+`agents/amp/` 디렉터리 전체를 `${XDG_CONFIG_HOME}/amp`로 통째로 심링크한다.
+전역 스킬은 Amp가 `~/.claude/skills/`를 자동으로 읽으므로 별도로 복제하지 않는다.
 
 ```sh
-mkdir -p ${XDG_CONFIG_HOME}/amp
-ln -sfn ${DOTRCDIR}/agents/amp/AGENTS.md ${XDG_CONFIG_HOME}/amp/AGENTS.md
-ln -sfn ${DOTRCDIR}/agents/amp/settings.json ${XDG_CONFIG_HOME}/amp/settings.json
+ln -sfn ${DOTRC_AGENTS_DIR}/amp ${XDG_CONFIG_HOME}/amp
 ```
 
 ### [CodeGraph](https://github.com/colbymchenry/codegraph)
