@@ -108,13 +108,8 @@
   "worktree": {
     "baseRef": "fresh"
   },
-  "statusLine": {
-    "type": "command",
-    "command": "bash -c 'plugin_dir=$(ls -d \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}\"/plugins/cache/claude-hud/claude-hud/*/ 2>/dev/null | sed \"s:/*$:/:\" | awk -F/ '\"'\"'{ print $(NF-1) \"\\t\" $0 }'\"'\"' | sort -t. -k1,1n -k2,2n -k3,3n -k4,4n | tail -1 | cut -f2-); exec \"$(\"$HOME/.local/bin/mise\" which bun)\" \"${plugin_dir}src/index.ts\"'"
-  },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
-    "claude-hud@claude-hud": true,
     "security-guidance@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": false,
     "ecc@ecc": false,
@@ -123,14 +118,10 @@
     "explanatory-output-style@claude-plugins-official": false,
     "remember@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": false,
-    "fable-advisor@fable-advisor": true,
     "ponytail@ponytail": true,
-    "claudish-to-english@gvzdv-plugins": true,
     "code-review@claude-plugins-official": false,
     "code-simplifier@claude-plugins-official": false,
     "claude-md-management@claude-plugins-official": false,
-    "harness@harness-marketplace": false,
-    "warp@claude-code-warp": true,
     "i-have-adhd@i-have-adhd": true
   },
   "extraKnownMarketplaces": {
@@ -140,53 +131,26 @@
         "repo": "anthropics/claude-plugins-official"
       }
     },
-    "claude-hud": {
-      "source": {
-        "source": "github",
-        "repo": "jarrodwatts/claude-hud"
-      }
-    },
-    "claude-code-warp": {
-      "source": {
-        "source": "github",
-        "repo": "warpdotdev/claude-code-warp"
-      }
-    },
     "ecc": {
       "source": {
         "source": "git",
         "url": "https://github.com/affaan-m/ECC.git"
-      }
-    },
-    "fable-advisor": {
-      "source": {
-        "source": "github",
-        "repo": "DannyMac180/fable-advisor"
-      }
+      },
+      "autoUpdate": true
     },
     "ponytail": {
       "source": {
         "source": "github",
         "repo": "DietrichGebert/ponytail"
-      }
-    },
-    "gvzdv-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "gvzdv/claudish-to-english"
-      }
-    },
-    "harness-marketplace": {
-      "source": {
-        "source": "github",
-        "repo": "revfactory/harness"
-      }
+      },
+      "autoUpdate": true
     },
     "i-have-adhd": {
       "source": {
         "source": "github",
         "repo": "ayghri/i-have-adhd"
-      }
+      },
+      "autoUpdate": true
     }
   },
   "outputStyle": "explanatory-concise",

@@ -223,50 +223,23 @@ ln -sf ${DOTRCDIR}/agents/claude ${HOME}/.claude
 # Marketplaces
 /plugin marketplace add anthropics/claude-plugins-official
 /plugin marketplace add affaan-m/ECC
-/plugin marketplace add jarrodwatts/claude-hud
-/plugin marketplace add revfactory/harness
-/plugin marketplace add ujuc/amp-plugin-cc
-/plugin marketplace add openai/codex-plugin-cc
-/plugin marketplace add warpdotdev/claude-code-warp
 /plugin marketplace add dietrichgebert/ponytail
 /plugin marketplace add ayghri/i-have-adhd
 
 # Plugins
 /plugin install superpowers@claude-plugins-official
-/plugin install ecc@ecc
-/plugin install claude-hud@claude-hud
-/plugin install code-review@claude-plugins-official
-/plugin install code-simplifier@claude-plugins-official
-/plugin install feature-dev@claude-plugins-official
-/plugin install claude-md-management@claude-plugins-official
 /plugin install security-guidance@claude-plugins-official
-/plugin install rust-analyzer-lsp@claude-plugins-official
-/plugin install harness@harness-marketplace
-/plugin install amp-plugin-cc@amp-plugin-cc
-/plugin install codex@openai-codex
-/plugin install warp@claude-code-warp
+/plugin install remember@claude-plugins-official
 /plugin install ponytail@ponytail
 /plugin install i-have-adhd@i-have-adhd
-
-# claude-hud statusline 설정
-/claude-hud:setup
 ```
 
 - [superpowers](https://github.com/obra/superpowers) — workflow skills 및 superpowers framework
 - [ponytail](https://github.com/dietrichgebert/ponytail) — 단순한 구현을 우선하는 개발 모드
-- [everything-claude-code](https://github.com/affaan-m/everything-claude-code) — 다수 스킬·커맨드 모음
-- [claude-hud](https://github.com/jarrodwatts/claude-hud) — statusline
-- code-review — 코드 리뷰 명령
-- code-simplifier — 코드 단순화
-- feature-dev — 기능 개발 가이드
-- claude-md-management — CLAUDE.md 관리
 - security-guidance — 보안 리뷰
-- rust-analyzer-lsp — Rust LSP 통합
-- [harness](https://github.com/revfactory/harness) — 에이전트 하네스 오케스트레이션
-- [amp-plugin-cc](https://github.com/ujuc/amp-plugin-cc) — Amp Code 통합
-- [codex](https://github.com/openai/codex-plugin-cc) — OpenAI Codex 통합 (Stop hook Review Gate)
-- [warp](https://github.com/warpdotdev/claude-code-warp) — Warp terminal 통합
+- remember — 세션 기록 저장
 - [i-have-adhd](https://github.com/ayghri/i-have-adhd) — ADHD 친화 출력 형식
+- [everything-claude-code](https://github.com/affaan-m/everything-claude-code) — 마켓플레이스만 등록, 플러그인은 비활성
 
 ### [Pi](https://github.com/earendil-works/pi)
 

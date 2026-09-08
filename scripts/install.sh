@@ -382,12 +382,8 @@ install_agents() {
             for item in \
                 anthropics/claude-plugins-official\|claude-plugins-official \
                 affaan-m/ECC\|ecc \
-                jarrodwatts/claude-hud\|claude-hud \
-                revfactory/harness\|harness-marketplace \
-                ujuc/amp-plugin-cc\|amp-plugin-cc \
-                openai/codex-plugin-cc\|openai-codex \
-                warpdotdev/claude-code-warp\|claude-code-warp \
-                dietrichgebert/ponytail\|ponytail; do
+                dietrichgebert/ponytail\|ponytail \
+                ayghri/i-have-adhd\|i-have-adhd; do
                 marketplace_source=${item%%|*}
                 marketplace_name=${item#*|}
                 if ! json_has_string_field "$marketplace_json" name "$marketplace_name"; then
@@ -401,13 +397,12 @@ install_agents() {
         if [ "$plugin_status" -ne 0 ]; then
             record_failure agents "List plugins" "$plugin_status" "claude plugin list --json"
         else
-            for item in superpowers@claude-plugins-official ecc@ecc claude-hud@claude-hud code-review@claude-plugins-official code-simplifier@claude-plugins-official feature-dev@claude-plugins-official claude-md-management@claude-plugins-official security-guidance@claude-plugins-official rust-analyzer-lsp@claude-plugins-official harness@harness-marketplace amp-plugin-cc@amp-plugin-cc codex@openai-codex warp@claude-code-warp ponytail@ponytail; do
+            for item in superpowers@claude-plugins-official security-guidance@claude-plugins-official remember@claude-plugins-official ponytail@ponytail i-have-adhd@i-have-adhd; do
                 if ! json_has_string_field "$plugin_json" id "$item"; then
                     run_step agents "Install plugin $item" claude plugin install "$item"
                 fi
             done
         fi
-        printf 'Manual step: run /claude-hud:setup in a Claude session.\n'
     else
         record_failure agents "Find Claude after installation" 1 "command -v claude"
     fi
