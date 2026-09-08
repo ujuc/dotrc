@@ -34,27 +34,32 @@ def is_noise:
   test("^\\s*<(local-command-stdout|system-reminder|command-message|command-args)")
   or test("^\\s*Caveat: The messages below were generated");
 
+def user_text:
+  if is_noise then empty
+  elif test("<command-name>") then
+    "CMD " + ([scan("<command-name>/?([^<]*)</command-name>")]
+      | flatten | join(" ") | clip(120))
+  else "USR " + clip(400) end;
+
+def user_event:
+  if type == "string" then user_text
+  else
+    .[]?
+    | if .type == "tool_result" and .is_error == true then
+        "ERR " + (.content | text_of | clip(240))
+      elif .type == "text" and ((.text // "") | is_noise | not) then
+        "USR " + (.text | clip(400))
+      else empty end
+  end;
+
+def assistant_event:
+  .[]?
+  | if .type == "text" then "AST " + (.text | clip(240))
+    elif .type == "tool_use" then "USE " + .name + " | " + (tool_arg | clip(160))
+    else empty end;
+
 fromjson? // empty
 | select(.type == "user" or .type == "assistant")
-| select($sidechains == "1" or (.isSidechain != true))
-| if .type == "user" then
-    (.message.content) as $c
-    | if ($c | type) == "string" then
-        if ($c | is_noise) then empty
-        elif ($c | test("<command-name>")) then
-          "CMD " + ($c | [scan("<command-name>/?([^<]*)</command-name>")] | flatten | join(" ") | clip(120))
-        else "USR " + ($c | clip(400)) end
-      else
-        $c[]?
-        | if .type == "tool_result" and (.is_error == true) then
-            "ERR " + (.content | text_of | clip(240))
-          elif .type == "text" and ((.text // "") | is_noise | not) then
-            "USR " + (.text | clip(400))
-          else empty end
-      end
-  else
-    .message.content[]?
-    | if .type == "text" then "AST " + (.text | clip(240))
-      elif .type == "tool_use" then "USE " + .name + " | " + (tool_arg | clip(160))
-      else empty end
-  end
+| select($sidechains == "1" or .isSidechain != true)
+| if .type == "user" then .message.content | user_event
+  else .message.content | assistant_event end

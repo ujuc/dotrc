@@ -4,85 +4,164 @@
 # that silently rot: tag extraction, malformed-line tolerance, sidechain and
 # noise filtering, the skills/commands split, and the digest cap.
 #
-#   bash test-collect-sessions      # exits non-zero on the first failure
+#   bash test-collect-sessions      # exits non-zero if any check fails
 set -euo pipefail
+
+case "${1:-}" in
+  -h|--help) echo "Usage: test-collect-sessions (uses synthetic local history only)"; exit 0 ;;
+  "") ;;
+  *) echo "test-collect-sessions: unknown argument: $1" >&2; exit 2 ;;
+esac
 
 here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 root=$(mktemp -d "${TMPDIR:-/tmp}/collect-sessions-test-XXXXXX")
 trap 'rm -rf "$root"' EXIT
 
 fail=0
-check() { # check <description> <condition-description-only-on-failure>
-  if eval "$2"; then printf '  ok   %s\n' "$1"
-  else printf '  FAIL %s\n' "$1"; fail=1; fi
+check() {
+  local description=$1
+  shift
+  if "$@"; then
+    printf '  ok   %s\n' "$description"
+  else
+    printf '  FAIL %s\n' "$description"
+    fail=1
+  fi
 }
 
-# --- fixture -----------------------------------------------------------------
+absent() { ! "$@"; }
+json_matches() { jq -e "$@" >/dev/null; }
+
+expect_status() {
+  local expected=$1 status=0
+  shift
+  "$@" >"$root/command.stdout" 2>"$root/command.stderr" || status=$?
+  [ "$status" -eq "$expected" ]
+}
+
+collect() {
+  CLAUDE_CONFIG_DIR="$root/home" bash "$here/collect-sessions" "$@"
+}
+
+# Fixtures: short history with malformed input, and a long history for clipping.
 mkdir -p "$root/home/projects/-test-proj"
 session="$root/home/projects/-test-proj/aaaaaaaa-0000-0000-0000-000000000001.jsonl"
 sid=aaaaaaaa-0000-0000-0000-000000000001
 
-{
-  printf '{"type":"user","sessionId":"%s","cwd":"/test/proj","gitBranch":"main","isSidechain":false,"timestamp":"2026-08-01T00:00:00Z","message":{"content":"fix the failing import"}}\n' "$sid"
-  echo '{ this line is not valid json'
-  printf '{"type":"user","sessionId":"%s","message":{"content":"<command-name>/commit</command-name>"}}\n' "$sid"
-  printf '{"type":"user","sessionId":"%s","message":{"content":"<local-command-stdout>noise that must not be scored</local-command-stdout>"}}\n' "$sid"
-  printf '{"type":"assistant","sessionId":"%s","isSidechain":false,"message":{"content":[{"type":"thinking","thinking":"dropped"},{"type":"tool_use","name":"Skill","input":{"skill":"commit"}}]}}\n' "$sid"
-  printf '{"type":"assistant","sessionId":"%s","isSidechain":false,"message":{"content":[{"type":"tool_use","name":"Bash","input":{"command":"cargo test"}}]}}\n' "$sid"
-  printf '{"type":"assistant","sessionId":"%s","isSidechain":false,"message":{"content":[{"type":"tool_use","name":"Read","input":{"file_path":"/test/proj/main.rs"}}]}}\n' "$sid"
-  printf '{"type":"user","sessionId":"%s","message":{"content":[{"type":"tool_result","is_error":true,"content":[{"type":"text","text":"error: cannot find value"}]}]}}\n' "$sid"
-  printf '{"type":"assistant","sessionId":"%s","isSidechain":true,"message":{"content":[{"type":"tool_use","name":"Grep","input":{"pattern":"sidechain-must-be-filtered"}}]}}\n' "$sid"
-  printf '{"type":"assistant","sessionId":"%s","cwd":"/test/proj/sub/scratch","isSidechain":false,"timestamp":"2026-08-01T00:05:00Z","message":{"content":[{"type":"text","text":"done"}]}}\n' "$sid"
-} >"$session"
+jq -c --arg id "$sid" '. + {sessionId: $id}' >"$session" <<'JSON'
+{"type":"user","cwd":"/test/proj","gitBranch":"main","timestamp":"2026-08-01T00:00:00Z",
+ "message":{"content":"fix the failing import"}}
+{"type":"user","message":{"content":"<command-name>/commit</command-name>"}}
+{"type":"user","message":{"content":"<local-command-stdout>noise that must not be scored</local-command-stdout>"}}
+{"type":"assistant","message":{"content":[
+  {"type":"thinking","thinking":"dropped"},
+  {"type":"tool_use","name":"Skill","input":{"skill":"commit"}}]}}
+{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Bash","input":{"command":"cargo test"}}]}}
+{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Read","input":{"file_path":"/test/proj/main.rs"}}]}}
+{"type":"user","message":{"content":[
+  {"type":"tool_result","is_error":true,"content":[{"type":"text","text":"error: cannot find value"}]}]}}
+{"type":"assistant","isSidechain":true,"message":{"content":[
+  {"type":"tool_use","name":"Grep","input":{"pattern":"sidechain-must-be-filtered"}}]}}
+{"type":"assistant","cwd":"/test/proj/sub/scratch","timestamp":"2026-08-01T00:05:00Z",
+ "message":{"content":[{"type":"text","text":"done"}]}}
+JSON
+printf '%s\n' '{ this line is not valid json' >>"$session"
+printf '%s\n' '{"type":"assistant","message":{"content":[{"type":"text","text":"after malformed line"}]}}' >>"$session"
 
 # A second session, long enough to exercise the 400-line digest cap.
 long="$root/home/projects/-test-proj/bbbbbbbb-0000-0000-0000-000000000002.jsonl"
 lid=bbbbbbbb-0000-0000-0000-000000000002
-printf '{"type":"user","sessionId":"%s","cwd":"/other/proj","message":{"content":"start"}}\n' "$lid" >"$long"
-i=0
-while [ "$i" -lt 500 ]; do
-  printf '{"type":"assistant","sessionId":"%s","isSidechain":false,"message":{"content":[{"type":"tool_use","name":"Bash","input":{"command":"step %d"}}]}}\n' "$lid" "$i" >>"$long"
-  i=$((i + 1))
-done
+jq -cn --arg id "$lid" '
+  {type: "user", sessionId: $id, cwd: "/other/proj", message: {content: "start"}},
+  (range(500) | {
+    type: "assistant", sessionId: $id,
+    message: {content: [{type: "tool_use", name: "Bash", input: {command: "step \(.)"}}]}
+  })
+' >"$long"
 
-# --- run ---------------------------------------------------------------------
+# Default collection.
 out="$root/report"
-CLAUDE_CONFIG_DIR="$root/home" bash "$here/collect-sessions" \
-  --out "$out" --since 2020-01-01 --max 10 >"$root/stdout.txt"
+collect --out "$out" --since 2020-01-01 --max 10 >"$root/stdout.txt"
 
 digest="$out/transcripts/$sid.txt"
 inv="$out/inventory.json"
 meta=$(jq -c --arg id "$sid" '.sessions[] | select(.session_id == $id)' "$inv")
 
 echo "collect-sessions self-check:"
-check "digest written"                  '[ -s "$digest" ]'
-check "human turn kept"                 'grep -q "^USR fix the failing import$" "$digest"'
-check "slash command tagged"            'grep -q "^CMD commit$" "$digest"'
-check "tool call and target captured"   'grep -q "^USE Bash | cargo test$" "$digest"'
-check "skill dispatch captured"         'grep -q "^USE Skill | commit$" "$digest"'
-check "failed result captured"          'grep -q "^ERR .*cannot find value" "$digest"'
-check "thinking dropped"                '! grep -q "dropped" "$digest"'
-check "sidechain filtered"              '! grep -q "sidechain-must-be-filtered" "$digest"'
-check "local-command noise filtered"    '! grep -q "noise that must not be scored" "$digest"'
-check "malformed line survived"         '[ "$(grep -c "^" "$digest")" -ge 6 ]'
+check "digest written"                  test -s "$digest"
+check "human turn kept"                 grep -q '^USR fix the failing import$' "$digest"
+check "slash command tagged"            grep -q '^CMD commit$' "$digest"
+check "tool call and target captured"   grep -q '^USE Bash | cargo test$' "$digest"
+check "skill dispatch captured"         grep -q '^USE Skill | commit$' "$digest"
+check "failed result captured"          grep -q '^ERR .*cannot find value' "$digest"
+check "thinking dropped"                absent grep -q 'dropped' "$digest"
+check "sidechain filtered"              absent grep -q 'sidechain-must-be-filtered' "$digest"
+check "local-command noise filtered"    absent grep -q 'noise that must not be scored' "$digest"
+check "malformed line survived"         grep -q '^AST after malformed line$' "$digest"
 
-check "inventory records the session"   '[ -n "$meta" ]'
-check "cwd is the launch dir"           '[ "$(jq -r .cwd <<<"$meta")" = "/test/proj" ]'
-check "tool errors counted"             '[ "$(jq -r .tool_errors <<<"$meta")" = "1" ]'
-check "skills_used from Skill tool"     '[ "$(jq -c .skills_used <<<"$meta")" = "[\"commit\"]" ]'
-check "commands_used kept separate"     '[ "$(jq -c .commands_used <<<"$meta")" = "[\"commit\"]" ]'
-check "sidechain tool not counted"      '! jq -e ".tools | index(\"Grep\")" <<<"$meta" >/dev/null'
+check "inventory records the session"   test -n "$meta"
+check "cwd is the launch dir"           json_matches '.cwd == "/test/proj"' <<<"$meta"
+check "tool errors counted"             json_matches '.tool_errors == 1' <<<"$meta"
+check "skills_used from Skill tool"     json_matches '.skills_used == ["commit"]' <<<"$meta"
+check "commands_used kept separate"     json_matches '.commands_used == ["commit"]' <<<"$meta"
+check "sidechain tool not counted"      json_matches '.tools | index("Grep") == null' <<<"$meta"
 
 long_digest="$out/transcripts/$lid.txt"
-check "long digest capped at 400"       '[ "$(grep -c "^" "$long_digest")" -le 401 ]'
-check "elision is announced"            'grep -q "lines elided" "$long_digest"'
-check "pre-cap length recorded"         '[ "$(jq -r ".sessions[] | select(.session_id == \"$lid\") | .digest_lines" "$inv")" -gt 400 ]'
+check "long digest capped at 400 plus marker" test "$(wc -l <"$long_digest")" -eq 401
+check "elision is announced"            grep -q '101 lines elided' "$long_digest"
+check "digest start retained"           grep -q '^USR start$' "$long_digest"
+check "digest end retained"             grep -q '^USE Bash | step 499$' "$long_digest"
+check "pre-cap length recorded"         json_matches --arg id "$lid" \
+  '.sessions[] | select(.session_id == $id) | .digest_lines == 501' "$inv"
 
 # --project must filter on the session cwd, not the file location.
 out2="$root/report2"
-CLAUDE_CONFIG_DIR="$root/home" bash "$here/collect-sessions" \
-  --out "$out2" --since 2020-01-01 --project /test/proj >/dev/null
-check "--project filters by cwd"        '[ "$(jq -r ".sessions | length" "$out2/inventory.json")" = "1" ]'
+collect --out "$out2" --since 2020-01-01 --project /test/proj >/dev/null
+check "--project filters by cwd" json_matches --arg id "$sid" \
+  '[.sessions[].session_id] == [$id]' "$out2/inventory.json"
+
+collect --out "$root/multi" --since 2020-01-01 \
+  --project /test/proj --project /other/proj >/dev/null
+check "multiple project filters" json_matches '.sessions_sampled == 2' "$root/multi/inventory.json"
+
+collect --out "$root/sidechains" --since 2020-01-01 \
+  --project /test/proj --include-sidechains >/dev/null
+check "sidechains can be included" grep -q 'sidechain-must-be-filtered' "$root/sidechains/transcripts/$sid.txt"
+check "inventory still excludes sidechains" json_matches \
+  '.sessions[0].tools | index("Grep") == null' "$root/sidechains/inventory.json"
+
+# Project paths are literal arguments, including spaces and backslashes.
+literal_project='/literal path\n/proj'
+jq -Rc --arg cwd "$literal_project" '
+  fromjson? // empty | .cwd = $cwd | .sessionId = "literal-path"
+' "$session" >"$root/home/projects/-test-proj/literal.jsonl"
+collect --out "$root/literal" --since 2020-01-01 --project "$literal_project" >/dev/null
+check "literal project path preserved" json_matches \
+  '[.sessions[].session_id] == ["literal-path"]' "$root/literal/inventory.json"
+
+collect --out "$root/no-match" --since 2020-01-01 --project /test/pro >/dev/null
+check "project prefix respects directory boundary" json_matches \
+  '.sessions_sampled == 0 and .sessions == []' "$root/no-match/inventory.json"
+
+collect --out "$root/limited" --since 2020-01-01 --max 1 >/dev/null
+check "sample limit respected" json_matches '.sessions_sampled == 1' "$root/limited/inventory.json"
+collect --out "$root/scanned" --since 2020-01-01 --scan 1 >/dev/null
+check "scan limit respected" json_matches '.sessions_scanned == 1' "$root/scanned/inventory.json"
+
+# Invalid CLI inputs must fail with usage errors before collecting history.
+check "help succeeds" expect_status 0 collect --help
+check "output directory required" expect_status 2 collect
+check "unknown option rejected" expect_status 2 collect --unknown
+for option in --out --since --max --scan --project; do
+  check "$option missing value rejected" expect_status 2 collect --out "$root/invalid" "$option"
+  check "$option missing value explained" grep -q 'requires a value' "$root/command.stderr"
+done
+check "option cannot consume next option" expect_status 2 collect --out --max 1
+for option in --max --scan; do
+  for value in 0 -1 abc; do
+    check "$option rejects $value" expect_status 2 collect --out "$root/invalid" "$option" "$value"
+  done
+done
 
 [ "$fail" -eq 0 ] && echo "all checks passed" || echo "FAILURES above"
 exit "$fail"
