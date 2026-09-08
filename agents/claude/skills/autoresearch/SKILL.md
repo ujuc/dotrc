@@ -257,31 +257,9 @@ The improved target file is saved back to its original location — only the unc
 
 ## Worked Example
 
-A real meta-optimization run on this very SKILL.md (recorded session, not synthetic):
-
-- **`{target}`**: `claude/skills/autoresearch/SKILL.md` (this file)
-- **`{exec}`**: text-based static rubric — operator scores the SKILL.md content directly against custom evals (the Option A path from Gotcha 9)
-- **`{inputs}`**: the SKILL.md content itself (single artifact)
-- **`{evals}`** (5 binary checks, distinct from the runtime `Eval Criteria` below):
-  - T1 — anti-recursion safeguard present
-  - T2 — runs/budget tradeoff guidance present
-  - T3 — worked example present
-  - T4 — all 6 procedural steps in order
-  - T5 — Step 4-1 names ≥3 failure patterns with detection method
-- **`{runs}`**: 1 (deterministic — static text yields the same score each evaluation)
-- **`{budget}`**: 8
-
-| Exp | Score | Δ | Mutation | Decision |
-|-----|-------|---|----------|----------|
-| 0 | 1/5 (20%) | — | baseline | — |
-| 1 | 2/5 (40%) | +20% | add Gotcha 9 (anti-recursion) | KEEP |
-| 2 | 3/5 (60%) | +20% | replace Step 4-1 prose with named failure pattern table | KEEP |
-| 3 | 4/5 (80%) | +20% | add runs/budget tradeoff guidance below context table | KEEP |
-| 4 | 5/5 (100%) | +20% | add this Worked Example section | KEEP |
-| 5 | 5/5 (100%) | 0% | shorten "to average out stochastic variance" to "to reduce noise" | KEEP (score-neutral size reduction) |
-| 6 | 5/5 (100%) | 0% | remove a duplicated baseline reminder | KEEP (score-neutral size reduction) |
-
-Stopped at experiment 6 after three consecutive 100% experiments; the final results row records `stop_reason=ceiling_3x`.
+See the [recorded meta-optimization example](references/eval-guide.md#worked-example)
+when choosing a static rubric or interpreting KEEP/DISCARD results. The example
+is historical evidence, separate from this skill's runtime Eval Criteria.
 
 ---
 

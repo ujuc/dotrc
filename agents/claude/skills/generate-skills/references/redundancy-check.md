@@ -6,7 +6,10 @@ Operationalizes Design Principle #1 ("don't restate things Claude already knows"
 
 ### 1. Agent definition overlap
 
-If the skill dispatches a subagent (`subagent_type: "X"`, `Agent` tool calls, or references to `~/.claude/agents/X.md`), the agent file already defines its own SYSTEM prompt. Any rule restated in SKILL.md is duplication.
+If a skill dispatches an agent, compare the skill with that agent's definition.
+Shared role standards may be redundant; task inputs, dispatch conditions and
+inline safety gates still belong at the call site. Use the active host's agent
+directory; `~/.claude/agents/X.md` is the Claude Code example.
 
 **Check:** for each agent the skill invokes, open the agent's `.md` file and diff claims. Typical overlap zones:
 
@@ -14,13 +17,15 @@ If the skill dispatches a subagent (`subagent_type: "X"`, `Agent` tool calls, or
 - Exploration depth ("read every file", "trace N levels")
 - Constraints ("no code modifications", "no refactoring suggestions")
 
-**Fix:** delete from SKILL.md. Point to the agent file once: "see `~/.claude/agents/X.md` for standards."
+**Fix:** link to the agent definition for duplicated role standards. Preserve
+explicit project requirements and the intentional inline exceptions below.
 
 ### 2. Sibling skill overlap
 
 If another skill in the same category (e.g., `.plans/`, `.research/`, planning family) already defines a procedure, don't copy it — link to it.
 
-**Check:** glob `~/.claude/skills/*/SKILL.md` for the keywords the draft uses; skim hits for duplicated procedures.
+**Check:** search the selected project and active host's skill directories for
+the draft's procedure keywords; skim hits for duplicated procedures.
 
 **Fix:** reference the sibling skill by name and move shared procedure into a shared `references/` file if reuse is expected across multiple skills.
 

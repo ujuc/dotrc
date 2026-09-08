@@ -131,7 +131,8 @@ of each instruction: **does the current model already do this by default?**
 
 ### S2 — No runtime model branching
 
-A SKILL.md cannot detect which model is executing it (SKILL.md Gotcha 4).
+Do not infer the executing model from this document. Use the host's reported
+capabilities and [SKILL.md's model guidance](../SKILL.md#model-guidance).
 Divergences land as maintainer-facing notes plus **one default that is safe
 across models** — never as `if <model> then <behavior>`.
 

@@ -74,7 +74,10 @@ For a managed verdict, PASS requires weighted average ≥ 7, every design criter
 
 ## Iteration Directive
 
-Every report ends with a directive for the next round, picked from the score trend. See [references/iteration-strategy.md](references/iteration-strategy.md) for the full decision matrix and stop conditions.
+Every report ends with a directive for the next round, picked from the score
+trend. Load [iteration strategy](references/iteration-strategy.md) when choosing
+that directive. Managed runs follow the orchestrator's round limit; standalone
+iteration advice does not authorize more managed rounds or implementation.
 
 Quick reference:
 - First round → use `Baseline`; do not infer a trend without a prior round.

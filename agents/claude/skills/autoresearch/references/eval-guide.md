@@ -109,3 +109,32 @@ Example: 4 evals × 5 runs = max score of 20.
 If 17 individual checks pass: 17/20 = 85% pass rate.
 
 Track pass rate, not raw score. Pass rate normalizes across different eval counts and run counts.
+
+## Worked Example
+
+A real meta-optimization run on the [autoresearch SKILL.md](../SKILL.md)
+(recorded session, not synthetic; moved here from that file):
+
+- **`{target}`**: `claude/skills/autoresearch/SKILL.md` (the skill entrypoint)
+- **`{exec}`**: text-based static rubric — operator scores the SKILL.md content directly against custom evals (the Option A path from SKILL.md Gotcha 9)
+- **`{inputs}`**: the SKILL.md content itself (single artifact)
+- **`{evals}`** (5 binary checks, distinct from SKILL.md's runtime `Eval Criteria`):
+  - T1 — anti-recursion safeguard present
+  - T2 — runs/budget tradeoff guidance present
+  - T3 — worked example present
+  - T4 — all 6 procedural steps in order
+  - T5 — Step 4-1 names ≥3 failure patterns with detection method
+- **`{runs}`**: 1 (deterministic — static text yields the same score each evaluation)
+- **`{budget}`**: 8
+
+| Exp | Score | Δ | Mutation | Decision |
+|-----|-------|---|----------|----------|
+| 0 | 1/5 (20%) | — | baseline | — |
+| 1 | 2/5 (40%) | +20% | add Gotcha 9 (anti-recursion) | KEEP |
+| 2 | 3/5 (60%) | +20% | replace Step 4-1 prose with named failure pattern table | KEEP |
+| 3 | 4/5 (80%) | +20% | add runs/budget tradeoff guidance below context table | KEEP |
+| 4 | 5/5 (100%) | +20% | add this Worked Example section | KEEP |
+| 5 | 5/5 (100%) | 0% | shorten "to average out stochastic variance" to "to reduce noise" | KEEP (score-neutral size reduction) |
+| 6 | 5/5 (100%) | 0% | remove a duplicated baseline reminder | KEEP (score-neutral size reduction) |
+
+Stopped at experiment 6 after three consecutive 100% experiments; the final results row records `stop_reason=ceiling_3x`.

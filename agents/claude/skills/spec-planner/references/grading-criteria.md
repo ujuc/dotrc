@@ -1,26 +1,30 @@
 # Grading Criteria for Spec Planner Output
 
-Quality evaluation criteria for Planner-generated specs. Use these to self-evaluate before delivering the spec to the user or passing it to the Generator.
+Use these criteria to self-review an approved architectural `spec.md` before
+delivery and handoff to `sprint-contract-negotiator`. Spike and bounded requests
+do not need a managed spec. Apply the classification and approval rules in
+[the skill](../SKILL.md); this rubric does not expand approved scope.
 
 ## Criteria
 
-### 1. Scope Ambition
+### 1. Scope Fit
 
-**Question**: Is the spec sufficiently ambitious relative to the input prompt?
+**Question**: Does the spec cover the complete approved product direction?
 
 | Grade | Description |
 |-------|-------------|
-| Excellent | Spec covers the complete approved direction, including non-obvious capabilities that materially improve user value |
+| Excellent | Spec covers the complete approved direction and explains the capabilities and dependencies needed for its user value |
 | Good | Spec covers the approved core and its important supporting capabilities without filler |
 | Weak | Spec is a thin wrapper around the input or omits capabilities needed for the stated product outcome |
-| Fail | Spec is narrower than the input prompt or adds no new insight |
+| Fail | Spec omits approved outcomes or adds unapproved scope |
 
-**Why it matters**: From the blog — "I prompted it to be ambitious about scope." A narrow spec produces a narrow product. The Planner's job is to envision the full possibility space.
+**Why it matters**: Missing supporting capabilities leaves product behavior
+unclear; count-driven additions expand scope without approval.
 
 **Red flags**:
 - Capability breadth is unexplained or mismatched to the approved direction
-- No features beyond what was explicitly mentioned in the input
-- "MVP" or "minimal" language that constrains scope prematurely
+- Supporting capabilities needed for an approved outcome are missing
+- Broadening or narrowing the approved direction without a product reason
 
 ### 2. Product Clarity
 
@@ -46,8 +50,8 @@ Quality evaluation criteria for Planner-generated specs. Use these to self-evalu
 
 | Grade | Description |
 |-------|-------------|
-| Excellent | Identifies 2-3 specific, high-value AI integration points with clear user benefit; explains what AI adds that traditional approaches cannot |
-| Good | Identifies 1-2 AI opportunities that are relevant and clearly described |
+| Excellent | Explains specific user value and tradeoffs for relevant AI opportunities, or gives a concrete reason AI is not applicable |
+| Good | Describes relevant AI user benefit, or states a reasonable non-applicability rationale |
 | Weak | Mentions AI generically ("could use AI for recommendations") without specificity |
 | Fail | No AI consideration at all, or forces AI where it adds no value |
 
@@ -60,16 +64,17 @@ Quality evaluation criteria for Planner-generated specs. Use these to self-evalu
 
 ### 4. Implementation Freedom
 
-**Question**: Does the Generator have technical freedom, or is the spec over-constrained?
+**Question**: Do planning and implementation retain technical freedom, or is the spec over-constrained?
 
 | Grade | Description |
 |-------|-------------|
-| Excellent | Spec defines only user-facing behavior and product constraints; the Generator retains all technical choices |
+| Excellent | Spec defines user-facing behavior and product constraints; planning and implementation retain technical choices within repository and approved product constraints |
 | Good | Behavioral specs with only descriptive existing-code context and no new technical prescriptions |
 | Weak | Includes database schemas, API route definitions, or framework-specific patterns |
-| Fail | Reads like a technical design document; Generator has no meaningful implementation choices |
+| Fail | Reads like a technical design document; prescribes implementation without a product reason |
 
-**Why it matters**: From the blog — "Constrain deliverables, delegate the path to the Generator." Wrong technical details cascade downstream, forcing the Generator into suboptimal paths.
+**Why it matters**: Unsupported technical prescriptions constrain downstream
+planning before repository evidence and implementation tradeoffs are examined.
 
 **Red flags**:
 - Database column names or table definitions in the spec
@@ -78,18 +83,18 @@ Quality evaluation criteria for Planner-generated specs. Use these to self-evalu
 - State management pattern prescriptions
 - "Use X library for Y" without alternatives
 
-## Composite Score
+## Using the Grades
 
-For a spec to be considered production-ready:
-- All four criteria must score Good or above
-- At least two criteria must score Excellent
-- No criteria may score Fail
-
-If any criterion scores Weak or below, revise the spec before proceeding to the Generator.
+Grades are diagnostic self-review labels, not an additional acceptance gate.
+Use weak areas to identify concrete omissions or contradictions within the
+approved direction; do not add scope merely to improve a grade. Delivery and
+handoff follow the approval and self-review requirements in
+[the skill](../SKILL.md), without a composite score or required grade count.
 
 ## Self-Evaluation Checklist
 
-Before delivering the spec, verify:
+Use these prompts to inspect applicable sections under the skill's self-review
+requirements; they do not require adding irrelevant template sections:
 
 - [ ] Capability breadth matches the approved product complexity without count-driven filler
 - [ ] Every feature has at least one user story with a value clause
@@ -98,5 +103,5 @@ Before delivering the spec, verify:
 - [ ] AI integration was explicitly considered (even if conclusion is "not applicable")
 - [ ] Dependency/value grouping follows real ordering constraints, not arbitrary stages
 - [ ] No implementation details leaked into feature descriptions
-- [ ] Visual design direction references concrete existing products
-- [ ] Exclusions section is not needed (Planner defines what IS in scope; contract defines what is NOT)
+- [ ] Visual design direction is concrete when relevant to the product
+- [ ] Approved constraints and exclusions are explicit and consistent with scope

@@ -4,15 +4,18 @@
 
 For full specifications see:
 
-- Frontmatter fields: `references/frontmatter-spec.md`
-- Description writing & examples: `references/description-examples.md`
-- Folder structure rules: `references/skill-structure.md`
+- [Frontmatter fields](frontmatter-spec.md)
+- [Description writing and examples](description-examples.md)
+- [Folder structure rules](skill-structure.md)
 
 ---
 
 ## Trigger tuning
 
 ### Under-triggering (skill is not loaded)
+
+First check the [invocation controls](frontmatter-spec.md#invocation-control-matrix).
+Manual-only skills are not expected to auto-load; preserve their selected mode.
 
 Symptoms:
 - The skill is not auto-loaded even when the user makes a related request.
@@ -56,5 +59,8 @@ Automation only checks form. The items below need human judgment.
 
 ### Structure
 
-- [ ] All `references/` paths point to real files.
+- [ ] Links inside reference documents resolve from their containing directory;
+      audit these separately because the validator scans SKILL.md only.
+- [ ] Bundled references are reachable from the entry point, with load conditions;
+      examples and historical paths are clearly labeled.
 - [ ] If body exceeds 500 lines, identify content to split into `references/`.

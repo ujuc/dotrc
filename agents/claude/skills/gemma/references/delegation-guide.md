@@ -7,14 +7,16 @@ local Ollama-backed Gemma model through `scripts/query.sh`.
 
 Good fits:
 
-- Long-document or large-log summarization
+- Long-document or large-log summarization within the selected model's context limit
 - Bulk translation
 - Simple classification
-- First drafts where structure matters more than judgment
+- Notes, outlines, or structured JSON drafts where structure matters more than judgment
 - Sensitive text that should stay on the configured Ollama host
 
-Keep hard reasoning, code review, architecture, conversation-dependent work,
-and final judgment on Claude.
+Keep high-difficulty math or reasoning, large-codebase navigation, code review,
+architecture, work requiring conversation or tool context, and final judgment
+on Claude. Follow [the skill's Bulk read restrictions](../SKILL.md#bulk-read-large-file-delegation)
+for large-file delegation.
 
 ## Calling Convention
 

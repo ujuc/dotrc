@@ -1,7 +1,7 @@
 # Skill Design Principles
 
 > Seven design defaults, subject to explicit user/repository requirements and
-> the authority, scope and evidence rules in quality-criteria.md.
+> the authority, scope and evidence rules in [quality criteria](quality-criteria.md).
 
 ---
 
@@ -52,16 +52,19 @@ Match the specificity of instructions to the nature of the task.
 
 Split information into 3 tiers. Agents load only what they need.
 
-### Tier 1: Metadata (always loaded)
+### Tier 1: Metadata (discovery)
 
 - Frontmatter fields: `name`, `description`, `disable-model-invocation`, `user-invocable`
 - Used by the system for trigger detection and invocation control
+- Loading depends on invocation control; see the
+  [frontmatter matrix](frontmatter-spec.md#invocation-control-matrix).
 - Target: ~100 words or fewer
 
 ### Tier 2: SKILL.md body (loaded on trigger)
 
 - Core workflow and execution instructions
-- Hard limit: **5,000 words / 500 lines**
+- Local authoring budget: **500 lines**, with a target of at most **5,000 words**.
+  The validator warns above 500 lines; the authoring eval treats it as failure.
 - Exceed this? Move content to Tier 3
 
 ### Tier 3: Bundled resources (loaded on demand)

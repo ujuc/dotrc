@@ -1,46 +1,22 @@
-# Sprint Contract Template
+# Sprint Contract Criteria Guide
 
-## Standard Format
-
-```markdown
-# Sprint Contract — [Sprint Name]
-
-## Sprint Goal
-[One sentence: what value does this sprint deliver to the user?]
-
-## Implementation Scope
-1. [Feature Name] — [What it does in 1 sentence]
-2. [Feature Name] — [What it does in 1 sentence]
-...
-
-## Verification Criteria
-
-| # | Criterion | Expected Behavior | Test Method |
-|---|-----------|-------------------|-------------|
-| 1 | [Subject + Verb + Expected Result] | [Observable outcome] | [Manual test / API call / UI interaction] |
-| 2 | ... | ... | ... |
-
-## Exclusions
-- [Item explicitly NOT included in this sprint]
-- [Item deferred to future sprint]
-
-## Negotiation History
-- Draft 1: [date] — [N] criteria proposed, [M] rejected
-- Draft 2: [date] — [N] criteria revised, [M] rejected
-- Final: [date] — [N] criteria agreed
-```
+Use this guide when drafting or repairing acceptance criteria. The canonical
+contract template and audit-file formats live in
+[file-format.md](file-format.md); do not maintain a second format here. For a
+complete draft → review → final example, read
+[negotiation-example.md](negotiation-example.md).
 
 ## Criteria Writing Rule
 
 Every criterion MUST follow this pattern:
 
-**Subject + Verb + Expected Result + Verification Method**
+**Subject + Verb + Observable Result + Verification Method**
 
 | Component | Description | Example |
 |-----------|-------------|---------|
 | Subject | The feature or UI element being tested | "Rectangle fill tool" |
 | Verb | The action the user performs | "allows click-drag" |
-| Expected Result | The observable outcome | "to fill rectangular area with selected tile" |
+| Observable Result | The observable outcome | "to fill rectangular area with selected tile" |
 | Verification Method | How to confirm it works | "Manual: select tile, click-drag rectangle, verify all cells filled" |
 
 ## Good vs Bad Criteria Examples
@@ -55,15 +31,18 @@ Every criterion MUST follow this pattern:
 | "The API is RESTful" | Architectural constraint, not a testable criterion |
 | "Code is clean and well-structured" | Code quality is not externally testable |
 
-### Good Criteria (will be ACCEPTED by Evaluator)
+### Complete Criteria Examples
 
-| Criterion | Why It Passes |
+| Criterion | Test Method |
 |-----------|-------------|
-| "Rectangle fill tool allows click-drag to fill rectangular area with selected tile" | Specific subject, clear action, observable result |
-| "Map loads within 2 seconds for a 100x100 grid" | Measurable threshold, specific scenario |
-| "Clicking Delete on selected entity removes it from canvas and entity list" | Two observable outcomes, specific trigger |
-| "POST /api/maps returns 201 with map ID when given valid JSON body" | Exact endpoint, status code, response format |
-| "Undo reverses the last 10 actions in correct LIFO order" | Specific depth, defined ordering |
+| Rectangle fill tool allows click-drag to fill a rectangular area with the selected tile | Select a tile, drag from (1,1) to (5,5), and verify all 25 cells contain that tile |
+| A 100×100 map becomes interactive within 2 seconds after Open Map | Open the 100×100 fixture and compare the Open Map and first accepted interaction timestamps |
+| Clicking Delete on a selected entity removes it from canvas and entity list | Select fixture entity E, click Delete, and confirm E is absent from both views |
+| POST /api/maps returns 201 with a map ID for a valid documented request | Submit the valid request fixture and inspect response status and map ID; use this only when the endpoint is already approved scope |
+| Undo reverses the last 10 actions in LIFO order | Perform 10 distinct fixture actions, invoke Undo 10 times, and compare every intermediate state with the saved prior state |
+
+These illustrate the four-part quality rule. The Evaluator still checks each
+criterion against the approved scope and its actual verification method.
 
 ## Real Examples from Blog (Sprint 3 — 27 Criteria)
 
@@ -81,12 +60,10 @@ These examples show the level of specificity that made the Evaluator effective:
 2. **The finding references actual code** (fillRectangle, selectedEntityId, route ordering) — showing the Evaluator tested deeply
 3. **The failure is actionable** — the Generator knows exactly what to fix without ambiguity
 
-## Criteria Count Guidelines
+## Coverage Guidance
 
-| Sprint Complexity | Suggested Criteria Count | Rationale |
-|-------------------|-------------------------|-----------|
-| Small (1-3 features) | 8-12 | Core behaviors + edge cases |
-| Medium (4-5 features) | 15-25 | Feature interactions matter |
-| Large (6+ features) | 25-40 | Broad behavior and interaction coverage |
-
-Fewer than eight criteria usually leaves behavior gaps. More than 40 suggests splitting the sprint.
+Choose criterion count from actual sprint complexity, never a fixed minimum.
+Cover approved core behavior, relevant edge cases, and feature interactions.
+Do not invent behavior to fill a quota. If the sprint boundary is unclear,
+follow the escalation rule in [the skill](../SKILL.md) before drafting more
+criteria.

@@ -34,18 +34,21 @@ If `$ARGUMENTS` is empty, ask the user via AskUserQuestion which mode and which 
 
 ---
 
-## Design principles
+## Reference routing
 
-Principles that guide every step. See `references/design-principles.md` for the full version.
+Load references when their condition applies; do not preload the directory.
+Paths in this body resolve from this skill directory. Links inside a reference
+resolve from that reference's directory.
 
-1. **Concise is key — aggressively cut what the model already knows.** The context window is shared, and a skill earns its tokens only by supplying what the model cannot derive from training or from reading the code. Restating model-known conventions, generic best practices, or standard tool behavior is pure overhead — telling the model what it already knows changes nothing. Preserve explicit project requirements; prune generic defaults when unnecessary.
-2. **Match degrees of freedom to task fragility** (low / medium / high specificity).
-3. **Progressive disclosure**: split content across three tiers (metadata → body → bundled resources).
-4. **Use subagents** wherever they protect the main context or unlock parallel work. See `references/subagent-guidelines.md` for the decision criteria.
-5. **Create a skill only for reusable, non-obvious behavior.** Put project-specific
-   conventions in project instructions and automate mechanical constraints.
-
----
+| When | Reference |
+| --- | --- |
+| Resolving authority, scope or evidence | [Quality criteria](references/quality-criteria.md) |
+| Choosing workload or delegation | [Model selection](references/model-selection.md), [subagent guidelines](references/subagent-guidelines.md) |
+| Designing or restructuring | [Design principles](references/design-principles.md), [skill types](references/skill-types.md), [patterns](references/patterns.md) |
+| Scaffolding or writing metadata | [Skill structure](references/skill-structure.md), [frontmatter spec](references/frontmatter-spec.md), [description examples](references/description-examples.md) |
+| Defining output or injecting context | [Output patterns](references/output-patterns.md), [dynamic context](references/dynamic-context.md) |
+| Reviewing an update | [Redundancy audit](references/redundancy-check.md), [review checklist](references/review-checklist.md), [eval guide](references/eval-guide.md) |
+| Distributing a completed skill | [Distribution guide](references/distribution-guide.md) |
 
 ## Language policy
 
@@ -207,40 +210,17 @@ Use `references/frontmatter-spec.md` together with `references/description-examp
 
 ### Procedure
 
-1. Set `name` (**required**): same as folder, kebab-case.
-2. Write `description` (**required**) using the **WHAT + WHEN** formula:
-   - WHAT: the minimum capability label needed for cross-harness discovery.
-   - WHEN: when it should trigger (from Step 1's trigger phrases).
-   - Do not summarize the workflow; agents may follow metadata instead of
-     loading the body. Keep process details in the body.
-   - If omitted, the first paragraph of the markdown body is used.
-3. Set `group` (**required** — local extension): one of the 8 slugs in
-   `references/frontmatter-spec.md` → `group`. Never guess — confirm with the
-   user when the placement is unclear.
-4. Decide optional fields by category:
+1. Set non-empty `name`, `description`, and `group`. Match `name` to the folder;
+   use the selected catalog group, asking only if placement remains unclear.
+2. Write a concise WHAT + WHEN description using the selected trigger phrases.
+   Keep workflow details in the body, not discovery metadata.
+3. Select optional fields from the frontmatter spec for the intended host and
+   distribution path. Use manual invocation for destructive/expensive skills
+   and hide background knowledge from the user menu where appropriate.
+4. Keep workload guidance in the body. Omit fixed `model` assignments unless the
+   user requests a host-supported override; tier labels are not native IDs.
 
-   **Invocation control:**
-   - `disable-model-invocation`: `true` for destructive or expensive skills.
-   - `user-invocable`: `false` for background-knowledge skills (hides from the `/` menu).
-
-   **Execution environment:**
-   - `model`: omit fixed frontmatter assignments. Put workload guidance in the
-     body (Step 4); an explicit user-requested override must use a host-supported
-     identifier. Tier labels and example family names are not native model IDs.
-   - `effort`: set when a different effort level than the session default is needed (`low`, `medium`, `high`, `max`).
-   - `context`: `fork` to run in an isolated subagent context.
-   - `agent`: subagent type when `context: fork` is set (`Explore`, `Plan`, `general-purpose`, ...).
-
-   **Tools / permissions:**
-   - `allowed-tools`: tools usable without confirmation while the skill is active.
-   - `disallowed-tools`: tools removed from the pool while the skill is active (e.g. `AskUserQuestion` for autonomous loops).
-
-   **Other:**
-   - `argument-hint`: autocomplete hint (e.g., `[issue-number]`).
-   - `arguments`: named positional arguments for `$name` substitution.
-   - `hooks`: hooks scoped to the skill's lifecycle.
-
-Mechanical checks (kebab-case, length, reserved prefix, etc.) are handled by `validate-skill` in Step 5. Here, only check semantics: **does `description` contain both WHAT and WHEN?**
+Step 5 owns mechanical validation; review trigger accuracy here.
 
 ## Step 4: Write the instructions
 
@@ -278,8 +258,8 @@ Pick instruction specificity per the freedom guide in `references/design-princip
 
 ### Size limits
 
-- SKILL.md body: aim for ≤ 5,000 words.
-- Over the limit? Move detail into `references/` and link with relative paths.
+Keep the body within 500 lines and aim for at most 5,000 words. Move optional
+detail into references, keeping execution gates and load conditions inline.
 
 ### Post-write checks
 
@@ -306,7 +286,9 @@ If the target cannot be identified, ask via AskUserQuestion.
 Using the freshly verified `references/frontmatter-spec.md` from Step 0:
 
 1. **Missing required fields**: add non-empty `name` and `description`; update cannot complete without them.
-2. **Removed fields**: detect fields no longer in the official doc (e.g., `license`, `metadata`).
+2. **Field compatibility**: distinguish standard, host-specific, and local fields.
+   `license` and `metadata` remain standard fields; absence from one host table
+   does not mean they were removed.
 3. **New fields worth adopting**: suggest `context`, `agent`, `effort`, `allowed-tools` etc. when they would help.
 4. **`description` quality**: WHAT + WHEN coverage, trigger phrasing.
 5. **Structural health**: SKILL.md line count (500-line ceiling), whether content should be split into `references/`.
@@ -368,20 +350,10 @@ through the `waza-runner` agent — this skill never invokes the `waza` CLI
 directly.** When Waza is unavailable, use fresh-context subagent scenarios and
 report that the evidence was not persisted by Waza.
 
-1. Scaffold the eval suite via the runner:
-   ```
-   Agent("waza-runner", "scaffold <skill-name>")
-   ```
-   The runner writes `agents/claude/evals/<skill-name>/eval.yaml` with positive×2 + negative×1 placeholder tasks. An existing `eval.yaml` is preserved — the runner never overwrites.
-2. Refine the auto-generated tasks so triggers and expected outputs match reality. Replace the placeholder prompts and add at least one assertion that exercises the skill's specific behavior. (Human-in-the-loop step.)
-3. Dispatch the candidate using a distinct label from the baseline retained in
-   Step 1:
-   ```
-   Agent("waza-runner", "eval <skill-name> --label candidate")
-   ```
-4. The agent prints a Korean summary table and saves JSON under
-   `~/.claude/data/waza/results/`. Keep the available baseline and candidate
-   paths for `skill-improver`.
+Use the runner's [agent definition](../../agents/waza-runner.md) for scaffolding,
+supported commands, existing-suite preservation and result paths. Refine its
+placeholder tasks against actual triggers and outputs before evaluation. Retain
+baseline/candidate paths for `skill-improver` and use distinct run labels.
 
 ### Independent review (optional)
 
@@ -430,77 +402,27 @@ For team-wide distribution, see `references/distribution-guide.md` — repo chec
 
 ## Gotchas
 
-Skill-specific pitfalls that validator automation cannot catch. Update this section whenever a new edge case is discovered.
-
-1. **`disable-model-invocation: true` removes the description from model context.**
-   When this flag is set, the skill's `description` is not loaded into context, so its natural-language trigger phrases cannot auto-fire — the skill is effectively `/name`-only (or an explicit user request to run it). It also blocks subagent preloading and scheduled-task prompts (v2.1.196+). Keep trigger phrases in `description` anyway: they document intent and remain the record of when the skill is meant to fire.
-
-2. **Reference paths are relative to SKILL.md, not the invocation cwd.**
-   Resolve from the skill directory and normally keep references inside it.
-   Exception: bundled sibling skills may share `../generate-skills/references/model-selection.md`.
-   Preserve its `../` prefix; standalone distribution needs a local adaptation.
-
-3. **`context: fork` drops conversation history.**
-   The forked subagent sees only the SKILL.md body as its prompt — no prior messages, no user context. Any skill using `context: fork` must be self-sufficient (no "as discussed above" assumptions).
-
-4. **Step 0 `WebFetch` is a single point of staleness.**
-   When the Claude Code docs page is unreachable (network, rate limit, layout change), the workflow falls back to the local `references/frontmatter-spec.md`. The metadata block at the top of that file (`last_upstream_check`) is the only signal of how stale the spec might be.
-
-5. **Cargo first-build cost is user-visible.**
-   The first invocation of `scripts/validate-skill` or `scripts/init-skill` compiles the Rust workspace (~6–30s). Subsequent runs are near-instant. Users unfamiliar with Rust may interpret the initial pause as a hang — surface this in progress messages if the skill is invoked in an unattended context.
-
-6. **Superpowers is an adapted source, not the controller.** Read the version
-   pinned by `workflow-hooks contract`. Keep local Korean discovery metadata,
-   group registration, validator behavior, and managed-workflow ownership.
-
----
+- Manual-only skills retain Korean triggers as the discovery record, even though
+  Claude Code does not auto-load their descriptions.
+- Preserve `../` in bundled sibling reference links. Standalone distribution
+  needs a local adaptation; invocation CWD is never the reference base.
+- Forked skills must supply required context rather than assume conversation
+  history. Check host behavior in the frontmatter spec.
+- A failed upstream fetch preserves the cache and check date. Report cached
+  evidence as cached, not freshly verified.
+- The first Rust launcher call may compile; explain a noticeable startup pause.
+- Superpowers is a pinned source. Local validation, catalog and managed
+  workflow ownership remain with this repository.
 
 ## Eval Criteria
 
-Six binary checks that should pass for any skill produced (or updated) by this workflow. The `autoresearch` skill can reuse these when optimizing autonomously.
+Use these binary checks with the evidence statuses in the eval guide.
 
-```
-EVAL 1: Frontmatter completeness
-  Question: Does SKILL.md contain both `name` and `description` fields,
-            each non-empty?
-  Pass: Both present with content.
-  Fail: Either missing or empty string.
-
-EVAL 2: Reference path integrity
-  Question: Do all `references/<path>` mentions in SKILL.md resolve
-            to files that exist on disk?
-  Pass: Every referenced path is an existing file.
-  Fail: Any referenced path is broken.
-
-EVAL 3: Description structure
-  Question: Does `description` (or `description` + `when_to_use`
-            together) contain both WHAT (what the skill does) and
-            WHEN (concrete trigger phrases the user might say)?
-  Pass: Both elements clearly present, no pure-generic leaders
-        like "help" or "manage".
-  Fail: Missing WHAT or WHEN, or the phrasing is purely generic.
-
-EVAL 4: Body size budget
-  Question: Is the SKILL.md body (everything after the closing `---`)
-            at most 500 lines?
-  Pass: ≤ 500 lines.
-  Fail: > 500 lines — split detail into `references/` files.
-        (`validate-skill` reports overage as a warning, not an error;
-        this eval still counts it as a failure.)
-
-EVAL 5: Validator pass
-  Question: Does the `$DOTRCDIR`-anchored `scripts/validate-skill`
-            command from Step 5 exit with status 0 and no `✗` findings?
-  Pass: Exit 0, no error-severity lines.
-  Fail: Exit non-zero, or any `✗` finding.
-
-EVAL 6: Behavior evidence
-  Question: Does exact-input baseline/candidate evidence support the claimed
-            behavior or source-consistency change at its stated evidence level,
-            without violating the workflow contract?
-  Pass: Same-input evidence supports the claimed level; a reproduced source
-        contradiction is repaired without fabricating behavior failure;
-        mechanical changes have validator evidence.
-  Fail: Mock/static/simulation evidence is presented as live behavior, an
-        unsupported PASS is claimed, or managed ownership diverges.
-```
+| ID | PASS condition |
+| --- | --- |
+| 1 | `name`, `description`, and `group` are non-empty. |
+| 2 | Every concrete reference path in the body and loaded references resolves. |
+| 3 | `description` plus optional `when_to_use` covers WHAT and concrete WHEN triggers. |
+| 4 | Body is at most 500 lines; a validator size warning still fails this criterion. |
+| 5 | The Step 5 validator exits 0 with no error-severity findings. |
+| 6 | Matching-input evidence supports the claimed level and preserves the workflow contract; mechanical corrections use structural evidence, and source-conflict repairs do not invent behavioral failures. |

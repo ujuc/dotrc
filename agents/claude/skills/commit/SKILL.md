@@ -67,7 +67,7 @@ rules without editing this user-level skill.
 - **Body wrapped at 72 characters**, blank line separating subject and body.
 - **Verb declarative `-다` ending** on the subject — any verb stem, no trailing period.
 - Full rule set, type table, footer syntax, breaking-change notation, and
-  anti-patterns live in `references/gitmessage.md`. Consult it for any case
+  anti-patterns live in [the fallback message guide](references/gitmessage.md). Consult it for any case
   not covered by the one-line summary above.
 
 ## Procedure
@@ -188,7 +188,7 @@ Stage both files together in the same commit so the two views never diverge.
 
 For very large changes (`git diff --cached --shortstat` ≥ 500 lines, ≥ 10 files changed, or the user gives a hint like `큰 diff` / `요약해서 커밋` / `gemma로 정리`), the body draft can be pre-summarized by Gemma through local Ollama. The subject and final body remain Claude-authored and reviewed.
 
-Call pattern, fallback rules, and result usage follow `references/gemma-delegation.md`.
+Call pattern, fallback rules, and result usage follow [Gemma delegation](references/gemma-delegation.md).
 
 ## Humanizer pass (optional)
 

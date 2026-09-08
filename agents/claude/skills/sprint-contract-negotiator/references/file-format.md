@@ -97,7 +97,7 @@ Written by the Generator on full acceptance. Final, stable form.
 
 Rules:
 
-- `contract.md` is immutable once written. A changed scope requires preserving the current workspace and starting a new sprint workspace; never rewrite the existing contract in place.
+- `contract.md` is immutable once written. A changed scope returns to negotiation only after the user finishes and archives the active workflow or explicitly abandons it. Start the replacement negotiation in canonical `.sprint/`; never rewrite the active contract or create an alternate workspace.
 - Negotiation History is the audit trail: every round's counts are reported, even if zero criteria changed.
 
 ## `escalation.md`
@@ -108,7 +108,7 @@ Written by either role when an early-escalation trigger fires.
 # Sprint Negotiation Escalated — [Sprint Name]
 
 ## Trigger
-[Which trigger fired — repeated rejection, > 50% rejection rate, or insufficient criteria]
+[Which trigger fired — repeated rejection, > 50% rejection rate after round 2, unclear sprint boundary, or unresolved rejection after review 3]
 
 ## Unresolved Criteria
 | # | Criterion (current draft) | Last Reject Reason |
@@ -123,4 +123,4 @@ Written by either role when an early-escalation trigger fires.
 Rules:
 
 - The escalation file blocks further auto-negotiation. The skill returns control to the user and waits.
-- If escalation occurs before review 3, resume at `contract-draft-{n+1}.md` and cite the user's resolution. If review 3 triggered escalation, preserve/archive the workspace and start a fresh workspace at draft 1; draft 4 is forbidden.
+- If escalation occurs before review 3, resume at `contract-draft-{n+1}.md` and cite the user's resolution. If review 3 triggered escalation, stop until the user resolves the active workflow through archive or explicit abandonment. Any replacement negotiation starts at draft 1 in canonical `.sprint/`; alternate workspaces and draft 4 are forbidden.

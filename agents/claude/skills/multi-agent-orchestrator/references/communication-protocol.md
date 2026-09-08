@@ -23,15 +23,30 @@ Implementation verification, blocker, debug, implementation-flag, plan baseline,
 
 ## Workflow Sources
 
-Every managed plan contains this exact section:
+Every managed plan contains `## Workflow Sources`. Use exact canonical
+backticked paths for present sources, or the plain value `None` for absent ones.
+For example, architectural work with material research uses:
 
 ```markdown
 ## Workflow Sources
-- Product Spec: `spec.md` or `None (bounded work)`
+- Product Spec: `spec.md`
 - Sprint Contract: `.sprint/contract.md`
 - Research:
-  - `.research/research-{topic}.md` or `None`
+  - `.research/research-{topic}.md`
 ```
+
+Bounded work without material research uses:
+
+```markdown
+## Workflow Sources
+- Product Spec: None
+- Sprint Contract: `.sprint/contract.md`
+- Research: None
+```
+
+Use `- Sprint Contract: None` only when no active contract exists. Never include
+alternatives or explanatory prose in field values, or put `None` in a research
+list. The topic placeholder above must be replaced with an existing source path.
 
 `annotate-plan` owns this section. Archive rejects malformed, non-canonical, missing, or unsafe source paths. Legacy `## Research Sources` remains readable only for pre-contract plans; new plans never emit it.
 

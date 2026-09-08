@@ -51,7 +51,7 @@ Do not inflate spike or bounded work merely to create an artifact.
 4. Present the proposed design in sections appropriate to its complexity: target users, value, capabilities, user-visible behavior, constraints, conceptual data, design direction, exclusions, and dependency ordering.
 5. Obtain one explicit approval for the complete design before writing `spec.md`.
 6. Write only the contract-configured path using [references/spec-template.md](references/spec-template.md) as structure, trimming irrelevant sections rather than filling them with boilerplate.
-7. Self-review before delivery:
+7. Self-review with [grading criteria](references/grading-criteria.md) before delivery:
    - no placeholders or unresolved template text;
    - no contradictory behavior or exclusions;
    - scope is decomposed enough for contract negotiation;

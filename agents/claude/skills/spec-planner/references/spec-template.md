@@ -1,6 +1,8 @@
 # Spec Template
 
 Based on the "RetroForge" spec structure from Anthropic's harness design blog.
+Use this structure only for an approved architectural request. Trim sections
+that do not apply; preserve approved constraints and exclusions where relevant.
 
 ## Standard Format
 
@@ -43,7 +45,7 @@ User Stories:
 - [Entity A] has many [Entity B]
 - [Entity C] belongs to [Entity A] and references [Entity B]
 
-Note: This is a conceptual model. The Generator decides schema details.
+Note: This is a conceptual model. Planning and implementation own schema details.
 
 ## Visual Design Direction
 
@@ -65,6 +67,7 @@ Example: "Aseprite for the tool palette density, Figma for the collaboration UX,
 ## AI Integration Opportunities
 - [Opportunity 1]: [How AI adds value to this feature]
 - [Opportunity 2]: [How AI adds value to this feature]
+[If AI adds no specific user value, state why it is not applicable instead.]
 
 ## Dependency & Value Ordering
 
@@ -102,9 +105,9 @@ For the blog's "RetroForge" tile map editor, the spec included:
 15. Real-time animation preview
 
 **Example dependency grouping**:
-- Sprint 1: Features 1-4 (core editing loop)
-- Sprint 2: Features 5-8 (creation workflows)
-- Sprint 3: Features 9-12 (power user features)
-- Sprint 4: Features 13-15 (polish and preview)
+- Capability group 1: Features 1-4 (core editing loop)
+- Capability group 2: Features 5-8 (creation workflows)
+- Capability group 3: Features 9-12 (power user features)
+- Capability group 4: Features 13-15 (polish and preview)
 
 Note how the example's size follows its approved product direction. Smaller architectural products can have fewer capabilities; scope fit and clarity matter more than count. The spec remains at product level without prescribing rendering technology, state libraries, or file schemas.

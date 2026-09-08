@@ -9,7 +9,7 @@
 Scales (1-7, 1-10) compound variability and give unreliable results across runs.
 Binary outcomes apply to checks actually evaluated with adequate evidence.
 Missing required evidence is UNVERIFIED; inapplicable checks are SKIP. Neither
-is a passing result. Report evidence levels from quality-criteria.md separately.
+is a passing result. Report [evidence levels](quality-criteria.md#evidence-and-completion) separately.
 
 ---
 

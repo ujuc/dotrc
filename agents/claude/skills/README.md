@@ -90,6 +90,11 @@ Superpowers 6.3.0의 brainstorming·writing-plans·writing-skills 원칙은 공�
 
 각 스킬은 `<skill>/SKILL.md` 패턴이며 선택적으로 `references/`, `scripts/`, `tools/` 디렉토리를 둔다. 전체 frontmatter 스펙은 [`generate-skills/references/frontmatter-spec.md`](generate-skills/references/frontmatter-spec.md).
 
+`SKILL.md`에는 실행 순서·필수 조건과 참조 문서의 로딩 시점을 두고, 상세 기준·
+템플릿·예시는 `references/`에서 관리한다. Markdown 링크는 각 문서 위치를
+기준으로 해석한다. 여러 스킬이 공유하는 지침은 소유 스킬의 reference를 직접
+연결한다. 본문뿐 아니라 reference 내부 링크도 확인한다.
+
 신규 스킬 추가 시 frontmatter에 **반드시** `group: <slug>` 필드를 둔다 — 위 8개 슬러그 중 선택. 누락하거나 목록 밖 값이면 `validate-skill`이 실패한다 (`generate-skills/tools/skill-core/src/rules.rs::ALLOWED_GROUPS`).
 
 ## References

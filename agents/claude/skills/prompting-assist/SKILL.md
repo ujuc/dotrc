@@ -101,8 +101,8 @@ Pick the proposal format by change magnitude:
 - **Small fix** (≤ 3 items): per-section diff
   ```
   Before: "Make it better"
-  After:  "Refactor the loop to use parallel tool calls (see Parallel tool-call prompt)."
-  Why:    Clarity & specificity (§Stage 3), Tool use (§parallel)
+  After:  "Run independent tool calls in parallel; keep dependent calls sequential."
+  Why:    Stage 3: Clarity & specificity; Tool use & agentic
   ```
 - **Full rewrite** (multiple failures): the improved prompt in full + a bullet list of key changes
 
@@ -133,7 +133,7 @@ Close with a one-line checklist coverage report: "10개 범주 중 7개 합격, 
 
 3. **Never edit the prompt in place without consent.** `Edit` is in `allowed-tools` for cases where the prompt lives in a file the user asked to be improved. Always show the proposal first, then apply the edit only after explicit confirmation.
 
-4. **Model-version drift.** Successive Claude generations differ enough (extended thinking defaults, parallel tool-call norms, effort tuning) that a checklist pass tuned for one generation can be a near-fail for another. When unknown, default to the latest available model and state the assumption.
+4. **Model-version drift.** Successive Claude generations differ enough (extended thinking defaults, parallel tool-call norms, effort tuning) that a checklist pass tuned for one generation can be a near-fail for another. When the target model is unknown, use current general Claude guidance and state the assumption without inventing an exact model version, as in Stage 1.
 
 ## Eval Criteria
 

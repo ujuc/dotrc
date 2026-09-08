@@ -109,11 +109,11 @@ After writing the artifacts, return these four briefly to the user:
 
 ### Phase A — Detection
 
-Call `humanize-detector` with absolute `input_path`, `taxonomy_path`, and `output_path` plus `run_id`, `genre_hint`, `min_severity`, and `include_document_level: true`. It writes `02_detection.json`.
+Call `humanize-detector` with absolute `input_path`, `taxonomy_path`, and `output_path` plus `run_id`, `genre_hint`, `min_severity`, and `include_document_level: true`. Resolve `taxonomy_path` to [the Korean taxonomy](references/taxonomy-ko.md). It writes `02_detection.json`.
 
 ### Phase B — Rewrite (up to 3 loops)
 
-Call `humanize-rewriter` with absolute `original_path`, `source_path`, `detection_path`, `playbook_path`, `rewrite_path`, and `diff_path`. `original_path` is always `01_input.txt`; round 1 also uses it as source, while later rounds use the prior candidate as source and receive the current review path. Use matching versions: `03_rewrite.md` + `03_rewrite_diff.json`, then `_v2`, then `_v3`. Change rate is always final candidate versus `original_path`.
+Call `humanize-rewriter` with absolute `original_path`, `source_path`, `detection_path`, `playbook_path`, `rewrite_path`, and `diff_path`. Resolve `playbook_path` to [the Korean playbook](references/playbook-ko.md). `original_path` is always `01_input.txt`; round 1 also uses it as source, while later rounds use the prior candidate as source and receive the current review path. Use matching versions: `03_rewrite.md` + `03_rewrite_diff.json`, then `_v2`, then `_v3`. Change rate is always final candidate versus `original_path`.
 
 ### Phase C — Parallel verification (agent team)
 
@@ -248,28 +248,19 @@ Genre changes the application bar. Decide in this order:
 | **코드 주석** | Brevity first. Remove unnecessary explanation | X |
 | **SNS/캐주얼** | Remove excess formality when the source is casual | Match source voice only |
 
-## Pattern catalog reference
+## References
 
 Read by language and mode:
 
 | Mode | Lang | Catalog |
 |---|---|---|
-| Fast | ko | `references/quick-rules.md` (loaded directly by the monolith) |
-| Fast | en | `references/patterns-en.md` + `references/patterns-common.md` |
-| Fast | mixed | the English catalogs above + `references/patterns-ko.md` |
-| Strict | ko | `references/taxonomy-ko.md` (SSOT, loaded by the detector) + `references/playbook-ko.md` (prescriptions, loaded by the rewriter) |
+| Fast | ko | [Quick rules](references/quick-rules.md): S1·S2 core, 6-item self-check, and grades; loaded directly by the monolith |
+| Fast | en | [English catalog](references/patterns-en.md) (E1–E19) + [common patterns](references/patterns-common.md) (C1–C6) |
+| Fast | mixed | The English/common catalogs above + [Korean fast catalog](references/patterns-ko.md) (K1–K19) |
+| Strict | ko | [Korean taxonomy](references/taxonomy-ko.md): SSOT, 10 categories × 40+ patterns, loaded by the detector; [Korean playbook](references/playbook-ko.md): per-category prescriptions, loaded by the rewriter |
 
 `patterns-ko.md` has a K↔A-J mapping table at the top for cross-referencing IDs between the
 fast and strict tracks.
-
-## References
-
-- Korean fast rulebook: `references/quick-rules.md` (S1·S2 core + 6-item self-check + grade criteria)
-- Korean strict SSOT: `references/taxonomy-ko.md` (10 categories × 40+ patterns)
-- Korean strict prescriptions: `references/playbook-ko.md` (per-category replacement recipes)
-- Korean fast catalog: `references/patterns-ko.md` (K1–K19 + mapping table)
-- English fast catalog: `references/patterns-en.md` (E1–E19)
-- Common patterns: `references/patterns-common.md` (C1–C6)
 
 ## Sub-agents (used by both strict and fast)
 

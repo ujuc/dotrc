@@ -46,9 +46,15 @@ my-skill/
 Hold detailed reference docs that SKILL.md links to.
 
 - Checklists, specs, example collections, ...
-- **Required** when SKILL.md body exceeds 5,000 words.
-- SKILL.md links via relative paths: `references/api-guide.md`.
-- If a skill depends on a file outside the skill tree (project-root doc, another submodule), copy it into `references/` so the skill is self-contained.
+- Keep the body within 500 lines and aim for at most 5,000 words; move detailed
+  rules and examples here before the entry point exceeds that budget.
+- Link each resource from SKILL.md with a load condition. Resolve Markdown links
+  from the containing document: `references/api-guide.md` in SKILL.md, but
+  `api-guide.md` in another reference in the same directory.
+- Bundled sibling skills may link to one authoritative shared reference, such
+  as the model selection guide owned by this skill. Preserve the relative path
+  instead of copying shared policy. Standalone distribution needs an authorized
+  local adaptation and an explicit source; do not copy project/runtime state.
 
 ### `scripts/`
 
@@ -69,7 +75,8 @@ Hold images, diagrams, PDFs, and other binary/media files.
 
 ## Progressive disclosure
 
-Three-tier content model (metadata → SKILL.md body → bundled resources). The canonical explanation lives in `design-principles.md` §3; don't restate it here — see that file for tier boundaries and size limits.
+See [progressive disclosure](design-principles.md#3-progressive-disclosure) for
+metadata, entry-point and bundled-resource boundaries.
 
 ---
 

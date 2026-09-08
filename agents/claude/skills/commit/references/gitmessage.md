@@ -1,8 +1,9 @@
 # Git Commit Message Guide
 
-Single source of truth for commit rules used by the `commit` skill.
-When this file changes, also update `~/.config/dotrc/gitmessage`
-(the global `commit.template`) so manual edits stay in sync.
+User-level fallback for the [commit skill](../SKILL.md). Project instructions,
+the repository's `gitmessage`, and commit hooks take precedence. Keep this
+reference aligned with the dotrc sources during authorized maintenance;
+changing the global `gitmessage` requires the repository's approval step.
 
 ## Sources
 

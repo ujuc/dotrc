@@ -8,7 +8,7 @@
 
 `description` must include two things:
 
-1. **WHAT**: what the skill does.
+1. **WHAT**: the minimum capability label, without an internal workflow summary.
 2. **WHEN**: in what situations / requests it should be used.
 
 ```
@@ -39,7 +39,7 @@ description: >-
 
 ```yaml
 description: >-
-  Runs TDD workflow: write failing test, implement, refactor.
+  Applies test-driven development.
   Use when implementing features, fixing bugs, or when user mentions
   "TDD", "test first", or "red-green-refactor".
 ```
@@ -63,7 +63,7 @@ description: >-
 ```yaml
 description: >-
   CLAUDE.md 및 AGENTS.md 파일을 가이드 원칙에 따라 생성한다.
-  프로젝트 분석, 인터뷰, 생성, 검증의 4단계 워크플로우를 수행한다.
+  CLAUDE.md 작성, AGENTS.md 생성, 에이전트 문서 정리 요청 시 사용한다.
 ```
 
 ---
@@ -124,10 +124,12 @@ description: >-
 
 ## Length tips
 
-- **Hard max**: 1,536 characters — `description` + `when_to_use` combined (truncated above this).
+- **Agent Skills limit**: 1,024 characters for `description` alone.
+- **Claude Code listing cap**: 1,536 characters for `description` plus
+  `when_to_use`; a separate truncation limit, not the standard's field limit.
 - **Recommended**: 100–300 characters (just the essentials).
 - Drop empty modifiers: "sophisticated", "comprehensive", "advanced", ...
 - Front-load concrete trigger phrases.
 - Use YAML folded scalar (`>-`) for readability when the description is multi-line.
 
-> For trigger over- and under-trigger remediation, see the "Trigger tuning" section in `references/review-checklist.md`.
+> For trigger remediation, see [Trigger tuning](review-checklist.md#trigger-tuning).

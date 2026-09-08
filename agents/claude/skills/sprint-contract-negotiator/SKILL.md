@@ -57,7 +57,10 @@ It does not claim to dispatch independent agents. Files are the audit trail and 
   contract.md            # final immutable agreement
 ```
 
-Formats are defined in [references/file-format.md](references/file-format.md), with examples in [references/negotiation-example.md](references/negotiation-example.md).
+Read [file formats](references/file-format.md) before writing negotiation files;
+it is the authoritative draft, review, final-contract, and escalation format.
+Use the [worked example](references/negotiation-example.md) when checking a
+complete round sequence.
 
 ## Negotiation
 
@@ -77,6 +80,9 @@ Every criterion must contain:
 > **Subject + Verb + Observable Result + Verification Method**
 
 The verification method must let a reviewer unfamiliar with the implementation decide PASS or FAIL. The recommended criterion count is based on actual sprint complexity, never a fixed minimum.
+
+When drafting or repairing criteria, load the
+[criterion examples and coverage guide](references/contract-template.md).
 
 ## Lifecycle Rules
 

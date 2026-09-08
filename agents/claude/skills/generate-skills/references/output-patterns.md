@@ -89,7 +89,7 @@ Good:
 
 Bad:
 - `Added login` — English, no -다 ending
-- `fix: 버그 수정` — no scope, content unclear
+- `fix: 버그 수정` — vague change, missing declarative ending
 - `feat(auth): 사용자가 소셜 계정으로 로그인할 수 있는 기능을 추가했습니다.` — too long, has period
 ~~~
 

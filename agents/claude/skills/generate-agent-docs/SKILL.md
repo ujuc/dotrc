@@ -199,7 +199,8 @@ Detect package/build/test/lint config, repository structure
 (monorepo/submodule), documentation/CI layout, and existing `.claude/rules/`
 in the target directory.
 
-- **Complex project** (any of: 3+ config file types, monorepo, submodules) →
+- Apply the [Stage 1 complexity criteria](references/stage1-analyzer.md#complexity-assessment).
+  **Complex project** →
   spawn 3 Explore agents in one message: config-explorer,
   structure-explorer, docs-explorer. Explore agents are **read-only** — each
   returns findings as its final message; collect from Agent tool results

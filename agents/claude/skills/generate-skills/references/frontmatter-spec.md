@@ -158,7 +158,10 @@ allowed-tools: Read, Grep, Bash(git status:*)
 ```
 
 - Accepts a space- or comma-separated string, or a YAML list — all three officially documented
-- **Turn-scoped, not skill-scoped.** The grant clears on the user's next message even though the skill content stays in context; re-invoking the skill re-applies it. For a session-wide grant use permission allow rules instead. (This is the one place where `allowed-tools` and `disallowed-tools` differ — the latter is scoped to the skill being active.)
+- **Turn-scoped, not session-scoped.** The grant clears on the user's next
+  message even though the skill content stays in context; re-invoking the skill
+  re-applies it. The `disallowed-tools` restriction also clears on the next
+  message. Use permission allow rules for a session-wide grant.
 - Does not restrict which tools are callable, only which skip per-use approval
 - Baseline permission settings still apply to tools not listed
 - `${CLAUDE_PROJECT_DIR}` substitution applies here too (v2.1.196+), so a rule like `Bash(${CLAUDE_PROJECT_DIR}/scripts/lint.sh *)` resolves to the same path the skill body uses. `${CLAUDE_SKILL_DIR}` (and `${CLAUDE_PLUGIN_ROOT}` / `${CLAUDE_PLUGIN_DATA}` in plugin skills) substitute here too — pairing the same variable in the body and in the rule lets a bundled script run without a prompt

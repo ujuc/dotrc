@@ -97,18 +97,9 @@ delegating skills continue through their primary-model fallback.
 
 ## When to use Gemma vs Claude
 
-Appropriate for:
-
-- Summarizing or classifying sensitive data locally
-- Multilingual translation
-- Long-document summarization within the selected model's context limit
-- Drafting notes, initial outlines, or structured JSON
-
-Better left to Claude:
-
-- High-difficulty math or reasoning
-- Large-codebase navigation
-- Tasks requiring the current conversation or tool context
+Use the [delegation guide](references/delegation-guide.md#when-to-delegate)
+to decide which text tasks fit the local model and which require Claude's
+judgment or tool context. The Bulk read restrictions above still apply.
 
 ## Error handling
 
@@ -120,7 +111,9 @@ Better left to Claude:
 
 ## References
 
-- `references/delegation-guide.md` — when to delegate to Gemma from Claude.
+- [Delegation guide](references/delegation-guide.md) — load when another skill
+  delegates to Gemma; owns task selection, calling conventions, fallback, and
+  result presentation.
 
 ## Eval Criteria
 
