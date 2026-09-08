@@ -85,6 +85,7 @@ claude/remote*
 **/.last-*
 **/*log*
 **/.ponytail*
+**/.system*
 
 ### Manual backups taken before editing config (e.g. settings.json.bak)
 *.bak
@@ -95,8 +96,13 @@ claude/remote*
 ### Entire agent runtime
 .entire/
 
-### Pi agent runtime
-pi/agent/bin
-pi/agent/sessions/**
-pi/agent/auth.json
-pi/agent/settings.json
+### Pi runtime — allow only the files we track under agent/, ignore the rest
+pi/agent/*
+!pi/agent/extensions
+
+### Codex runtime — allow only the files we track, ignore the rest
+codex/*
+!codex/AGENTS.md
+!codex/README.md
+!codex/hooks.json
+!codex/skills
