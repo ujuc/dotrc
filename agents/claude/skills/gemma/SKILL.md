@@ -20,12 +20,37 @@ All requests go through `scripts/query.sh`:
 bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "이 문단을 3줄로 요약해줘: ..."
 
 # Use another installed Ollama model for one call.
-GEMMA_MODEL=gemma4:4b bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "hello"
+GEMMA_MODEL=gemma4:e4b-mlx bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "hello"
 ```
 
 stdout contains only the model response. stderr starts with
 `info: backend=ollama model=<id>`. Label user-visible output with the reported
 model, for example `Gemma (gemma4:26b-mlx via Ollama):`.
+
+## Bulk read (large-file delegation)
+
+A `PreToolUse` hook (`scripts/shunt-hook.sh`, registered in `settings.json`)
+denies whole-file `Read` calls and bare `cat|head|tail|less|more` on files
+longer than `SHUNT_MIN_LINES` (default 350). Piped commands and reads with
+`offset`/`limit` pass through. Set `SHUNT_OFF=1` to bypass.
+
+When blocked, delegate *understanding* to the local worker and keep only the
+summary in context:
+
+```bash
+bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/bulk-read.sh" \
+  --question "Which methods touch the database?" --paths src/Service.java src/Handler.java
+```
+
+`bulk-read.sh` wraps each file in `<file path="...">` tags and calls the Ollama
+`/api/generate` endpoint directly with `num_ctx=32768`, `temperature=0.2` and
+the smaller `gemma4:e4b-mlx` by default (override with `GEMMA_MODEL`; `ollama
+run` adds ~50s per call and cannot set the context size). Follow-up questions re-send the same paths;
+nothing is cached, so the corpus never enters Claude's context.
+
+Do not delegate editing (summaries lack reliable line numbers: read the needed
+section with `offset`/`limit`), debugging, architecture decisions, or
+security-sensitive code.
 
 ## Setup (first run)
 

@@ -28,7 +28,7 @@ The default model is `gemma4:26b-mlx`. Override it only when the user asks for
 another installed Ollama model:
 
 ```bash
-GEMMA_MODEL=gemma4:4b bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "<prompt>"
+GEMMA_MODEL=gemma4:e4b-mlx bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/gemma/scripts/query.sh" "<prompt>"
 ```
 
 ### Passing Dynamic Input

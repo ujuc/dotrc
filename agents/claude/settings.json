@@ -4,7 +4,8 @@
   "skillListingBudgetFraction": 0.05,
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "CLAUDISH_MD_MODE": "sibling"
+    "CLAUDISH_MD_MODE": "sibling",
+    "SHUNT_MIN_LINES": "350"
   },
   "permissions": {
     "allow": [
@@ -87,6 +88,18 @@
             "type": "command",
             "command": "~/.local/bin/workflow-hooks hook",
             "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Read|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/skills/gemma/scripts/shunt-hook.sh",
+            "timeout": 10
           }
         ]
       }

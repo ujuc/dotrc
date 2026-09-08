@@ -8,6 +8,7 @@
 
 - Delegate only independent, context-heavy work; keep synthesis, decisions, and edits on the active model.
 - Use `Explore` for multi-file discovery and the local Ollama-backed `gemma` skill for text-only transforms; `gemma` has no remote fallback.
+- Files over `SHUNT_MIN_LINES` are blocked by the shunt hook: use `gemma` `bulk-read.sh` to understand them, then targeted `Read` with `offset`/`limit` to edit. Never delegate debugging, architecture, or security-sensitive code.
 - Reserve `Workflow` for large evals, compliance checks, cross-verification, or bulk triage; test a narrow slice and state the token budget first.
 
 ## Compaction
