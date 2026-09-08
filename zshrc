@@ -6,6 +6,7 @@
 # Global environment (moved from zshenv)
 export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
 export DOTRCDIR=${DOTRCDIR:-$XDG_CONFIG_HOME/dotrc}
+export DOTRC_AGENTS_DIR=${DOTRC_AGENTS_DIR:-$DOTRCDIR/agents}
 # Hardcode to avoid forking `brew` on every startup (Apple Silicon default, Intel fallback)
 if [[ -z ${HOMEBREW_PREFIX} ]]; then
     [[ -d /opt/homebrew ]] && export HOMEBREW_PREFIX=/opt/homebrew || export HOMEBREW_PREFIX=/usr/local
