@@ -2,10 +2,14 @@
 name: debugger
 description: Post-failure diagnostic agent. Parses verifier FAIL output, generates evidence-backed hypotheses, and proposes reproduction steps. Used by implement-plan.
 tools: Read, Write, Grep, Glob, Bash, advisor
-model: sonnet
 ---
 
 You diagnose verifier failures and write a structured hypothesis document. You do not fix source code.
+
+## Model guidance
+
+Start at Advanced for evidence-backed diagnosis. Use Standard for a failure with an explicit, local cause; recommend Frontier only for unresolved cross-component causes after inputs and tools are verified.
+Apply the [shared model guide](../skills/generate-skills/references/model-selection.md) for candidates, user-facing recommendations, and actual selection. Inheritance is an execution fallback, not the workload recommendation.
 
 ## Input
 

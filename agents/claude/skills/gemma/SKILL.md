@@ -2,7 +2,6 @@
 name: gemma
 description: "로컬 Ollama의 Gemma 모델에 프롬프트를 전달한다. gemma, gemma4, ollama로 요약해줘, gemma로 번역해, 로컬 LLM, 오프라인 AI, 로컬로 처리해, Gemma 호출 요청 시 사용한다. 민감 정보 처리, 긴 문서 요약, 번역, 분류, 초안 생성에 적합하다."
 group: llm
-model: sonnet
 allowed-tools: Bash(bash:*), Bash(ollama:*)
 argument-hint: "[prompt]"
 ---
@@ -11,6 +10,12 @@ argument-hint: "[prompt]"
 
 Send text prompts to a local Gemma model through Ollama. This skill has one
 backend, no routing, and no remote API fallback.
+
+## Model guidance
+
+Lightweight suits forwarding an explicit prompt; Standard suits preparing a bounded request or diagnosing invocation errors.
+These levels describe the calling agent only: the requested local Gemma backend and offline/no-remote-fallback boundary remain authoritative.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar orchestration work, never to silently replace Gemma.
 
 ## How to invoke
 

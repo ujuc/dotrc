@@ -3,7 +3,6 @@ name: spec-planner
 description: "요청의 복잡도를 분류하고, 아키텍처 수준 작업에만 승인된 제품 스펙을 spec.md로 작성한다."
 when_to_use: "스펙 작성, 요구사항 확장, spec-planner, 기획서 만들어줘, 제품 기획 시작, plan this app, expand this idea, create a product spec"
 group: planning
-model: opus
 allowed-tools: Read, Write, Glob, Grep, Bash
 ---
 
@@ -12,6 +11,12 @@ allowed-tools: Read, Write, Glob, Grep, Bash
 Classify a product request, clarify its intent, and write the canonical `spec.md` only when the work needs an architectural product specification. Define what to build and why; leave implementation choices to planning and execution stages.
 
 The design discipline here is adapted from Superpowers `brainstorming` at the version pinned in `workflow-hooks contract`. This skill does not invoke that workflow or create `docs/superpowers/specs/` state.
+
+## Model guidance
+
+Use Advanced for architectural scope and product tradeoffs; Standard suits classification of a clear, bounded request.
+Recommend Frontier for unresolved, interdependent requirements after Advanced analysis; model escalation does not settle missing user decisions.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## Contract Preflight
 

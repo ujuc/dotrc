@@ -3,13 +3,18 @@ name: qa-evaluator
 description: "Chrome 통합으로 실행 중인 웹앱을 실제 사용자처럼 탐색하여 버그, 기능 누락, UX 문제를 발견한다."
 when_to_use: "QA 테스트, 웹앱 테스트, qa-evaluator, 앱 검증해줘, test the running app, evaluate my build, find bugs 요청 시 사용한다. multi-agent-orchestrator의 Evaluator 단계에서도 호출된다."
 group: verify
-model: sonnet
 allowed-tools: Read Write Glob Grep Bash advisor ToolSearch mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__tabs_create_mcp mcp__claude-in-chrome__navigate mcp__claude-in-chrome__read_page mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__find mcp__claude-in-chrome__form_input mcp__claude-in-chrome__javascript_tool mcp__claude-in-chrome__read_console_messages mcp__claude-in-chrome__read_network_requests mcp__claude-in-chrome__resize_window mcp__claude-in-chrome__gif_creator
 ---
 
 # QA Evaluator
 
 Evaluate a running web application by browsing it like a real user. Discover bugs, missing features, and UX issues through hands-on exploration with Chrome integration.
+
+## Model guidance
+
+Use Standard for explicit acceptance flows; Advanced suits exploratory testing, multi-step state, and ambiguous severity decisions.
+Recommend Frontier when interdependent failures remain unexplained after Advanced review; every level still requires live browser evidence.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## Prerequisite: live Chrome access
 
@@ -149,13 +154,19 @@ round: <N>
 
 For managed output, include the exact feature, round, plan, acceptance contract, final verifier, URL, and per-criterion PASS/FAIL evidence. When running standalone, print only the report body and do not create a managed file.
 
-## Advisor Escalation
+## Independent Calibration
 
-This skill runs on sonnet by default. At the decision points below, call `advisor()` to borrow higher-tier reasoning:
+Use the model guidance above. Consult an available independent reviewer or advisor
+at the decision point below:
 
 - **Borderline severity**: when evidence clearly shows a defect but Critical vs Major classification is uncertain and would materially alter remediation order.
 
-How to call: invoke `advisor()` with no parameters. The full current conversation context (Chrome exploration results, issue list) is automatically forwarded to the higher-tier model. Use this as a calibration check against leniency bias — while preserving the evaluator's adversarial stance.
+Supply the exploration evidence, issue list and severity question explicitly;
+do not assume automatic context forwarding. Select another model only when
+supported, permitted and needed for the reasoning task. Use consultation to
+check leniency bias while preserving the evaluator's adversarial stance and
+verdict ownership. If unavailable, report skipped calibration and unresolved
+severity; self-review does not count as independent review.
 
 ## Gotchas
 

@@ -12,16 +12,21 @@ This file is the **reference** for callers and contributors.
 
 ## Role Matrix
 
-| Agent              | Calling skill       | Model  | Tools                                     | Writes code | Output path                       | Advisor |
+| Agent              | Calling skill       | Recommended profile | Tools                                     | Writes code | Output path                       | Advisor |
 |--------------------|---------------------|--------|-------------------------------------------|-------------|-----------------------------------|---------|
-| `reference-finder` | `annotate-plan`     | sonnet | Read, Glob, Grep, advisor                 | no          | `.plans/.partial/references.md`   | ≤1      |
-| `researcher`       | `deep-read` (×3)    | sonnet | Read, Glob, Grep, Bash, advisor           | no          | `.research/.partial/{role}.md`    | ≤1      |
-| `verifier`         | `implement-plan`    | haiku  | Read, Glob, Grep, Bash, advisor           | no          | `.plans/.verify-{item-slug}.md`   | emergency only |
-| `implementer`      | `implement-plan`    | sonnet | Read, Write, Edit, Glob, Grep, Bash, advisor | **yes**  | source files + `.plans/.blocker-{item-slug}.md` on failure | ≤1 (pre-blocker) |
-| `debugger`         | `implement-plan`    | sonnet | Read, Grep, Glob, Bash, advisor           | no          | `.plans/.debug-{item-slug}.md`    | ≤1      |
+| `reference-finder` | `annotate-plan`     | Standard | Read, Glob, Grep, advisor                 | no          | `.plans/.partial/references.md`   | ≤1      |
+| `researcher`       | `deep-read` (×3)    | Standard / Advanced | Read, Glob, Grep, Bash, advisor           | no          | `.research/.partial/{role}.md`    | ≤1      |
+| `verifier`         | `implement-plan`    | Lightweight / Standard | Read, Glob, Grep, Bash, advisor           | no          | `.plans/.verify-{item-slug}.md`   | emergency only |
+| `implementer`      | `implement-plan`    | Standard / Advanced | Read, Write, Edit, Glob, Grep, Bash, advisor | **yes**  | source files + `.plans/.blocker-{item-slug}.md` on failure | ≤1 (pre-blocker) |
+| `debugger`         | `implement-plan`    | Advanced | Read, Grep, Glob, Bash, advisor           | no          | `.plans/.debug-{item-slug}.md`    | ≤1      |
 
-Model selection: `haiku` for mechanical / high-volume parallel work, `sonnet`
-for anything that requires reasoning or synthesis.
+Model recommendations follow the [shared workload guide](../skills/generate-skills/references/model-selection.md).
+Each definition states its starting profile and escalation conditions. Resolve
+the current task's profile to a supported model while honoring explicit user
+choices and constraints. Profiles are recommendations, not native model IDs.
+State the recommendation when choosing a worker; distinguish it from an actual
+host-supported selection. Inheritance is a fallback, not proof of task fitness.
+Independent review requires a separate context, not necessarily a different model.
 
 Tool minimalism: each agent gets the smallest tool set that lets it do its
 job. `implementer` is the only one with `Write` / `Edit` for a reason.
@@ -102,7 +107,7 @@ budget is deliberately tight:
   before deep reading, before implementing).
 - Do NOT call advisor for deterministic / mechanical work. It is not a
   sanity check; it is a judgment aid.
-- The `verifier` is haiku-model and treats advisor as **emergency-only** —
+- The `verifier` treats advisor as **emergency-only** —
   see its SKILL-side policy for the narrow exception.
 - When advisor conflicts with tool output (files, test results), trust the
   tool output. You are allowed ONE reconcile call to surface the conflict
@@ -115,10 +120,10 @@ Some agents are not part of the planning pipeline above. They are stateless
 wrappers around external tools and are safe to share across multiple calling
 skills (the "one caller per agent" rule applies to pipeline workers only).
 
-| Agent             | Calling skills                | Model  | Tools                    | Writes code | Output                                                         | Advisor |
+| Agent             | Calling skills                | Recommended profile | Tools                    | Writes code | Output                                                         | Advisor |
 |-------------------|-------------------------------|--------|--------------------------|-------------|----------------------------------------------------------------|---------|
-| `waza-runner`     | `generate-skills`, explicit eval requests | sonnet | Bash, Read               | no          | stdout + optional `claude/evals/<skill>/` scaffold + result JSON | no      |
-| `skill-engineer`  | `skill-improver` (optional)   | sonnet | Read, Glob, Grep, advisor | no          | stdout (Korean report — trigger / overlap / model fitness)     | ≤1      |
+| `waza-runner`     | `generate-skills`, explicit eval requests | Standard | Bash, Read               | no          | stdout + optional `claude/evals/<skill>/` scaffold + result JSON | no      |
+| `skill-engineer`  | `skill-improver` (optional)   | Advanced | Read, Glob, Grep, advisor | no          | stdout (Korean report — trigger / overlap / model fitness)     | ≤1      |
 
 `waza-runner` is the single entry point for all waza operations. Callers
 dispatch with `scaffold <name>` to create a placeholder `eval.yaml` or
@@ -146,8 +151,9 @@ trigger|overlap|model|all]")`.
 2. `description` is one sentence in the definition's established language and names its caller or use case.
 3. `tools:` contains the minimum set. Do not copy `implementer`'s tool list
    by default.
-4. `model:` — `haiku` only if the work is mechanical and cost-sensitive;
-   otherwise `sonnet`.
+4. State the recommended workload profile and escalation conditions in the body.
+   Use the shared guide for candidates; any native model override must be supported
+   by the host and respect user choices. Omission is only an execution fallback.
 5. Decide advisor policy: `≤1`, `emergency only`, or `no advisor`.
 6. Document Input, Output, and any Failure Policy explicitly in the body.
 7. Add a row to the Role Matrix above and, if the agent produces a new

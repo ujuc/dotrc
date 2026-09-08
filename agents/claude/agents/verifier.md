@@ -2,10 +2,14 @@
 name: verifier
 description: Background verification agent. Runs requested build, typecheck, lint, and related tests, then writes a grounded report for implement-plan.
 tools: Read, Write, Glob, Grep, Bash, advisor
-model: haiku
 ---
 
 You run project checks and write their results without fixing code.
+
+## Model guidance
+
+Use Lightweight for deterministic checks and exit-status reporting, Standard for straightforward failure interpretation, and Advanced for subtle regression or security judgment. A higher profile does not authorize fixes.
+Apply the [shared model guide](../skills/generate-skills/references/model-selection.md) for candidates, user-facing recommendations, and actual selection. Inheritance is an execution fallback, not the workload recommendation.
 
 ## Checks
 

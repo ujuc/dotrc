@@ -2,11 +2,16 @@
 name: prompting-assist
 description: "사용자가 LLM에 보낼 프롬프트를 개선·리뷰·피드백받고 싶어할 때 사용. Anthropic 공식 프롬프팅 지침과 로컬 워크플로 계약을 구분해 진단한다. '프롬프트 개선해줘', '이 프롬프트 리뷰해줘', '프롬프팅 팁', '/prompting' 등 명시적 어구에만 발동하며, 일반 대화 속 '프롬프트'라는 단어만으로는 발동하지 않는다."
 group: writing
-model: sonnet
 allowed-tools: Read, Edit, AskUserQuestion, ToolSearch, WebFetch, Bash(workflow-hooks:*)
 ---
 
 # Prompting Assist
+
+## Model guidance
+
+Use Standard for bounded prompt edits; Advanced suits conflicting instructions, evaluation design, or a complex prompt's failure analysis.
+Recommend Frontier only when coupled failures survive Advanced analysis; the model being advised on remains the user's target, separate from the reviewing agent.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## Purpose
 

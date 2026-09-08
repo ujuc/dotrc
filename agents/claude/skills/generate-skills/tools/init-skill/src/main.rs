@@ -16,7 +16,7 @@ description: |
 group: {group}
 # Optional fields — uncomment and fill in as needed.
 # when_to_use: \"Trigger phrases and example utterances separated from description\"
-# model: opus                        # opus | sonnet | haiku
+# Omit fixed model assignments; add workload recommendations in the body below.
 # effort: high                       # low | medium | high | xhigh | max
 # disable-model-invocation: true     # for destructive / high-cost workflows
 # argument-hint: \"[target]\"
@@ -33,6 +33,17 @@ group: {group}
 TODO: One-line description of what this skill does.
 
 If $ARGUMENTS is provided, treat it as the target path / name. Otherwise, ask the user.
+
+## Model guidance
+
+TODO: Choose the default workload level and explain which tasks it fits.
+TODO: State concrete escalation conditions and cheaper mechanical phases.
+Use the shared model-selection guide when available, or adapt it for standalone
+distribution. Local recommendation examples: Lightweight (Luna / Haiku),
+Standard (Terra / Sonnet), Advanced (Sol / Opus), Frontier (Astra / Fable).
+These are workload suggestions, not proven cross-provider equivalence or model
+IDs. Resolve an available host model for delegation; if switching is unavailable,
+recommend the model without claiming a switch. Never put a tier in `model`.
 
 ## Step 1: TODO
 

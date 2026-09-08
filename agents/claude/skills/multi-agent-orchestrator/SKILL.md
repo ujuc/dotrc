@@ -3,7 +3,6 @@ name: multi-agent-orchestrator
 description: "canonical 스펙·계약·연구·계획·구현 스킬과 선택적 독립 평가를 하나의 장기 실행 파이프라인으로 조율한다."
 when_to_use: "멀티에이전트, 파이프라인 실행, multi-agent-orchestrator, 에이전트 오케스트레이션, full harness run, autonomous build session, plan and build this 요청 시 사용한다."
 group: build
-model: opus
 argument-hint: "[1-4 sentence prompt]"
 allowed-tools: Read Write Edit Glob Grep Bash Agent AskUserQuestion advisor
 ---
@@ -11,6 +10,12 @@ allowed-tools: Read Write Edit Glob Grep Bash Agent AskUserQuestion advisor
 # Multi-Agent Orchestrator
 
 Coordinate the canonical workflow writers and optional independent evaluators. The orchestrator owns sequencing, evaluator selection, synthesized evaluation, and handoff only. It never writes another skill's artifact or performs managed implementation itself.
+
+## Model guidance
+
+Use Advanced for coordination and evidence synthesis; Standard suits routine handoffs with settled contracts, and each worker follows its own role guidance.
+Recommend Frontier for long, ambiguous cross-stage decisions that remain unresolved after Advanced analysis.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## Canonical Pipeline
 

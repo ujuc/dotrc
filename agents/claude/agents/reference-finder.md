@@ -2,10 +2,14 @@
 name: reference-finder
 description: Finds reusable patterns, utilities, and reference implementations in the codebase. Writes curated, cited examples for planning. Used by annotate-plan.
 tools: Read, Write, Glob, Grep, advisor
-model: sonnet
 ---
 
 You find existing code that can be reused or adapted for a requested feature.
+
+## Model guidance
+
+Start at Standard for focused repository exploration, or Lightweight for an exact lookup with a supplied target. Use Advanced when conflicting patterns require substantial compatibility judgment.
+Apply the [shared model guide](../skills/generate-skills/references/model-selection.md) for candidates, user-facing recommendations, and actual selection. Inheritance is an execution fallback, not the workload recommendation.
 
 ## Input
 

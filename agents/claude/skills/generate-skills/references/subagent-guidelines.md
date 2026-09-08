@@ -20,6 +20,16 @@ Ask these 3 questions before spawning a subagent:
 
 ## Available Subagent Types
 
+The types and parameters below are Claude Code examples. Map each role to the
+active host's supported delegation API and tool access. Use `model-selection.md`
+to choose a workload level, then resolve an actually available model and tool
+capabilities. Lightweight suits a bounded inventory; Standard suits structural
+analysis and routine review; Advanced suits conflicting instructions or uncertain
+judgment. Frontier is for unresolved, broad decisions. These are recommendations,
+not equivalent benchmark ranks across providers. Never pass a tier label as a
+model ID. If model selection is unavailable, state the recommendation and actual
+inherited model when known; do not claim the recommendation changed the model.
+
 | Type | Strengths | Limitations |
 |------|-----------|-------------|
 | Explore | Fast codebase search, file pattern matching, keyword search | Cannot edit files or run arbitrary commands |
@@ -51,6 +61,8 @@ Report as a brief summary: skill count, similar skills (name + one-line purpose)
 
 **Agent parameters**:
 - `subagent_type`: `Explore`
+- Workload: **Lightweight** for a bounded inventory; **Standard** if similarities
+  require interpretation across several workflows.
 - `description`: "Survey existing skills"
 - `run_in_background`: `true` — the subagent runs independently; consume its summary only *after* AskUserQuestion returns and before starting Step 2.
 
@@ -76,6 +88,8 @@ Return a structural summary (not full content) that can inform SKILL.md drafting
 
 **Agent parameters**:
 - `subagent_type`: `Explore`
+- Workload: **Standard**; escalate to **Advanced** for conflicting role ownership
+  or policy dependencies.
 - `description`: "Analyze reference skill"
 - `run_in_background`: `false` (result needed before finalizing draft)
 
@@ -101,7 +115,10 @@ You did NOT write this skill. Review it independently using these criteria:
 4. Instructions: Are they specific and actionable? Error handling included?
 5. Size: SKILL.md under 500 lines / 5000 words?
 
-For any criterion where your PASS/FAIL call is low-confidence, call advisor() for an independent opus second opinion before finalizing.
+For any criterion where your PASS/FAIL call is low-confidence, seek a second
+independent opinion through an available advisor or fresh-context reviewer.
+Give that reviewer the relevant source evidence and the uncertain finding.
+If unavailable, report the uncertainty instead of inventing an independent pass.
 
 Report: PASS/FAIL per criterion, with specific issues for any FAIL.
 Do NOT fix issues — only report them.
@@ -109,8 +126,13 @@ Do NOT fix issues — only report them.
 
 **Agent parameters**:
 - `subagent_type`: `general-purpose`
-- `model`: `sonnet`
-- advisor: the reviewer calls `advisor()` (opus per settings `advisorModel`) for uncertain findings — a cross-model second opinion. advisor forwards only the reviewer's transcript, so the review stays blind.
+- Workload: **Standard** for routine structure review, **Advanced** for evidence
+  quality or workflow contracts, **Frontier** for unresolved broad tradeoffs.
+  Resolve available models using `model-selection.md`; independence comes from
+  a separate reviewer/context, not a provider alias or a higher tier.
+- Advisor: use the host's supported advisor/delegation equivalent for uncertain
+  findings. Share review evidence without the author's self-assessment; report
+  missing independent-review capability explicitly.
 - `description`: "Blind review generated skill"
 - `run_in_background`: `false` (must receive results before reporting to user)
 

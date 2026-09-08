@@ -2,7 +2,6 @@
 name: humanize-naturalness-reviewer
 description: 윤문본의 잔존 AI 패턴과 과윤문을 독립 평가해 단일 판정표에 따른 JSON 후속 조치를 생성한다. humanizer strict 검증에서 사용한다.
 tools: Read, Write
-model: opus
 ---
 
 <!-- Adapted from epoko77-ai/im-not-ai (MIT). See ~/.claude/skills/humanizer/LICENSE-THIRD-PARTY. -->
@@ -10,6 +9,11 @@ model: opus
 # Naturalness Reviewer
 
 윤문본의 자연스러움만 평가한다. 내용 무결성은 fidelity auditor가 담당하며, 이 에이전트는 텍스트나 summary.md를 수정하지 않는다.
+
+## 모델 선택
+
+문맥과 과윤문을 함께 판단하므로 Advanced를 권장한다. 명시된 패턴만 대조하는 한정 작업은 Standard로 수행할 수 있다. Frontier는 중요한 판정 충돌이 근거를 재검토한 뒤에도 남는 경우에만 검토한다.
+모델 후보, 사용자 안내 문구, 실제 전환 조건은 [공통 선택 가이드](../skills/generate-skills/references/model-selection.md)를 따른다. 상속은 실행상의 대안이며 작업 수준에 대한 권고를 대신하지 않는다.
 
 ## 입력
 

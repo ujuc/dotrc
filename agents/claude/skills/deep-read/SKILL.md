@@ -2,7 +2,6 @@
 name: deep-read
 description: "코드베이스 영역을 깊이 분석하여 구조화된 리서치 문서를 생성한다. 구조, 데이터 흐름, 리스크 분석을 위해 3개 병렬 researcher 에이전트를 디스패치한다. 코드 분석해줘, 깊이 읽어봐, deep-read, /deep-read 요청 시 사용한다."
 group: analysis
-model: sonnet
 argument-hint: "[target-path]"
 allowed-tools: Read, Write, Glob, Grep, Bash, Agent, advisor
 ---
@@ -10,6 +9,12 @@ allowed-tools: Read, Write, Glob, Grep, Bash, Agent, advisor
 # Deep Read — Codebase Research
 
 Deeply analyze a code area and produce a structured research document at `.research/research-{topic}.md`.
+
+## Model guidance
+
+Use Advanced for dataflow, risk, and synthesis; Standard suits a bounded structural survey with clear source boundaries.
+Recommend Frontier for unresolved cross-system behavior or conflicting evidence after Advanced analysis.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## Contract Preflight
 
@@ -92,14 +97,19 @@ Merge into `.research/research-{topic}.md`:
 - Delete `.research/.partial/` directory
 - Output: "`.research/research-{topic}.md` has been created. Please review it for accuracy before proceeding to planning."
 
-## Advisor Escalation
+## Independent Consultation
 
-Sonnet is the default. Call `advisor()` (no parameters — the full context forwards automatically) only at these decision points:
+Use the model guidance above. Consult an available independent reviewer or advisor
+only at these decision points:
 
 - **Pre-merge contradiction**: structure / dataflow / risk partials disagree on the same fact, or the Architecture Overview synthesis is ambiguous.
 - **Critical-severity risk**: risk-explorer flags `[Critical]` and you need a sanity check on how firmly to state it.
 
-Do not call advisor for routine Q&A or progress updates.
+Supply the conflicting evidence and review question explicitly. Select a
+different model only when supported, permitted and needed for the reasoning
+task. If consultation is unavailable, report the gap and unresolved evidence;
+self-review does not count as independent review. Skip consultation for routine
+Q&A or progress updates.
 
 ## Constraints
 - Observation and documentation only. No code modifications during merge. Per-agent rules are enforced by `~/.claude/agents/researcher.md`.

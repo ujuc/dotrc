@@ -3,7 +3,6 @@ name: implement-plan
 description: "canonical 구현 계획을 검증 중심으로 실행하고, 선택된 평가가 끝난 뒤 전체 워크플로 산출물을 안전하게 보관한다."
 when_to_use: "구현 시작, 플랜 실행해, implement-plan, 다 구현해, /implement-plan 요청 시 사용한다."
 group: build
-model: sonnet
 argument-hint: "[feature-name]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, AskUserQuestion
 ---
@@ -11,6 +10,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, AskUserQuestion
 # Implement Plan — Managed Execution Engine
 
 Execute the approved `.plans/plan-{feature}.md`, prove each item and the full workflow, and call the canonical archive operation exactly once. This is the only managed execution engine and completion owner.
+
+## Model guidance
+
+Use Standard for bounded implementation with settled interfaces; Advanced suits coupled multi-file changes or difficult debugging.
+Lightweight suits isolated deterministic checks; recommend Frontier when Advanced cannot resolve a long, interdependent implementation problem.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## Inputs
 

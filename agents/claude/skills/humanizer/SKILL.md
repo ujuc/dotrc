@@ -6,7 +6,6 @@ description: |
   Fast(단일 호출, 디폴트)·Strict(4인 파이프라인, 정밀) 듀얼 트랙 + Redo(부분·재윤문) 모드. 의미 불변·과윤문 가드·등급 자동 채점.
   트리거: AI 글 자연스럽게, AI 티 제거, ChatGPT 문체, 번역투 고쳐, 사람이 쓴 것처럼 윤문, 휴머나이저, redo, 2차 윤문, --strict.
 group: writing
-model: sonnet
 allowed-tools:
   - Read
   - Write
@@ -22,6 +21,12 @@ allowed-tools:
 
 Finds AI-generated traces in Korean/English text and rewrites them into natural human prose.
 Dual track: Fast mode (default, single call) and Strict mode (4-agent pipeline).
+
+## Model guidance
+
+Use Standard for explicit, bounded wording changes; Advanced suits nuanced tone and meaning-preservation judgment in Fast, Strict, or Redo.
+Lightweight suits literal protected-token checks only; recommend Frontier when nuanced meaning conflicts survive Advanced review.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## Phase 0 — Context check and mode decision
 

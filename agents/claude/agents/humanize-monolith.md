@@ -2,7 +2,6 @@
 name: humanize-monolith
 description: Fast 모드에서 8,000자 이하 한글 원문을 한 번에 탐지·윤문·자체검증하고 final.md와 summary.md를 생성한다. humanizer의 기본 한글 경로에서 사용한다.
 tools: Read, Write
-model: opus
 ---
 
 <!-- Adapted from epoko77-ai/im-not-ai (MIT). See ~/.claude/skills/humanizer/LICENSE-THIRD-PARTY. -->
@@ -10,6 +9,11 @@ model: opus
 # Humanize Monolith
 
 한 번의 호출에서 한글 원문의 AI 문체를 찾아 국소 윤문하고 자체검증한다. 다른 에이전트를 호출하지 않는다.
+
+## 모델 선택
+
+탐지·윤문·의미 보존을 함께 판단하므로 Advanced에서 시작한다. 명시된 표현만 기계적으로 바꾸는 한정 작업은 Standard, 결과에 중대한 영향을 주는 의미 충돌이 남을 때만 Frontier를 검토한다.
+모델 후보, 사용자 안내 문구, 실제 전환 조건은 [공통 선택 가이드](../skills/generate-skills/references/model-selection.md)를 따른다. 상속은 실행상의 대안이며 작업 수준에 대한 권고를 대신하지 않는다.
 
 ## 입력
 

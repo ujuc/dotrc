@@ -3,7 +3,6 @@ name: annotate-plan
 description: "병렬 분석으로 canonical 구현 계획을 만들고 사용자의 직접 편집과 인라인 주석을 반복 반영한다."
 when_to_use: "구현 계획 작성, 플랜 만들어줘, annotate-plan, /annotate-plan, 노트 반영해줘, address notes, 주석 처리해, annotations 요청 시 사용한다."
 group: analysis
-model: sonnet
 argument-hint: "[feature-name]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, advisor
 ---
@@ -13,6 +12,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, advisor
 Create and iteratively refine `.plans/plan-{feature}.md`. This is the only managed plan writer; orchestrators and optional Superpowers skills may provide context or discipline but must not create a competing plan.
 
 The planning quality rules are adapted from Superpowers `writing-plans` at the version pinned in `workflow-hooks contract`. This skill does not invoke that workflow or create `docs/superpowers/plans/` state.
+
+## Model guidance
+
+Use Advanced for dependency analysis and plan synthesis; Standard suits revisions with settled scope and interfaces.
+Recommend Frontier for unresolved, interdependent architectural decisions after Advanced analysis.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## Contract Preflight
 
@@ -105,7 +110,12 @@ Before user delivery, verify and revise:
 - all behavior changes have named tests and runnable verification commands;
 - Workflow Sources lists only material active sources.
 
-Call `advisor()` only for a load-bearing contradiction between the two partials or an unresolved high-impact planning decision.
+For a load-bearing contradiction between the two partials or an unresolved
+high-impact planning decision, consult an available independent reviewer or
+advisor. Apply the model guidance above to the review's reasoning needs.
+Supply the relevant evidence explicitly; do not
+assume automatic context forwarding. If consultation is unavailable, report the
+gap and unresolved decision; self-review does not count as independent review.
 
 ### 5. Baseline and Review Gate
 

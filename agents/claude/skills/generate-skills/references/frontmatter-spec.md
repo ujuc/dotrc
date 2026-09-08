@@ -188,7 +188,7 @@ model: opus
 - The override applies for the rest of the current turn only and is not saved to settings — the session model resumes on the next prompt
 - A value excluded by the organization's `availableModels` allowlist is silently ignored and the session keeps its current model — no error is raised
 - **With `context: fork`, this sets the forked subagent's model instead of the session model**, overriding what the `agent` type would supply
-- **[LOCAL]** convention: `opus` for planning/orchestration, `sonnet` for deterministic execution (see `skills/CLAUDE.md`). `validate-skill` accepts only `opus`, `sonnet`, `haiku`, `inherit` — a deliberately stricter subset of what upstream allows
+- **[LOCAL]** convention: omit fixed `model` assignments; define a recommended workload level and escalation conditions in the body using `model-selection.md`. Omission inherits the active session but does not select a task-appropriate model. Resolve recommendations through an available host model/delegation API, or report them without claiming a switch. An explicit user-requested frontmatter override must use a verified host identifier, never a tier label. `validate-skill` checks only for a non-empty string; it cannot verify host availability and does not enforce a provider-specific allowlist.
 
 ### `effort`
 

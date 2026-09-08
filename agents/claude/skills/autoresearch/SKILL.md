@@ -3,7 +3,6 @@ name: autoresearch
 description: "편집 가능한 대상(프롬프트, 설정, 코드 등)을 반복 실행-평가-변이하여 자율적으로 최적화한다. Karpathy의 autoresearch 방법론(execute → score → mutate → keep/discard) 기반."
 when_to_use: "사용자가 `/autoresearch` 또는 autoresearch 실행을 명시적으로 요청했을 때만 사용한다. 자동 실험과 eval 루프 요청만으로는 실행하지 않는다."
 group: meta
-model: opus
 disable-model-invocation: true
 argument-hint: "[target-path]"
 allowed-tools: Read, Write, Edit, Bash, AskUserQuestion
@@ -14,6 +13,12 @@ allowed-tools: Read, Write, Edit, Bash, AskUserQuestion
 Adapts Andrej Karpathy's autoresearch methodology (autonomous experimentation loops) to any editable artifact — skills, prompts, configurations, code, queries, or any file where output quality can be measured.
 
 ---
+
+## Model guidance
+
+Use Advanced to design evaluations and interpret mutations; Standard suits a bounded loop with settled criteria.
+Recommend Frontier for coupled failure modes that remain unexplained after Advanced analysis; keep measured target-model settings fixed within a comparison.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## The Core Job
 

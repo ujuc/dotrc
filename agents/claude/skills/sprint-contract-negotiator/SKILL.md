@@ -3,13 +3,18 @@ name: sprint-contract-negotiator
 description: Generator·Evaluator 역할을 파일 기반 프로토콜로 번갈아 수행해 canonical sprint의 done 기준을 협상한다.
 when_to_use: "sprint contract 협상, done 기준 정의, 완료 조건 합의, acceptance criteria 작성, sprint-contract-negotiator 호출 시. 구현 시작 전에 'done이 뭔지 먼저 정하자'·'이 sprint의 합격 기준을 잡아줘'·'평가자가 검증할 기준을 만들어줘' 같은 요청에 적합."
 group: planning
-model: opus
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---
 
 # Sprint Contract Negotiator
 
 Negotiate externally testable acceptance criteria through alternating Generator and Evaluator passes. The canonical output is the immutable `.sprint/contract.md`; drafts, reviews, and escalation records remain in `.sprint/` for the active workflow.
+
+## Model guidance
+
+Use Advanced to negotiate and challenge acceptance criteria; Standard suits translating settled requirements into explicit checks.
+Recommend Frontier for coupled criteria that remain inconsistent after Advanced review; preserve the three-review limit and role boundaries.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## Contract Preflight
 

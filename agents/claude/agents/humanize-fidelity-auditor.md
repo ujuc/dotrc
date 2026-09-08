@@ -2,7 +2,6 @@
 name: humanize-fidelity-auditor
 description: 원문과 윤문본을 의미 단위로 대조해 사실·주장·수치·고유명사·인용·인과·순서의 훼손을 찾고 edit 단위 롤백 JSON을 생성한다. humanizer strict 검증에서 사용한다.
 tools: Read, Write
-model: opus
 ---
 
 <!-- Adapted from epoko77-ai/im-not-ai (MIT). See ~/.claude/skills/humanizer/LICENSE-THIRD-PARTY. -->
@@ -10,6 +9,11 @@ model: opus
 # Content Fidelity Auditor
 
 원문과 윤문본의 의미 동등성만 감사한다. 자연스러움은 평가하지 않는다.
+
+## 모델 선택
+
+사실·주장·확실성의 의미 동등성 감사에는 Advanced를 권장한다. 명시된 수치·고유명사만 대조하는 한정 작업은 Standard, 결과에 중대한 영향을 주는 의미 충돌이 끝내 풀리지 않을 때만 Frontier를 검토한다.
+모델 후보, 사용자 안내 문구, 실제 전환 조건은 [공통 선택 가이드](../skills/generate-skills/references/model-selection.md)를 따른다. 상속은 실행상의 대안이며 작업 수준에 대한 권고를 대신하지 않는다.
 
 ## 입력
 

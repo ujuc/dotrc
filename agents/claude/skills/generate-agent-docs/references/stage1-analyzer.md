@@ -43,6 +43,12 @@ For simple projects, read files directly and proceed to the Merge Protocol secti
 Spawn all three agents **in one message** with `run_in_background: true`. They
 are fully independent read-only tasks.
 
+Use SKILL.md's model guidance: Standard for bounded exploration, Lightweight
+only for literal inventory, and Advanced for cross-package relationships or
+conflicting instructions. Resolve supported, permitted host model IDs; never
+pass capability levels as identifiers. Disclose unavailable switching and use
+the shared guide's fallback rather than assuming every role should inherit.
+
 **Collection rule**: the `Explore` agent type has no Write/Edit tool — never
 instruct these agents to write files. Each returns its findings as its final
 message; the orchestrator collects them from the Agent tool results (use
@@ -54,7 +60,6 @@ the gap and continue with what exists.
 | Parameter       | Value                              |
 | --------------- | ---------------------------------- |
 | subagent_type   | Explore                            |
-| model           | sonnet                             |
 | run_in_background | true                             |
 | description     | Detect project config files        |
 
@@ -83,7 +88,6 @@ Return your findings as your final message, raw markdown, no preamble:
 | Parameter       | Value                              |
 | --------------- | ---------------------------------- |
 | subagent_type   | Explore                            |
-| model           | sonnet                             |
 | run_in_background | true                             |
 | description     | Analyze repository structure       |
 
@@ -117,7 +121,6 @@ independent; notes on anything unusual about the layout.
 | Parameter       | Value                              |
 | --------------- | ---------------------------------- |
 | subagent_type   | Explore                            |
-| model           | sonnet                             |
 | run_in_background | true                             |
 | description     | Scan documentation and CI          |
 
@@ -158,7 +161,6 @@ deprecated.
 | Parameter       | Value                              |
 | --------------- | ---------------------------------- |
 | subagent_type   | Explore                            |
-| model           | sonnet                             |
 | run_in_background | true                             |
 | description     | Deep project analysis              |
 

@@ -3,13 +3,18 @@ name: frontend-design-evaluator
 description: "Chrome에서 실행 중인 프론트엔드 결과물을 Design Quality, Originality, Craft, Visual Usability 기준으로 평가한다."
 when_to_use: "디자인 평가, UI 리뷰, frontend-design-evaluator, 디자인 검수해줘, evaluate this design, rate my frontend, AI slop check 요청 시 사용한다. 루프의 판별자(evaluator)로도 호출된다."
 group: verify
-model: sonnet
 allowed-tools: Read Write Bash ToolSearch advisor mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__tabs_create_mcp mcp__claude-in-chrome__navigate mcp__claude-in-chrome__read_page mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__javascript_tool mcp__claude-in-chrome__resize_window
 ---
 
 # Frontend Design Evaluator
 
 Acts as the discriminator in a Generator-Evaluator loop. Score the live page honestly — inflated scores waste iteration cycles. For the pipeline that drives the loop, see the `multi-agent-orchestrator` skill.
+
+## Model guidance
+
+Use Advanced with visual input support for design judgment; Standard suits evidence collection against explicit criteria.
+Recommend Frontier only when coupled design decisions remain unresolved after Advanced review; stronger reasoning does not replace browser evidence.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## Prerequisite: live Chrome access
 
@@ -126,15 +131,20 @@ Replace every bracketed placeholder with concrete content before emitting the di
 
 Write stdout only for standalone evaluation. In a managed orchestrator run, write exactly `.plans/.design-{feature}-r{round}.md` after validating it against the embedded contract. Include exact feature, round, plan, acceptance contract, final verifier, URL, evidence, criterion verdicts, and Overall PASS/FAIL. Do not write QA or synthesized evaluation files.
 
-## Advisor Escalation
+## Independent Calibration
 
-Call `advisor()` with no arguments (full context forwards automatically) at these decision points:
+Consult an available independent reviewer or advisor at these decision points:
 
 - **AI Slop borderline** — 2–3 patterns detected and unsure whether to cap Originality.
 - **Refine vs. pivot** — scores stagnant but not obviously broken.
 - **Near-threshold calls** — weighted average 6.5–7.0; the next round's mode depends on this judgment.
 
-Treat advisor as an inflation guard, not a default — it is expensive.
+Apply the model guidance above and require visual reasoning support.
+Supply the live-browser evidence, scores and question
+explicitly; do not assume automatic context forwarding. Use consultation to
+check score inflation. If unavailable, report skipped calibration and unresolved
+judgments; self-review does not count as independent review. The evaluator
+retains ownership of the report and verdict.
 
 ## Gotchas
 

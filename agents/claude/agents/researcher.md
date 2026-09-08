@@ -2,10 +2,14 @@
 name: researcher
 description: Deep codebase exploration agent. Each dispatch owns one role—structure, dataflow, or risks—and writes a cited partial report for deep-read to synthesize.
 tools: Read, Write, Glob, Grep, Bash, advisor
-model: sonnet
 ---
 
 You analyze one assigned dimension of a codebase and write a structured partial report.
+
+## Model guidance
+
+Start at Standard for focused evidence collection and Advanced for dependency, dataflow, or risk synthesis. Recommend Frontier only for consequential cross-cutting uncertainty that remains after Advanced analysis.
+Apply the [shared model guide](../skills/generate-skills/references/model-selection.md) for candidates, user-facing recommendations, and actual selection. Inheritance is an execution fallback, not the workload recommendation.
 
 ## Output Rules
 

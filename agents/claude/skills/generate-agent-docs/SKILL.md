@@ -3,7 +3,6 @@ name: generate-agent-docs
 description: "Claude·Codex 공통 AGENTS.md, Claude 전용 CLAUDE.md와 관련 에이전트 문서를 생성·갱신한다. 문서 업데이트, CLAUDE.md 업데이트, AGENTS.md 갱신 요청에 사용한다. (구 명칭 generate-claude-md)"
 when_to_use: "문서 생성/갱신 요청일 때. 트리거: '/generate-agent-docs', '문서 업데이트해줘', '문서 갱신해줘', '문서 최신화', 'CLAUDE.md 업데이트', 'AGENTS.md 갱신', 'rules 생성', 'contributing-docs 추가', 'update the docs', 'update CLAUDE.md', 'refresh AGENTS.md'. 파일명이 없는 포괄 요청은 Stage 0-2의 대상 확인을 먼저 거친다. CLAUDE.md·AGENTS.md 등 에이전트 문서의 단일 파일 요청도 지원하며, README·API 문서·CHANGELOG는 이 스킬을 호출하지 않는다. 에이전트 문서 생성이 아닌 이 스킬 자체의 분석·리뷰·개선 계획 요청에는 생성 파이프라인을 실행하지 않는다."
 group: docs
-model: opus
 allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch TaskOutput advisor Bash(workflow-hooks:*)
 ---
 
@@ -19,6 +18,12 @@ read it natively; Claude Code loads it via the `@AGENTS.md` import), and
 current Pi adapter loads shared skills and workflow hooks, not AGENTS.md, so do
 not claim Pi receives project instructions unless its host integration does.
 
+## Model guidance
+
+Use Advanced for instruction synthesis and semantic review; Standard suits bounded updates and repository discovery, while Lightweight suits literal inventory only.
+Recommend Frontier for unresolved conflicts across many instruction layers after Advanced review.
+Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
+
 ## Active harness capabilities
 
 The Claude tool/model names below are examples, not prerequisites. Resolve
@@ -32,12 +37,16 @@ nonexistent tool or unsupported model alias.
 | Clarify intent | AskUserQuestion | Native user-input tool or ordinary interactive question |
 | Independent roles | Agent + TaskOutput | Fresh-context subagents with supplied inputs; otherwise direct work with independence marked unavailable |
 | Advisor | advisor() | Available independent reviewer; if absent, record skipped consultation and unresolved evidence |
-| Model selection | opus / sonnet | Inherit session unless that alias is supported and permitted |
+| Model selection | Role-based recommendation | Apply Model guidance; resolve actual IDs through the host and retain the session when switching is unavailable or not permitted |
 
 A missing question tool does not imply a headless session. Ask in normal text
 when interactive. In headless runs, use confirmed facts and existing
 authorization only; leave dependent writes pending if a material choice is
 unresolved. Direct self-review never counts as an independent review.
+
+For consultation, supply the relevant evidence and question explicitly; do not
+assume automatic context forwarding. A reviewer may use the session model in a
+fresh context. Model changes alone do not establish independence.
 
 
 ## Pipeline Map
@@ -191,7 +200,7 @@ Detect package/build/test/lint config, repository structure
 in the target directory.
 
 - **Complex project** (any of: 3+ config file types, monorepo, submodules) →
-  spawn 3 Explore agents (`model: sonnet`) in one message: config-explorer,
+  spawn 3 Explore agents in one message: config-explorer,
   structure-explorer, docs-explorer. Explore agents are **read-only** — each
   returns findings as its final message; collect from Agent tool results
   (TaskOutput for background runs).
@@ -200,12 +209,12 @@ in the target directory.
 Merge findings, classify each as discoverable vs undiscoverable, separate
 facts from `[ASSUMPTION]`s, and present the summary to the user.
 
-**advisor() gate ①**: monorepo with 5+ packages, 3+ submodules, or an
+**Independent consultation ①**: monorepo with 5+ packages, 3+ submodules, or an
 existing CLAUDE.md with complex structure → validate the analysis strategy.
 
-**Effort note**: the orchestrator inherits the session model/effort — do not
-pin `effort` in frontmatter. If analysis itself is the bottleneck on a very
-large monorepo, suggest the user raise the session effort level and re-run.
+**Effort note**: do not pin `effort` in frontmatter. Select the recommended
+model level by role; adjust supported effort separately when analysis remains
+the bottleneck. If switching is unavailable, suggest a suitable session model.
 
 ## Stage 2: Interview (orchestrator only — do not delegate)
 
@@ -223,7 +232,7 @@ choose. Confirm every Stage 1 `[ASSUMPTION]`.
 
 **Deep exploration (optional)**: while AskUserQuestion is pending and the
 project is a large monorepo (5+ packages) with unresolved questions, spawn
-Explore-Deep (`model: sonnet`) in the background. Skip when Stage 1 results
+Explore-Deep in the background. Skip when Stage 1 results
 suffice.
 
 **Unavailable question tool**: use a normal interactive question or a native
@@ -236,7 +245,7 @@ Never invent interview answers. Prior explicit user decisions need no repeat.
 authorized by the user's request or prior selection. Ask only about unresolved
 scope, material policy changes, or destructive actions requiring approval.
 
-**advisor() gate ②**: user answers contradict Stage 1 detection, or update
+**Independent consultation ②**: user answers contradict Stage 1 detection, or update
 mode surfaces 10+ drift items.
 
 ## Stage 3: Generation
@@ -274,7 +283,11 @@ Apply grounded blind fixes within authorization once, then check the affected
 criteria and final references. Never claim fully verified completion for
 unchecked final bytes, skipped independent review or unresolved defects.
 
-## Advisor Escalation Summary
+## Independent Consultation Summary
+
+Use the active harness's available reviewer or advisor through the capability
+mapping above. If unavailable, record the skipped consultation and any
+unresolved evidence; preserve Stage 4's verification limits.
 
 | # | When | Trigger |
 |---|------|---------|
@@ -282,7 +295,7 @@ unchecked final bytes, skipped independent review or unresolved defects.
 | ② | During Stage 2 | User answer ↔ detection mismatch, or 10+ drift items in update mode |
 | ③ | During Stage 4 | Verifier FAIL persists after 2 fix rounds |
 
-**When not to call advisor()**: simple project generation, 1–2 target files,
+**Skip consultation**: simple project generation, 1–2 target files,
 verification passes on the first run, or the user gave unambiguous
 instructions.
 
@@ -321,9 +334,10 @@ case is discovered.
 3. **Blind Reviewer independence is the whole point.** If Phase 1/2 output or
    Stage 1/2 context leaks into the Reviewer prompt, the review becomes
    confirmation and the FAIL filter loses its value.
-4. **Model names are host-specific hints.** Use supported aliases only; inherit
-   the session otherwise. Missing advisor or independent roles must be reported,
-   never fabricated. Effort remains inherited.
+4. **Model selection follows role needs and host capabilities.** Apply Model
+   guidance; use only supported, permitted choices or disclose the fallback.
+   Missing advisor or independent roles must be reported, never fabricated.
+   Effort selection is separate from model level.
 
 5. **`disable-model-invocation` is intentionally unset.** The skill is
    invasive (writes/edits several project files); auto-invocation can still

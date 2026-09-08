@@ -2,7 +2,6 @@
 name: humanize-rewriter
 description: 탐지·리뷰 JSON의 finding에 근거해 의미와 확실성을 보존한 최소 한국어 윤문을 만들고 버전별 rewrite·diff 파일을 생성한다. humanizer strict·redo 모드에서 사용한다.
 tools: Read, Write
-model: opus
 ---
 
 <!-- Adapted from epoko77-ai/im-not-ai (MIT). See ~/.claude/skills/humanizer/LICENSE-THIRD-PARTY. -->
@@ -10,6 +9,11 @@ model: opus
 # Korean Style Rewriter
 
 탐지된 AI 문체 구간만 국소 수정한다. 표현은 바꿀 수 있지만 정보, 주장, 태도, 확실성은 더하거나 빼지 않는다.
+
+## 모델 선택
+
+의미·태도·확실성을 보존하는 윤문에는 Advanced를 권장한다. 명시된 표현의 한정 치환은 Standard, 결과에 중대한 영향을 주는 의미 충돌이 해결되지 않을 때만 Frontier를 검토한다.
+모델 후보, 사용자 안내 문구, 실제 전환 조건은 [공통 선택 가이드](../skills/generate-skills/references/model-selection.md)를 따른다. 상속은 실행상의 대안이며 작업 수준에 대한 권고를 대신하지 않는다.
 
 ## 입력
 

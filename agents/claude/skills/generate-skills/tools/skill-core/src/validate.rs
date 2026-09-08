@@ -75,7 +75,9 @@ fn xml_re() -> &'static Regex {
 
 fn ref_path_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
-    RE.get_or_init(|| Regex::new(r"references/[A-Za-z0-9_\-./]+").unwrap())
+    RE.get_or_init(|| {
+        Regex::new(r"(?:\.{1,2}/|[A-Za-z0-9_-]+/)*references/[A-Za-z0-9_\-./]+").unwrap()
+    })
 }
 
 pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
@@ -277,10 +279,26 @@ fn validate_known_keys(fm: &Frontmatter, findings: &mut Vec<Finding>) {
 }
 
 fn validate_values(fm: &Frontmatter, findings: &mut Vec<Finding>) {
-    check_enum(fm, "model", rules::ALLOWED_MODELS, findings);
+    validate_model(fm, findings);
     check_enum(fm, "effort", rules::ALLOWED_EFFORTS, findings);
     check_enum(fm, "context", rules::ALLOWED_CONTEXTS, findings);
     check_enum(fm, "shell", rules::ALLOWED_SHELLS, findings);
+}
+
+fn validate_model(fm: &Frontmatter, findings: &mut Vec<Finding>) {
+    let Some(value) = frontmatter::get_value(fm, "model") else {
+        return;
+    };
+    match value.as_str() {
+        Some(model) if !model.trim().is_empty() => findings.push(Finding::pass(
+            "Values",
+            "model is a non-empty string (host availability is not checked)",
+        )),
+        _ => findings.push(Finding::fail(
+            "Values",
+            "model must be a non-empty string; omit it to inherit the host/session default",
+        )),
+    }
 }
 
 fn check_enum(fm: &Frontmatter, key: &str, allowed: &[&str], findings: &mut Vec<Finding>) {
@@ -455,18 +473,74 @@ mod tests {
     }
 
     #[test]
-    fn enum_check_accepts_valid() {
-        let fm = fm_from("---\nname: t\nmodel: opus\n---\n");
+    fn reference_paths_preserve_relative_prefixes() {
+        let source = "`references/local.md` [guide](../peer/references/shared.md) \
+                      `../../shared/references/deep.md` `./references/local.md`";
+        let paths: Vec<_> = ref_path_re()
+            .find_iter(source)
+            .map(|m| m.as_str())
+            .collect();
+        assert_eq!(
+            paths,
+            [
+                "references/local.md",
+                "../peer/references/shared.md",
+                "../../shared/references/deep.md",
+                "./references/local.md"
+            ]
+        );
+    }
+
+    #[test]
+    fn references_resolve_sibling_paths_without_local_fallback() {
+        let unique = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let root = std::env::temp_dir().join(format!(
+            "skill-reference-test-{}-{unique}",
+            std::process::id()
+        ));
+        let skill = root.join("subject");
+        std::fs::create_dir_all(skill.join("references")).unwrap();
+        std::fs::create_dir_all(root.join("peer/references")).unwrap();
+        std::fs::write(skill.join("references/local.md"), "local").unwrap();
+        std::fs::write(skill.join("references/missing.md"), "decoy").unwrap();
+        std::fs::write(root.join("peer/references/shared.md"), "shared").unwrap();
+
         let mut findings = Vec::new();
-        check_enum(&fm, "model", rules::ALLOWED_MODELS, &mut findings);
+        validate_references(
+            &skill,
+            "`references/local.md` [shared](../peer/references/shared.md)",
+            &mut findings,
+        );
+        assert_eq!(findings.len(), 1);
+        assert_eq!(findings[0].severity, Severity::Pass);
+
+        findings.clear();
+        validate_references(&skill, "`../peer/references/missing.md`", &mut findings);
+        assert_eq!(findings.len(), 1);
+        assert_eq!(findings[0].severity, Severity::Fail);
+        assert_eq!(
+            findings[0].message,
+            "broken path: ../peer/references/missing.md"
+        );
+        std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn enum_check_accepts_valid() {
+        let fm = fm_from("---\nname: t\ncontext: fork\n---\n");
+        let mut findings = Vec::new();
+        check_enum(&fm, "context", rules::ALLOWED_CONTEXTS, &mut findings);
         assert!(findings.iter().any(|f| f.severity == Severity::Pass));
     }
 
     #[test]
     fn enum_check_rejects_invalid() {
-        let fm = fm_from("---\nname: t\nmodel: gpt-4\n---\n");
+        let fm = fm_from("---\nname: t\ncontext: unknown\n---\n");
         let mut findings = Vec::new();
-        check_enum(&fm, "model", rules::ALLOWED_MODELS, &mut findings);
+        check_enum(&fm, "context", rules::ALLOWED_CONTEXTS, &mut findings);
         assert!(findings.iter().any(|f| f.severity == Severity::Fail));
     }
 
@@ -474,7 +548,47 @@ mod tests {
     fn enum_check_skips_missing() {
         let fm = fm_from("---\nname: t\n---\n");
         let mut findings = Vec::new();
-        check_enum(&fm, "model", rules::ALLOWED_MODELS, &mut findings);
+        check_enum(&fm, "context", rules::ALLOWED_CONTEXTS, &mut findings);
+        assert!(findings.is_empty());
+    }
+
+    #[test]
+    fn model_accepts_identifiers_without_provider_allowlist() {
+        for model in [
+            "inherit",
+            "opus",
+            "provider/custom-model",
+            "local-model:latest",
+        ] {
+            let fm = fm_from(&format!("---\nmodel: {model}\n---\n"));
+            let mut findings = Vec::new();
+            validate_values(&fm, &mut findings);
+            assert_eq!(findings.len(), 1, "model: {model}");
+            assert_eq!(findings[0].severity, Severity::Pass, "model: {model}");
+            assert!(
+                findings[0]
+                    .message
+                    .contains("host availability is not checked")
+            );
+        }
+    }
+
+    #[test]
+    fn model_rejects_empty_and_non_string_values() {
+        for model in ["", "null", "''", "'   '", "true", "42", "[]", "{}"] {
+            let fm = fm_from(&format!("---\nmodel: {model}\n---\n"));
+            let mut findings = Vec::new();
+            validate_values(&fm, &mut findings);
+            assert_eq!(findings.len(), 1, "model: {model}");
+            assert_eq!(findings[0].severity, Severity::Fail, "model: {model}");
+        }
+    }
+
+    #[test]
+    fn model_omission_inherits_without_finding() {
+        let fm = fm_from("---\nname: t\n---\n");
+        let mut findings = Vec::new();
+        validate_model(&fm, &mut findings);
         assert!(findings.is_empty());
     }
 

@@ -2,12 +2,16 @@
 name: waza-runner
 description: 모든 waza CLI 호출을 한곳에서 수행해 eval 스캐폴드·실행·전후 비교를 제공하고 미설치 환경에서는 안전하게 건너뛴다. generate-skills와 명시적 평가 요청에서 사용한다.
 tools: Bash, Read
-model: sonnet
 ---
 
 # waza-runner
 
 This is the only agent allowed to invoke Microsoft's [`waza`](https://github.com/microsoft/waza) CLI. Callers never run the binary directly.
+
+## Model guidance
+
+Start at Standard for evaluation orchestration and result interpretation, or Lightweight for deterministic result formatting. Use Advanced for conflicting evaluation evidence. Keep the runner's model separate from the explicitly configured evaluation target.
+Apply the [shared model guide](../skills/generate-skills/references/model-selection.md) for candidates, user-facing recommendations, and actual selection. Inheritance is an execution fallback, not the workload recommendation.
 
 ## Caller Contract
 

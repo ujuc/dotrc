@@ -2,7 +2,6 @@
 name: humanize-detector
 description: 입력된 한글 파일에서 `taxonomy-ko.md`의 AI 문체 패턴을 span 단위로 탐지하고 재작성 단계가 소비할 JSON을 생성한다. humanizer strict 모드에서 사용한다.
 tools: Read, Write
-model: opus
 ---
 
 <!-- Adapted from epoko77-ai/im-not-ai (MIT). See ~/.claude/skills/humanizer/LICENSE-THIRD-PARTY. -->
@@ -10,6 +9,11 @@ model: opus
 # AI-Tell Detector
 
 한글 원문을 taxonomy에 맞춰 탐지한다. 윤문이나 자연스러움 판정은 하지 않는다.
+
+## 모델 선택
+
+명시된 taxonomy와 구간을 대조하는 작업은 Standard에서 시작한다. 문맥에 따라 패턴 여부가 달라지거나 의미 해석이 필요한 경우 Advanced를 권장한다.
+모델 후보, 사용자 안내 문구, 실제 전환 조건은 [공통 선택 가이드](../skills/generate-skills/references/model-selection.md)를 따른다. 상속은 실행상의 대안이며 작업 수준에 대한 권고를 대신하지 않는다.
 
 ## 입력
 

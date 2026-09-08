@@ -2,7 +2,6 @@
 name: generate-skills
 description: "Claude 스킬을 생성하거나 기존 스킬을 최신 spec에 맞게 업데이트한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, generate-skills 요청 시 사용한다."
 group: meta
-model: opus
 disable-model-invocation: true
 argument-hint: "[skill-name]"
 ---
@@ -14,6 +13,13 @@ selected write scope, native tool equivalents and evidence levels, including
 updates to this skill. Reuse existing user approval and managed-plan decisions.
 Claude tool/model names below are host-specific examples; map available
 capabilities and report missing independent roles rather than inventing them.
+
+## Model guidance
+
+Use **Standard** for scoped authoring, **Advanced** for conflicting policies or
+uncertain evidence, **Frontier** for unresolved cross-workflow decisions and
+**Lightweight** for mechanical validation. Apply `references/model-selection.md`
+to resolve available models or recommend one when the host cannot switch.
 
 ## Mode detection
 
@@ -195,8 +201,6 @@ This creates a draft only. Completion and registration remain blocked until `car
 - No `README.md` was created.
 - Folder name does not start with `claude` or `anthropic`.
 
----
-
 ## Step 3: Write the frontmatter
 
 Use `references/frontmatter-spec.md` together with `references/description-examples.md`.
@@ -220,7 +224,9 @@ Use `references/frontmatter-spec.md` together with `references/description-examp
    - `user-invocable`: `false` for background-knowledge skills (hides from the `/` menu).
 
    **Execution environment:**
-   - `model`: `opus` for complex workflows; omit otherwise.
+   - `model`: omit fixed frontmatter assignments. Put workload guidance in the
+     body (Step 4); an explicit user-requested override must use a host-supported
+     identifier. Tier labels and example family names are not native model IDs.
    - `effort`: set when a different effort level than the session default is needed (`low`, `medium`, `high`, `max`).
    - `context`: `fork` to run in an isolated subagent context.
    - `agent`: subagent type when `context: fork` is set (`Explore`, `Plan`, `general-purpose`, ...).
@@ -236,8 +242,6 @@ Use `references/frontmatter-spec.md` together with `references/description-examp
 
 Mechanical checks (kebab-case, length, reserved prefix, etc.) are handled by `validate-skill` in Step 5. Here, only check semantics: **does `description` contain both WHAT and WHEN?**
 
----
-
 ## Step 4: Write the instructions
 
 Write the SKILL.md body following the pattern picked in Step 1.
@@ -252,6 +256,10 @@ If the skill's body needs live shell output injected at load time (e.g. current 
 
 ### Common rules
 
+- **State model guidance**: use `references/model-selection.md` for default levels,
+  escalation triggers and cheaper mechanical phases. Link it when shipped together;
+  otherwise adapt its wording locally. Resolve an available model API or recommend
+  a model without claiming a session switch.
 - **Be specific**: include runnable commands, exact paths, concrete acceptance criteria.
 - **Handle errors**: list failure modes and how to recover.
 - **Name the tools**: state which tools are used (Read, Write, Bash, AskUserQuestion, ...).
@@ -283,8 +291,6 @@ Pick instruction specificity per the freedom guide in `references/design-princip
   writers, archive behavior, and excluded controllers against
   `workflow-hooks contract` rather than peer prose.
 
----
-
 ## Step U1: Inspect the target skill (update mode)
 
 1. Extract the target skill path / name from `$ARGUMENTS`.
@@ -294,8 +300,6 @@ Pick instruction specificity per the freedom guide in `references/design-princip
 5. Count SKILL.md body lines.
 
 If the target cannot be identified, ask via AskUserQuestion.
-
----
 
 ## Step U2: Compare against the latest spec (update mode)
 
@@ -309,11 +313,11 @@ Using the freshly verified `references/frontmatter-spec.md` from Step 0:
 6. **Redundancy audit**: detect body content that duplicates dispatched agent definitions, sibling skills, or standard LLM knowledge. Follow `references/redundancy-check.md`. Typical findings: constraints mirrored between skill and agent, prompt templates restating agent rules, generic markdown conventions.
 7. **Managed ownership**: when the skill participates in the managed lifecycle,
    compare its paths and sole-writer claims with `workflow-hooks contract`.
+8. **Model guidance**: retain task-level defaults and escalation triggers in the
+   body; inheritance alone is not a workload recommendation.
 
 Summarize the comparison and reuse any already approved update scope. Resolve
 only material unanswered choices or changes beyond that authorization.
-
----
 
 ## Step U3: Apply updates (update mode)
 
@@ -381,7 +385,12 @@ report that the evidence was not persisted by Waza.
 
 ### Independent review (optional)
 
-If the generated skill includes `references/` or `scripts/`, spawn a `general-purpose` agent (`model: sonnet`) to do a blind review; the reviewer consults `advisor()` for an opus cross-model second opinion on uncertain findings. Follow `references/subagent-guidelines.md` → "Reviewer".
+If the generated skill includes `references/` or `scripts/`, use an available
+fresh-context reviewer with the tools needed for a blind review. Select its
+workload level using `references/model-selection.md`; uncertain findings may
+receive a second independent opinion through a supported delegation/advisor
+capability. Follow `references/subagent-guidelines.md`
+→ "Reviewer".
 
 Skip for minimal skills (SKILL.md only) or when the user requested a quick build.
 
@@ -427,7 +436,9 @@ Skill-specific pitfalls that validator automation cannot catch. Update this sect
    When this flag is set, the skill's `description` is not loaded into context, so its natural-language trigger phrases cannot auto-fire — the skill is effectively `/name`-only (or an explicit user request to run it). It also blocks subagent preloading and scheduled-task prompts (v2.1.196+). Keep trigger phrases in `description` anyway: they document intent and remain the record of when the skill is meant to fire.
 
 2. **Reference paths are relative to SKILL.md, not the invocation cwd.**
-   `references/<name>.md` in SKILL.md always resolves relative to the skill directory. Avoid `../` paths — if you need content from outside the skill tree, copy it into `references/` so the skill stays self-contained.
+   Resolve from the skill directory and normally keep references inside it.
+   Exception: bundled sibling skills may share `../generate-skills/references/model-selection.md`.
+   Preserve its `../` prefix; standalone distribution needs a local adaptation.
 
 3. **`context: fork` drops conversation history.**
    The forked subagent sees only the SKILL.md body as its prompt — no prior messages, no user context. Any skill using `context: fork` must be self-sufficient (no "as discussed above" assumptions).
