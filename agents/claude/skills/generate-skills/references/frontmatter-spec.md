@@ -1,7 +1,7 @@
 ---
 source_url: https://code.claude.com/docs/en/skills
 spec_url: https://agentskills.io/specification
-last_upstream_check: 2026-08-14
+last_upstream_check: 2026-09-09
 check_interval_days: 14
 ---
 

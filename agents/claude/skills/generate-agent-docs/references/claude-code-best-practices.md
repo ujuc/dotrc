@@ -1,7 +1,7 @@
 ---
 source_url: https://code.claude.com/docs/en/best-practices.md
 secondary_source_url: https://code.claude.com/docs/en/memory.md
-last_upstream_check: 2026-07-27
+last_upstream_check: 2026-09-09
 check_interval_days: 0  # 0 = fetch on every run (user preference: always live; the doc changes often). WebFetch caches per-URL for ~15 min, so this is cheap.
 ---
 
