@@ -278,6 +278,20 @@ ln -sfn ${DOTRC_AGENTS_DIR}/codex ${HOME}/.codex
 ln -sfn ${DOTRC_AGENTS_DIR}/amp ${XDG_CONFIG_HOME}/amp
 ```
 
+### [waza](https://github.com/microsoft/waza)
+
+`agents/claude/evals/<skill>/`의 스킬 평가 스위트를 실행하는 CLI다. `scripts/install.sh --agents`가
+업스트림 설치 스크립트로 최신 릴리스 바이너리를 설치한다(`/usr/local/bin`이 쓰기 가능하면 그곳,
+아니면 `~/bin`; 둘 다 `zshrc`의 `path`에 있다).
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | bash
+```
+
+바이너리만 설치되며 `~/.claude/data/waza-workspace/`는 만들지 않는다. 워크스페이스 준비와
+로컬 Ollama 모델 설정은 `agents/claude/agents/references/waza-install.md`를 따른다.
+실행은 항상 `waza-runner` 에이전트를 거친다.
+
 ### [CodeGraph](https://github.com/colbymchenry/codegraph)
 
 전역 CLI는 번들 설치 스크립트를 쓴다. 자체 런타임을 포함해

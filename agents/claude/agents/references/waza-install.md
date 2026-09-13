@@ -4,12 +4,14 @@
 
 ## 빠른 설치 (macOS / Linux)
 
+dotrc의 `scripts/install.sh --agents`가 `waza`가 PATH에 없을 때 아래 업스트림 스크립트를 그대로 실행한다. 수동으로 설치하거나 갱신할 때도 같은 명령을 쓴다.
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | bash
 ```
 
 설치 위치: `/usr/local/bin`에 쓰기 권한이 있으면 그곳, 없으면 `$HOME/bin`.
-`$HOME/bin` 사용 시 PATH 등록이 필요하다 — `~/.zshenv`(zsh) 또는 `~/.bashrc`(bash)에:
+두 경로 모두 dotrc `zshrc`의 `path`에 이미 등록되어 있다. dotrc `zshrc`를 쓰지 않는 셸에서는 `~/.zshenv`(zsh) 또는 `~/.bashrc`(bash)에 추가한다:
 
 ```sh
 export PATH="$HOME/bin:$PATH"

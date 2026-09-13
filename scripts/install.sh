@@ -348,6 +348,10 @@ install_agents() {
         run_shell_step agents "Install Claude Code" 'curl -fsSL https://claude.ai/install.sh | bash'
         export PATH="$HOME/.local/bin:$PATH"
     fi
+    if ! command -v waza >/dev/null 2>&1; then
+        run_shell_step agents "Install waza" 'curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | bash'
+        export PATH="$HOME/bin:$PATH"
+    fi
     if command -v mise >/dev/null 2>&1; then
         run_step agents "Install Pi coding agent" mise exec -- npm install -g @mariozechner/pi-coding-agent
     elif command -v npm >/dev/null 2>&1; then
