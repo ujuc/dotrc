@@ -4,11 +4,15 @@
 # Usage:
 #   waza-run.sh status
 #   waza-run.sh scaffold <skill-name>
-#   waza-run.sh eval <skill-name|/absolute/eval.yaml> [--label X] [--baseline-json /absolute/result.json] [--prefix Y]
+#   waza-run.sh eval <skill-name|/absolute/eval.yaml> [--label X] [--baseline-json /absolute/result.json] [--prefix Y] [--trials N] [--epsilon X]
+#
+# --trials is forwarded only when given. --epsilon (default 0.1) is the weighted-score
+# drop that counts as a regression. Mock-engine results are reference-only.
 #
 # Exit codes:
-#   0  success, or an advisory skip (waza/workspace missing, suite already exists)
-#   1  waza produced no result JSON, or scaffold/baseline failed
+#   0  success (including a reported ⚠️ regression), or an advisory skip
+#   1  no result JSON, scaffold/baseline failed, or ⚠️ incomparable baseline
+#      (engine, model, trials, or task set differ)
 #   2  usage error
 #
 # Every harness (Claude Code, Amp, Codex, Pi) runs waza through this script.
@@ -102,10 +106,29 @@ cmd_status() {
   echo "- Evals: \`$EVALS_DIR\`"
   echo "- Results: \`$RESULTS_DIR\`"
   echo "- Eval model: \`$COPILOT_MODEL\` via \`$COPILOT_PROVIDER_BASE_URL\` (offline=$COPILOT_OFFLINE)"
+  local reason=""
   if command -v jq >/dev/null 2>&1; then
     echo "- jq: ✅"
   else
     echo "- jq: ❌ missing — reports will contain only the result JSON path."
+    reason="jq missing"
+  fi
+
+  local tags_url="${COPILOT_PROVIDER_BASE_URL%/v1}/api/tags" tags
+  [ -f "$WORKSPACE/.waza.yaml" ] || reason="workspace missing"
+  [ -n "${WAZA_BIN:-}" ] || reason="waza binary missing"
+  if [ -z "$reason" ]; then
+    if ! tags="$(curl -fsS --max-time 3 "$tags_url" 2>/dev/null)"; then
+      reason="Ollama unreachable at $tags_url"
+    elif ! jq -e --arg m "$COPILOT_MODEL" '.models[]? | select(.name == $m or .model == $m)' <<<"$tags" >/dev/null; then
+      reason="model $COPILOT_MODEL not served by Ollama"
+    fi
+    echo "- Ollama: ${reason:-✅ $COPILOT_MODEL served}"
+  fi
+  if [ -z "$reason" ]; then
+    echo "- Usable: yes"
+  else
+    echo "- Usable: no ($reason)"
   fi
 }
 
@@ -216,6 +239,16 @@ render_report() {
   echo "| Aggregate score | $(fmt_num "$agg") |"
   echo "| Success rate | $(fmt_pct "$rate") |"
   echo "| Duration | ${dur}ms |"
+  local engine
+  engine="$(jq -r '.config.engine_type // "unknown"' "$result_json")"
+  echo "| Engine | $engine |"
+  echo "| Model | $(jq -r '.config.model_id // "unknown"' "$result_json") |"
+  echo "| Trials | $(jq -r '.config.runs_per_test // "unknown"' "$result_json") |"
+  jq -r '[.tasks[]?.runs[]?] | "| Skill invocations | \(map(select((.skill_invocations // []) | length > 0)) | length) / \(length) |"' "$result_json"
+  if [ "$engine" = "mock" ]; then
+    echo
+    echo "> ℹ️ reference-only (mock engine: SKILL.md not exercised)"
+  fi
 
   if [ "$(jq -r '.metrics // {} | length' "$result_json")" != "0" ]; then
     echo
@@ -251,9 +284,46 @@ render_report() {
   echo "- Result JSON: \`$result_json\`"
 }
 
+# ponytail: first-match `key: value` read from eval.yaml, no YAML parser; the post-run comparator backstops misreads
+yaml_config() { awk -v k="$1:" '$1 == k { gsub(/["'\'']/, "", $2); print $2; exit }' "$EVAL_YAML"; }
+
+# incomparable_fields BASELINE CURRENT: one line per differing engine/model/trials/task set.
+# A CURRENT without .tasks is a pre-run expectation whose unknown (null) fields are skipped;
+# a real result compares every field, so a missing field fails closed.
+incomparable_fields() {
+  jq -r --slurpfile cur "$2" '
+    . as $b | $cur[0] as $c |
+    ( ("engine_type", "model_id", "runs_per_test") as $k
+      | select(($c.tasks == null and $c.config[$k] == null) | not)
+      | select($b.config[$k] != $c.config[$k])
+      | "- \($k): baseline \($b.config[$k]) → current \($c.config[$k])" ),
+    ( select($c.tasks != null)
+      | ([$b.tasks[]?.test_id] | sort) as $bt | ([$c.tasks[]?.test_id] | sort) as $ct
+      | select($bt != $ct)
+      | "- tasks: baseline \($bt | join(",")) → current \($ct | join(","))" )
+  ' "$1"
+}
+
+# print_incomparable BASELINE CURRENT: prints the block and returns 1 when anything differs.
+print_incomparable() {
+  local diffs fields
+  diffs="$(incomparable_fields "$1" "$2")"
+  [ -z "$diffs" ] && return 0
+  fields="$(printf '%s\n' "$diffs" | sed 's/^- \([a-z_]*\):.*/\1/' | paste -sd, - | sed 's/,/, /g')"
+  echo
+  echo "### ⚠️ incomparable ($fields)"
+  echo
+  printf '%s\n' "$diffs"
+  echo
+  echo "**No regression verdict.** Rerun with the baseline's engine, model, trials, and task set."
+  echo "- Baseline JSON: \`$1\`"
+  return 1
+}
+
 render_comparison() {
-  local baseline_json="$1" result_json="$2"
+  local baseline_json="$1" result_json="$2" epsilon="$3"
   command -v jq >/dev/null 2>&1 || return 0
+  print_incomparable "$baseline_json" "$result_json" || return 1
 
   local prev_score new_score delta prev_rate new_rate prev_failed new_failed
   prev_score="$(jq -r '.summary.weighted_score' "$baseline_json")"
@@ -272,24 +342,53 @@ render_comparison() {
   echo "| Weighted score | $(fmt_num "$prev_score") | $(fmt_num "$new_score") | $delta |"
   echo "| Success rate | $(fmt_pct "$prev_rate") | $(fmt_pct "$new_rate") | |"
   echo "| Failed + errored tasks | $prev_failed | $new_failed | |"
-  if awk -v d="$delta" 'BEGIN { exit !(d < 0) }'; then
+
+  local drops
+  drops="$(jq -r --slurpfile base "$baseline_json" --argjson eps "$epsilon" '
+    def r: . * 1000 | round / 1000;
+    ($base[0].tasks // [] | map({key: .test_id, value: .stats}) | from_entries) as $b
+    | .tasks[]? | select(.stats != null and $b[.test_id] != null) | $b[.test_id] as $p
+    | select((($p.avg_weighted_score - .stats.avg_weighted_score) | r) > $eps or .stats.pass_rate < $p.pass_rate)
+    | "- **\(.test_id)**: weighted \($p.avg_weighted_score | r) → \(.stats.avg_weighted_score | r), pass_rate \($p.pass_rate | r) → \(.stats.pass_rate | r)"
+  ' "$result_json")"
+  if [ -n "$drops" ]; then
     echo
-    echo "⚠️ **regression** — weighted score dropped. Roll back or compare both JSON files to find the cause."
+    echo "### Per-task drops"
+    echo
+    printf '%s\n' "$drops"
+  fi
+
+  echo
+  if [ "$(jq -r '.config.engine_type' "$result_json")" = "mock" ]; then
+    echo "ℹ️ reference-only (mock engine: SKILL.md not exercised) — no regression verdict."
+  elif awk -v d="$delta" -v e="$epsilon" 'BEGIN { exit !(d + 0 < -e) }'; then
+    echo "⚠️ **regression** — weighted score dropped by more than $epsilon. Roll back or compare both JSON files to find the cause."
   fi
   echo "- Baseline JSON: \`$baseline_json\`"
 }
 
 cmd_eval() {
-  local target="" label="run" prefix="" baseline_json=""
+  local target="" label="run" prefix="" baseline_json="" trials="" epsilon="0.1"
 
   while [ $# -gt 0 ]; do
     case "$1" in
-      --label) label="${2:-}"; shift 2 ;;
-      --prefix) prefix="${2:-}"; shift 2 ;;
-      --baseline-json|--baseline_json) baseline_json="${2:-}"; shift 2 ;;
+      --label|--prefix|--baseline-json|--baseline_json|--trials|--epsilon)
+        if [ $# -lt 2 ]; then
+          echo "error: $1 needs a value" >&2
+          return 2
+        fi ;;
+    esac
+    case "$1" in
+      --label) label="$2"; shift 2 ;;
+      --prefix) prefix="$2"; shift 2 ;;
+      --baseline-json|--baseline_json) baseline_json="$2"; shift 2 ;;
+      --trials) trials="$2"; shift 2 ;;
+      --epsilon) epsilon="$2"; shift 2 ;;
       --label=*) label="${1#*=}"; shift ;;
       --prefix=*) prefix="${1#*=}"; shift ;;
       --baseline-json=*|--baseline_json=*) baseline_json="${1#*=}"; shift ;;
+      --trials=*) trials="${1#*=}"; shift ;;
+      --epsilon=*) epsilon="${1#*=}"; shift ;;
       -*)
         echo "error: unknown flag '$1'" >&2
         usage >&2
@@ -304,7 +403,15 @@ cmd_eval() {
   done
 
   if [ -z "$target" ]; then
-    echo "usage: waza-run.sh eval <skill-name|/absolute/eval.yaml> [--label X] [--baseline-json /absolute/result.json] [--prefix Y]" >&2
+    echo "usage: waza-run.sh eval <skill-name|/absolute/eval.yaml> [--label X] [--baseline-json /absolute/result.json] [--prefix Y] [--trials N] [--epsilon X]" >&2
+    return 2
+  fi
+  if [ -n "$trials" ] && ! [[ "$trials" =~ ^[1-9][0-9]*$ ]]; then
+    echo "error: --trials must be a positive integer" >&2
+    return 2
+  fi
+  if ! [[ "$epsilon" =~ ^[0-9]*\.?[0-9]+$ ]]; then
+    echo "error: --epsilon must be a non-negative number" >&2
     return 2
   fi
 
@@ -337,13 +444,28 @@ cmd_eval() {
       ;;
   esac
 
+  # Fail before an expensive run when the baseline is already known to be incomparable.
+  if [ -n "$baseline_json" ] && command -v jq >/dev/null 2>&1; then
+    local t_eff expected
+    t_eff="${trials:-$(yaml_config trials_per_task)}"
+    expected="$(jq -n --arg e "$(yaml_config executor)" --arg m "$COPILOT_MODEL" --arg t "$t_eff" \
+      '{config: {engine_type: (if $e == "" then null else $e end), model_id: $m,
+                 runs_per_test: (if $t == "" then null else ($t | tonumber) end)}}')"
+    if ! print_incomparable "$baseline_json" <(printf '%s' "$expected"); then
+      echo "- Run skipped: the result would not be comparable."
+      return 1
+    fi
+  fi
+
   prefix="${prefix:-$skill_name}"
   local ts result_json run_log waza_rc
   ts="$(date +%Y%m%d-%H%M%S)"
   result_json="$RESULTS_DIR/${prefix}-${label}-${ts}.json"
   run_log="$(mktemp)"
 
-  if "$WAZA_BIN" run "$EVAL_YAML" --model "$COPILOT_MODEL" --no-update-check --output "$result_json" >|"$run_log" 2>&1; then
+  # ${trials:+...} is unquoted on purpose: it expands to nothing or to two words.
+  if "$WAZA_BIN" run "$EVAL_YAML" --model "$COPILOT_MODEL" ${trials:+--trials "$trials"} \
+       --no-update-check --output "$result_json" >|"$run_log" 2>&1; then
     waza_rc=0
   else
     waza_rc=$?
@@ -362,7 +484,7 @@ cmd_eval() {
 
   render_report "$skill_name" "$label" "$result_json" "$waza_rc"
   if [ -n "$baseline_json" ]; then
-    render_comparison "$baseline_json" "$result_json"
+    render_comparison "$baseline_json" "$result_json" "$epsilon" || return 1
   fi
   return 0
 }

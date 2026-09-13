@@ -25,7 +25,7 @@ Dispatch only:
 ```text
 status
 scaffold <skill-name>
-eval <skill-name|/absolute/eval.yaml> [--label X] [--baseline_json /absolute/result.json] [--prefix Y]
+eval <skill-name|/absolute/eval.yaml> [--label X] [--baseline_json /absolute/result.json] [--prefix Y] [--trials N] [--epsilon X]
 ```
 
 The dispatch string maps one-to-one onto the launcher's arguments
@@ -38,14 +38,15 @@ bash "${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/
 - A bare name resolves to `~/.claude/evals/<name>/eval.yaml`; `scaffold` and a missing bare-name eval create a placeholder suite. Existing suites are never changed. An absolute eval path must already exist.
 - A successful `eval` writes `~/.claude/data/waza/results/<prefix>-<label>-<timestamp>.json` and prints a Markdown report ending with that absolute path. No-score paths explain why and produce no JSON.
 - Missing waza or workspace is advisory: the launcher prints the install command and the guide path (`../skills/waza/references/waza-install.md`) and exits 0. Return that output unchanged.
-- Launcher exit codes: 0 success or advisory skip, 1 no result JSON or failed scaffold/baseline, 2 usage error. Never turn exit 1 or 2 into a green report.
+- Launcher exit codes: 0 success (including a reported `⚠️ **regression**`) or advisory skip, 1 no result JSON, failed scaffold/baseline, or `⚠️ incomparable` baseline, 2 usage error. Never turn exit 1 or 2 into a green report.
 
 ## Output
 
 Return the launcher's stdout verbatim as the agent result. Do not paraphrase
 grader feedback, invent metric rows, or drop the closing `- Result JSON:` line.
-When the launcher reports a `⚠️ regression`, keep that line at the top of your
-summary so the caller can act on it.
+When the launcher reports `⚠️ **regression**` or `⚠️ incomparable`, keep that
+line at the top of your summary so the caller can act on it. Keep a mock
+result's reference-only note; never present it as a verdict.
 
 ## Upstream Drift
 

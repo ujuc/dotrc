@@ -43,6 +43,20 @@ Inspect the target's evaluator prompts and checked-in suites.
 calls presented as live runs; preservation PASS without a baseline; unchecked
 final repairs; skipped required evidence or failed criteria hidden by a score.
 
+**WARN — low-signal suite** (report-only) when any of these holds for the
+target's checked-in suite:
+
+- `eval.yaml` `config.executor` is `mock`, or the launcher's `| Engine |` row
+  shows `mock` — the mock executor never loads SKILL.md.
+- A copilot-sdk result shows `| Skill invocations | 0 / M |` across all runs.
+- Every grader in `eval.yaml` and `tasks/*.yaml` is a `type: text`
+  `contains`/`not_contains` check or a `type: behavior` token budget — these pass
+  when the output echoes prompt words.
+
+Never edit `claude/evals/` to clear the WARN; route suite authoring to
+`generate-skills` through the `waza` skill. A WARN is never PASS evidence and
+never blocks Phase 5.
+
 A source contradiction may be repaired without claiming that baseline behavior
 failed under higher-priority rules.
 

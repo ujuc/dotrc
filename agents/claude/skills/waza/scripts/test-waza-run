@@ -1,0 +1,181 @@
+#!/usr/bin/env bash
+# Self-check for waza-run.sh using a fake binary and synthetic result JSON.
+# Asserts the regression-guard contract: report rows, --trials passthrough,
+# epsilon threshold, mock reference-only, incomparable baselines, exit codes,
+# and the status Usable line. Never touches a real install or Ollama.
+#
+#   bash test-waza-run      # exits non-zero if any check fails
+set -euo pipefail
+
+case "${1:-}" in
+  -h|--help) echo "Usage: test-waza-run (uses a fake binary and synthetic results only)"; exit 0 ;;
+  "") ;;
+  *) echo "test-waza-run: unknown argument: $1" >&2; exit 2 ;;
+esac
+
+here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+launcher="$here/waza-run.sh"
+root=$(mktemp -d "${TMPDIR:-/tmp}/waza-run-test-XXXXXX")
+trap 'rm -rf "$root"' EXIT
+
+fail=0
+check() {
+  local description=$1
+  shift
+  if "$@"; then
+    printf '  ok   %s\n' "$description"
+  else
+    printf '  FAIL %s\n' "$description"
+    fail=1
+  fi
+}
+
+absent() { ! "$@"; }
+out_has() { grep -qF -- "$1" "$root/out"; }
+argv_has() { [ -f "$FAKE_ARGV" ] && grep -qF -- "$1" "$FAKE_ARGV"; }
+
+# launch EXPECTED_STATUS ARGS...: runs the launcher with output in $root/out.
+# Kills it after ~5s so a flag-parsing hang fails instead of blocking.
+launch() {
+  local expected=$1 status=0 pid i
+  shift
+  rm -f "$FAKE_ARGV"
+  bash "$launcher" "$@" >"$root/out" 2>&1 &
+  pid=$!
+  for i in $(seq 50); do
+    kill -0 "$pid" 2>/dev/null || break
+    sleep 0.1
+  done
+  if kill -0 "$pid" 2>/dev/null; then
+    kill "$pid" 2>/dev/null || true
+    echo "(hung)" >>"$root/out"
+    return 1
+  fi
+  wait "$pid" || status=$?
+  [ "$status" -eq "$expected" ]
+}
+
+launch_as_model() { local model=$1; shift; COPILOT_MODEL="$model" launch "$@"; }
+
+# fixture ENGINE TRIALS '{"test_id": [avg_weighted_score, pass_rate], ...}' [INVOKED_RUNS_PER_TASK]
+fixture() {
+  jq -n --arg e "$1" --argjson t "$2" --argjson tasks "$3" --argjson inv "${4:-0}" '
+    [$tasks | to_entries[] | {test_id: .key, display_name: .key,
+      status: (if .value[1] == 1 then "passed" else "failed" end),
+      stats: {avg_weighted_score: .value[0], pass_rate: .value[1]},
+      runs: [range($t) as $i | {status: "passed", validations: {},
+             skill_invocations: (if $i < $inv then [{skill: "x"}] else null end)}]}] as $ts
+    | ($ts | length) as $n | ([$ts[] | select(.status == "passed")] | length) as $ok
+    | {config: {engine_type: $e, model_id: "gemma4:26b-mlx", runs_per_test: $t, timeout_sec: 300},
+       summary: {total_tests: $n, succeeded: $ok, failed: ($n - $ok), errors: 0, skipped: 0,
+         success_rate: ($ok / $n),
+         aggregate_score: ([$ts[].stats.avg_weighted_score] | add / $n),
+         weighted_score: ([$ts[].stats.avg_weighted_score] | add / $n), duration_ms: 1},
+       tasks: $ts}'
+}
+
+mkdir -p "$root/bin" "$root/curlbin" "$root/ws" "$root/results" "$root/evals/live" "$root/evals/mock" "$root/fx"
+cat >"$root/bin/waza" <<'SH'
+#!/usr/bin/env bash
+case "$1" in
+  --version) echo "fake 0.0.0" ;;
+  run)
+    printf ' %s' "$@" >"$FAKE_ARGV"; printf ' \n' >>"$FAKE_ARGV"
+    out=""
+    while [ $# -gt 0 ]; do [ "$1" = --output ] && out="$2"; shift; done
+    [ -n "${FAKE_FIXTURE:-}" ] || exit 1
+    cp "$FAKE_FIXTURE" "$out" ;;
+esac
+SH
+cat >"$root/curlbin/curl" <<'SH'
+#!/usr/bin/env bash
+printf '%s' "$FAKE_TAGS"
+SH
+chmod +x "$root/bin/waza" "$root/curlbin/curl"
+touch "$root/ws/.waza.yaml"
+printf 'config:\n  trials_per_task: 1\n  executor: copilot-sdk\n' >"$root/evals/live/eval.yaml"
+printf 'config:\n  trials_per_task: 1\n  executor: mock\n' >"$root/evals/mock/eval.yaml"
+
+export PATH="$root/bin:$PATH"
+export WAZA_WORKSPACE="$root/ws" WAZA_RESULTS_DIR="$root/results" WAZA_EVALS_DIR="$root/evals"
+export COPILOT_MODEL="gemma4:26b-mlx" COPILOT_PROVIDER_BASE_URL="http://127.0.0.1:1/v1"
+export FAKE_ARGV="$root/argv" FAKE_TAGS='{"models":[{"name":"gemma4:26b-mlx"}]}'
+live="$root/evals/live/eval.yaml"
+mock="$root/evals/mock/eval.yaml"
+
+fixture copilot-sdk 3 '{"a":[1,1],"b":[1,1],"c":[1,1]}' 1 >"$root/fx/base-live.json"
+fixture copilot-sdk 3 '{"a":[1,1],"b":[1,1],"c":[0.833,0.667]}' >"$root/fx/noise.json"
+fixture copilot-sdk 3 '{"a":[1,1],"b":[0.7,1],"c":[0.7,1]}' >"$root/fx/drop.json"
+fixture copilot-sdk 3 '{"a":[1,1],"b":[0.7,1],"d":[0.7,1]}' >"$root/fx/tasks-changed.json"
+fixture copilot-sdk 3 '{"a":[1,1],"b":[0.7,1],"c":[0.7,1]}' | jq 'del(.config.engine_type)' >"$root/fx/no-engine.json"
+fixture mock 3 '{"a":[1,1],"b":[1,1],"c":[1,1]}' >"$root/fx/base-mock.json"
+fixture mock 3 '{"a":[1,1],"b":[0.7,1],"c":[0.7,1]}' >"$root/fx/mock-drop.json"
+
+echo "report rows and passthrough"
+export FAKE_FIXTURE="$root/fx/base-live.json"
+check "plain eval exits 0" launch 0 eval "$live" --label a
+check "no --trials forwarded when not given" absent argv_has "--trials"
+check "engine row" out_has "| Engine | copilot-sdk |"
+check "model row" out_has "| Model | gemma4:26b-mlx |"
+check "trials row" out_has "| Trials | 3 |"
+check "skill invocations row" out_has "| Skill invocations | 3 / 9 |"
+
+echo "epsilon threshold"
+export FAKE_FIXTURE="$root/fx/noise.json"
+check "noise pair exits 0" launch 0 eval "$live" --label b --trials 3 --baseline-json "$root/fx/base-live.json"
+check "--trials forwarded" argv_has " --trials 3 "
+check "noise pair is not a regression" absent out_has "**regression**"
+check "per-task drops list the noisy task" out_has "- **c**:"
+check "per-task drops skip unchanged tasks" absent out_has "- **a**:"
+export FAKE_FIXTURE="$root/fx/drop.json"
+check "large drop exits 0" launch 0 eval "$live" --label c --trials 3 --baseline-json "$root/fx/base-live.json"
+check "large drop is a regression" out_has "⚠️ **regression**"
+check "wider epsilon exits 0" launch 0 eval "$live" --label d --trials 3 --epsilon 0.3 --baseline-json "$root/fx/base-live.json"
+check "wider epsilon suppresses the regression" absent out_has "**regression**"
+
+echo "mock and comparability"
+export FAKE_FIXTURE="$root/fx/mock-drop.json"
+check "mock pair exits 0" launch 0 eval "$mock" --label e --trials 3 --baseline-json "$root/fx/base-mock.json"
+check "mock is reference-only" out_has "reference-only (mock engine: SKILL.md not exercised)"
+check "mock never reports a regression" absent out_has "**regression**"
+check "engine mismatch exits 1" launch 1 eval "$mock" --label f --trials 3 --baseline-json "$root/fx/base-live.json"
+check "engine mismatch is incomparable" out_has "⚠️ incomparable"
+check "engine mismatch names engine_type" out_has "engine_type"
+check "engine mismatch skips the run" absent test -f "$FAKE_ARGV"
+export FAKE_FIXTURE="$root/fx/base-live.json"
+check "trials mismatch exits 1" launch 1 eval "$live" --label g --trials 1 --baseline-json "$root/fx/base-live.json"
+check "trials mismatch names runs_per_test" out_has "runs_per_test"
+check "trials mismatch skips the run" absent test -f "$FAKE_ARGV"
+export FAKE_FIXTURE="$root/fx/tasks-changed.json"
+check "task-set change exits 1" launch 1 eval "$live" --label h --trials 3 --baseline-json "$root/fx/base-live.json"
+check "task-set change is incomparable" out_has "- tasks:"
+check "task-set change keeps the result path" out_has "- Result JSON:"
+check "task-set change has no verdict" absent out_has "**regression**"
+check "model mismatch exits 1" launch_as_model other:tag 1 eval "$live" --label m --trials 3 --baseline-json "$root/fx/base-live.json"
+check "model mismatch names model_id" out_has "model_id"
+export FAKE_FIXTURE="$root/fx/base-live.json"
+check "trials_per_task mismatch without --trials exits 1" launch 1 eval "$live" --label n --baseline-json "$root/fx/base-live.json"
+check "trials_per_task mismatch skips the run" absent test -f "$FAKE_ARGV"
+export FAKE_FIXTURE="$root/fx/no-engine.json"
+check "missing engine_type in a result exits 1" launch 1 eval "$live" --label o --trials 3 --baseline-json "$root/fx/base-live.json"
+check "missing engine_type has no verdict" absent out_has "**regression**"
+
+echo "failures and usage"
+export FAKE_FIXTURE=""
+check "missing result JSON exits 1" launch 1 eval "$live" --label i
+check "missing result JSON is reported" out_has "run failed"
+check "--trials 0 exits 2" launch 2 eval "$live" --trials 0
+check "--epsilon abc exits 2" launch 2 eval "$live" --epsilon abc
+check "trailing value-less flag exits 2" launch 2 eval "$live" --label
+check "launcher --help exits 0" launch 0 --help
+
+echo "status"
+check "status exits 0 when Ollama is unreachable" launch 0 status
+check "unreachable Ollama is not usable" bash -c 'tail -1 "$0" | grep -q "^- Usable: no (Ollama unreachable"' "$root/out"
+check "served model is usable" env PATH="$root/curlbin:$PATH" bash -c '"$0" status | tail -1 | grep -qx -- "- Usable: yes"' "$launcher"
+check "unserved model is not usable" env PATH="$root/curlbin:$PATH" COPILOT_MODEL=other:tag bash -c '"$0" status | tail -1 | grep -qxF -- "- Usable: no (model other:tag not served by Ollama)"' "$launcher"
+
+if [ "$fail" -ne 0 ]; then
+  echo "test-waza-run: FAILED"
+fi
+exit "$fail"

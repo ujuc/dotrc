@@ -83,7 +83,7 @@ Record a target-type policy mismatch as **B.7 — language policy drift** and as
    waza_run="<repo_root>/claude/skills/waza/scripts/waza-run.sh"
    bash "$waza_run" status
    ```
-   A missing binary or workspace only disables the Phase 4/5 Waza regression guard; report it as SKIP, never as a Phase 0 failure. Never call the `waza` binary directly — the [`waza` skill](../waza/SKILL.md) owns every subcommand.
+   Waza is usable only when the output contains the line `- Usable: yes`. Otherwise (missing binary, workspace, jq, or served Ollama model) only the Phase 4/5 Waza regression guard is disabled; report it as SKIP with the `- Usable: no (<reason>)` reason, never as a Phase 0 failure. Never call the `waza` binary directly — the [`waza` skill](../waza/SKILL.md) owns every subcommand.
 
 If any toolchain/path/repo check fails, report the issue with an actionable fix and stop — do not proceed to Phase 1.
 
@@ -216,22 +216,30 @@ Classify each failure before editing:
   `diff -u`, and apply only accepted scope. If the bar is not met, explain why and
   propose nothing.
 
-### Waza baseline (before the first edit to a target)
+### Waza baseline (before the first model-visible edit to a target)
 
 When Phase 0 found Waza usable and the target skill has a checked-in suite at
-`<repo_root>/claude/evals/<skill>/eval.yaml`, persist a baseline **before**
-touching the target:
+`<repo_root>/claude/evals/<skill>/eval.yaml`, persist a baseline **before** the
+first fix that changes model-visible content — frontmatter, description, body,
+or a reference path. Catalog-only fixes (the skills README) leave the guard SKIP
+(catalog-only). If a later iteration introduces the first model-visible fix, run
+the baseline before that edit:
 
 ```bash
 eval_yaml="<repo_root>/claude/evals/<skill>/eval.yaml"
-[ -f "$eval_yaml" ] && bash "$waza_run" eval "$eval_yaml" --label improver-baseline
+[ -f "$eval_yaml" ] && bash "$waza_run" eval "$eval_yaml" --label improver-baseline --trials 3
 ```
+
+Three trials are required because a single run is noisy: an unchanged
+copilot-sdk suite measured weighted 1.000 then 0.944. One 3-trial copilot-sdk
+run took 13–20 minutes against the local model, so budget the guard per target.
 
 Record the result JSON path the report ends with (`- Result JSON: ...`) as
 `waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: the bare
 skill-name form auto-scaffolds a new suite, which is authoring work outside this
 skill's write boundary. No suite → Waza guard SKIP for that target; agent
-targets have no suites and are always SKIP.
+targets have no suites and are always SKIP. A launcher exit 1 or a missing
+`- Result JSON:` line leaves no baseline, and the guard is UNVERIFIED.
 
 ### Auto-fixable (apply with Edit tool)
 
@@ -265,18 +273,30 @@ behavior change unapplied; local reasoning is not an independent review.
 2. **Regression guard**: if a fix introduces a new failure, revert that fix and
    reclassify it as manual. For an unapplied E-track proposal, discard the draft
    under `$REPORT_DIR/proposed/`.
-   - **Waza guard**: when `waza_baseline[<skill>]` exists, rerun the same suite
-     against it after the fixes:
+   - **Waza guard**: when `waza_baseline[<skill>]` exists and this iteration
+     applied model-visible fixes, rerun the same suite against it:
      ```bash
-     bash "$waza_run" eval "$eval_yaml" --label improver-after \
+     bash "$waza_run" eval "$eval_yaml" --label improver-after --trials 3 \
        --baseline-json "${waza_baseline[<skill>]}"
      ```
-     A `⚠️ regression` line (negative weighted-score delta) is a regression for
-     this rule: revert the fix and reclassify it as manual. A non-negative delta
-     is a preservation check, not behavior proof — mock-executor suites score
-     keywords, so report it under B.10 as fixed-input replay, never as live
-     behavior. Retain both JSON paths for the Phase 6 report and any later
-     `/autoresearch` run.
+     Classify the launcher output in this order:
+     - Launcher exit 1, no `- Result JSON:` line, or `⚠️ incomparable` — on the
+       rerun or on its confirmation run: record `UNVERIFIED`, never SKIP or PASS,
+       and do not revert on it alone. This wins over a reference-only note.
+     - `⚠️ **regression**` (rounded weighted Δ below −0.1): run one confirmation
+       with `--label improver-confirm` against the same baseline. If the line
+       appears again, revert **all** model-visible fixes of this iteration for
+       the target and reclassify them as manual (`regression-reverted`). Do not
+       bisect per fix; each extra run costs another 13–20 minutes. If it does not
+       reappear, record `preserved` with an "unconfirmed drop" note and both JSON
+       paths.
+     - `reference-only` (mock engine): record `reference-only` and never revert;
+       the mock executor never loads SKILL.md.
+     - Otherwise `preserved`. A preserved score is a fixed-input replay, not
+       behavior proof; report it under B.10, never as live behavior.
+
+     Retain every JSON path for the Phase 6 report and any later `/autoresearch`
+     run.
 3. If all required audit checks PASS, with optional/inapplicable evidence clearly
    SKIP/UNVERIFIED → proceed to Phase 6. Do not claim behavior beyond its evidence.
 4. If failures remain and iteration count < 3 → return to Phase 4.
@@ -299,7 +319,9 @@ summary and the location of `REPORT_DIR`:
 Evidence: <sampled> sessions since <date>, <failed> failed, coverage <ratio>
   - <session id> → <target>: <one-line paraphrase and disposition>
 Waza: <usable|SKIP reason>
-  - <skill>: weighted <before> → <after> (<Δ>) — baseline <json>, after <json>
+  - <skill>: engine <engine>, trials <n>, weighted <before> → <after> (<Δ>), skill invocations <N/M>, verdict <preserved|regression-reverted|reference-only|UNVERIFIED|SKIP> — baseline <json>, after <json>[, confirm <json>]
+Suite signal:
+  - <skill>: WARN low-signal suite (<mock engine|0 skill invocations|text/token-budget graders only>) → author through generate-skills with the waza skill
 ```
 
 Include empty evidence and no-proposal outcomes. List every target with a
@@ -355,8 +377,8 @@ If deeper eval-based optimization is warranted, finish this run first and recomm
 4. Missing history can make the collector fail rather than emit an empty
    inventory. Both cases make Dimension E SKIP, never PASS or a structural FAIL.
 5. Beyond target files and the catalog, writes are limited to `REPORT_DIR`, an
-   explicitly requested commit, the Phase 6 timestamp, and Waza result JSON under
-   the gitignored `~/.claude/data/waza/results/`, subject to user and host write
+   explicitly requested commit, the Phase 6 timestamp, and Waza result JSON
+   (baseline, after, and confirmation runs) under the gitignored `~/.claude/data/waza/results/`, subject to user and host write
    boundaries. Never scaffold or edit `claude/evals/` from this skill; suite
    authoring belongs to `generate-skills` through the `waza` skill.
 
@@ -377,4 +399,4 @@ is violated; missing applicable evidence is UNVERIFIED, never PASS.
 | 8 | Session evidence collection and reporting | Use the collector, keep audit artifacts under mktemp `REPORT_DIR`, cite IDs plus paraphrases; no direct raw-history reads or digest quotes. |
 | 9 | Waza invocation in skill/agent definitions | Only `claude/skills/waza/scripts/waza-run.sh` contains direct Waza subcommands; skills and agents (including `waza-runner.md`) call that launcher. Exclude `waza-install.md` when scanning documentation. |
 | 10 | Model recommendation and execution | Recommend a workload profile with supported candidates and escalation conditions; respect user choices and distinguish advice from actual switching. Inheritance is a fallback, not proof of fit. |
-| 11 | Waza regression guard | With Waza usable and a checked-in suite, a baseline JSON exists before the first edit and an `--baseline-json` rerun follows the fixes; a negative weighted delta reverts the fix. Without Waza or a suite, the guard is SKIP and no suite is scaffolded. |
+| 11 | Waza regression guard | With `- Usable: yes` and a checked-in suite, a target about to receive a model-visible edit has a `--trials 3` baseline JSON before that edit and a `--trials 3 --baseline-json` rerun after it; only a `⚠️ **regression**` line that reproduces on one confirmation rerun reverts all of that iteration's model-visible fixes for the target and reclassifies them as manual. Launcher exit 1, a missing Result JSON, or `⚠️ incomparable` is UNVERIFIED; mock results are reference-only and never revert. Without Waza, a suite, or a model-visible edit, the guard is SKIP and no suite is scaffolded or edited. |
