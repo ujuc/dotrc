@@ -78,6 +78,12 @@ Record a target-type policy mismatch as **B.7 — language policy drift** and as
    ```
    Compare that version with all `superpowers.adapted_from` versions in the contract. If missing or mismatched, emit a non-blocking warning that adapted assumptions need review; do not edit the plugin cache, installed manifest, pins, or skills automatically.
 6. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking.
+7. **Waza availability** (non-blocking): resolve the launcher once and record whether measurement is possible for this run:
+   ```bash
+   waza_run="<repo_root>/claude/skills/waza/scripts/waza-run.sh"
+   bash "$waza_run" status
+   ```
+   A missing binary or workspace only disables the Phase 4/5 Waza regression guard; report it as SKIP, never as a Phase 0 failure. Never call the `waza` binary directly — the [`waza` skill](../waza/SKILL.md) owns every subcommand.
 
 If any toolchain/path/repo check fails, report the issue with an actionable fix and stop — do not proceed to Phase 1.
 
@@ -210,6 +216,23 @@ Classify each failure before editing:
   `diff -u`, and apply only accepted scope. If the bar is not met, explain why and
   propose nothing.
 
+### Waza baseline (before the first edit to a target)
+
+When Phase 0 found Waza usable and the target skill has a checked-in suite at
+`<repo_root>/claude/evals/<skill>/eval.yaml`, persist a baseline **before**
+touching the target:
+
+```bash
+eval_yaml="<repo_root>/claude/evals/<skill>/eval.yaml"
+[ -f "$eval_yaml" ] && bash "$waza_run" eval "$eval_yaml" --label improver-baseline
+```
+
+Record the result JSON path the report ends with (`- Result JSON: ...`) as
+`waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: the bare
+skill-name form auto-scaffolds a new suite, which is authoring work outside this
+skill's write boundary. No suite → Waza guard SKIP for that target; agent
+targets have no suites and are always SKIP.
+
 ### Auto-fixable (apply with Edit tool)
 
 | Category | Trigger | Fix |
@@ -242,6 +265,18 @@ behavior change unapplied; local reasoning is not an independent review.
 2. **Regression guard**: if a fix introduces a new failure, revert that fix and
    reclassify it as manual. For an unapplied E-track proposal, discard the draft
    under `$REPORT_DIR/proposed/`.
+   - **Waza guard**: when `waza_baseline[<skill>]` exists, rerun the same suite
+     against it after the fixes:
+     ```bash
+     bash "$waza_run" eval "$eval_yaml" --label improver-after \
+       --baseline-json "${waza_baseline[<skill>]}"
+     ```
+     A `⚠️ regression` line (negative weighted-score delta) is a regression for
+     this rule: revert the fix and reclassify it as manual. A non-negative delta
+     is a preservation check, not behavior proof — mock-executor suites score
+     keywords, so report it under B.10 as fixed-input replay, never as live
+     behavior. Retain both JSON paths for the Phase 6 report and any later
+     `/autoresearch` run.
 3. If all required audit checks PASS, with optional/inapplicable evidence clearly
    SKIP/UNVERIFIED → proceed to Phase 6. Do not claim behavior beyond its evidence.
 4. If failures remain and iteration count < 3 → return to Phase 4.
@@ -263,9 +298,12 @@ summary and the location of `REPORT_DIR`:
 
 Evidence: <sampled> sessions since <date>, <failed> failed, coverage <ratio>
   - <session id> → <target>: <one-line paraphrase and disposition>
+Waza: <usable|SKIP reason>
+  - <skill>: weighted <before> → <after> (<Δ>) — baseline <json>, after <json>
 ```
 
-Include empty evidence and no-proposal outcomes. Leave the scratch directory for
+Include empty evidence and no-proposal outcomes. List every target with a
+Waza baseline, including unchanged ones, so the JSON pairs stay discoverable. Leave the scratch directory for
 inspection. Session history stays local and read-only: never upload, commit, or
 quote raw history or digest lines. Cite session IDs with one-line paraphrases.
 
@@ -317,8 +355,10 @@ If deeper eval-based optimization is warranted, finish this run first and recomm
 4. Missing history can make the collector fail rather than emit an empty
    inventory. Both cases make Dimension E SKIP, never PASS or a structural FAIL.
 5. Beyond target files and the catalog, writes are limited to `REPORT_DIR`, an
-   explicitly requested commit, and the Phase 6 timestamp, subject to user and
-   host write boundaries.
+   explicitly requested commit, the Phase 6 timestamp, and Waza result JSON under
+   the gitignored `~/.claude/data/waza/results/`, subject to user and host write
+   boundaries. Never scaffold or edit `claude/evals/` from this skill; suite
+   authoring belongs to `generate-skills` through the `waza` skill.
 
 ## Eval Criteria
 
@@ -335,5 +375,6 @@ is violated; missing applicable evidence is UNVERIFIED, never PASS.
 | 6 | Missing or invalid `group` | Report as manual and present the eight allowed slugs; never guess. |
 | 7 | E-track proposal or a sample without attributable failures | Every proposal cites a session ID and rubric label; no failures means no E-track edit. Keep explicit user-directed authoring separate. |
 | 8 | Session evidence collection and reporting | Use the collector, keep audit artifacts under mktemp `REPORT_DIR`, cite IDs plus paraphrases; no direct raw-history reads or digest quotes. |
-| 9 | Waza invocation in skill/agent definitions | Only `waza-runner.md` contains direct Waza subcommands; exclude `waza-install.md` when scanning documentation. |
+| 9 | Waza invocation in skill/agent definitions | Only `claude/skills/waza/scripts/waza-run.sh` contains direct Waza subcommands; skills and agents (including `waza-runner.md`) call that launcher. Exclude `waza-install.md` when scanning documentation. |
 | 10 | Model recommendation and execution | Recommend a workload profile with supported candidates and escalation conditions; respect user choices and distinguish advice from actual switching. Inheritance is a fallback, not proof of fit. |
+| 11 | Waza regression guard | With Waza usable and a checked-in suite, a baseline JSON exists before the first edit and an `--baseline-json` rerun follows the fixes; a negative weighted delta reverts the fix. Without Waza or a suite, the guard is SKIP and no suite is scaffolded. |

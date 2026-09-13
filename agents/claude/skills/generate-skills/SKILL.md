@@ -155,7 +155,7 @@ new guidance: three pressure scenarios for discipline skills, otherwise one
 application or retrieval scenario. For updates, run the unchanged skill as the
 baseline. Keep the prompts and observed failure so Step 5 can rerun exactly the
 same cases; if Waza is available for an existing skill, persist this baseline
-through `waza-runner` before editing. If baseline behavior passes, do not invent a failure. A reproduced instruction
+through the `waza` skill launcher before editing. If baseline behavior passes, do not invent a failure. A reproduced instruction
 contradiction may justify a scoped consistency correction; otherwise avoid
 speculative guidance and retain the evidence level.
 
@@ -343,17 +343,21 @@ mechanical corrections may mark behavior N/A with structural evidence. The autor
 
 ### Waza measurement (optional automation)
 
-If `waza` is on PATH, persist the Step 5 candidate run alongside the Step 1
+If `waza` is usable, persist the Step 5 candidate run alongside the Step 1
 baseline for an existing skill. A new skill uses the no-guidance transcript as
 its baseline because no runnable skill exists yet. **All waza operations route
-through the `waza-runner` agent — this skill never invokes the `waza` CLI
-directly.** When Waza is unavailable, use fresh-context subagent scenarios and
+through the [`waza` skill](../waza/SKILL.md) launcher
+`../waza/scripts/waza-run.sh` — this skill never invokes the `waza` CLI
+directly.** In Claude Code, dispatch the `waza-runner` agent
+([definition](../../agents/waza-runner.md)) when an isolated context is
+preferable; it forwards the same `scaffold`/`eval` dispatch string to the
+launcher. When Waza is unavailable, use fresh-context subagent scenarios and
 report that the evidence was not persisted by Waza.
 
-Use the runner's [agent definition](../../agents/waza-runner.md) for scaffolding,
-supported commands, existing-suite preservation and result paths. Refine its
-placeholder tasks against actual triggers and outputs before evaluation. Retain
-baseline/candidate paths for `skill-improver` and use distinct run labels.
+Use the `waza` SKILL.md for scaffolding, supported commands, existing-suite
+preservation and result paths. Refine its placeholder tasks against actual
+triggers and outputs before evaluation. Retain baseline/candidate paths for
+`skill-improver` and use distinct run labels.
 
 ### Independent review (optional)
 

@@ -46,9 +46,12 @@ final repairs; skipped required evidence or failed criteria hidden by a score.
 A source contradiction may be repaired without claiming that baseline behavior
 failed under higher-priority rules.
 
-Review evidence and configuration only. To fill a behavior-evidence gap, report
-it and request an authorized isolated run through the owning authoring/evaluation
-workflow; do not execute the target workflow from this maintenance skill.
+Review evidence and configuration; do not execute the target workflow from this
+maintenance skill. The one permitted measurement is replaying a checked-in suite
+through the `waza` skill launcher (`claude/skills/waza/scripts/waza-run.sh`) as
+the Phase 4/5 regression guard. That replay compares before/after scores on
+fixed inputs and never fills a behavior-evidence gap: report the gap and request
+an authorized isolated run through the owning authoring/evaluation workflow.
 
 ## B.11 — Host capability and source integrity
 

@@ -4,7 +4,7 @@
 - Scopes follow directories: `amp`, `claude`, `codex`, `hooks`, `pi`, `rules`, `skills`, `tools`.
 - The root `gitmessage` and `.githooks/commit-msg` define commit types and subject format.
 - After changing `agents/claude/skills/<name>/`, run `bash agents/claude/skills/generate-skills/scripts/validate-skill agents/claude/skills/<name>` from the repository root, then run `skill-improver`.
-- For suites under `agents/claude/evals/<skill>/`, follow `agents/claude/agents/waza-runner.md`; never invoke the `waza` CLI directly.
+- For suites under `agents/claude/evals/<skill>/`, run `bash agents/claude/skills/waza/scripts/waza-run.sh` (the `waza` skill; Claude Code may dispatch the `waza-runner` agent wrapper); never invoke the `waza` CLI directly.
 - Edit repository paths, never symlink targets.
 
 ## Configuration Boundaries

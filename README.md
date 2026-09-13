@@ -289,8 +289,9 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | ba
 ```
 
 바이너리만 설치되며 `~/.claude/data/waza-workspace/`는 만들지 않는다. 워크스페이스 준비와
-로컬 Ollama 모델 설정은 `agents/claude/agents/references/waza-install.md`를 따른다.
-실행은 항상 `waza-runner` 에이전트를 거친다.
+로컬 Ollama 모델 설정은 `agents/claude/skills/waza/references/waza-install.md`를 따른다.
+실행은 항상 `waza` 스킬의 `scripts/waza-run.sh`를 거치며(Amp·Codex·Pi 공용), Claude Code의
+`waza-runner` 에이전트는 이 런처를 격리 컨텍스트에서 호출하는 래퍼다.
 
 ### [CodeGraph](https://github.com/colbymchenry/codegraph)
 

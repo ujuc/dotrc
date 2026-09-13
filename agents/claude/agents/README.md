@@ -122,18 +122,22 @@ skills (the "one caller per agent" rule applies to pipeline workers only).
 
 | Agent             | Calling skills                | Recommended profile | Tools                    | Writes code | Output                                                         | Advisor |
 |-------------------|-------------------------------|--------|--------------------------|-------------|----------------------------------------------------------------|---------|
-| `waza-runner`     | `generate-skills`, explicit eval requests | Standard | Bash, Read               | no          | stdout + optional `claude/evals/<skill>/` scaffold + result JSON | no      |
+| `waza-runner`     | `generate-skills`, explicit eval requests (Claude Code only) | Standard | Bash, Read               | no          | stdout + optional `claude/evals/<skill>/` scaffold + result JSON | no      |
 | `skill-engineer`  | `skill-improver` (optional)   | Advanced | Read, Glob, Grep, advisor | no          | stdout (Korean report — trigger / overlap / model fitness)     | ≤1      |
 
-`waza-runner` is the single entry point for all waza operations. Callers
-dispatch with `scaffold <name>` to create a placeholder `eval.yaml` or
-`eval <path-or-name>` to run a measurement (which auto-scaffolds the suite
-when one is missing). The runner parses the resulting JSON and renders a
-Korean summary table — or a before/after comparison when given a baseline
-JSON. **Callers must never invoke the `waza` CLI directly; all subcommands
-route through this agent.** On a host without `waza` installed it prints
-the install guide at `references/waza-install.md` and exits cleanly so the
-calling skill can degrade gracefully without a score.
+`waza-runner` is a Claude Code wrapper around the harness-neutral `waza`
+skill launcher, `../skills/waza/scripts/waza-run.sh`, which is the single
+entry point for all waza operations (Amp, Codex, and Pi call the launcher
+directly). Callers dispatch with `status`, `scaffold <name>` to create a
+placeholder `eval.yaml`, or `eval <path-or-name>` to run a measurement (which
+auto-scaffolds a bare-name suite when one is missing). The launcher parses
+the resulting JSON and renders a summary table — or a before/after
+comparison when given a baseline JSON. **Callers must never invoke the `waza`
+CLI directly; all subcommands route through the launcher, optionally via
+this agent for an isolated context.** On a host without `waza` installed it
+prints the install command plus the guide path
+(`../skills/waza/references/waza-install.md`) and exits cleanly so the calling
+skill can degrade gracefully without a score.
 
 When provisioned, `~/.claude/data/waza-workspace/` is gitignored and uses relative skill/eval paths with symlinks to `~/.claude/skills/` and `~/.claude/evals/`. This repository does not synthesize the evolving `.waza.yaml`; an absent workspace yields an advisory no-score exit.
 
