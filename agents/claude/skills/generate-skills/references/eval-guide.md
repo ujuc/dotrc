@@ -43,6 +43,38 @@ Fail condition: [What triggers a "no"]
 
 ---
 
+## Waza suites
+
+A suite under `claude/evals/<skill>/` feeds the `skill-improver` regression
+guard, so it must be able to fail when the skill degrades. Placeholder scaffolds
+cannot: their `contains` graders check words that already appear in the prompt.
+
+- **Executor.** `executor: copilot-sdk` injects SKILL.md into the session;
+  `executor: mock` echoes the prompt and never reads the skill, so mock suites
+  are reference-only and score 1.0 whatever the skill says.
+- **Graders that carry signal.** Grade what the skill changes in the output:
+  a `text` `regex_match` on the required shape (a `-다` subject, a report
+  heading, a status line), a `program`/`file` grader on a produced artifact, or
+  a `prompt` grader whose judge (`config.judge_model` in eval.yaml; the launcher
+  exposes no judge flag) is not the eval model. Keep the `behavior` token budget
+  as a side check, not the only one.
+- **Negative task.** Keep at least one prompt where the skill must not change
+  the answer, graded with `text` `not_contains` or a `skill_invocation` grader
+  that lists the skill under `forbidden_skills`.
+- **Trials and IDs.** Set `trials_per_task: 3` (or run with `--trials 3`) and
+  freeze task IDs before the baseline run; the launcher marks a later run
+  `⚠️ incomparable` when engine, model, trials, or the task set differ, and
+  skips the run entirely when eval.yaml already shows the mismatch.
+- **Trigger precision.** `inject_skill_body: false` with a `skill_invocation`
+  grader measures whether the agent calls the `skill` tool. Validate the
+  channel first: in a 2026-09-13 probe the local `gemma4:26b-mlx` never invoked
+  `commit` on a direct commit request (0 invocations, 272k tokens), so a 0 there
+  reflects the eval model, not the skill. Trust a positive-trigger grader only
+  after a control task shows the model invoking some skill under the same
+  executor and model.
+- **Budget.** One 3-trial copilot-sdk run measured 13–20 minutes on the local
+  model; keep suites to 3–6 tasks.
+
 ## Baseline and evidence integrity
 
 Preserve exact prompts, fixture bytes, injected events and expected actions.

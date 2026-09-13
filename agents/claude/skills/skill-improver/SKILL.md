@@ -321,7 +321,7 @@ Evidence: <sampled> sessions since <date>, <failed> failed, coverage <ratio>
 Waza: <usable|SKIP reason>
   - <skill>: engine <engine>, trials <n>, weighted <before> → <after> (<Δ>), skill invocations <N/M>, verdict <preserved|regression-reverted|reference-only|UNVERIFIED|SKIP> — baseline <json>, after <json>[, confirm <json>]
 Suite signal:
-  - <skill>: WARN low-signal suite (<mock engine|0 skill invocations|text/token-budget graders only>) → author through generate-skills with the waza skill
+  - <skill>: WARN low-signal suite (<mock engine|text/token-budget graders only>) → author through generate-skills with the waza skill
 ```
 
 Include empty evidence and no-proposal outcomes. List every target with a

@@ -48,10 +48,14 @@ target's checked-in suite:
 
 - `eval.yaml` `config.executor` is `mock`, or the launcher's `| Engine |` row
   shows `mock` — the mock executor never loads SKILL.md.
-- A copilot-sdk result shows `| Skill invocations | 0 / M |` across all runs.
 - Every grader in `eval.yaml` and `tasks/*.yaml` is a `type: text`
-  `contains`/`not_contains` check or a `type: behavior` token budget — these pass
-  when the output echoes prompt words.
+  `contains`/`not_contains` check or a `type: behavior` token budget, with no
+  `skill_invocation` grader — these pass when the output echoes prompt words.
+
+Do not WARN on `| Skill invocations | 0 / M |` alone. With the default
+`inject_skill_body: true`, waza puts SKILL.md in the system prompt, so the agent
+has no reason to call the `skill` tool and 0 is expected. Invocation counts are
+graded only by `skill_invocation` graders in `inject_skill_body: false` suites.
 
 Never edit `claude/evals/` to clear the WARN; route suite authoring to
 `generate-skills` through the `waza` skill. A WARN is never PASS evidence and

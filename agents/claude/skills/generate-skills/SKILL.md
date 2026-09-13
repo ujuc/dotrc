@@ -155,7 +155,9 @@ new guidance: three pressure scenarios for discipline skills, otherwise one
 application or retrieval scenario. For updates, run the unchanged skill as the
 baseline. Keep the prompts and observed failure so Step 5 can rerun exactly the
 same cases; if Waza is available for an existing skill, persist this baseline
-through the `waza` skill launcher before editing. If baseline behavior passes, do not invent a failure. A reproduced instruction
+through the `waza` skill launcher before editing, after the suite's tasks are
+final and with `--trials 3` (see "Waza measurement" below). If baseline
+behavior passes, do not invent a failure. A reproduced instruction
 contradiction may justify a scoped consistency correction; otherwise avoid
 speculative guidance and retain the evidence level.
 
@@ -355,9 +357,26 @@ launcher. When Waza is unavailable, use fresh-context subagent scenarios and
 report that the evidence was not persisted by Waza.
 
 Use the `waza` SKILL.md for scaffolding, supported commands, existing-suite
-preservation and result paths. Refine its placeholder tasks against actual
-triggers and outputs before evaluation. Retain baseline/candidate paths for
-`skill-improver` and use distinct run labels.
+preservation and result paths. Author suites that carry signal per
+[Waza suites](references/eval-guide.md#waza-suites) — a mock executor or
+prompt-echo keyword graders cannot detect a regression.
+
+The launcher refuses baselines it cannot compare, so fix the inputs first:
+
+1. Scaffold, then refine the placeholder tasks against actual triggers and
+   outputs **before** the Step 1 baseline. Changing task IDs, the executor, or
+   `trials_per_task` afterwards makes the candidate `⚠️ incomparable` (exit 1,
+   and the run is skipped when eval.yaml already shows the mismatch); rerun the
+   baseline on the unchanged skill instead of comparing across suites.
+2. Run the baseline and the candidate with the same `--trials 3` and distinct
+   labels, passing the baseline JSON to the candidate run with `--baseline-json`.
+   One 3-trial copilot-sdk run took 13–20 minutes against the local model.
+3. Read the verdict, not the raw delta: `⚠️ **regression**` (rounded weighted Δ
+   below −0.1 by default) blocks the candidate until inspected; a smaller drop is
+   run-to-run noise; a `reference-only` mock result and an `⚠️ incomparable`
+   report are not behavior evidence.
+
+Retain baseline/candidate JSON paths for `skill-improver`.
 
 ### Independent review (optional)
 

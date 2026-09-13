@@ -60,7 +60,7 @@ regression). Unknown flags, flags without a value, and invalid numbers exit 2.
 - A successful `eval` writes `~/.claude/data/waza/results/<prefix>-<label>-<timestamp>.json` and prints a Markdown report ending with that absolute path. Relay the report as-is; never paraphrase grader feedback or invent metric rows.
 - Exit 0 covers success, a reported `⚠️ **regression**`, **and** advisory skips (no binary, no workspace, suite already exists). Exit 1 means waza produced no result JSON, scaffold/baseline validation failed, or the baseline is `⚠️ incomparable`. Exit 2 is a usage error. Read the report body, not just the exit code, before claiming a score.
 - Waza exit 1 can still produce valid task-failure JSON; the script parses it and adds the exit code as a warning.
-- The report shows Engine, Model, Trials, and Skill invocations (runs with a recorded skill invocation / all runs).
+- The report shows Engine, Model, Trials, and Skill invocations (runs with a recorded skill invocation / all runs). Invocations are recorded only when the agent calls the `skill` tool; with the default `inject_skill_body: true` the SKILL.md body is already in the system prompt, so `0 / M` is expected and is not a failure.
 - With `--baseline-json`:
   - Engine, model, trials, or task-set differences print `⚠️ incomparable`, give no verdict, and exit 1. Differences knowable from eval.yaml, `--trials`, and `COPILOT_MODEL` skip the run entirely.
   - `⚠️ **regression**` appears only when the rounded weighted-score delta is below `-epsilon`; recommend rollback or inspection of both JSON files. Smaller drops are run-to-run noise at the default: an unchanged suite measured 1.000 → 0.944 across two 3-trial runs.
