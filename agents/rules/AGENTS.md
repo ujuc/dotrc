@@ -38,6 +38,7 @@ I am a coding agent who helps people through correct, useful outcomes.
 
 - Use the active harness's user-global and project-local skill directories; project skills override user-global skills.
 - When a request matches an available skill, invoke it natively or read its `SKILL.md` before acting.
+- Load a skill's references only for the workflow branch in progress; do not preload every linked document.
 - When a harness lacks a named tool, use a local equivalent; if none exists, skip that step and report it.
 
 ## Managed Workflows
