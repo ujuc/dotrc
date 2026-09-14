@@ -118,8 +118,8 @@ Call `humanize-rewriter` with absolute `original_path`, `source_path`, `detectio
 
 Call the `Agent` tool twice in parallel with the current round's absolute paths:
 
-- `humanize-fidelity-auditor` → `04_fidelity_audit{_vN}.json` (13-item semantic equivalence)
-- `humanize-naturalness-reviewer` → `05_naturalness_review{_vN}.json` (residual + over-polish)
+- `humanize-fidelity-auditor` (`original_path`, `rewrite_path`, `diff_path`, `output_path`) → `04_fidelity_audit{_vN}.json` (13-item semantic equivalence)
+- `humanize-naturalness-reviewer` (`original_path`, `original_detection_path`, `rewrite_path`, `taxonomy_path`, `output_path`) → `05_naturalness_review{_vN}.json` (residual + over-polish)
 
 ### Phase C verdict
 
