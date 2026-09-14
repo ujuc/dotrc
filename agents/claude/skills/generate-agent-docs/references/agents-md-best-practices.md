@@ -79,3 +79,44 @@ filter applies only where no explicit project requirement takes precedence:
   Gotchas, Non-Obvious Conventions, Build & Test **Gotchas** (not standard
   commands), Boundaries — i.e., the "anything you'd tell a new teammate"
   material that code cannot reveal.
+
+---
+
+## Cross-vendor finding — GPT-6 Astra guidance (2026)
+
+Source: [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)
+(OpenAI). Model-specific finding, applied as a local writing default for the
+cross-harness AGENTS.md because the same instruction shapes recur across
+current frontier models. Explicit repository and user requirements still win.
+
+### A1 — Route documents by situation, never as a blanket preload
+
+- Bad: "Before every edit, read architecture.md, database.md, and deployment.md."
+- Good: "Use architecture.md for service boundaries, database.md for schema
+  changes, and deployment.md when preparing a deployment."
+
+A blanket read burns every-session context; a contextual pointer costs one line
+and loads only the branch in use. Emit pointers with their condition.
+
+### A2 — Drop test encouragement; keep non-obvious invocations
+
+Current models run relevant checks unprompted (see W1 in
+model-prompting-guides.md). Omit "always run the tests" lines; keep a test
+command only when it is non-obvious or gated by a team decision.
+
+### A3 — Grant safe automation explicitly; calibrate restrictions to risk
+
+Where a workflow is safe to run unattended, say so with its reason, e.g. "Local
+tests use disposable fixtures with no production access; run them, fix
+failures, and rerun affected tests without asking per step." Reserve "ask
+first" language for destructive, production, or out-of-scope actions. Blanket
+restrictive phrasing written for weaker models over-constrains current ones,
+which already refuse unsafe work. Never weaken an explicit user or repository
+safety boundary to satisfy this default.
+
+### A4 — Define done where the repository has a fixed notion of it
+
+If completing a change in this repository means running it, inspecting the
+result, and fixing what fails, write that completion criterion once. A
+"stop for review after the first implementation" line pulls the agent toward
+an earlier stop; emit it only when the team actually wants that checkpoint.

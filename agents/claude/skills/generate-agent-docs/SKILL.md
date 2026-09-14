@@ -312,6 +312,7 @@ instructions.
 | Expand an update beyond existing authorization | Present the new scope or destructive change; reuse prior approval for unchanged scope (U3) |
 | Tell a Stage 1 Explore agent to write a file | Explore is read-only — findings return as final messages |
 | Add generic self-check scaffolding | Apply W1; preserve concrete team test gates and recommend automation without erasing policy |
+| Emit "read X, Y, Z before every edit" or a blanket "always ask before" rule | Route each document by situation and scope approval to destructive or out-of-scope actions (agents-md-best-practices.md A1, A3); keep explicit team safety boundaries |
 | Emit a TDD or test-first process mandate aimed at the agent's own loop | Rewrite as outcome-based verification (tdd-agent-loop.md T1) — keep it only as one of T1's Reconciliation survivors, e.g. a team decision confirmed in Stage 2 |
 | Emit an instruction to show, or to suppress, the agent's reasoning | Never (W2) — risks `reasoning_extraction` refusals one way, internal-tag leakage the other |
 | Emit a sometimes-relevant multi-step procedure as a CLAUDE.md / AGENTS.md section | Recommend a skill and emit one reference line (C2) — every-session budget is for always-relevant content |
