@@ -1,6 +1,6 @@
 # Skill Design Principles
 
-> Seven design defaults, subject to explicit user/repository requirements and
+> Eight design defaults, subject to explicit user/repository requirements and
 > the authority, scope and evidence rules in [quality criteria](quality-criteria.md).
 
 ---
@@ -46,6 +46,13 @@ Match the specificity of instructions to the nature of the task.
 - **Context dependency**: Should results vary by situation? → High freedom
 - **Repetition**: Does the same pattern repeat? → Low freedom
 
+**Default up, not down.** Current models handle nuance and ambiguity well, so
+an elaborate itinerary or recipe now tends to hinder rather than help. Start
+at the highest freedom the task tolerates and lower it only for a fragility
+you can name. State the goal and the constraints; leave the route to the model.
+
+> Source: [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) — OpenAI, 2026 (model-specific finding; apply as local default)
+
 ---
 
 ## 3. Progressive Disclosure
@@ -73,6 +80,18 @@ Split information into 3 tiers. Agents load only what they need.
 - `scripts/`: automation and validation scripts
 - `assets/`: images, diagrams, PDFs
 - No size limit
+
+### Router pattern for multi-workflow skills
+
+When a skill covers several workflows, keep the SKILL.md body a minimal router:
+enough to pick the workflow and locate its reference or script, nothing that
+only one branch needs. Point contextually, not as a blanket preload:
+
+- Bad: "Before starting, read `references/a.md`, `b.md`, and `c.md`."
+- Good: "Use `a.md` for migrations, `b.md` for rollout review, `c.md` when a
+  script fails."
+
+> Source: [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) — OpenAI, 2026 (model-specific finding; apply as local default)
 
 ---
 
@@ -144,6 +163,24 @@ Skills can register hooks that activate only when the skill is called and last f
 **Implementation:** Define hooks in the skill's frontmatter. They are session-scoped and automatically cleaned up.
 
 > Source: [Lessons from Building Claude Code](https://x.com/trq212/article/2033949937936085378) — Thariq (@trq212), 2026-03-18
+
+---
+
+## 8. Completion Criteria and Decision Boundaries
+
+Say what "done" means before the workflow starts. If done includes running the
+result, inspecting it, and fixing what fails, write that into the skill; a
+"stop for review after the first implementation" step pulls the model toward an
+earlier stop. When continuation is wanted, name what to explore and where to stop.
+
+Calibrate permission language to actual risk. Grant safe automation explicitly
+(e.g., "local tests use disposable fixtures with no production access; run them,
+fix failures, and rerun without asking per step") and reserve "never without
+approval" for actions that are destructive or outside scope. Blanket
+restrictions written for weaker models over-constrain current ones. Preserve
+explicit user or repository safety boundaries regardless.
+
+> Source: [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) — OpenAI, 2026 (model-specific finding; apply as local default)
 
 ---
 

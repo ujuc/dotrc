@@ -95,6 +95,24 @@ description: >-
   or "document this project".
 ```
 
+### Trigger names the domain, not the action
+
+```yaml
+# Bad: any mention of the domain loads the skill
+description: >-
+  Create and validate Postgres schema migrations.
+  Use when working with databases, queries, models, or persistence.
+
+# Fix: trigger on the action the skill actually performs
+description: >-
+  Create and validate Postgres schema migrations.
+  Use when adding or changing a migration, or reviewing its rollout.
+```
+
+Domain-wide triggers load instructions the model does not need for most of
+that domain's work. Keep the description as short as it can be while the
+trigger stays unambiguous.
+
 ### Internal jargon only
 
 ```yaml

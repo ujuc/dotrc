@@ -49,6 +49,7 @@ Automation only checks form. The items below need human judgment.
 - [ ] WHEN (when to use it) is stated.
 - [ ] Trigger phrases the user actually says are present.
 - [ ] Doesn't lead with overly generic words ("help", "manage") that risk over-triggering.
+- [ ] WHEN names the action the skill performs, not the whole domain it touches.
 
 ### Body instructions
 
@@ -56,6 +57,8 @@ Automation only checks form. The items below need human judgment.
 - [ ] Failure modes and recovery are covered.
 - [ ] Input/output examples are present.
 - [ ] Tools used are named (Read, Bash, AskUserQuestion, ...).
+- [ ] Completion criteria are stated; no unrequested "stop for review" step.
+- [ ] Specificity matches a named fragility; no step-by-step recipe where judgment suffices.
 
 ### Structure
 
@@ -64,3 +67,4 @@ Automation only checks form. The items below need human judgment.
 - [ ] Bundled references are reachable from the entry point, with load conditions;
       examples and historical paths are clearly labeled.
 - [ ] If body exceeds 500 lines, identify content to split into `references/`.
+- [ ] Multi-workflow skills route to references per branch instead of preloading all of them.
