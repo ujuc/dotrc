@@ -1,6 +1,6 @@
 ---
 name: generate-skills
-description: "Claude 스킬을 생성하거나 기존 스킬을 최신 spec에 맞게 업데이트한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, generate-skills 요청 시 사용한다."
+description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza가 맡는다."
 group: meta
 disable-model-invocation: true
 argument-hint: "[skill-name]"
@@ -25,7 +25,7 @@ to resolve available models or recommend one when the host cannot switch.
 
 Inspect `$ARGUMENTS` to choose a mode:
 
-- **Update mode**: `$ARGUMENTS` contains any of `업데이트`, `수정`, `update`
+- **Update mode**: `$ARGUMENTS` contains any of `업데이트`, `수정`, `갱신`, `최신화`, `update`, `refresh`
   → Run Step 0 → Steps U1–U3 → Step 5 (validation)
 - **Create mode**: anything else
   → Run Step 0 → Steps 1–5
