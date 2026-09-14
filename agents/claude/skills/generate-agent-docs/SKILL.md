@@ -1,7 +1,7 @@
 ---
 name: generate-agent-docs
-description: "Claude·Codex 공통 AGENTS.md, Claude 전용 CLAUDE.md와 관련 에이전트 문서를 생성·갱신한다. 문서 업데이트, CLAUDE.md 업데이트, AGENTS.md 갱신 요청에 사용한다. (구 명칭 generate-claude-md)"
-when_to_use: "문서 생성/갱신 요청일 때. 트리거: '/generate-agent-docs', '문서 업데이트해줘', '문서 갱신해줘', '문서 최신화', 'CLAUDE.md 업데이트', 'AGENTS.md 갱신', 'rules 생성', 'contributing-docs 추가', 'update the docs', 'update CLAUDE.md', 'refresh AGENTS.md'. 파일명이 없는 포괄 요청은 Stage 0-2의 대상 확인을 먼저 거친다. CLAUDE.md·AGENTS.md 등 에이전트 문서의 단일 파일 요청도 지원하며, README·API 문서·CHANGELOG는 이 스킬을 호출하지 않는다. 에이전트 문서 생성이 아닌 이 스킬 자체의 분석·리뷰·개선 계획 요청에는 생성 파이프라인을 실행하지 않는다."
+description: "Claude·Codex 공통 AGENTS.md, Claude 전용 CLAUDE.md, .claude/rules, contributing-docs 등 에이전트 문서를 생성·갱신한다. CLAUDE.md 업데이트, AGENTS.md 갱신, 에이전트 문서 생성 요청에 사용한다. README·API 문서·CHANGELOG는 제외. (구 명칭 generate-claude-md)"
+when_to_use: "에이전트 문서(AGENTS.md, CLAUDE.md, nested CLAUDE.md, .claude/rules, contributing-docs)를 만들거나 고칠 때. 트리거: '/generate-agent-docs', 'generate-agent-docs', 'CLAUDE.md 업데이트', 'CLAUDE.md 만들어줘', 'AGENTS.md 갱신', 'AGENTS.md 생성해줘', '에이전트 문서 갱신', 'rules 생성', 'contributing-docs 추가', 'update CLAUDE.md', 'create AGENTS.md', 'refresh AGENTS.md'. 커밋 워크플로 안의 문서 갱신 단계는 commit 스킬이 처리한다."
 group: docs
 allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch TaskOutput advisor Bash(workflow-hooks:*)
 ---
