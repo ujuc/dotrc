@@ -1,6 +1,6 @@
 ---
 name: deep-read
-description: "코드베이스 영역을 깊이 분석하여 구조화된 리서치 문서를 생성한다. 구조, 데이터 흐름, 리스크 분석을 위해 3개 병렬 researcher 에이전트를 디스패치한다. 코드 분석해줘, 깊이 읽어봐, deep-read, /deep-read 요청 시 사용한다."
+description: "코드베이스 영역을 깊이 분석하여 .research/ 아래 구조화된 리서치 문서를 생성한다. 코드 분석해줘, 깊이 읽어봐, 리서치 문서 만들어줘, 코드베이스 조사해줘, research this codebase, deep-read, /deep-read 요청 시 사용한다. 단일 함수 설명이나 즉답형 코드 질문에는 사용하지 않는다."
 group: analysis
 argument-hint: "[target-path]"
 allowed-tools: Read, Write, Glob, Grep, Bash, Agent, advisor

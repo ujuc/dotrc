@@ -1,6 +1,6 @@
 ---
 name: commit
-description: "한국어 Conventional Commits 규칙에 따라 git 커밋을 생성한다. 서브모듈 변경 감지·우선 커밋, 문서 자동 업데이트, push, 요약까지 포함하며, 프로젝트에 자체 commit 스킬이 있으면 전체 워크플로를 그쪽에 위임한다. /commit, 커밋해줘, 변경사항 커밋, 커밋하고 푸시해줘 요청 시 사용한다."
+description: "한국어 Conventional Commits 규칙에 따라 git 커밋을 생성하고, 요청 시 push까지 수행한다. /commit, 커밋해줘, 변경사항 커밋, 커밋하고 푸시해줘, commit, commit and push 요청 시 사용한다. 프로젝트에 자체 commit 스킬이 있으면 그쪽에 위임한다."
 group: docs
 allowed-tools: Bash(git rev-parse:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git -C:*), Bash(git submodule:*), Bash(printf:*), Bash(bash:*), Read, Edit, Glob
 ---

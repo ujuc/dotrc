@@ -1,7 +1,7 @@
 ---
 name: annotate-plan
-description: "병렬 분석으로 canonical 구현 계획을 만들고 사용자의 직접 편집과 인라인 주석을 반복 반영한다."
-when_to_use: "구현 계획 작성, 플랜 만들어줘, annotate-plan, /annotate-plan, 노트 반영해줘, address notes, 주석 처리해, annotations 요청 시 사용한다."
+description: "canonical 구현 계획을 만들고 사용자의 직접 편집과 인라인 주석을 반복 반영한다."
+when_to_use: "구현 계획 작성, 플랜 만들어줘, 계획 수정해줘, write an implementation plan, annotate-plan, /annotate-plan, 노트 반영해줘, address notes, 플랜 주석 처리해, plan annotations 요청 시 사용한다. .plans/plan-*.md 관리 계획 전용이며 제품 스펙·기획서는 spec-planner가 맡는다."
 group: analysis
 argument-hint: "[feature-name]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, advisor

@@ -1,7 +1,7 @@
 ---
 name: qa-evaluator
 description: "Chrome 통합으로 실행 중인 웹앱을 실제 사용자처럼 탐색하여 버그, 기능 누락, UX 문제를 발견한다."
-when_to_use: "QA 테스트, 웹앱 테스트, qa-evaluator, 앱 검증해줘, test the running app, evaluate my build, find bugs 요청 시 사용한다. multi-agent-orchestrator의 Evaluator 단계에서도 호출된다."
+when_to_use: "QA 테스트, 웹앱 테스트, qa-evaluator, /qa-evaluator, 앱 검증해줘, 실행 중인 앱 QA해줘, test the running app, evaluate my build, find bugs 요청 시 사용한다. 소스 코드 디버깅이나 테스트 코드 작성에는 사용하지 않는다."
 group: verify
 allowed-tools: Read Write Glob Grep Bash advisor ToolSearch mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__tabs_create_mcp mcp__claude-in-chrome__navigate mcp__claude-in-chrome__read_page mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__find mcp__claude-in-chrome__form_input mcp__claude-in-chrome__javascript_tool mcp__claude-in-chrome__read_console_messages mcp__claude-in-chrome__read_network_requests mcp__claude-in-chrome__resize_window mcp__claude-in-chrome__gif_creator
 ---

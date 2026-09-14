@@ -1,7 +1,7 @@
 ---
 name: frontend-design-evaluator
 description: "Chrome에서 실행 중인 프론트엔드 결과물을 Design Quality, Originality, Craft, Visual Usability 기준으로 평가한다."
-when_to_use: "디자인 평가, UI 리뷰, frontend-design-evaluator, 디자인 검수해줘, evaluate this design, rate my frontend, AI slop check 요청 시 사용한다. 루프의 판별자(evaluator)로도 호출된다."
+when_to_use: "디자인 평가, UI 리뷰, /frontend-design-evaluator, frontend-design-evaluator, 디자인 검수해줘, 디자인 점수 매겨줘, evaluate this design, rate my frontend, AI slop check 요청 시 사용한다. 브라우저에 렌더된 화면의 시각 품질만 평가하며 UI 소스 코드 리뷰나 글의 AI 문체 검사에는 사용하지 않는다."
 group: verify
 allowed-tools: Read Write Bash ToolSearch advisor mcp__claude-in-chrome__tabs_context_mcp mcp__claude-in-chrome__tabs_create_mcp mcp__claude-in-chrome__navigate mcp__claude-in-chrome__read_page mcp__claude-in-chrome__get_page_text mcp__claude-in-chrome__javascript_tool mcp__claude-in-chrome__resize_window
 ---

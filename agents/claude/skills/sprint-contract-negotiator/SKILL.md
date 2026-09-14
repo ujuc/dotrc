@@ -1,7 +1,7 @@
 ---
 name: sprint-contract-negotiator
-description: Generator·Evaluator 역할을 파일 기반 프로토콜로 번갈아 수행해 canonical sprint의 done 기준을 협상한다.
-when_to_use: "sprint contract 협상, done 기준 정의, 완료 조건 합의, acceptance criteria 작성, sprint-contract-negotiator 호출 시. 구현 시작 전에 'done이 뭔지 먼저 정하자'·'이 sprint의 합격 기준을 잡아줘'·'평가자가 검증할 기준을 만들어줘' 같은 요청에 적합."
+description: "canonical sprint의 done 기준(acceptance criteria)을 협상해 .sprint/contract.md로 확정한다."
+when_to_use: "sprint contract 협상, done 기준 정의, 완료 조건 합의, acceptance criteria 작성, 인수 조건 정의, definition of done 작성, sprint-contract-negotiator, /sprint-contract-negotiator 호출 시. 구현 시작 전에 'done이 뭔지 먼저 정하자'·'이 sprint의 합격 기준을 잡아줘'·'평가자가 검증할 기준을 만들어줘' 같은 요청에 적합."
 group: planning
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
 ---

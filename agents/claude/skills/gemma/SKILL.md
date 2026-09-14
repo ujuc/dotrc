@@ -1,6 +1,6 @@
 ---
 name: gemma
-description: "로컬 Ollama의 Gemma 모델에 프롬프트를 전달한다. gemma, gemma4, ollama로 요약해줘, gemma로 번역해, 로컬 LLM, 오프라인 AI, 로컬로 처리해, Gemma 호출 요청 시 사용한다. 민감 정보 처리, 긴 문서 요약, 번역, 분류, 초안 생성에 적합하며 bulk-read.sh로 대용량 파일 요약도 지원한다."
+description: "로컬 Ollama의 Gemma 모델에 프롬프트를 전달한다. gemma, gemma4, /gemma, ollama로 요약해줘, gemma로 번역해, 로컬 LLM으로 처리해, 오프라인 AI로 처리해, 로컬로 처리해, Gemma 호출, 큰 파일 로컬로 요약해 요청 시 사용한다. 민감 정보 처리, 긴 문서 요약, 번역, 분류, 초안 생성에 적합하며 원격 폴백은 없다."
 group: llm
 allowed-tools: Bash(bash:*), Bash(ollama:*)
 argument-hint: "[prompt]"

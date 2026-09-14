@@ -1,6 +1,6 @@
 ---
 name: waza
-description: "Microsoft waza CLI로 스킬 평가 스위트(evals/SKILL/eval.yaml)를 스캐폴드·실행하고 baseline과 비교한다. waza, 스킬 평가해줘, eval 실행, eval 만들어줘, 스킬 점수 비교, 회귀 확인, waza 상태 확인 요청 시 사용한다. 모든 waza 호출은 이 스킬의 scripts/waza-run.sh를 거치며 미설치 환경에서는 점수 없이 안전하게 건너뛴다."
+description: "Microsoft waza CLI로 스킬 평가 스위트(evals/SKILL/eval.yaml)를 스캐폴드·실행하고 baseline과 비교한다. /waza, waza, 스킬 평가해줘, eval 실행, eval 만들어줘, eval 스캐폴드, 스킬 점수 비교, baseline 비교, 회귀 확인, waza 상태 확인 요청 시 사용한다. 정의 개선은 skill-improver가 맡는다."
 group: meta
 allowed-tools: Bash(bash:*), Read
 argument-hint: "status | scaffold SKILL | eval SKILL-or-eval.yaml [--label X] [--baseline-json FILE] [--trials N] [--epsilon X]"

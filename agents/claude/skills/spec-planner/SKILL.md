@@ -1,7 +1,7 @@
 ---
 name: spec-planner
-description: "요청의 복잡도를 분류하고, 아키텍처 수준 작업에만 승인된 제품 스펙을 spec.md로 작성한다."
-when_to_use: "스펙 작성, 요구사항 확장, spec-planner, 기획서 만들어줘, 제품 기획 시작, plan this app, expand this idea, create a product spec"
+description: "아키텍처 수준 작업에만 승인된 제품 스펙을 spec.md로 작성한다."
+when_to_use: "스펙 작성, 요구사항 확장, spec-planner, /spec-planner, 기획서 만들어줘, 제품 기획 시작, PRD 작성, expand this idea into a product spec, create a product spec 요청 시 사용한다. 구현 계획은 annotate-plan이 맡는다."
 group: planning
 allowed-tools: Read, Write, Glob, Grep, Bash
 ---

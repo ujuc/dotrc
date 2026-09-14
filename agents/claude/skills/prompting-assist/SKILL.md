@@ -1,6 +1,6 @@
 ---
 name: prompting-assist
-description: "사용자가 LLM에 보낼 프롬프트를 개선·리뷰·피드백받고 싶어할 때 사용. Anthropic 공식 프롬프팅 지침과 로컬 워크플로 계약을 구분해 진단한다. '프롬프트 개선해줘', '이 프롬프트 리뷰해줘', '프롬프팅 팁', '/prompting' 등 명시적 어구에만 발동하며, 일반 대화 속 '프롬프트'라는 단어만으로는 발동하지 않는다."
+description: "사용자가 LLM에 보낼 프롬프트를 개선·리뷰·피드백받고 싶어할 때 사용. '프롬프트 개선해줘', '이 프롬프트 리뷰해줘', '이 프롬프트 피드백 줘', 'system prompt 개선해줘', '프롬프팅 팁', 'improve my prompt', 'review this prompt', '/prompting-assist' 등 명시적 어구에만 발동하며, 일반 대화 속 '프롬프트'라는 단어만으로는 발동하지 않는다."
 group: writing
 allowed-tools: Read, Edit, AskUserQuestion, ToolSearch, WebFetch, Bash(workflow-hooks:*)
 ---
@@ -25,7 +25,7 @@ Korean trigger phrases are kept verbatim because they must match user utterances
 - "프롬프트 개선해줘"
 - "이 프롬프트 리뷰해줘" / "이 프롬프트 피드백 줘"
 - "프롬프팅 팁 알려줘"
-- `/prompting`
+- `/prompting-assist`
 - "system prompt 개선해줘"
 
 **Do NOT activate on:**

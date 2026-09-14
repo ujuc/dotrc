@@ -1,7 +1,7 @@
 ---
 name: implement-plan
-description: "canonical 구현 계획을 검증 중심으로 실행하고, 선택된 평가가 끝난 뒤 전체 워크플로 산출물을 안전하게 보관한다."
-when_to_use: "구현 시작, 플랜 실행해, implement-plan, 다 구현해, /implement-plan 요청 시 사용한다."
+description: "canonical 구현 계획을 검증 중심으로 실행하고 워크플로 산출물 아카이브까지 담당한다."
+when_to_use: "승인된 .plans 플랜의 구현 시작, 플랜 실행해, 플랜대로 구현해, implement the plan, execute the plan, implement-plan, 다 구현해, /implement-plan 요청 시 사용한다. 플랜 없는 단발 코딩 요청에는 사용하지 않는다."
 group: build
 argument-hint: "[feature-name]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Agent, AskUserQuestion
