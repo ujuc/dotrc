@@ -76,6 +76,8 @@ claude/teams
 claude/session-data
 claude/settings.local.json
 claude/daemon.log
+claude/feedback
+claude/skills/ego-browser
 claude/daemon
 claude/jobs
 claude/security
@@ -105,4 +107,5 @@ codex/*
 !codex/AGENTS.md
 !codex/README.md
 !codex/hooks.json
+!codex/hooks
 !codex/skills

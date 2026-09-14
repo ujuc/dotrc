@@ -12,6 +12,16 @@
             "additionalContextLimit": 1000
           }
         ]
+      },
+      {
+        "matcher": "startup|resume|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/sungjin6111/.codex/hooks/graft/graft-hooks.cjs\" session-start",
+            "timeout": 10000
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
@@ -22,6 +32,15 @@
             "command": "~/.local/bin/workflow-hooks hook",
             "timeout": 30,
             "additionalContextLimit": 500
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/sungjin6111/.codex/hooks/graft/graft-hooks.cjs\" prompt",
+            "timeout": 15000
           }
         ]
       }
@@ -35,6 +54,27 @@
             "command": "~/.local/bin/workflow-hooks hook",
             "timeout": 30,
             "additionalContextLimit": 1000
+          }
+        ]
+      },
+      {
+        "matcher": "apply_patch|Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/sungjin6111/.codex/hooks/graft/graft-hooks.cjs\" post-edit",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/sungjin6111/.codex/hooks/graft/graft-hooks.cjs\" stop",
+            "timeout": 10000
           }
         ]
       }
