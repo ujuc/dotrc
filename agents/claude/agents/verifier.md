@@ -1,6 +1,6 @@
 ---
 name: verifier
-description: Background verification agent. Runs requested build, typecheck, lint, and related tests, then writes a grounded report for implement-plan.
+description: Build/typecheck/lint/test runner for implement-plan. Writes .plans/.verify-*.md with PASS/FAIL/SKIP per check; not a document or prose checklist verifier (generate-agent-docs and humanizer use their own roles).
 tools: Read, Write, Glob, Grep, Bash, advisor
 ---
 

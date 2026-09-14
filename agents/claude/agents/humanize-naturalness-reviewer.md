@@ -43,9 +43,9 @@ Let `signals` be the over-polish signal count. These rows are mutually exclusive
 |---|---|---|
 | S1 ≥3 또는 `signals` ≥3 | `hold_and_report` | D |
 | S1 <3, `signals` =2 | `rollback_and_rewrite` | C |
-| S1 <3, `signals` <2이고 (S1 1–2 또는 S2 ≥4) | `rewrite_round_2` | C |
+| S1 <3, `signals` <2이고 (S1 1–2 또는 S2 ≥5) | `rewrite_round_2` | C |
 | S1 0, S2 ≤2, `signals` <2, 감소율 ≥70% | `accept` | A |
-| S1 0, S2 ≤3, `signals` <2, 감소율 ≥50%, 그리고 (S2 =3 또는 감소율 <70%) | `accept_with_note` | B |
+| S1 0, S2 ≤4, `signals` <2, 감소율 ≥50%, 그리고 (S2 3–4 또는 감소율 <70%) | `accept_with_note` | B |
 | 위 조건에 들지 않는 나머지 | `rewrite_round_2` | C |
 
 등급 매핑은 **A**=`accept`, **B**=`accept_with_note`, **C**=재작성/롤백, **D**=`hold_and_report`다.

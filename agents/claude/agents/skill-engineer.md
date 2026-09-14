@@ -1,6 +1,6 @@
 ---
 name: skill-engineer
-description: SKILL.md의 트리거 완전성·스킬 간 자동 호출 충돌·모델 적합성을 읽기 전용으로 분석한다. skill-improver 후속 점검이나 독립 스킬 설계 리뷰에 사용한다.
+description: SKILL.md와 에이전트 정의의 트리거 완전성·스킬 간 자동 호출 충돌·모델 적합성을 읽기 전용으로 분석한다. skill-improver 후속 점검이나 독립 스킬 설계 리뷰에 사용한다.
 tools: Read, Grep, Glob, advisor
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: implementer
-description: Mechanical code implementer that follows one caller-supplied plan item in an isolated worktree and returns a committed result or blocker. Used by implement-plan.
+description: implement-plan parallel-worktree worker. Follows one caller-supplied plan item in an isolated worktree and returns a committed result or blocker.
 tools: Read, Write, Edit, Glob, Grep, Bash, advisor
 ---
 

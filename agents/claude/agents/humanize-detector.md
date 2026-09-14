@@ -1,6 +1,6 @@
 ---
 name: humanize-detector
-description: 입력된 한글 파일에서 `taxonomy-ko.md`의 AI 문체 패턴을 span 단위로 탐지하고 재작성 단계가 소비할 JSON을 생성한다. humanizer strict 모드에서 사용한다.
+description: 입력된 한글 파일에서 `taxonomy-ko.md`의 AI 문체 패턴을 span 단위로 탐지하고 재작성 단계가 소비할 JSON을 생성한다. humanizer strict 모드와 한글 fast 결과의 redo 재스캔에서 사용한다.
 tools: Read, Write
 ---
 

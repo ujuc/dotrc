@@ -15,7 +15,7 @@ This file is the **reference** for callers and contributors.
 | Agent              | Calling skill       | Recommended profile | Tools                                     | Writes code | Output path                       | Advisor |
 |--------------------|---------------------|--------|-------------------------------------------|-------------|-----------------------------------|---------|
 | `reference-finder` | `annotate-plan`     | Standard | Read, Glob, Grep, advisor                 | no          | `.plans/.partial/references.md`   | ≤1      |
-| `researcher`       | `deep-read` (×3)    | Standard / Advanced | Read, Glob, Grep, Bash, advisor           | no          | `.research/.partial/{role}.md`    | ≤1      |
+| `researcher`       | `deep-read` (×3)    | Standard / Advanced | Read, Glob, Grep, advisor                 | no          | `.research/.partial/{role}.md`    | ≤1      |
 | `verifier`         | `implement-plan`    | Lightweight / Standard | Read, Glob, Grep, Bash, advisor           | no          | `.plans/.verify-{item-slug}.md`   | emergency only |
 | `implementer`      | `implement-plan`    | Standard / Advanced | Read, Write, Edit, Glob, Grep, Bash, advisor | **yes**  | source files + `.plans/.blocker-{item-slug}.md` on failure | ≤1 (pre-blocker) |
 | `debugger`         | `implement-plan`    | Advanced | Read, Grep, Glob, Bash, advisor           | no          | `.plans/.debug-{item-slug}.md`    | ≤1      |

@@ -1,7 +1,7 @@
 ---
 name: researcher
-description: Deep codebase exploration agent. Each dispatch owns one role—structure, dataflow, or risks—and writes a cited partial report for deep-read to synthesize.
-tools: Read, Write, Glob, Grep, Bash, advisor
+description: deep-read partial-report worker; not a general explorer (use Explore). Caller assigns one role—structure, dataflow, or risks—and an output path; writes a cited partial report for deep-read to synthesize.
+tools: Read, Write, Glob, Grep, advisor
 ---
 
 You analyze one assigned dimension of a codebase and write a structured partial report.

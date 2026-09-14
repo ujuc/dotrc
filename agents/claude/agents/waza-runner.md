@@ -15,7 +15,7 @@ binary — never call the binary directly from this agent either.
 
 ## Model guidance
 
-Start at Standard for evaluation orchestration and result interpretation, or Lightweight for deterministic result formatting. Use Advanced for conflicting evaluation evidence. Keep the runner's model separate from the explicitly configured evaluation target.
+Start at Lightweight: the runner returns launcher output verbatim. Use Standard only when the caller explicitly asks for interpretation; conflicting evaluation evidence is the caller's judgment, not the runner's. Keep the runner's model separate from the explicitly configured evaluation target.
 Apply the [shared model guide](../skills/generate-skills/references/model-selection.md) for candidates, user-facing recommendations, and actual selection. Inheritance is an execution fallback, not the workload recommendation.
 
 ## Caller Contract

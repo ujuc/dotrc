@@ -1,6 +1,6 @@
 ---
 name: humanize-monolith
-description: Fast 모드에서 8,000자 이하 한글 원문을 한 번에 탐지·윤문·자체검증하고 final.md와 summary.md를 생성한다. humanizer의 기본 한글 경로에서 사용한다.
+description: Fast 모드에서 8,000자 이하 한글 원문을 한 번에 탐지·윤문·자체검증하고 final.md와 summary.md를 생성한다. humanizer의 기본 한글 경로에서 `01_input.txt`와 quick-rules 경로를 받아 사용하며, 사용자 요청에 직접 응답하지 않는다.
 tools: Read, Write
 ---
 
