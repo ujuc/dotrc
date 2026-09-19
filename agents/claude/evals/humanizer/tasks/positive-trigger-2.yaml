@@ -1,16 +1,16 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the mode rule and its notice come from SKILL.md, never from the prompt.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with humanizer-related work"
+  prompt: "A user runs humanizer with --strict on a paragraph written only in English. Do not run tools or write files. Which mode actually runs, and what notice does the user see?"
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: forces-fast-for-english
     config:
-      contains:
-        - "humanizer"
-
+      regex_match:
+        - "(?i)\\bfast\\b"
+        - "(?i)한국어 전용|korean[- ]only"

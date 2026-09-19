@@ -1,16 +1,36 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Inline English fast track; exact facts are checked by text, claim preservation (the SKILL.md supreme rule) by the TypeSafe judge. Style is not judged; its pattern catalog lives in references/ and is never injected.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use humanizer to help me complete this task"
+  prompt: |
+    Humanize the English paragraph below inline. Do not run tools, write files, or ask questions. Reply with the rewritten paragraph only.
+
+    In today's fast-paced digital landscape, it is important to note that Acme Robotics, founded in 2019 by Dr. Lena Ortiz, has truly revolutionized warehouse automation. Moreover, the company's flagship robot not only reduced picking errors by 37% but also seamlessly integrated with existing systems. Ultimately, this serves as a testament to the transformative power of innovation.
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: keeps-exact-facts
     config:
-      contains:
-        - "humanizer"
-
+      contains_cs:
+        - "Acme Robotics"
+        - "2019"
+        - "Lena Ortiz"
+        - "37%"
+  - type: program
+    name: judged-meaning-invariance
+    config:
+      command: bash
+      args:
+        - "-c"
+        - 'exec "$HOME/.claude/skills/waza/scripts/typesafe-judge" "$@"'
+        - judge
+        - "--source"
+        - "In today's fast-paced digital landscape, it is important to note that Acme Robotics, founded in 2019 by Dr. Lena Ortiz, has truly revolutionized warehouse automation. Moreover, the company's flagship robot not only reduced picking errors by 37% but also seamlessly integrated with existing systems. Ultimately, this serves as a testament to the transformative power of innovation."
+        - "--ask"
+        - "Compare `answer` with `source`. Does `answer` keep every factual claim from `source` without adding new facts or changing what is claimed?"
+        - "--pass"
+        - "0.5"
+      timeout: 60

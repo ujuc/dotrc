@@ -20,6 +20,7 @@ graders:
   - type: behavior
     name: token-budget
     config:
-      max_tokens: 20000
+      # Injecting the 16 KB SKILL.md alone costs ~20.4k tokens; tool-using runs reach 60k+.
+      max_tokens: 30000
 tasks:
   - "tasks/*.yaml"
