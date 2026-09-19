@@ -2,6 +2,13 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "respectGitignore": true,
   "skillListingBudgetFraction": 0.05,
+  "pluginConfigs": {
+    "agents-md@builtin": {
+      "options": {
+        "instructionFiles": "claude-md-and-agents-md"
+      }
+    }
+  },
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDISH_MD_MODE": "sibling",
