@@ -1,17 +1,16 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; stub detection and its automatic score come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use qa-evaluator to help me complete this task"
+  prompt: "A feature page lists records but offers no way to create, edit, or delete them. Do not run tools or write files. What does qa-evaluator call this, and what Product Depth score does it get?"
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: stub-scores-one
     config:
-      contains:
-        - "evaluator"
-        - "qa"
-
+      regex_match:
+        - "(?i)\\bstub"
+        - "\\b1\\b"

@@ -1,17 +1,15 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the exact clarifying question comes from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with prompting assist-related work"
+  prompt: "A user pastes a prompt and it is unclear whether they want it improved or explained. Do not run tools or write files. Quote the one question prompting-assist asks first."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: asks-the-clarifying-question
     config:
-      contains:
-        - "assist"
-        - "prompting"
-
+      regex_match:
+        - "개선해드릴까요"

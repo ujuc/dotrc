@@ -1,16 +1,16 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the launcher and its stderr contract come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use gemma to help me complete this task"
+  prompt: "Do not run tools or write files. Which script do all Gemma requests go through, and what does its stderr line start with?"
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: single-launcher
     config:
-      contains:
-        - "gemma"
-
+      regex_match:
+        - "query\\.sh"
+        - "backend=ollama"

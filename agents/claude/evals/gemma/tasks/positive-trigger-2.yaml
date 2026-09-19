@@ -1,16 +1,15 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the error table comes from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with gemma-related work"
+  prompt: "Do not run tools or write files. What exit code does the Gemma launcher return when the prompt is missing or empty?"
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: empty-prompt-exit
     config:
-      contains:
-        - "gemma"
-
+      regex_match:
+        - "\\b64\\b"

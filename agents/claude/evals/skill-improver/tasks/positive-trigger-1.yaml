@@ -1,17 +1,15 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; a missing group is never inferred and the allowed slug count comes from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use skill-improver to help me complete this task"
+  prompt: "validate-skill reports that a skill has no group field. Do not run tools or write files. Does skill-improver fill it in? Say how many allowed slugs it presents to the user."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: group-stays-manual
     config:
-      contains:
-        - "improver"
-        - "skill"
-
+      regex_match:
+        - "(?i)\\b(eight|8)\\b"

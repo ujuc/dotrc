@@ -1,17 +1,15 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; scores are diagnostic and never override severity.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with qa evaluator-related work"
+  prompt: "Every score is 9 out of 10 and every contracted criterion is met, but one Major issue remains. Do not run tools or write files. Give the overall verdict in one word, then the reason."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: severity-overrides-scores
     config:
-      contains:
-        - "evaluator"
-        - "qa"
-
+      regex_match:
+        - "(?i)\\bFAIL"

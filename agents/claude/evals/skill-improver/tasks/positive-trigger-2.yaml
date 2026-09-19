@@ -1,17 +1,16 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the session evidence defaults come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with skill improver-related work"
+  prompt: "Do not run tools or write files. For Dimension E evidence collection, state the default window in days and the default number of newest qualifying sessions."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: evidence-defaults
     config:
-      contains:
-        - "improver"
-        - "skill"
-
+      regex_match:
+        - "\\b45\\b"
+        - "\\b12\\b"

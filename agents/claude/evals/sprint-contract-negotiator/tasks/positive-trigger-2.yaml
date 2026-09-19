@@ -1,18 +1,18 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the criterion quality rule comes from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with sprint contract negotiator-related work"
+  prompt: "Do not run tools or write files. List the four parts that every acceptance criterion must contain."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: four-part-criterion
     config:
-      contains:
-        - "contract"
-        - "negotiator"
-        - "sprint"
-
+      regex_match:
+        - "(?i)subject"
+        - "(?i)verb"
+        - "(?i)observable"
+        - "(?i)verification"

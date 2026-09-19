@@ -1,17 +1,15 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the do-not-activate list comes from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use prompting-assist to help me complete this task"
+  prompt: "A user asks only: '프롬프트 엔지니어링이 뭐야?' Do not run tools or write files. Does prompting-assist activate? Say why, naming the kind of request this is."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: rejects-concept-question
     config:
-      contains:
-        - "assist"
-        - "prompting"
-
+      regex_match:
+        - "(?i)concept|개념"

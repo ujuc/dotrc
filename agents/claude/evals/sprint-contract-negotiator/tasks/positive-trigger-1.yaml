@@ -1,18 +1,15 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the three-review limit and its escalation file come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use sprint-contract-negotiator to help me complete this task"
+  prompt: "The third review still leaves one acceptance criterion unresolved. Do not run tools or write files. Is a fourth draft written? Name the file that is written instead."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: escalates-after-three
     config:
-      contains:
-        - "contract"
-        - "negotiator"
-        - "sprint"
-
+      regex_match:
+        - "escalation\\.md"

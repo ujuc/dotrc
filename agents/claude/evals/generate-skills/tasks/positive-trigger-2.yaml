@@ -1,17 +1,16 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the size limits come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with generate skills-related work"
+  prompt: "Do not run tools or write files. State the size limits for a SKILL.md body: the line limit and the word target."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: body-size-limits
     config:
-      contains:
-        - "generate"
-        - "skills"
-
+      regex_match:
+        - "\\b500\\b"
+        - "5,?000"

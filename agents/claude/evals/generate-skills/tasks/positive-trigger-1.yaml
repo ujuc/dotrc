@@ -1,17 +1,16 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; mode detection keywords and the update steps come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use generate-skills to help me complete this task"
+  prompt: "The skill is invoked with the arguments: 갱신 commit. Do not run tools or write files. Which mode runs, and which steps does it go through?"
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: detects-update-mode
     config:
-      contains:
-        - "generate"
-        - "skills"
-
+      regex_match:
+        - "(?i)update"
+        - "U1"

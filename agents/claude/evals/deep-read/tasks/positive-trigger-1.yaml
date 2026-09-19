@@ -1,17 +1,15 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the topic slug rule (drop the container, join with hyphens) comes from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use deep-read to help me complete this task"
+  prompt: "A user runs deep-read on the directory src/billing/invoices. Do not run tools or write files. Give the exact path of the research document that is produced."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: derives-research-path
     config:
-      contains:
-        - "deep"
-        - "read"
-
+      regex_match:
+        - "\\.research/research-billing-invoices\\.md"

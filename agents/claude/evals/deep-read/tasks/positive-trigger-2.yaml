@@ -1,17 +1,17 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the researcher roles and their partial outputs come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with deep read-related work"
+  prompt: "Do not run tools or write files. Name the partial output files that the parallel researchers write before the merge."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: three-partials
     config:
-      contains:
-        - "deep"
-        - "read"
-
+      regex_match:
+        - "structure\\.md"
+        - "dataflow\\.md"
+        - "risks\\.md"
