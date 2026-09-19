@@ -85,6 +85,24 @@ The workspace `.waza.yaml` uses relative `skills/` and `evals/` symlinks into
 the dotrc tree; do not write absolute paths there. Ollama must be serving the
 target model before a real (non-mock) run.
 
+## Judge grader
+
+`scripts/typesafe-judge` is a waza `program` grader for answers a regex cannot
+grade. It reads the answer on stdin, asks TypeSafe (Jev) one Noul per `--ask`
+(optionally against `--source`), and passes when every probability reaches
+`--pass` (default 0.7). See `~/.claude/evals/humanizer/tasks/` for the wiring.
+
+- Exit 0 pass, 1 below threshold, 2 judge unavailable (no `TYPESAFE_API_KEY`,
+  network, API error). waza scores 1 and 2 alike, so read the feedback before
+  calling a drop a regression. The answer leaves the machine; offline runs fail.
+- Judge only what the injected SKILL.md body dictates. Rules that live in
+  `references/` never reach the eval model, so judging them measures the model.
+- Keep exact strings (names, numbers) on `text` graders and leave the judge the
+  semantic remainder. Every probability is appended to
+  `~/.claude/data/waza/judge-log.jsonl`; add a second judge for the middle band
+  only if that log shows one.
+- `scripts/typesafe-judge --self-check` runs without network.
+
 ## Procedure
 
 1. Run `status` when unsure whether waza is usable; on a missing binary or

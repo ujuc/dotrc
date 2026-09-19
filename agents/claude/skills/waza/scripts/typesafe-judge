@@ -1,0 +1,122 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# ///
+"""waza `program` grader backed by TypeSafe (Jev) Noul judgments.
+
+waza pipes the agent's answer on stdin; exit 0 passes, non-zero fails, and
+stdout becomes the grader feedback. Each --ask is one yes/no question about
+`answer` (and `source`, when --source is given). All must reach --pass.
+
+    echo "rewritten text" | typesafe-judge --source "original" \
+        --ask "Does `answer` keep every claim made in `source`?"
+    typesafe-judge --self-check   # no network
+
+Exit 1 = a judgment fell below --pass. Exit 2 = the judge itself was
+unavailable (no key, network, API error); waza still scores that as a fail,
+so read the feedback before treating it as a regression.
+"""
+
+import argparse
+import json
+import os
+import shutil
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+API_URL = "https://api.typesafe.ai/v1/systemone"
+LOG = Path.home() / ".claude/data/waza/judge-log.jsonl"
+
+
+def api_key() -> str | None:
+    if key := os.environ.get("TYPESAFE_API_KEY"):
+        return key
+    # Non-interactive shells skip the mise hook that normally exports the key.
+    if shutil.which("mise"):
+        out = subprocess.run(["mise", "exec", "--", "printenv", "TYPESAFE_API_KEY"],
+                             capture_output=True, text=True)
+        return out.stdout.strip() or None
+    return None
+
+
+def build_payload(answer: str, source: str | None, asks: list[str]) -> dict:
+    state = {"answer": answer} | ({"source": source} if source else {})
+    questions = {f"q{i}": {"type": "noul", "instructions": ask} for i, ask in enumerate(asks)}
+    return {"model": "jev-latest", "state": state, "questions": questions}
+
+
+def judge(payload: dict, key: str) -> list[float]:
+    req = urllib.request.Request(
+        API_URL,
+        data=json.dumps(payload).encode(),
+        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+    )
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=20) as res:
+                answers = json.load(res)["answers"]
+                return [answers[f"q{i}"]["noul"] for i in range(len(payload["questions"]))]
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 529) and attempt < 2:
+                time.sleep(2**attempt)
+                continue
+            raise
+    raise AssertionError("unreachable")
+
+
+def verdict(probs: list[float], threshold: float) -> bool:
+    return all(p >= threshold for p in probs)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ask", action="append", default=[])
+    parser.add_argument("--source")
+    # ponytail: fixed cut-off, no escalation. judge-log.jsonl records every
+    # probability; add a second judge for the middle band only if it fills up.
+    parser.add_argument("--pass", dest="threshold", type=float, default=0.7)
+    parser.add_argument("--self-check", action="store_true")
+    args = parser.parse_args()
+
+    if args.self_check:
+        assert verdict([0.9, 0.8], 0.7) and not verdict([0.9, 0.6], 0.7)
+        p = build_payload("a", "s", ["one?", "two?"])
+        assert p["state"] == {"answer": "a", "source": "s"} and list(p["questions"]) == ["q0", "q1"]
+        assert "source" not in build_payload("a", None, ["one?"])["state"]
+        print("self-check ok")
+        return 0
+
+    if not args.ask:
+        parser.error("at least one --ask is required")
+    answer = sys.stdin.read().strip()
+    if not answer:
+        print("FAIL: empty answer", file=sys.stderr)
+        return 1
+    if not (key := api_key()):
+        print("JUDGE-UNAVAILABLE: TYPESAFE_API_KEY is not set", file=sys.stderr)
+        return 2
+    try:
+        probs = judge(build_payload(answer, args.source, args.ask), key)
+    except (urllib.error.URLError, KeyError, TimeoutError, json.JSONDecodeError) as e:
+        print(f"JUDGE-UNAVAILABLE: {e!r}", file=sys.stderr)
+        return 2
+
+    ok = verdict(probs, args.threshold)
+    lines = [f"{p:.2f} {'ok  ' if p >= args.threshold else 'LOW '} {ask}" for p, ask in zip(probs, args.ask)]
+    print("\n".join(lines), file=sys.stdout if ok else sys.stderr)
+    try:
+        LOG.parent.mkdir(parents=True, exist_ok=True)
+        with LOG.open("a") as f:
+            f.write(json.dumps({"ts": int(time.time()), "pass": ok, "probs": probs, "asks": args.ask},
+                               ensure_ascii=False) + "\n")
+    except OSError:
+        pass
+    return 0 if ok else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
