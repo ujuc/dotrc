@@ -1,18 +1,15 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; a single-stage request is handed to that stage's owner.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with multi agent orchestrator-related work"
+  prompt: "A user already has an approved plan and only asks for it to be carried out. Do not run tools or write files. Should multi-agent-orchestrator run its whole pipeline? Name the one skill that should handle this request."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: names-single-stage-owner
     config:
-      contains:
-        - "agent"
-        - "multi"
-        - "orchestrator"
-
+      regex_match:
+        - "implement-plan"

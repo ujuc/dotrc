@@ -1,18 +1,18 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the stage owners come from SKILL.md, never from the prompt.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use multi-agent-orchestrator to help me complete this task"
+  prompt: "A user wants a new feature built end to end with multi-agent-orchestrator. Do not run tools or write files. List the pipeline stages in order and name the skill that owns each stage."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: names-stage-owners
     config:
-      contains:
-        - "agent"
-        - "multi"
-        - "orchestrator"
-
+      regex_match:
+        - "spec-planner"
+        - "sprint-contract-negotiator"
+        - "annotate-plan"
+        - "implement-plan"
