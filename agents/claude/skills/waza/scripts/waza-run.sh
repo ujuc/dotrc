@@ -161,6 +161,10 @@ auto_scaffold() {
     return 1
   fi
 
+  # waza writes its own default `model:`; every run passes --model, so the
+  # field only records a model the suite never ran on.
+  sed -i.bak '/^  model:/d' "$EVAL_YAML" && rm -f "$EVAL_YAML.bak"
+
   SCAFFOLDED=1
   return 0
 }

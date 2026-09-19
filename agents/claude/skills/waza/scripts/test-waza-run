@@ -79,6 +79,9 @@ cat >"$root/bin/waza" <<'SH'
 #!/usr/bin/env bash
 case "$1" in
   --version) echo "fake 0.0.0" ;;
+  new)
+    mkdir -p "$WAZA_EVALS_DIR/$3"
+    printf 'config:\n  executor: copilot-sdk\n  model: claude-sonnet-4.6\n' >"$WAZA_EVALS_DIR/$3/eval.yaml" ;;
   run)
     printf ' %s' "$@" >"$FAKE_ARGV"; printf ' \n' >>"$FAKE_ARGV"
     out=""
@@ -168,6 +171,12 @@ check "--trials 0 exits 2" launch 2 eval "$live" --trials 0
 check "--epsilon abc exits 2" launch 2 eval "$live" --epsilon abc
 check "trailing value-less flag exits 2" launch 2 eval "$live" --label
 check "launcher --help exits 0" launch 0 --help
+
+echo "scaffold"
+check "scaffold exits 0" launch 0 scaffold fresh
+check "scaffold drops the model field" absent grep -q '^  model:' "$root/evals/fresh/eval.yaml"
+check "scaffold keeps the rest of config" grep -qx '  executor: copilot-sdk' "$root/evals/fresh/eval.yaml"
+check "scaffold leaves no backup file" absent test -e "$root/evals/fresh/eval.yaml.bak"
 
 echo "status"
 check "status exits 0 when Ollama is unreachable" launch 0 status
