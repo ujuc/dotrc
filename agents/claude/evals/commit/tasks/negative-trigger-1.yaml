@@ -11,6 +11,7 @@ graders:
   - type: text
     name: omits-skill-keywords
     config:
-      not_contains:
-        - "commit"
+      # Whole word only: a joke about coffee that "committed" crimes is not the skill.
+      regex_not_match:
+        - "(?i)\\bcommit\\b"
 

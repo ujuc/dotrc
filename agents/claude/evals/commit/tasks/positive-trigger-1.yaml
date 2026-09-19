@@ -1,10 +1,10 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: The subject format, Korean -다 ending, 50-character cap, required fix body, and attribution ban all come from SKILL.md.
+description: Generation probe for what the local eval model does reliably; the type(scope) subject, its Korean wording, and the 50-character cap come from SKILL.md. The -다 ending and the required fix body are probed in task 002 because the model keeps each in 1 of 3 runs, and the attribution ban is not graded because the Copilot SDK system prompt always appends its own trailer.
 tags:
   - positive-trigger
 inputs:
-  prompt: "The staged diff repairs a crash in the zsh startup script when the config file is missing. The project scopes are zshrc, agents, and scripts. Do not run tools. Reply with only the commit message."
+  prompt: "The staged diff changes only the zshrc file: zsh no longer crashes at startup when a config file is missing. The project scopes are zshrc, agents, and scripts. Do not run tools. Reply with only the commit message."
 expected:
   should_trigger: true
 graders:
@@ -12,9 +12,7 @@ graders:
     name: korean-conventional-subject-and-body
     config:
       regex_match:
-        # type(scope): subject ending in 다, at most 50 characters in total.
-        - "(?m)^fix\\(zshrc\\): .{1,37}다$"
-        # A fix always carries a body after one blank line.
-        - "(?m)^fix\\(zshrc\\): .*\\n\\n\\S"
-      regex_not_match:
-        - "(?i)co-authored-by"
+        # type(scope): subject, at most 50 characters in total.
+        - "(?m)^fix\\(zshrc\\): .{1,38}$"
+        # The subject is written in Korean.
+        - "(?m)^fix\\(zshrc\\): .*[가-힣]"

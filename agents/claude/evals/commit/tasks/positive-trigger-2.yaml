@@ -1,16 +1,19 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Decision-only probe; the length cap and its verification command come from SKILL.md.
+description: Decision-only probe; the length cap, its verification command, the subject ending, and the body policy come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Do not run tools. State the maximum subject length for a commit message in this workflow, and the exact shell command used to measure it."
+  prompt: "Do not run tools. State the maximum subject length for a commit message in this workflow, the exact shell command used to measure it, the verb ending every subject must use, and the two commit types that always require a body."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: subject-cap-and-measurement
+    name: subject-rules-and-body-policy
     config:
       regex_match:
         - "\\b50\\b"
         - "wc -m"
+        - "다"
+        - "(?i)\\bfeat\\b"
+        - "(?i)\\bfix\\b"
