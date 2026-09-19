@@ -1,6 +1,6 @@
 ---
 name: skill-improver
-description: "스킬/에이전트 정의를 테스트 시나리오와 최근 세션 기록에서 관찰된 실패를 근거로 자동 개선한다. /skill-improver, skill-improver, 스킬 개선해줘, 에이전트 정의 개선, 스킬 최적화, 스킬 테스트해줘, test skills, improve skill 요청 시 사용한다. eval 실행·점수 비교는 waza, 반복 변이 루프는 autoresearch가 맡는다."
+description: "스킬/에이전트 정의를 테스트 시나리오와 최근 세션 기록에서 관찰된 실패를 근거로 자동 개선한다. /skill-improver, skill-improver, 스킬 개선해줘, 에이전트 정의 개선, 스킬 최적화, improve skill 요청 시 사용한다. 스킬 테스트·eval 실행·점수 비교는 waza, 반복 변이 루프는 autoresearch가 맡는다."
 group: meta
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bash:*), Bash(git:*), Bash(date:*), Bash(jq:*), Bash(mktemp:*), Bash(diff:*), Agent, advisor
 argument-hint: "[skill-name ...]"

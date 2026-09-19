@@ -1,7 +1,7 @@
 ---
 name: multi-agent-orchestrator
 description: "canonical 스펙·계약·연구·계획·구현 스킬과 선택적 독립 평가를 하나의 장기 실행 파이프라인으로 조율한다."
-when_to_use: "멀티에이전트, 파이프라인 실행, multi-agent-orchestrator, /multi-agent-orchestrator, 에이전트 오케스트레이션, full harness run, autonomous build session, plan and build this, 기획부터 구현까지 해줘 요청 시 사용한다. 멀티에이전트 개념 설명이나 CI 파이프라인 실행에는 사용하지 않는다."
+when_to_use: "멀티에이전트, 파이프라인 실행, multi-agent-orchestrator, /multi-agent-orchestrator, 에이전트 오케스트레이션, full harness run, autonomous build session, plan and build this, 기획부터 구현까지 해줘 요청 시 사용한다. 스펙 작성만, 플랜 작성만, 승인된 플랜 구현만 같은 단일 단계 요청은 spec-planner, annotate-plan, implement-plan이 각각 맡는다. 멀티에이전트 개념 설명이나 CI 파이프라인 실행에는 사용하지 않는다."
 group: build
 argument-hint: "[1-4 sentence prompt]"
 allowed-tools: Read Write Edit Glob Grep Bash Agent AskUserQuestion advisor
