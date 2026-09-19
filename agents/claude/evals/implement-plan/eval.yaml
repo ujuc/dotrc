@@ -20,6 +20,7 @@ graders:
   - type: behavior
     name: token-budget
     config:
-      max_tokens: 20000
+      # A ~10 KB SKILL.md plus the skill listing already costs ~18.5k tokens; tool-using runs reach 46k+.
+      max_tokens: 30000
 tasks:
   - "tasks/*.yaml"
