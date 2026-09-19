@@ -78,6 +78,7 @@ claude/settings.local.json
 claude/daemon.log
 claude/feedback
 claude/skills/ego-browser
+claude/skills/synced
 claude/daemon
 claude/jobs
 claude/security
