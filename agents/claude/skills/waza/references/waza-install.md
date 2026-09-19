@@ -66,13 +66,13 @@ The `.waza.yaml` format changes quickly, so this repository does not generate it
 
 ## Local Ollama model
 
-`waza-run.sh` uses the local Ollama model `gemma4:26b-mlx` as the default
+`waza-run.sh` uses the local Ollama model `gemma4:e4b-mlx` as the default
 evaluation target through waza's Copilot SDK BYOK path. The defaults are:
 
 ```sh
 COPILOT_PROVIDER_BASE_URL=http://localhost:11434/v1
 COPILOT_PROVIDER_TYPE=openai
-COPILOT_MODEL=gemma4:26b-mlx
+COPILOT_MODEL=gemma4:e4b-mlx
 COPILOT_OFFLINE=true
 ```
 

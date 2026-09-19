@@ -31,7 +31,7 @@ EVALS_DIR="${WAZA_EVALS_DIR:-$HOME/.claude/evals}"
 export WAZA_NO_UPDATE_CHECK=1
 export COPILOT_PROVIDER_BASE_URL="${COPILOT_PROVIDER_BASE_URL:-http://localhost:11434/v1}"
 export COPILOT_PROVIDER_TYPE="${COPILOT_PROVIDER_TYPE:-openai}"
-export COPILOT_MODEL="${COPILOT_MODEL:-gemma4:26b-mlx}"
+export COPILOT_MODEL="${COPILOT_MODEL:-gemma4:e4b-mlx}"
 export COPILOT_OFFLINE="${COPILOT_OFFLINE:-true}"
 
 usage() {

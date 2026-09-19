@@ -24,7 +24,7 @@ Lightweight suits forwarding a command and relaying the rendered report;
 Standard suits choosing labels, baselines, and interpreting failed tasks;
 Advanced suits conflicting evaluation evidence. These levels describe the
 calling agent only. The evaluation target stays the configured local Ollama
-model (`gemma4:26b-mlx` by default) and is never replaced silently. Apply the
+model (`gemma4:e4b-mlx` by default) and is never replaced silently. Apply the
 [shared selection guide](../generate-skills/references/model-selection.md) to
 the orchestration side.
 
@@ -75,7 +75,7 @@ The launcher exports these defaults when unset; existing values win:
 ```sh
 COPILOT_PROVIDER_BASE_URL=http://localhost:11434/v1
 COPILOT_PROVIDER_TYPE=openai
-COPILOT_MODEL=gemma4:26b-mlx
+COPILOT_MODEL=gemma4:e4b-mlx
 COPILOT_OFFLINE=true
 WAZA_NO_UPDATE_CHECK=1
 ```
