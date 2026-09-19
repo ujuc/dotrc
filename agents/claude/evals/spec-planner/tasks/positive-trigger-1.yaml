@@ -1,17 +1,15 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; an investigation request is a spike and creates no managed spec.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use spec-planner to help me complete this task"
+  prompt: "A user asks: 'Should this small CLI use SQLite or Postgres? Just look into it and recommend one.' Do not run tools or write files. Which request class is this, and is spec.md written?"
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: classifies-as-spike
     config:
-      contains:
-        - "planner"
-        - "spec"
-
+      regex_match:
+        - "(?i)\\bspike\\b"

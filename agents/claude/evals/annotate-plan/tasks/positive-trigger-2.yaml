@@ -1,17 +1,15 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; contract-changing feedback must leave the plan and return to negotiation.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with annotate plan-related work"
+  prompt: "While an acceptance contract is active, a user's note on the plan rewrites one acceptance criterion. Do not run tools or write files. Is the plan edited in place? Say where this change must be handled instead."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: returns-to-negotiation
     config:
-      contains:
-        - "annotate"
-        - "plan"
-
+      regex_match:
+        - "(?i)\\.sprint|negotiat"

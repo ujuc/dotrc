@@ -1,16 +1,20 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: The subject format, Korean -다 ending, 50-character cap, required fix body, and attribution ban all come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use commit to help me complete this task"
+  prompt: "The staged diff repairs a crash in the zsh startup script when the config file is missing. The project scopes are zshrc, agents, and scripts. Do not run tools. Reply with only the commit message."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: korean-conventional-subject-and-body
     config:
-      contains:
-        - "commit"
-
+      regex_match:
+        # type(scope): subject ending in 다, at most 50 characters in total.
+        - "(?m)^fix\\(zshrc\\): .{1,37}다$"
+        # A fix always carries a body after one blank line.
+        - "(?m)^fix\\(zshrc\\): .*\\n\\n\\S"
+      regex_not_match:
+        - "(?i)co-authored-by"

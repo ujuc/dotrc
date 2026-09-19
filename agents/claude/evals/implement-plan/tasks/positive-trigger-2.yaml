@@ -1,17 +1,15 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; repository Git policy overrides the generic worktree mode.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with implement plan-related work"
+  prompt: "The repository instructions say to commit directly to main and never create branches. The plan has three todos with disjoint files. Do not run tools or write files. Which execution mode does implement-plan choose?"
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: sequential-on-direct-main
     config:
-      contains:
-        - "implement"
-        - "plan"
-
+      regex_match:
+        - "(?i)sequential"

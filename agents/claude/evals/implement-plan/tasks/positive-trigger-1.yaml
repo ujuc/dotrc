@@ -1,17 +1,15 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the evaluation handoff status comes from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use implement-plan to help me complete this task"
+  prompt: "Every todo is checked, the final verifier passed, and two independent evaluators were selected for this run. Do not run tools or write files. What exact status does implement-plan return now, and does it archive?"
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: awaits-evaluation
     config:
-      contains:
-        - "implement"
-        - "plan"
-
+      regex_match:
+        - "AWAITING_EVALUATION"

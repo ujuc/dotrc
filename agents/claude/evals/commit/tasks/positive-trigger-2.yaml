@@ -1,16 +1,16 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the length cap and its verification command come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "I need assistance with commit-related work"
+  prompt: "Do not run tools. State the maximum subject length for a commit message in this workflow, and the exact shell command used to measure it."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: subject-cap-and-measurement
     config:
-      contains:
-        - "commit"
-
+      regex_match:
+        - "\\b50\\b"
+        - "wc -m"

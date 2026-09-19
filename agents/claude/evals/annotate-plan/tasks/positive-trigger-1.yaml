@@ -1,17 +1,17 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Auto-generated positive-trigger task.
+description: Decision-only probe; the kebab-case slug and the three managed paths come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Use annotate-plan to help me complete this task"
+  prompt: "Do not run tools or write files. For a feature the user calls 'dark mode', give the exact path of the managed plan file, of its review baseline copy, and of its cycle counter."
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: contains-keywords
+    name: managed-plan-paths
     config:
-      contains:
-        - "annotate"
-        - "plan"
-
+      regex_match:
+        - "\\.plans/plan-dark-mode\\.md"
+        - "\\.plan-dark-mode\\.md\\.prev"
+        - "\\.plan-dark-mode\\.cycle"
