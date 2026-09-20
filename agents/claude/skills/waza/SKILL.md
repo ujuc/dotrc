@@ -101,6 +101,9 @@ grade. It reads the answer on stdin, asks TypeSafe (Jev) one Noul per `--ask`
   semantic remainder. Every probability is appended to
   `~/.claude/data/waza/judge-log.jsonl`; add a second judge for the middle band
   only if that log shows one.
+- It is a `uv run --script` program (PEP 723, standard library only), so `uv`
+  must be on `PATH`; without it waza reports the task as failed. The key is read
+  from `TYPESAFE_API_KEY`, then from `mise exec` when the shell skips mise hooks.
 - `scripts/typesafe-judge --self-check` runs without network.
 
 ## Procedure
