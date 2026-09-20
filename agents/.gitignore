@@ -68,7 +68,7 @@ claude/usage-data
 claude/backups
 claude/hooks/*
 claude/mcp-needs*.json
-claude/policy-limits.json
+claude/policy-limits.json*
 claude/memory
 claude/homunculus
 claude/metrics
