@@ -64,6 +64,12 @@ Inter or Poppins as the sole font family, used at default weights (400, 600, 700
 
 **Detection**: Check the font stack. If it is Inter or Poppins only, with no secondary typeface, no custom font features (`font-feature-settings`), and no unusual weight combinations, flag it.
 
+### 11. Current Generator Default Style
+
+A cluster of styles that current generators fall back on when given no design direction: a cream or off-white page background, an italic accent word in headlines, numbered "01 / 02 / 03" section labels, monospace labels, and pill-shaped buttons. Each one can be a deliberate choice; the cluster without a stated direction is the signal.
+
+**Detection**: Flag once when three or more of these appear together and neither the spec nor the approved design direction calls for them. When a later round removes a flagged pattern, check which default replaced it.
+
 ## Structural Anti-Patterns
 
 ### Layout Formula Detection

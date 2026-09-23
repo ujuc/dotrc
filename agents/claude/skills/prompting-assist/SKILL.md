@@ -47,7 +47,7 @@ If intent is ambiguous, ask one clarifying question first: "이 프롬프트를 
    - If absent, request once: "어떤 프롬프트를 보고 싶으신가요?"
 
 2. **Collect the minimum necessary context** via `AskUserQuestion` (batch the questions, do not re-ask):
-   - Target model: Claude family / another LLM / unknown
+   - Target model: specific Claude model (name/version if known) / Claude family only / another LLM / unknown
    - Primary use case: one-shot / agentic / tool-calling / long-context / coding
    - Hard constraints: response length / cost / latency / output format
 
@@ -67,6 +67,12 @@ prompting best-practices reference:
 ```
 https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
 ```
+
+When Stage 1 names a specific current Claude model, also fetch that model's
+guide. Find it in the fetched page's "Model-specific guidance" table and apply
+it before the general techniques. Follow the table row rather than a stored
+URL, because the table changes as models ship. If the model has no row, say so
+and use the general page.
 
 On Claude Code, `WebFetch` is deferred: load it with `ToolSearch` (query
 `select:WebFetch`) before fetching. Other harnesses use their equivalent web
@@ -89,6 +95,7 @@ Judge pass / fail per checklist category:
 | Output control | Anthropic | Is the desired output shape stated positively and concretely? |
 | Thinking & effort | Anthropic | Does the effort setting match task difficulty without requesting visible chain-of-thought? |
 | Tool use & agentic | Anthropic | Is action-vs-suggestion intent clear, with tools named when needed? |
+| Model carry-over | Anthropic | Does the prompt keep instructions written for an earlier model's habits that the target model's guide says to remove, such as narration suppression, blanket anti-formatting rules, or thinking toggles? Remove those before adding new ones. |
 | Managed workflow | Local contract | Does an agentic prompt preserve canonical paths, writers, and approval boundaries? |
 | Engineering restraint | Local rule | Does it avoid test hard-coding, defensive bloat, and needless abstraction pressure? |
 
@@ -108,7 +115,7 @@ Pick the proposal format by change magnitude:
 
 **Prefer presenting options** when the user has a real choice: lay out "Option A (terse)" vs "Option B (strict)".
 
-Close with a one-line checklist coverage report: "10개 범주 중 7개 합격, 3개 개선 반영."
+Close with a one-line checklist coverage report: "11개 범주 중 8개 합격, 3개 개선 반영."
 
 ## Constraints
 
@@ -133,7 +140,7 @@ Close with a one-line checklist coverage report: "10개 범주 중 7개 합격, 
 
 3. **Never edit the prompt in place without consent.** `Edit` is in `allowed-tools` for cases where the prompt lives in a file the user asked to be improved. Always show the proposal first, then apply the edit only after explicit confirmation.
 
-4. **Model-version drift.** Successive Claude generations differ enough (extended thinking defaults, parallel tool-call norms, effort tuning) that a checklist pass tuned for one generation can be a near-fail for another. When the target model is unknown, use current general Claude guidance and state the assumption without inventing an exact model version, as in Stage 1.
+4. **Model-version drift.** Successive Claude generations differ enough (whether thinking can be turned off, effort defaults and what each level means, formatting and progress-update tendencies, parallel tool-call norms) that a checklist pass tuned for one generation can be a near-fail for another. When the target model is unknown, use current general Claude guidance and state the assumption without inventing an exact model version, as in Stage 1.
 
 ## Eval Criteria
 

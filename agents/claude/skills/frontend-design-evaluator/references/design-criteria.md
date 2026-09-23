@@ -27,7 +27,7 @@ Evaluates whether a human designer would recognize intentional creative decision
 
 | Score | Description |
 | ----- | ----------- |
-| 1-3 | Unmodified stock components. Obvious AI generation signs (purple gradients, generic hero sections, 3-column feature grids). Default library styling with content swapped in. |
+| 1-3 | Unmodified stock components. Obvious AI generation signs from the [anti-patterns catalog](anti-patterns.md). Default library styling with content swapped in. |
 | 4-5 | Some custom choices visible but the overall impression is template-based. Custom colors applied to a standard layout. One or two distinctive elements surrounded by defaults. |
 | 6-7 | Many intentional creative choices. Layout breaks from templates in meaningful ways. Custom components or interactions. Some default remnants remain but do not dominate. |
 | 8-10 | Distinctively creative approach that a designer would recognize as intentional. Unique layout strategies, unexpected color combinations that work, custom illustrations or typography. Cannot be mistaken for a template. |

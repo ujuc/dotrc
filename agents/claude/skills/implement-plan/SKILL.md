@@ -83,7 +83,7 @@ For each todo in dependency order:
 
 1. Derive `{item-slug}` as `{ordinal}-{kebab-summary}` and map its exact paths, tests, criteria, inputs, and outputs.
 2. For behavior work, run the named test and record the expected failure before implementation.
-3. Implement only that item. Follow repository patterns and write `.plans/.blocker-{item-slug}.md` when the plan cannot be executed without a scope decision.
+3. Implement only that item. Follow repository patterns and write `.plans/.blocker-{item-slug}.md` when the plan cannot be executed without a scope decision. Leave out a pre-existing bug, performance concern or improvement you notice outside the item unless the item cannot work without it; record it as a follow-up.
 4. Run the named focused checks, then launch an independent verifier writing `.plans/.verify-{item-slug}.md`.
 5. Require explicit `build:`, `typecheck:`, `lint:`, `tests:`, and `errors:` results. Any applicable FAIL blocks completion.
 6. Mark `[x]` only after fresh PASS and continue. Never begin the next item while the current one is unresolved.
@@ -92,7 +92,7 @@ For each todo in dependency order:
 
 Use only when repository policy allows it and independence is proven from the plan interfaces:
 
-1. Launch one implementer per disjoint item in isolated worktrees and require its exact worktree, branch, commit SHA, changed paths, checks, and blocker path.
+1. Launch one implementer per disjoint item in isolated worktrees and require its exact worktree, branch, commit SHA, changed paths, checks, blocker path, and out-of-item follow-ups.
 2. Wait for all already-launched siblings before handling a blocker; never orphan worktrees.
 3. Verify each returned SHA independently in its worktree. Fix and reverify there.
 4. Integrate only the exact verified SHA using the repository-approved method. On conflict, abort and ask the user; never auto-resolve a dependency-classification failure.
@@ -142,7 +142,7 @@ Durable outputs are:
 - `docs/plans/plan-{feature}.md` always;
 - `docs/reports/report-{feature}.md` only for evaluator-bearing completion.
 
-On archive error, report the exact diagnostic, leave active source state in place, and do not invent a filename or overwrite a destination. Confirm the implementation flag is absent after successful archive. Report item totals, verification evidence, retained worktrees, and exact durable paths. Suggest commit only when changes remain uncommitted; push is always a separate explicit action.
+On archive error, report the exact diagnostic, leave active source state in place, and do not invent a filename or overwrite a destination. Confirm the implementation flag is absent after successful archive. Report item totals, verification evidence, out-of-item follow-ups, retained worktrees, and exact durable paths. Suggest commit only when changes remain uncommitted; push is always a separate explicit action.
 
 ## Eval Criteria
 

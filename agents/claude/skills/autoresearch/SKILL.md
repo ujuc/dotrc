@@ -17,7 +17,7 @@ Adapts Andrej Karpathy's autoresearch methodology (autonomous experimentation lo
 ## Model guidance
 
 Use Advanced to design evaluations and interpret mutations; Standard suits a bounded loop with settled criteria.
-Recommend Frontier for coupled failure modes that remain unexplained after Advanced analysis; keep measured target-model settings fixed within a comparison.
+Recommend Frontier for coupled failure modes that remain unexplained after Advanced analysis; keep the target's resolved model and effort level fixed within a comparison and record them with the baseline. A change to either starts a new baseline.
 Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## The Core Job
@@ -158,7 +158,7 @@ Pick ONE thing to change. Never change multiple things at once.
 - Add an anti-pattern ("Do NOT do X") for a recurring mistake
 - Move a buried instruction higher (priority = position)
 - Add or improve an example showing correct behavior
-- Remove an instruction causing over-optimization for one thing
+- Remove an instruction causing over-optimization for one thing, or one the target model already follows by default (e.g., carry-over rules written for an earlier model)
 
 **Good mutations (code/config):**
 - Adjust a parameter or threshold value

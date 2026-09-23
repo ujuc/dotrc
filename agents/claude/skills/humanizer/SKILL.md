@@ -254,7 +254,7 @@ Read by language and mode:
 | Mode | Lang | Catalog |
 |---|---|---|
 | Fast | ko | [Quick rules](references/quick-rules.md): S1·S2 core, 6-item self-check, and grades; loaded directly by the monolith |
-| Fast | en | [English catalog](references/patterns-en.md) (E1–E19) + [common patterns](references/patterns-common.md) (C1–C6) |
+| Fast | en | [English catalog](references/patterns-en.md) (E1–E20) + [common patterns](references/patterns-common.md) (C1–C6) |
 | Fast | mixed | The English/common catalogs above + [Korean fast catalog](references/patterns-ko.md) (K1–K19) |
 | Strict | ko | [Korean taxonomy](references/taxonomy-ko.md): SSOT, 10 categories × 40+ patterns, loaded by the detector; [Korean playbook](references/playbook-ko.md): per-category prescriptions, loaded by the rewriter |
 

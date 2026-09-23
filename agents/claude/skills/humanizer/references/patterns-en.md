@@ -103,3 +103,9 @@ Fast English/mixed-track rules. Meaning invariance overrides every recipe: do no
 ### E19. Over-structured prose [P2]
 
 **Rule:** Convert a short related list to prose only when all items, labels, ordering, and logical relationships remain intact.
+
+### E20. Mannered prose [P2]
+
+**Signals:** a metaphor or flourish standing in for a plain statement (“a dial worth turning” for “a parameter worth varying”; “earns its keep” for “still matters”).
+
+**Rule:** Replace it with the literal phrase only when that says exactly the same thing. Keep figurative language the source uses deliberately (quotes, titles, a stated analogy, or a personal/essay voice the source sustains), and leave the finding unresolved when no faithful literal phrase exists.
