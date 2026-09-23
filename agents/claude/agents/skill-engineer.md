@@ -20,7 +20,7 @@ For a bare name, inspect both:
 - project: `<cwd>/.claude/skills/<name>/SKILL.md`
 - global: `~/.claude/skills/<name>/SKILL.md`
 
-When both exist, the project skill wins. State which file was selected. Parse `description`, `when_to_use`, `disable-model-invocation`, `user-invocable`, `model`, and `effort` before judging triggers.
+When both exist, the project skill wins. State which file was selected. Parse `description`, `when_to_use`, `disable-model-invocation`, `user-invocable`, `model`, and `effort` before judging triggers and model fitness.
 
 ## Output
 
@@ -85,9 +85,15 @@ require a different model.
 
 PASS when workload guidance is justified, respects those constraints, and
 distinguishes advice from actual selection. WARN for missing workload guidance,
-unsupported overrides, concrete capability mismatches, or conflicts with user
-constraints. Omitting native `model` is valid, but inheritance alone does not
-establish task fitness. When the effective model or capabilities cannot be
+unsupported overrides, concrete capability mismatches, conflicts with user
+constraints, an `effort` pinned without measured evidence ([`effort`
+rule](../skills/generate-skills/references/frontmatter-spec.md#effort)), or one
+whose cited evidence names a model other than the pinned full model name or the
+verified effective model, with no re-check (shared model guide, step 4). An
+alias such as `opus` is not a pin. If neither model is known, or the evidence
+names no model, report that carry-over check UNVERIFIED instead of a WARN.
+Omitting native `model` or `effort` is valid, but inheritance alone does not
+establish task fitness. When the effective model, effort, or capabilities cannot be
 verified, mark runtime fitness UNVERIFIED without inventing a mismatch or
 claiming a live test. The PASS/WARN verdict assesses the definition's policy.
 
