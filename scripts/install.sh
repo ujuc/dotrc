@@ -353,11 +353,11 @@ install_agents() {
         export PATH="$HOME/bin:$PATH"
     fi
     if command -v mise >/dev/null 2>&1; then
-        run_step agents "Install Pi coding agent" mise exec -- npm install -g @mariozechner/pi-coding-agent
+        run_step agents "Install Pi coding agent" mise exec -- npm install -g @earendil-works/pi-coding-agent
     elif command -v npm >/dev/null 2>&1; then
-        run_step agents "Install Pi coding agent" npm install -g @mariozechner/pi-coding-agent
+        run_step agents "Install Pi coding agent" npm install -g @earendil-works/pi-coding-agent
     else
-        record_failure agents "Install Pi coding agent (npm missing)" 127 "npm install -g @mariozechner/pi-coding-agent"
+        record_failure agents "Install Pi coding agent (npm missing)" 127 "npm install -g @earendil-works/pi-coding-agent"
     fi
     if command -v claude >/dev/null 2>&1; then
         marketplace_json=$(claude plugin marketplace list --json 2>&1)
