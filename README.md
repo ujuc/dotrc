@@ -251,8 +251,10 @@ bun add -g --ignore-scripts @earendil-works/pi-coding-agent
 ln -sf ${DOTRC_AGENTS_DIR}/pi ${HOME}/.pi
 ```
 
-전역 지침(`AGENTS.md`)과 `agent/extensions/workflow-hooks.ts`는 `agents/pi/` 디렉터리 전체가
-`~/.pi`로 심링크되므로 자동으로 배포된다. `agent/` 아래에서는 `extensions/`만 추적하고,
+`agent/extensions/workflow-hooks.ts`는 `agents/pi/` 디렉터리 전체가
+`~/.pi`로 심링크되므로 자동으로 배포된다. `pi/AGENTS.md`는 이 디렉터리를 편집할 때 쓰는 지침이며
+Pi 전역 지침이 아니다. Pi는 전역 지침을 `~/.pi/agent/AGENTS.md`에서 읽는데, 이 경로는 추적하지 않는다.
+`agent/` 아래에서는 `extensions/`만 추적하고,
 나머지 Pi 런타임 상태는 `agents/.gitignore`의 화이트리스트(`pi/agent/*` + `!pi/agent/extensions`)로 제외한다.
 
 ### [Codex](https://developers.openai.com/codex)
@@ -265,7 +267,7 @@ ln -sfn ${DOTRC_AGENTS_DIR}/codex ${HOME}/.codex
 
 디렉터리 내부에서 `AGENTS.md`는 `agents/rules/AGENTS.md`에 대한 상대 심링크이고,
 `skills`는 `agents/claude/skills`에 대한 상대 심링크다 (전역 스킬 재사용, 새 스킬 추가 시
-별도 작업 불필요). `codex/` 안에서는 `AGENTS.md`, `README.md`, `hooks.json`, `skills`만 추적하고,
+별도 작업 불필요). `codex/` 안에서는 `AGENTS.md`, `README.md`, `hooks.json`, `hooks/`, `skills`만 추적하고,
 나머지 Codex 런타임 상태(인증, 캐시, sqlite, tmp 등)는 `agents/.gitignore`의
 화이트리스트(`codex/*` + 개별 `!허용파일`)로 제외한다.
 
