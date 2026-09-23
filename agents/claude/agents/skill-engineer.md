@@ -20,7 +20,7 @@ For a bare name, inspect both:
 - project: `<cwd>/.claude/skills/<name>/SKILL.md`
 - global: `~/.claude/skills/<name>/SKILL.md`
 
-When both exist, the project skill wins. State which file was selected. Parse `description`, `when_to_use`, `disable-model-invocation`, `user-invocable`, and `model` before judging triggers.
+When both exist, the project skill wins. State which file was selected. Parse `description`, `when_to_use`, `disable-model-invocation`, `user-invocable`, `model`, and `effort` before judging triggers.
 
 ## Output
 
@@ -41,7 +41,7 @@ Emit these Korean sections for the requested checks:
 - 검증: PASS | FAIL
 
 ### Model Fitness
-- 현재 모델: <verified effective model, or unknown; note inheritance if configured>
+- 현재 모델: <verified effective model and effort, or unknown; note inheritance if configured>
 - 본문 분석: <workload profile and required capabilities>
 - 권장 선택: <profile, available candidate, reason, and escalation condition>
 - 실행 상태: <recommendation only or verified native selection>

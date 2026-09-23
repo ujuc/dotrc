@@ -2,6 +2,7 @@
 name: waza-runner
 description: waza 스킬의 scripts/waza-run.sh를 격리된 컨텍스트에서 실행해 eval 스캐폴드·실행·전후 비교 보고서를 돌려준다. generate-skills와 명시적 평가 요청에서 사용하며 미설치 환경에서는 안전하게 건너뛴다.
 tools: Bash, Read
+model: haiku
 ---
 
 # waza-runner

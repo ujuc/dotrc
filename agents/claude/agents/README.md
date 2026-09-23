@@ -1,24 +1,26 @@
 # agents/
 
-Reference for the five subagents that power the planning-pipeline skills
-(`deep-read` → `annotate-plan` → `implement-plan`).
+Reference for the subagents in this directory: the five planning-pipeline
+workers (`deep-read` → `annotate-plan` → `implement-plan`) plus auxiliary
+agents.
 
 Agents here are pipeline workers, not general-purpose assistants. They are
 invoked via the `Agent` tool with `subagent_type: "<name>"` by exactly one
 calling skill each.
 
-For policy ("how to edit agents here"), see `../CLAUDE.md`.
+The checklist at the end of this file is the policy for adding or editing
+agents here.
 This file is the **reference** for callers and contributors.
 
 ## Role Matrix
 
 | Agent              | Calling skill       | Recommended profile | Tools                                     | Writes code | Output path                       | Advisor |
 |--------------------|---------------------|--------|-------------------------------------------|-------------|-----------------------------------|---------|
-| `reference-finder` | `annotate-plan`     | Standard | Read, Glob, Grep, advisor                 | no          | `.plans/.partial/references.md`   | ≤1      |
-| `researcher`       | `deep-read` (×3)    | Standard / Advanced | Read, Glob, Grep, advisor                 | no          | `.research/.partial/{role}.md`    | ≤1      |
-| `verifier`         | `implement-plan`    | Lightweight / Standard | Read, Glob, Grep, Bash, advisor           | no          | `.plans/.verify-{item-slug}.md`   | emergency only |
+| `reference-finder` | `annotate-plan`     | Standard | Read, Write, Glob, Grep, advisor          | no          | `.plans/.partial/references.md`   | ≤1      |
+| `researcher`       | `deep-read` (×3)    | Standard / Advanced | Read, Write, Glob, Grep, advisor          | no          | `.research/.partial/{role}.md`    | ≤1      |
+| `verifier`         | `implement-plan`    | Lightweight / Standard | Read, Write, Glob, Grep, Bash, advisor    | no          | `.plans/.verify-{item-slug}.md`   | emergency only |
 | `implementer`      | `implement-plan`    | Standard / Advanced | Read, Write, Edit, Glob, Grep, Bash, advisor | **yes**  | source files + `.plans/.blocker-{item-slug}.md` on failure | ≤1 (pre-blocker) |
-| `debugger`         | `implement-plan`    | Advanced | Read, Grep, Glob, Bash, advisor           | no          | `.plans/.debug-{item-slug}.md`    | ≤1      |
+| `debugger`         | `implement-plan`    | Advanced | Read, Write, Grep, Glob, Bash, advisor    | no          | `.plans/.debug-{item-slug}.md`    | ≤1      |
 
 Model recommendations follow the [shared workload guide](../skills/generate-skills/references/model-selection.md).
 Each definition states its starting profile and escalation conditions. Resolve
@@ -27,9 +29,13 @@ choices and constraints. Profiles are recommendations, not native model IDs.
 State the recommendation when choosing a worker; distinguish it from an actual
 host-supported selection. Inheritance is a fallback, not proof of task fitness.
 Independent review requires a separate context, not necessarily a different model.
+Subagents inherit the session effort unless the definition sets `effort`; a low
+session level also lowers every evidence-gathering worker.
 
 Tool minimalism: each agent gets the smallest tool set that lets it do its
-job. `implementer` is the only one with `Write` / `Edit` for a reason.
+job. Every pipeline agent has `Write`, scoped by its body to its own output
+artifact; `implementer` is the only one with `Edit` and the only one allowed
+to change source files.
 
 ## I/O Contract
 
@@ -97,8 +103,8 @@ Artifact paths read by multiple skills:
 
 ## Advisor Common Guide
 
-All five agents have `advisor` in their `tools:` frontmatter, but the call
-budget is deliberately tight:
+All five pipeline agents (and `skill-engineer`) have `advisor` in their
+`tools:` frontmatter, but the call budget is deliberately tight:
 
 - `advisor()` takes **no parameters** — the agent's full execution context
   is forwarded automatically.
@@ -122,7 +128,7 @@ skills (the "one caller per agent" rule applies to pipeline workers only).
 
 | Agent             | Calling skills                | Recommended profile | Tools                    | Writes code | Output                                                         | Advisor |
 |-------------------|-------------------------------|--------|--------------------------|-------------|----------------------------------------------------------------|---------|
-| `waza-runner`     | `generate-skills`, explicit eval requests (Claude Code only) | Standard | Bash, Read               | no          | stdout + optional `claude/evals/<skill>/` scaffold + result JSON | no      |
+| `waza-runner`     | `generate-skills`, explicit eval requests (Claude Code only) | Lightweight | Bash, Read               | no          | stdout + optional `claude/evals/<skill>/` scaffold + result JSON | no      |
 | `skill-engineer`  | `skill-improver` (optional)   | Advanced | Read, Glob, Grep, advisor | no          | stdout (Korean report — trigger / overlap / model fitness)     | ≤1      |
 
 `waza-runner` is a Claude Code wrapper around the harness-neutral `waza`
@@ -148,6 +154,14 @@ overlap across skills, and model fitness. It produces a Korean report
 with PASS / WARN / FAIL verdicts per dimension and never edits skill
 files. Dispatch with `Agent("skill-engineer", "<target> [--check
 trigger|overlap|model|all]")`.
+
+The five `humanize-*` agents (`humanize-monolith`, `humanize-detector`,
+`humanize-rewriter`, `humanize-fidelity-auditor`,
+`humanize-naturalness-reviewer`) are not tool wrappers; they are
+single-caller workers of the `humanizer` skill, which
+specifies their dispatch parameters and output files; run its
+`scripts/check-consistency` after changing shared values. They use only Read
+and Write and have no advisor.
 
 ## Adding a New Agent — Checklist
 
