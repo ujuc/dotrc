@@ -1,11 +1,13 @@
 ---
 source_urls:
-  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5.md
-  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5.md
-  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8.md
+  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1.md
+  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5.md   # base guide inherited by 5.1
+  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5.md
+  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5.md    # base guide inherited by 5.5
+  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8.md  # legacy; still listed in the upstream model-guide table
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5.md
 secondary_source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md
-last_upstream_check: 2026-09-09
+last_upstream_check: 2026-09-23
 check_interval_days: 14
 ---
 
@@ -28,10 +30,23 @@ instructions should be written** is authoritative for Stage 3 (writing) and
 Stage 4 (verifying). Everything else in those guides is out of scope; see
 "Out of scope" at the bottom.
 
+**Inheritance**: Opus 5.5 — *"Existing Claude Opus 5 prompts should perform
+well without changes"*; Fable 5.1 — *"Your existing Claude Fable 5 prompts
+should perform well on Claude Fable 5.1 without changes"*. Rules below that
+quote Opus 5 or Fable 5 therefore still apply to the current models unless a
+rule says otherwise. Where a newer guide does not restate a finding, never
+attribute it to Opus 5.5 or Fable 5.1 (upstream: *"treat it as measured on
+that model and re-check it"*).
+
 **Freshness**: re-fetch `source_urls` only when `today - last_upstream_check >
 check_interval_days` (`ToolSearch` `select:WebFetch` first — deferred tool).
-Fetch `secondary_source_url` only when a question is cross-model rather than
-tier-specific. On any fetch failure, use this file and say so in one line:
+When that gate fires, also fetch `secondary_source_url` and compare the guide
+links in its "Model-specific guidance" table with `source_urls`. A guide listed
+there but missing here is drift: report it in one line and route cache
+maintenance to `skill-improver generate-agent-docs` (a project-doc run never
+edits this file). Otherwise fetch `secondary_source_url` only when a question
+is cross-model rather than model-specific. On any fetch failure, use this file
+and say so in one line:
 *"model-prompting 가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."*
 
 Every rule below is tagged by consumer. Do not mix them:
@@ -61,20 +76,25 @@ commands, explicit team gates and mandated verification. Recommend hooks when
 appropriate without deleting the requirement before an authorized replacement.
 See D1 for the model-specific counterpoint.
 
-### W2 — Never command reasoning visibility, in either direction
+### W2 — Never command reasoning visibility or thinking amount
 
 Fable 5: instructions that *"tell the model to echo, transcribe, or explain
 its internal reasoning as response text can trigger the
 `reasoning_extraction` refusal category ... causing elevated fallbacks."*
+Opus 5.5 has the same category, *"new if you're coming from Claude Opus 5"*.
 Opus 5: *"If your system prompt contains a rule instructing the model not to
 think or not to reason, remove it; that kind of instruction increases tag
-leakage."*
+leakage."* Opus 5.5: *"remove the no-thinking rule either way."*
+Opus 5.5: *"Lowering effort reduces thinking ... more reliably than prompt
+instructions do."*
 
-Both directions harm. Reasoning visibility is an application concern
-(structured thinking blocks), never a repository doc line. Asking for the
-**rationale behind a decision** ("propose alternatives with reasoning") is a
-different thing — that is output content, not internal-reasoning
-transcription, and stays allowed.
+Show-your-reasoning and don't-think lines cause harm; think-harder lines steer
+thinking less reliably than effort does. Reasoning visibility is an application
+concern (structured thinking blocks) and thinking amount is effort
+configuration (D2) — never a repository doc line. Asking for the **rationale
+behind a decision** ("propose alternatives with reasoning") is a different
+thing — that is output content, not internal-reasoning transcription, and
+stays allowed.
 
 ### W3 — State every rule's scope explicitly
 
@@ -94,11 +114,11 @@ not license for prose.
 
 ### W5 — Never write confidence or severity filter bars
 
-All four guides converge: *"only report high-severity issues," "be
-conservative," "don't nitpick"* are followed literally and suppress real
-findings. Opus 5: *"ask it to report everything and filter in a separate pass
-instead."* Applies whenever generated docs carry review or triage
-instructions.
+Opus 5, Sonnet 5 and Opus 4.8 converge: *"only report high-severity issues,"
+"be conservative"* (Sonnet 5 and Opus 4.8 add *"don't nitpick"*) are followed
+literally and suppress real findings. Opus 5: *"ask it to report everything and
+filter in a separate pass instead."* Applies whenever generated docs carry
+review or triage instructions.
 
 ### W6 — Delegation guidance needs a bar, not a ban
 
@@ -128,6 +148,9 @@ Claude Fable 5 and can degrade output quality. Review and consider removing
 older instructions if default performance is better."* This is the upstream
 justification for pruning this skill's own files. On every update pass, ask
 of each instruction: **does the current model already do this by default?**
+Both current guides reaffirm this. Opus 5.5 migration: *"Instructions tuned
+for Claude Opus 5's behavior may no longer be needed"*. Fable 5.1, on
+narration suppressors: *"Remove lines like that before adding anything."*
 
 ### S2 — No runtime model branching
 
@@ -140,12 +163,17 @@ across models** — never as `if <model> then <behavior>`.
 
 ## Divergences — recorded, not resolved
 
-### D1 — Verification scaffolding: Opus 5 says remove, Fable 5 says add
+### D1 — Verification scaffolding: Opus says remove; Fable 5 added it for long runs
 
-- Opus 5: remove explicit verification instructions; *"do not use subagents
-  to verify or double-check your own work."*
+- Opus 5 (inherited by Opus 5.5): remove explicit verification instructions;
+  *"do not use subagents to verify or double-check your own work."*
 - Fable 5: *"Make self-verification explicit in long-run prompts. Separate,
   fresh-context verifier subagents tend to outperform self-critique."*
+- Claude Code on Fable (code.claude.com/docs/en/model-config): *"Skip the
+  verification reminders"*.
+
+Generic verification lines in project docs are expendable on both families
+(W1). Independent verifier roles remain a skill/harness design choice.
 
 The reconciliation that holds for both turns on **whose work is verified**:
 
@@ -155,19 +183,27 @@ The reconciliation that holds for both turns on **whose work is verified**:
 | A writer checks its own output because delegation is unavailable | Direct fallback, not independent review. Report the missing role and partial verification under stage4-verifier.md. |
 | A generated project doc instructs either | Apply W1's scoped default; explicit project verification requirements remain valid. |
 
-### D2 — Effort and thinking defaults differ per tier
+### D2 — Effort and thinking defaults differ per model
 
-Opus 5 (thinking on, default `high`), Sonnet 5 (adaptive thinking on),
-Opus 4.8 (thinking off unless adaptive is set), Fable 5 (adaptive only).
+Fable 5.1 and Opus 5.5: adaptive thinking always on (cannot be disabled);
+default effort `high` on Fable 5.1, `medium` on Opus 5.5. Sonnet 5: adaptive,
+default `high`. Legacy Opus 5: default `high`. *"Effort level names don't
+correspond to the same amount of thinking across models"* (Opus 5.5; Fable 5.1
+says the same), and the default changed within the Opus family.
 These are API/harness configuration, not project knowledge: never write
-effort or thinking settings into a project doc — they go stale per tier and
-fail the staleness check.
+effort or thinking settings, or "think harder/less" lines (W2), into a project
+doc — they go stale per model and fail the staleness check.
 
 ---
 
 ## Out of scope — do not import
 
 Verbosity and narration tuning, effort sweeps, design/frontend defaults,
-computer-use resolutions, tokenizer and `max_tokens` sizing, the
-send-to-user tool, refusal fallback wiring. These tune an application's
-runtime, not a repository's documentation.
+computer-use and vision tooling, tokenizer and `max_tokens` sizing, the
+send-to-user tool, refusal fallback wiring, `thinking.display` and
+progress-update reminders, unattended-run continuation loops and early-stop
+system-prompt blocks, elapsed-time budgets, pasted-content tagging, chat-only
+thinking lines, the multi-app "explore broadly" line, tool-call batching
+reminders, and system-prompt blocks for change/test scope, targeted edits or
+compaction summaries (context-engineering-claude5.md C4). These tune an
+application's runtime or system prompt, not a repository's documentation.

@@ -13,8 +13,9 @@ contributing-docs/, nested CLAUDE.md, `.claude/rules/` — under one governing
 rule: **keep necessary shared instructions in AGENTS.md and Claude-specific
 additions in CLAUDE.md; prefer non-obvious guidance and preserve explicit policy.**
 Role split: **AGENTS.md is the primary cross-harness document** (Codex/Amp
-read it natively; Claude Code loads it via the `@AGENTS.md` import), and
-**CLAUDE.md is the Claude Code-specific layer** on top of that import. The
+read it natively; Claude Code reads it through the `@AGENTS.md` import, which
+keeps it loaded once any CLAUDE.md exists), and **CLAUDE.md is the Claude
+Code-specific layer** on top of that import. The
 current Pi adapter loads shared skills and workflow hooks, not AGENTS.md, so do
 not claim Pi receives project instructions unless its host integration does.
 
@@ -117,7 +118,7 @@ Same loud-fallback rule on failure.
 
 | Reference | Holds | Interval |
 |-----------|-------|----------|
-| references/model-prompting-guides.md | Per-model instruction-authoring rules (4 `source_urls`; the secondary URL only for cross-model questions) | 14d |
+| references/model-prompting-guides.md | Per-model instruction-authoring rules (`source_urls`; when the gate fires, the secondary URL's model-guide table is checked for unlisted guides; otherwise secondary only for cross-model questions) | 14d |
 | references/agents-md-best-practices.md | agents.md standard — fetch only when AGENTS.md is a target | 30d |
 | references/context-engineering-claude5.md | Claude 5 context-engineering rules C1–C4 (judgment framing, skill-over-section, no memory lines, four-layer placement) | 90d |
 | references/tdd-agent-loop.md | Agent-loop TDD findings T1 (conditional reject of agent-directed TDD process mandates + survivor list) | 90d |
@@ -314,7 +315,7 @@ instructions.
 | Add generic self-check scaffolding | Apply W1; preserve concrete team test gates and recommend automation without erasing policy |
 | Emit "read X, Y, Z before every edit" or a blanket "always ask before" rule | Route each document by situation and scope approval to destructive or out-of-scope actions (agents-md-best-practices.md A1, A3); keep explicit team safety boundaries |
 | Emit a TDD or test-first process mandate aimed at the agent's own loop | Rewrite as outcome-based verification (tdd-agent-loop.md T1) — keep it only as one of T1's Reconciliation survivors, e.g. a team decision confirmed in Stage 2 |
-| Emit an instruction to show, or to suppress, the agent's reasoning | Never (W2) — risks `reasoning_extraction` refusals one way, internal-tag leakage the other |
+| Emit an instruction to show, suppress, or dial up the agent's reasoning | Never (W2) — risks `reasoning_extraction` refusals or tag leakage, and thinking amount is set by effort, not doc text |
 | Emit a sometimes-relevant multi-step procedure as a CLAUDE.md / AGENTS.md section | Recommend a skill and emit one reference line (C2) — every-session budget is for always-relevant content |
 | Add session logs or treat a Notes heading as grounds for deletion | Apply scoped C3; preserve intentional project policy and do not assume every host has auto-memory |
 | Edit project docs while `.plans/.implementing` exists | Return proposed edits to the active `implement-plan` run; do not become a second executor |
