@@ -188,8 +188,11 @@ model: opus
 ```
 
 - Upstream accepts the same values as `/model`, or `inherit` to keep the active model; if unset, inherits from the current session model
+- Aliases (`opus`, `sonnet`, `fable`, ...) point to the provider's recommended version and update over time; to pin a model whose behavior you measured, use the full model name ([model-config](https://code.claude.com/docs/en/model-config))
 - The override applies for the rest of the current turn only and is not saved to settings — the session model resumes on the next prompt
 - A value excluded by the organization's `availableModels` allowlist is silently ignored and the session keeps its current model — no error is raised
+- In auto mode, and in plan mode while the auto-mode classifier reviews commands, a model that auto mode doesn't support is likewise not used and the session keeps its current model
+- **[LOCAL]** This repository's user settings run auto mode, so confirm an explicit override actually took effect.
 - **With `context: fork`, this sets the forked subagent's model instead of the session model**, overriding what the `agent` type would supply
 - **[LOCAL]** convention: omit fixed `model` assignments; define a recommended workload level and escalation conditions in the body using `model-selection.md`. Omission inherits the active session but does not select a task-appropriate model. Resolve recommendations through an available host model/delegation API, or report them without claiming a switch. An explicit user-requested frontmatter override must use a verified host identifier, never a tier label. `validate-skill` checks only for a non-empty string; it cannot verify host availability and does not enforce a provider-specific allowlist.
 
@@ -198,11 +201,13 @@ model: opus
 Effort level when this skill is active. Overrides the session effort level.
 
 ```yaml
-effort: max
+effort: high
 ```
 
 - Options: `low`, `medium`, `high`, `xhigh`, `max` (availability depends on the model)
-- Default: inherits from session
+- Default: inherits from session; with no level set anywhere, each model starts at its own default, and defaults differ by model ([model-config](https://code.claude.com/docs/en/model-config))
+- Overrides the session level but not the `CLAUDE_CODE_EFFORT_LEVEL` environment variable; `maxEffortLevel` or an organization effort cap still limits it (model-config)
+- **[LOCAL]** Pin a level only with measured evidence; see [model-selection.md](model-selection.md) step 4 on effort names across models.
 
 ### `context`
 

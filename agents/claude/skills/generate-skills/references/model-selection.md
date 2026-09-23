@@ -33,8 +33,10 @@ execution does not need the coordinator's full reasoning capacity.
    is not a provider allowlist.
 4. Choose reasoning effort separately, only where supported: lower for explicit
    procedures, moderate for bounded reasoning, higher for difficult inference.
-   Effort names and defaults vary by host and model. Raising effort does not add
-   missing tools, context capacity, or permissions.
+   Effort names and defaults vary by host and model, and a level name does not
+   mean the same amount of reasoning on a different model; re-check a level
+   carried over from another model. Raising effort does not add missing tools,
+   context capacity, or permissions.
 5. If verification exposes a reasoning gap, first rule out missing inputs,
    unavailable tools and environment errors. Then consider higher effort or the
    next profile, retaining the same acceptance criteria and the owning workflow's
@@ -93,9 +95,12 @@ inferred from vendor descriptions, not vendor certifications of equivalence.
 - [OpenAI model catalog](https://developers.openai.com/api/docs/models): Luna
   emphasizes cost-sensitive volume, Terra balances intelligence and cost, Sol
   handles complex professional work, and Astra targets the hardest work.
-- [Claude model overview](https://platform.claude.com/docs/en/models/overview):
-  Haiku emphasizes speed, Sonnet balances speed and intelligence, Opus handles
-  complex agentic coding, and Fable targets demanding long-horizon reasoning.
+- [Claude model overview](https://platform.claude.com/docs/en/models/overview)
+  (checked 2026-09-23): Haiku emphasizes speed, Sonnet balances speed and
+  intelligence, Opus covers long-running agentic coding and knowledge work and
+  is the suggested starting point, and Fable targets demanding reasoning and
+  long-horizon agentic work or cases where Opus at higher effort still falls
+  short.
 - [Claude cost and intelligence guidance](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence):
   evaluate effort and cost per completed task; a stronger model may avoid retries.
 - [Codex subagent model and reasoning controls](https://learn.chatgpt.com/docs/agent-configuration/subagents#choosing-models-and-reasoning):

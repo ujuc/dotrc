@@ -53,7 +53,7 @@ Automation only checks form. The items below need human judgment.
 
 ### Body instructions
 
-- [ ] Each step is concrete (runnable commands, specific criteria).
+- [ ] Each step is concrete (runnable commands, specific criteria); verification steps name their gate (command, test, file, criterion), with no bare "double-check your work" reminders.
 - [ ] Failure modes and recovery are covered.
 - [ ] Input/output examples are present.
 - [ ] Tools used are named (Read, Bash, AskUserQuestion, ...).

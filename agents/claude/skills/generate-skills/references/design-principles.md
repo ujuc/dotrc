@@ -52,6 +52,8 @@ at the highest freedom the task tolerates and lower it only for a fragility
 you can name. State the goal and the constraints; leave the route to the model.
 
 > Source: [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) — OpenAI, 2026 (model-specific finding; apply as local default)
+>
+> Also: [Claude Code model configuration](https://code.claude.com/docs/en/model-config) ("Describe the outcome, not the steps", Fable guidance) — model-specific finding; apply as local default
 
 ---
 
@@ -179,6 +181,11 @@ fix failures, and rerun without asking per step") and reserve "never without
 approval" for actions that are destructive or outside scope. Blanket
 restrictions written for weaker models over-constrain current ones. Preserve
 explicit user or repository safety boundaries regardless.
+
+Trade-off (model-specific finding, [Prompting Claude Fable 5.1](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1)):
+strong run-to-completion wording can lower the chance the model asks about a
+genuinely ambiguous request; keep explicit stop conditions where ambiguity is
+costly.
 
 > Source: [Rethinking skills and prompts for GPT-6 Astra](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) — OpenAI, 2026 (model-specific finding; apply as local default)
 
