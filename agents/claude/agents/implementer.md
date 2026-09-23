@@ -30,6 +30,7 @@ If any required input is missing, write a blocker instead of guessing.
 - Run the project's typecheck and related tests when available.
 - When the plan admits multiple plausible interpretations, call advisor once; if ambiguity remains, block.
 - If a shared utility or out-of-scope file is required, block.
+- Leave out a pre-existing bug, performance concern or improvement outside the item, even in allowed files: block if the item cannot work without addressing it; otherwise report it under `follow_ups`.
 
 ## Blocker Contract
 
@@ -52,6 +53,7 @@ Stop editing after a blocker. Return:
 status: BLOCKED
 worktree: <absolute path>
 blocker: <absolute path>
+follow_ups: None
 ```
 
 ## Completion Contract
@@ -69,7 +71,10 @@ branch: <branch name>
 commit: <commit SHA>
 changed_files: <comma-separated paths>
 verification: <typecheck/tests PASS|FAIL|SKIP summary>
+follow_ups: None
 ```
+
+In either return, replace `None` with one indented `- <repo-relative path>: <finding>` line per out-of-item finding.
 
 Do not return COMPLETE when a requested check failed.
 
