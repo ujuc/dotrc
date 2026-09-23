@@ -1,7 +1,7 @@
 ---
 source_url: https://code.claude.com/docs/en/skills
 spec_url: https://agentskills.io/specification
-last_upstream_check: 2026-09-09
+last_upstream_check: 2026-09-23
 check_interval_days: 14
 ---
 
@@ -35,16 +35,17 @@ description: What this skill does. When to use it.
 - The first `---` MUST be on **line 1** (no blank lines before it)
 - The second `---` closes the frontmatter
 - No whitespace before or after delimiters
+- **[CC]** Both failures are silent. With the opening `---` anywhere but line 1, the whole file, markers included, becomes skill content. YAML that does not parse still loads the skill with no fields set, so it stops matching on `description` without an error; `claude plugin validate <skills-dir>` (v2.1.233+) lists such files
 
 ---
 
 ## Field Reference
 
-**[SPEC]** `name` and `description` are **required**. **[CC]** Claude Code itself treats every field as optional — it falls back to the directory name and to the first body paragraph — but a spec-conformant skill declares both.
+**[SPEC]** `name` and `description` are **required**. **[CC]** Claude Code itself treats every field as optional — it falls back to the directory name and to the first non-empty line of the body — but a spec-conformant skill declares both. A field name must match exactly, hyphens included: Claude Code ignores an unrecognized field without an error, so a typo such as `disable_model_invocation` does nothing.
 
 **[CC]** Boolean fields (`disable-model-invocation`, `user-invocable`, `background`) accept `yes`, `no`, `on`, `off`, `1`, and `0` in any letter case as well as `true`/`false`. Before v2.1.218 only `true`/`false` were recognized, so prefer them for portability.
 
-> **Portability.** Only `name`, `description`, `license`, `compatibility`, `metadata`, and `allowed-tools` belong to the Agent Skills standard. Every other field here — including `when_to_use`, `argument-hint`, `model`, `context`, and this repository's `group` — is Claude Code-only and is a **hard error**, not an ignored key, on claude.ai uploads, the Skills API, and `package_skill.py`. See [Portability outside Claude Code](#portability-outside-claude-code).
+> **Portability.** Only `name`, `description`, `license`, `compatibility`, `metadata`, and `allowed-tools` belong to the Agent Skills standard. Every other field here — including `when_to_use`, `argument-hint`, `model`, `context`, and this repository's `group` — is Claude Code-only and is a **hard error**, not an ignored key, on claude.ai uploads (including enabling a personal skill for your claude.ai account), the Skills API, and `package_skill.py`. See [Portability outside Claude Code](#portability-outside-claude-code).
 
 > **Local extension (this repository):** every SKILL.md MUST also include a `group` field — one of 8 fixed slugs. `validate-skill` fails when it is missing or invalid, and the catalog table in `skills/README.md` mirrors it. See the [`group`](#group) section below.
 
@@ -65,7 +66,7 @@ Display name for the skill. **[CC]** If omitted, uses the directory name.
 
 ### `description`
 
-What the skill does and when to use it. Claude uses this to decide when to apply the skill. If omitted, uses the first paragraph of markdown content.
+What the skill does and when to use it. Claude uses this to decide when to apply the skill. If omitted, uses the first non-empty line of the markdown content.
 
 | Rule | Origin | Description |
 |------|--------|-------------|
@@ -73,7 +74,7 @@ What the skill does and when to use it. Claude uses this to decide when to apply
 | Spec max length | **[SPEC]** | **1,024 characters** — a hard cap on `description` alone |
 | Listing cap | **[CC]** | **1,536 characters** for `description` + `when_to_use` combined, truncated in the skill listing (the `skillListingMaxDescChars` default). This is what `DESCRIPTION_COMBINED_MAX` enforces — a different limit from the row above, not a restatement |
 | Recommended structure | | **WHAT** (what it does) + **WHEN** (when to use it) |
-| XML tags | **[LOCAL]** | Tag-shaped tokens (`<name ...>`) forbidden. Claude Code itself escapes angle brackets rather than rejecting them |
+| XML tags | **[LOCAL]** | Tag-shaped tokens (`<name ...>`) forbidden. Upstream documents escaping only for skills synced from claude.ai (v2.1.228+), not rejection |
 | Language | **[LOCAL]** | Per project language policy (Korean or English) |
 
 This is the primary field the system uses for natural language matching. Its quality directly affects trigger accuracy.
@@ -81,7 +82,7 @@ This is the primary field the system uses for natural language matching. Its qua
 Two distinct truncation mechanisms apply, and front-loading only helps with the first:
 
 - The per-skill 1,536-character cap truncates the tail regardless of how many skills exist. **Front-load the key use case.**
-- **[CC]** When many skills overflow the listing's total budget (1% of the model's context window), Claude Code drops **whole** descriptions, starting with the least-invoked skills. Front-loading does not help there — raise the budget or mark low-priority skills `name-only` via `skillOverrides`.
+- **[CC]** When many skills overflow the listing's total budget (1% of the model's context window), Claude Code drops **whole** descriptions, starting with the least-invoked skills. Front-loading does not help there — raise the budget (`skillListingBudgetFraction`, e.g. `0.02` = 2%, or a fixed character count in `SLASH_COMMAND_TOOL_CHAR_BUDGET`) or mark low-priority skills `name-only` via `skillOverrides`.
 
 ### `when_to_use`
 
@@ -158,13 +159,14 @@ allowed-tools: Read, Grep, Bash(git status:*)
 ```
 
 - Accepts a space- or comma-separated string, or a YAML list — all three officially documented
+- **[SPEC]** The standard defines only a space-separated string and marks the field *"Experimental"*; use that form in a skill meant for other agents
 - **Turn-scoped, not session-scoped.** The grant clears on the user's next
   message even though the skill content stays in context; re-invoking the skill
   re-applies it. The `disallowed-tools` restriction also clears on the next
   message. Use permission allow rules for a session-wide grant.
 - Does not restrict which tools are callable, only which skip per-use approval
-- Baseline permission settings still apply to tools not listed
-- `${CLAUDE_PROJECT_DIR}` substitution applies here too (v2.1.196+), so a rule like `Bash(${CLAUDE_PROJECT_DIR}/scripts/lint.sh *)` resolves to the same path the skill body uses. `${CLAUDE_SKILL_DIR}` (and `${CLAUDE_PLUGIN_ROOT}` / `${CLAUDE_PLUGIN_DATA}` in plugin skills) substitute here too — pairing the same variable in the body and in the rule lets a bundled script run without a prompt
+- Baseline permission settings still apply to tools not listed, and deny and ask rules still override `allowed-tools`
+- `${CLAUDE_PROJECT_DIR}` substitution applies to Bash rules here too (v2.1.196+), so a rule like `Bash(${CLAUDE_PROJECT_DIR}/scripts/lint.sh *)` resolves to the same path the skill body uses. `${CLAUDE_SKILL_DIR}` (and `${CLAUDE_PLUGIN_ROOT}` / `${CLAUDE_PLUGIN_DATA}` in plugin skills) substitute here too — pairing the same variable in the body and in the rule lets a bundled script run without a prompt
 
 ### `disallowed-tools`
 
@@ -193,7 +195,7 @@ model: opus
 - A value excluded by the organization's `availableModels` allowlist is silently ignored and the session keeps its current model — no error is raised
 - In auto mode, and in plan mode while the auto-mode classifier reviews commands, a model that auto mode doesn't support is likewise not used and the session keeps its current model
 - **[LOCAL]** This repository's user settings run auto mode, so confirm an explicit override actually took effect.
-- **With `context: fork`, this sets the forked subagent's model instead of the session model**, overriding what the `agent` type would supply
+- **With `context: fork`, this sets the forked subagent's model instead of the session model**, overriding what the `agent` type would supply; a value `availableModels` excludes then follows the subagent model-override rules, not the bullet above
 - **[LOCAL]** convention: omit fixed `model` assignments; define a recommended workload level and escalation conditions in the body using `model-selection.md`. Omission inherits the active session but does not select a task-appropriate model. Resolve recommendations through an available host model/delegation API, or report them without claiming a switch. An explicit user-requested frontmatter override must use a verified host identifier, never a tier label. `validate-skill` checks only for a non-empty string; it cannot verify host availability and does not enforce a provider-specific allowlist.
 
 ### `effort`
@@ -252,12 +254,15 @@ background: false
 
 ### `hooks`
 
-Hooks scoped to this skill's lifecycle. See Claude Code hooks documentation for configuration format.
+Hooks in the same format as settings-based hooks. Claude Code registers them when the skill is invoked and keeps running them for the rest of the session, on later turns too; set `once: true` on a hook to remove it after its first successful run. See [Hooks in skills and agents](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents).
 
 ```yaml
 hooks:
-  - event: on_skill_start
-    command: echo "Skill started"
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "./scripts/security-check.sh"
 ```
 
 ### `paths`
@@ -286,7 +291,7 @@ shell: powershell
 ```
 
 - Options: `bash` (default) or `powershell`.
-- `powershell` takes effect only when the PowerShell tool is enabled — on by default on Windows without Git Bash, and enabled elsewhere with `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`. The env var is one route to enabling the tool, not a universal prerequisite.
+- `powershell` takes effect only when the PowerShell tool is enabled — on by default on Windows without Git Bash, and on Windows with Git Bash for claude.ai and Console accounts; Bedrock, Google Cloud Agent Platform, and Microsoft Foundry sessions and macOS, Linux, and WSL need `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`. Setting it to `0` turns the tool off.
 - Writing `shell: bash` explicitly is **not** the same as omitting the field: on a machine without bash it aborts the whole skill invocation before any command runs.
 
 ### `metadata`
@@ -358,7 +363,7 @@ Claude Code accepts every field above. Other distribution paths do not.
 | Distribution path | Accepted frontmatter |
 |---|---|
 | Claude Code skills at any level, including plugin skills | Every field above |
-| claude.ai uploads, the Skills API, `package_skill.py` | `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools` |
+| claude.ai uploads (including a personal skill enabled for your claude.ai account for Cowork, cloud sessions, or routines), the Skills API, `package_skill.py` | `name`, `description`, `license`, `compatibility`, `metadata`, `allowed-tools` |
 
 An unlisted field is a **hard error**, not an ignored key:
 
@@ -367,7 +372,7 @@ Unexpected key(s) in SKILL.md frontmatter: argument-hint.
 Allowed properties are: allowed-tools, compatibility, description, license, metadata, name
 ```
 
-This repository's own house style — `when_to_use`, `argument-hint`, `model`, `group` — would therefore fail a claude.ai upload. **No skill here is upload-destined, so this is a constraint to know, not a defect list — do not strip fields from existing skills.** A skill newly intended for one of those paths must be restricted to the six fields. Claude Code-only **body** features (dynamic `` !`command` `` injection, `@` file references) likewise stop working there, while six-field frontmatter still loads unchanged in Claude Code.
+This repository's own house style — `when_to_use`, `argument-hint`, `model`, `group` — would therefore fail a claude.ai upload. **No skill here is upload-destined, so this is a constraint to know, not a defect list — do not strip fields from existing skills.** A skill newly intended for one of those paths, including one you enable for your claude.ai account, must be restricted to the six fields. Claude Code-only **body** features (dynamic `` !`command` `` injection, `@` file references) likewise stop working there, while six-field frontmatter still loads unchanged in Claude Code.
 
 ---
 
@@ -396,14 +401,14 @@ Skills support dynamic value substitution in skill content:
 
 | Variable | Description |
 |----------|-------------|
-| `$ARGUMENTS` | All arguments passed when invoking the skill. If not present in content, arguments are appended as `ARGUMENTS: <value>` |
+| `$ARGUMENTS` | All arguments passed when invoking the skill. When no placeholder (`$ARGUMENTS`, `$N`, or a named argument) receives an argument, they are appended as `ARGUMENTS: <value>`; an unfilled `$N` stays literal and does not count, while a named placeholder counts even when empty |
 | `$ARGUMENTS[N]` | Access a specific argument by 0-based index (e.g. `$ARGUMENTS[0]` for first) |
 | `$N` | Shorthand for `$ARGUMENTS[N]` (e.g. `$0` for first argument) |
 | `$name` | Named argument declared in the `arguments` frontmatter list (names map to positions in order) |
 | `${CLAUDE_SESSION_ID}` | Current session ID. Useful for logging or session-specific files |
 | `${CLAUDE_EFFORT}` | Current effort level (`low`–`max`; ultracode reports as `xhigh`). Use to adapt instructions to the active effort |
-| `${CLAUDE_SKILL_DIR}` | Directory containing the skill's SKILL.md — for plugin skills, the skill's subdirectory, not the plugin root. Applies to the body and `allowed-tools` |
-| `${CLAUDE_PROJECT_DIR}` | Project root directory (v2.1.196+) — same path hooks receive. Applies to the body and `allowed-tools` |
+| `${CLAUDE_SKILL_DIR}` | Directory containing the skill's SKILL.md — for plugin skills, the skill's subdirectory, not the plugin root. Applies to the body and Bash rules in `allowed-tools` |
+| `${CLAUDE_PROJECT_DIR}` | Project root directory (v2.1.196+) — same path hooks receive. Applies to the body and Bash rules in `allowed-tools` |
 | `${CLAUDE_PLUGIN_ROOT}` | Plugin installation directory. Plugin skills only — use for files bundled anywhere in the plugin, including resources shared between its skills |
 | `${CLAUDE_PLUGIN_DATA}` | Plugin persistent data directory, surviving plugin updates. Plugin skills only — installed dependencies, caches, generated files |
 
