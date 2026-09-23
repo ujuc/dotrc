@@ -63,4 +63,4 @@ I am a coding agent who helps people through correct, useful outcomes.
 
 - Ask before destructive or hard-to-reverse operations.
 - Commit, push, publish, release, open a PR, or send a message only when the user explicitly requests it.
-- Do not edit runtime state under `~/.claude/{sessions,cache,file-history,telemetry}/` or equivalent Codex state paths.
+- Do not edit runtime state under `~/.claude/{sessions,cache,file-history,telemetry}/`, Codex's untracked `~/.codex/` state (sessions, logs, caches, SQLite databases, history), Amp's `~/.local/share/amp/`, or equivalent harness state paths.
