@@ -7,5 +7,5 @@
 - Put shared logic in one authoritative skill's `references/` and link to it instead of copying.
 - Do not track plugin-generated `learned/` content.
 - State each skill's recommended workload profile and escalation conditions using [the model selection guide](generate-skills/references/model-selection.md). Resolve Lightweight, Standard, Advanced, or Frontier to a supported model for the current task; inheritance is a fallback, not the recommendation. Keep native model IDs separate from profile labels, respect explicit user choices, and distinguish advice from actual switching.
-- Read the machine-readable workflow surface with `workflow-hooks contract`; `agents/workflow-contract.json` is canonical for artifact paths, writers, archive destinations, cadence, and Superpowers pins.
+- Read the machine-readable workflow surface (artifact paths, writers, archive destinations, cadence, and Superpowers pins) with `workflow-hooks contract`.
 - `skill-improver` runs through the SessionStart cadence hook; do not also schedule it with cron.
