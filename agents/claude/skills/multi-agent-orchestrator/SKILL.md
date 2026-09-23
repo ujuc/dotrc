@@ -94,11 +94,12 @@ Invoke `annotate-plan` with exact spec, contract, and material research paths. R
 
 ## Implementation Stage
 
-Invoke `implement-plan` with the exact feature and selected evaluator set.
+Invoke `implement-plan` with the exact feature, selected evaluator set, and any retained `follow_ups`.
 
 - With no evaluators, expect fresh full verification followed by immediate archive. The orchestrator does not synthesize a report.
-- With evaluators, require exact `AWAITING_EVALUATION`. Any premature archive is a protocol failure.
-- On blocker, RESET, or verification failure, let `implement-plan` and `annotate-plan` own recovery. Do not edit code in the orchestrator role.
+- With evaluators, require exact `AWAITING_EVALUATION` and retain its `follow_ups` unchanged for re-entry. Any premature archive is a protocol failure.
+- On any other exit (blocker, RESET, cancellation, verification or archive failure), retain the `follow_ups` that exit reports and let `implement-plan` and `annotate-plan` own recovery. Do not edit code in the orchestrator role.
+- Each `implement-plan` return that lists `follow_ups` replaces the retained list. They are out-of-item notes for the user, relayed when the run completes or stops; never pass them to evaluators or copy them into a synthesis.
 
 Repository Git instructions control execution mode. Never impose generic branches, commits, worktrees, merges, or PRs.
 
@@ -150,15 +151,15 @@ Overall PASS requires every active acceptance criterion PASS and every selected 
 
 ## Feedback Loop and Completion
 
-- **PASS:** re-invoke `implement-plan` with the exact synthesized path as `final_report`. Only that finalization call validates existing evidence and invokes archive.
-- **FAIL:** return exact findings to `implement-plan`; remove/invalidate the stale final verifier before implementation changes. Require item fixes, a new full verifier, and a new fresh evaluation round.
+- **PASS:** re-invoke `implement-plan` with the exact synthesized path as `final_report` and the retained `follow_ups`. Only that finalization call validates existing evidence and invokes archive.
+- **FAIL:** return exact findings and the retained `follow_ups` to `implement-plan`; remove/invalidate the stale final verifier before implementation changes. Require item fixes, a new full verifier, and a new fresh evaluation round.
 - Default maximum is three managed evaluation rounds. If round 2 repeats a root issue from round 1, investigate whether the contract, plan, implementation, or evaluator boundary is wrong before round 3. After round 3 FAIL, write/update handoff and ask the user rather than silently expanding scope.
 
-Completion is valid only after `implement-plan` reports successful archive into contract destinations.
+Completion is valid only after `implement-plan` reports successful archive into contract destinations. Relay its out-of-item follow-ups to the user with the result.
 
 ## Handoff
 
-When context must reset, write only `.plans/.handoff-{feature}.md` with active stage, exact canonical paths, selected evaluators, latest round, completed evidence, blockers, service URLs, and next owner/action. A new session cross-checks every path before resuming. Never use handoff as consent, and never duplicate artifact contents into it.
+When context must reset, write only `.plans/.handoff-{feature}.md` with active stage, exact canonical paths, selected evaluators, latest round, completed evidence, blockers, retained `follow_ups` plus any an in-progress `implement-plan` run has recorded but not yet returned, service URLs, and next owner/action. A new session cross-checks every path before resuming. Never use handoff as consent, and never duplicate artifact contents into it.
 
 ## Optional Superpowers Boundary
 

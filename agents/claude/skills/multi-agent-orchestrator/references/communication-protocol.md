@@ -60,7 +60,7 @@ The orchestrator writes one synthesized report per round only after all selected
 2. list every active contract criterion with PASS/FAIL and evidence source;
 3. preserve each selected evaluator's verdict;
 4. return Overall FAIL for any failed criterion, failed evaluator, Critical/Major issue, or missing evidence;
-5. send findings to `implement-plan` without editing source reports.
+5. send findings, and separately the retained `follow_ups` (the out-of-item list from the latest `implement-plan` return, never written into the synthesis), to `implement-plan` without editing source reports.
 
 ## Handoff Format
 
@@ -75,11 +75,12 @@ Use `.plans/.handoff-{feature}.md` only when context must reset:
 ## Latest Evaluation Round
 ## Completed Evidence
 ## Blockers
+## Retained Follow-ups
 ## Runtime Services
 ## Next Owner and Action
 ```
 
-Include exact paths and observed state, not copies of artifact content. A handoff does not grant approval. On resume, cross-check every referenced path and continue only the same active feature.
+Include exact paths and observed state, not copies of artifact content. `## Retained Follow-ups` also lists any an in-progress `implement-plan` run has recorded but not yet returned. A handoff does not grant approval. On resume, cross-check every referenced path and continue only the same active feature.
 
 ## Active-State Rules
 

@@ -23,7 +23,8 @@ The caller may supply:
 
 - `{feature}` or an exact active plan path;
 - `evaluators`: the selected independent evaluators, empty for standalone execution;
-- `final_report`: an exact synthesized PASS report path, only when finalizing an evaluator-bearing run.
+- `final_report`: an exact synthesized PASS report path, only when finalizing an evaluator-bearing run;
+- `follow_ups`: out-of-item follow-ups an earlier invocation of this feature returned, passed back on every re-entry; absent means None. Seed the run's `follow_ups` with them unchanged; they are not fix targets.
 
 An orchestrator passes these values but does not execute plan items or archive artifacts itself.
 
@@ -47,9 +48,9 @@ When `final_report` is supplied, do not reimplement completed items:
 1. Require all todos checked, `.plans/.verify-final-{feature}.md` present with no FAIL, and no implementation change newer than that final verifier.
 2. Read the exact report. Require an overall PASS, exact references to selected QA/design source reports, and PASS for every active acceptance criterion. A score cannot override a failing criterion or severity.
 3. Confirm the report matches `.plans/.evaluation-{feature}-r{round}.md` and the same selected feature.
-4. Call the archive procedure in [Completion and Archive](#completion-and-archive) with `final_report` and return. Do not run evaluator work or create a second synthesis.
+4. Call the archive procedure in [Completion and Archive](#completion-and-archive) with `final_report` and return, reporting the supplied `follow_ups` as the out-of-item follow-ups. Do not run evaluator work or create a second synthesis.
 
-If the report is FAIL, do not enter finalization. Return its findings to normal implementation, remove the stale final verifier before changes, and require a fresh full verifier before another evaluation round.
+If the report is FAIL, do not enter finalization. Return its findings and the supplied `follow_ups` to normal implementation, remove the stale final verifier before changes, and require a fresh full verifier before another evaluation round.
 
 ## Execution Mode
 
@@ -83,7 +84,7 @@ For each todo in dependency order:
 
 1. Derive `{item-slug}` as `{ordinal}-{kebab-summary}` and map its exact paths, tests, criteria, inputs, and outputs.
 2. For behavior work, run the named test and record the expected failure before implementation.
-3. Implement only that item. Follow repository patterns and write `.plans/.blocker-{item-slug}.md` when the plan cannot be executed without a scope decision. A pre-existing bug, performance concern or improvement you notice outside the item stays out of this change, even inside the item's files: if the item cannot work without addressing it, that is a scope decision and takes the blocker route; otherwise record it as a follow-up.
+3. Implement only that item. Follow repository patterns and write `.plans/.blocker-{item-slug}.md` when the plan cannot be executed without a scope decision. A pre-existing bug, performance concern or improvement you notice outside the item stays out of this change, even inside the item's files: if the item cannot work without addressing it, that is a scope decision and takes the blocker route; otherwise record it as a follow-up, one `- <repo-relative path>: <finding>` line in the run's `follow_ups`, which every exit reports.
 4. Run the named focused checks, then launch an independent verifier writing `.plans/.verify-{item-slug}.md`.
 5. Require explicit `build:`, `typecheck:`, `lint:`, `tests:`, and `errors:` results. Any applicable FAIL blocks completion.
 6. Mark `[x]` only after fresh PASS and continue. Never begin the next item while the current one is unresolved.
@@ -92,13 +93,15 @@ For each todo in dependency order:
 
 Use only when repository policy allows it and independence is proven from the plan interfaces:
 
-1. Launch one implementer per disjoint item in isolated worktrees and require its exact worktree, branch, commit SHA, changed paths, checks, blocker path, and out-of-item follow-ups.
+1. Launch one implementer per disjoint item in isolated worktrees and require its exact worktree, branch, commit SHA, changed paths, checks, blocker path, and `follow_ups`; add each returned line to the run's `follow_ups`.
 2. Wait for all already-launched siblings before handling a blocker; never orphan worktrees.
 3. Verify each returned SHA independently in its worktree. Fix and reverify there.
 4. Integrate only the exact verified SHA using the repository-approved method. On conflict, abort and ask the user; never auto-resolve a dependency-classification failure.
 5. Remove merged or explicitly abandoned worktrees and branches only when project instructions permit those actions.
 
 ## Blockers and Failures
+
+Every exit below also reports the run's `follow_ups`, in the `AWAITING_EVALUATION` block layout, so the caller can pass them back on re-entry.
 
 - **Explicit blocker:** show `Problem`, `Attempts`, and `Proposal`; remove the implementation flag; return to `annotate-plan` Phase B. Do not redesign scope inline.
 - **Verifier failure:** create `.plans/.debug-{item-slug}.md` through an independent debugger or the inline systematic-debugging invariant. Apply a fix only after root cause is demonstrated, then rerun the same verifier. A root cause that is a pre-existing defect outside the item takes the blocker route from Sequential Execution step 3 instead.
@@ -119,9 +122,11 @@ After all todos are checked:
    plan: .plans/plan-{feature}.md
    final_verifier: .plans/.verify-final-{feature}.md
    evaluators: [selected evaluator names]
+   follow_ups: None
    ```
+   When the run's `follow_ups` is not empty, replace `None` with one indented `- <repo-relative path>: <finding>` line each.
    Do not archive. The orchestrator runs independent evaluation and writes the synthesis.
-5. A PASS synthesis re-invokes this skill with its exact `final_report` for finalization-only entry. A FAIL synthesis returns findings to implementation and invalidates the prior final verifier.
+5. A PASS synthesis re-invokes this skill with its exact `final_report` and the block's `follow_ups` for finalization-only entry. A FAIL synthesis returns findings and those `follow_ups` to implementation and invalidates the prior final verifier; fix only the findings, and the next block carries the `follow_ups` forward with any new ones.
 
 ## Completion and Archive
 
@@ -142,7 +147,7 @@ Durable outputs are:
 - `docs/plans/plan-{feature}.md` always;
 - `docs/reports/report-{feature}.md` only for evaluator-bearing completion.
 
-On archive error, report the exact diagnostic, leave active source state in place, and do not invent a filename or overwrite a destination. Confirm the implementation flag is absent after successful archive. Report item totals, verification evidence, out-of-item follow-ups, retained worktrees, and exact durable paths. Suggest commit only when changes remain uncommitted; push is always a separate explicit action.
+On archive error, report the exact diagnostic and the run's `follow_ups`, leave active source state in place, and do not invent a filename or overwrite a destination. Confirm the implementation flag is absent after successful archive. Report item totals, verification evidence, out-of-item follow-ups, retained worktrees, and exact durable paths. Suggest commit only when changes remain uncommitted; push is always a separate explicit action.
 
 ## Eval Criteria
 

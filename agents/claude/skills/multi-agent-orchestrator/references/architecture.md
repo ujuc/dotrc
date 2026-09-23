@@ -66,7 +66,7 @@ Numerical scores are diagnostic. They cannot override failed criteria, severe fi
 
 ## State and Recovery
 
-One checkout has at most one active workflow. Artifacts survive context resets through canonical files, while `.plans/.handoff-{feature}.md` records only current routing state. Resume cross-checks paths before action.
+One checkout has at most one active workflow. Artifacts survive context resets through canonical files, while `.plans/.handoff-{feature}.md` records only current routing state and retained `follow_ups`, including any an in-progress `implement-plan` run has not yet returned. Resume cross-checks paths before action.
 
 Failures return to the owning stage:
 
@@ -82,7 +82,7 @@ Consumers do not silently repair another owner's artifact.
 
 ## Completion
 
-A no-evaluator run archives after `implement-plan` completes fresh full verification. An evaluator-bearing run pauses at `AWAITING_EVALUATION`, then re-enters `implement-plan` with the exact synthesized PASS report. This keeps one completion authority while retaining independent judgment.
+A no-evaluator run archives after `implement-plan` completes fresh full verification. An evaluator-bearing run pauses at `AWAITING_EVALUATION`, then re-enters `implement-plan` with the exact synthesized PASS report and the `follow_ups` retained from the `AWAITING_EVALUATION` block. This keeps one completion authority while retaining independent judgment.
 
 Archive preserves product intent, acceptance contract, research, plan, and optional final synthesis under `docs/`. Active state is not considered complete until that archive succeeds.
 
