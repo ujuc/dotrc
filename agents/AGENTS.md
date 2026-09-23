@@ -2,7 +2,7 @@
 
 - Scopes: `skills` for `claude/skills/` and `claude/evals/`, `rules` for `rules/`, otherwise `agents`.
 - After changing `agents/claude/skills/<name>/`, run `bash agents/claude/skills/generate-skills/scripts/validate-skill agents/claude/skills/<name>` from the repository root, then run `skill-improver`.
-- For suites under `agents/claude/evals/<skill>/`, run `bash agents/claude/skills/waza/scripts/waza-run.sh eval <skill>` (the `waza` skill; Claude Code may dispatch the `waza-runner` agent wrapper); never invoke the `waza` CLI directly.
+- For suites under `agents/claude/evals/<skill>/`, run `bash agents/claude/skills/waza/scripts/waza-run.sh eval <skill>` (the `waza` skill); never invoke the `waza` CLI directly.
 
 ## Configuration Boundaries
 
