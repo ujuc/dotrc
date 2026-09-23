@@ -95,6 +95,12 @@ inferred from vendor descriptions, not vendor certifications of equivalence.
 - [OpenAI model catalog](https://developers.openai.com/api/docs/models): Luna
   emphasizes cost-sensitive volume, Terra balances intelligence and cost, Sol
   handles complex professional work, and Astra targets the hardest work.
+- [OpenAI model guidance](https://developers.openai.com/api/docs/guides/latest-model)
+  (checked 2026-09-23): GPT-5.6 Sol is "the model for flagship capability",
+  Terra offers "a balance of intelligence and cost", Luna suits "efficient,
+  high-volume workloads", and GPT-6 Astra is the "highest level of capability".
+  API IDs, effort support, and Codex dispatch notes live in
+  [openai-models.md](openai-models.md).
 - [Claude model overview](https://platform.claude.com/docs/en/models/overview)
   (checked 2026-09-23): Haiku emphasizes speed, Sonnet balances speed and
   intelligence, Opus covers long-running agentic coding and knowledge work and
