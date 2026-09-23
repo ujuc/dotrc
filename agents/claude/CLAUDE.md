@@ -6,7 +6,7 @@
 
 ## Changes
 
-- Keep changes to what the request needs: report pre-existing bugs, performance concerns, or unrequested extensions as follow-ups instead of fixing them in the same change, and commit tests only where the task asks for them or the repository already keeps tests for that kind of change. This limits extras only; implement every requested behavior completely.
+- Keep changes to what the request needs: report pre-existing bugs, performance concerns, or unrequested extensions as follow-ups instead of fixing them in the same change, and add tests only where the task asks for them or the repository already keeps tests for that kind of change. This limits extras only; implement every requested behavior completely.
 
 ## Delegation
 
