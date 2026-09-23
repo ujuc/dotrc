@@ -1,7 +1,7 @@
 ---
 source_url: https://code.claude.com/docs/en/best-practices.md
 secondary_source_url: https://code.claude.com/docs/en/memory.md
-last_upstream_check: 2026-09-09
+last_upstream_check: 2026-09-23
 check_interval_days: 0  # 0 = fetch on every run (user preference: always live; the doc changes often). WebFetch caches per-URL for ~15 min, so this is cheap.
 ---
 
@@ -48,7 +48,7 @@ behavior, the AGENTS.md import pattern, and the `.claude/rules/` format live on
 
 ---
 
-## Cached snapshot (last verified 2026-07-19)
+## Cached snapshot (last verified 2026-09-23)
 
 ### ✅ Include / ❌ Exclude (source: best-practices)
 
@@ -105,13 +105,23 @@ Local defaults for this skill:
 
 ### AGENTS.md — the official cross-agent pattern (source: memory)
 
-> Claude Code reads `CLAUDE.md`, not `AGENTS.md`. If your repository already
-> uses `AGENTS.md` for other coding agents, **create a `CLAUDE.md` that imports
-> it so both tools read the same instructions without duplicating them. You can
-> also add Claude-specific instructions below the import.** Claude loads the
-> imported file at session start, then appends the rest.
+> Claude Code can read `AGENTS.md` as your project instructions, so a
+> repository already set up for other coding agents works without adding a
+> `CLAUDE.md`, an import, or a setting.
 
-Official recommended shape (verbatim example from memory.md):
+Default-read table: with *"An `AGENTS.md` and a `CLAUDE.md` or `CLAUDE.local.md`
+in your working directory or above it"*, Claude reads *"Your `CLAUDE.md` files
+only"*.
+
+> Reading `AGENTS.md` directly requires Claude Code v2.1.277 or later. In some
+> sessions, such as those on Amazon Bedrock or with telemetry disabled, Claude
+> can't read `AGENTS.md`, so import it from a `CLAUDE.md` there instead.
+
+> Keeping the import never makes Claude read `AGENTS.md` twice, whichever
+> **Project instructions** value you use.
+
+Official recommended shape (verbatim example from memory.md "Share one file
+with other coding tools"):
 
 ```markdown
 @AGENTS.md
@@ -126,15 +136,20 @@ Use plan mode for changes under `src/billing/`.
   (symlinks need Administrator/Developer Mode).
 - **This skill adopts the import pattern as its default**: AGENTS.md is the
   primary cross-harness project document (Codex and Amp load it natively),
-  CLAUDE.md is the Claude-specific layer on top of the import
-  (stage3-generator.md Sections A–B (shared first)).
-- `/init` in a repo with an existing AGENTS.md reads it and incorporates the
-  relevant parts into the generated CLAUDE.md; it also reads other tool
-  configs (`.cursorrules`, `.devin/rules/`, `.windsurfrules`).
+  CLAUDE.md is `@AGENTS.md` + Claude-only additions on top of the import
+  (stage3-generator.md Sections A–B (shared first)). The default works in
+  every session type, stays correct once any CLAUDE.md exists, and never
+  double-loads.
+- `/init` incorporates other tools' instruction files: Cursor
+  (`.cursor/rules/`, `.cursorrules`) and Copilot
+  (`.github/copilot-instructions.md`) by default; `AGENTS.md`,
+  `.devin/rules/`, `.windsurf/rules/`/`.windsurfrules` and `.clinerules` only
+  with `CLAUDE_CODE_NEW_INIT=1`. `/import` (v2.1.213+) appends a one-time copy
+  of `AGENTS.md` into CLAUDE.md, which duplicates shared text, so this skill
+  does not use it.
 
-> Note: snapshots before 2026-07 recorded a "keep AGENTS.md a pointer link, do
-> not `@import` it" stance. The upstream guidance above **supersedes** it for
-> repositories whose AGENTS.md serves multiple agents.
+> Note: snapshots before 2026-09 quoted "Claude Code reads `CLAUDE.md`, not
+> `AGENTS.md`"; upstream now reads AGENTS.md directly (v2.1.277+).
 
 ### `.claude/rules/` format (source: memory)
 
@@ -143,8 +158,11 @@ Use plan mode for changes under `src/billing/`.
   launch, with the same priority as `.claude/CLAUDE.md`.
 - Path-scoped rules trigger when Claude reads files matching the pattern (not
   on every tool use). Brace expansion is supported (`src/**/*.{ts,tsx}`).
-- `.md` files are discovered recursively; symlinked rule files/directories are
-  resolved normally (shareable across projects).
+- `.md` files are discovered recursively; symlinks are supported. A symlink
+  whose target is outside the working directory is treated like an external
+  import: it loads only after external imports are approved for the project,
+  and then only rules without `paths`. For machine-wide shared rules, prefer
+  `~/.claude/rules/`.
 - The legacy `description` / `globs` / `alwaysApply` fields are **not** part of
   the documented format — never emit them; migrate them on update.
 
