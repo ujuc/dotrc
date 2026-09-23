@@ -10,4 +10,4 @@
 
 ## `agents/` Configuration
 
-- Changes under `agents/claude/`, `agents/amp/`, or `agents/rules/` affect live machine-wide configuration. Edit repository paths, never symlink targets.
+- Changes under `agents/claude/`, `agents/codex/`, `agents/amp/`, `agents/pi/`, or `agents/rules/` affect live machine-wide configuration. Edit repository paths, never symlink targets.

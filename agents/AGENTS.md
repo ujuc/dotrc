@@ -1,15 +1,12 @@
 ## Work Rules
 
-- Work only on `main`; do not create branches or PRs.
-- Scopes follow directories: `amp`, `claude`, `codex`, `hooks`, `pi`, `rules`, `skills`, `tools`.
-- The root `gitmessage` and `.githooks/commit-msg` define commit types and subject format.
+- Scopes: `skills` for `claude/skills/` and `claude/evals/`, `rules` for `rules/`, otherwise `agents`.
 - After changing `agents/claude/skills/<name>/`, run `bash agents/claude/skills/generate-skills/scripts/validate-skill agents/claude/skills/<name>` from the repository root, then run `skill-improver`.
-- For suites under `agents/claude/evals/<skill>/`, run `bash agents/claude/skills/waza/scripts/waza-run.sh` (the `waza` skill; Claude Code may dispatch the `waza-runner` agent wrapper); never invoke the `waza` CLI directly.
-- Edit repository paths, never symlink targets.
+- For suites under `agents/claude/evals/<skill>/`, run `bash agents/claude/skills/waza/scripts/waza-run.sh eval <skill>` (the `waza` skill; Claude Code may dispatch the `waza-runner` agent wrapper); never invoke the `waza` CLI directly.
 
 ## Configuration Boundaries
 
-- `claude/CLAUDE.md`, `claude/settings.json`, `amp/`, `codex/hooks.json`, and `pi/extensions/` affect every local session for their harness. Keep runtime state and secrets outside tracked files.
+- `claude/CLAUDE.md`, `claude/settings.json`, `amp/`, `codex/hooks.json`, `codex/hooks/`, and `pi/agent/extensions/` affect every local session for their harness. Keep runtime state and secrets outside tracked files.
 - `workflow-contract.json` is the canonical harness-neutral contract for managed artifact paths, sole writers, archive destinations, maintenance cadence, and adapted Superpowers versions. Keep the Rust embedded contract and validator in sync with it.
 - `tools/workflow-hooks/` is the canonical cross-harness hook policy and native Claude/Codex event translator. Install its Rust binary at `~/.local/bin/workflow-hooks`; keep Amp and Pi adapters limited to native event and result translation.
 - `hooks/test-workflow-hooks.sh` is the black-box contract suite for the installed policy surface; do not add runtime shell wrappers around the binary.
@@ -18,13 +15,13 @@
 - Do not reference or modify `claude/deplicated/`; treat `claude/plugins/` as read-only.
 - Add `.gitignore` entries when tools create new runtime files under `claude/`.
 - `claude/mcp.json` is empty by default; configure MCP through the Claude Code UI, which writes to `~/.claude.json`.
-- `rules/AGENTS.md` is shared by Claude, Amp, Codex, and Pi. Keep it self-contained, harness-neutral, and under 8 KB. Sync its Agent Identity with `rules/SOUL.md`.
+- `rules/AGENTS.md` is shared by Claude, Amp, and Codex. Keep it self-contained, harness-neutral, and under 8 KB. Sync its Agent Identity with `rules/SOUL.md`.
 - Repository-root `.claude/<type>/` is project-local; `agents/claude/<type>/` is user-global. Put reusable agents and skills under `agents/claude/`.
 - Amp loads `~/.claude/skills/` directly, and the Pi extension contributes the same path. Do not duplicate portable skills under harness directories.
 
 ## Managed Workflow
 
-- Keep one active workflow per checkout: `spec.md` → `.sprint/contract.md` → optional `.research/research-*.md` → `.plans/plan-*.md` → implementation/evaluation → durable `docs/{specs,contracts,research,plans,reports}/`.
+- Keep one active workflow per checkout: `spec.md` (architecture-level work only) → `.sprint/contract.md` → optional `.research/research-*.md` → `.plans/plan-*.md` → explicit approval → implementation → optional evaluation → durable `docs/{specs,contracts,research,plans,reports}/`.
 - `annotate-plan` is the sole plan writer. `implement-plan` is the sole managed executor and archive caller.
 - QA and design evaluators write separate round reports; `multi-agent-orchestrator` alone synthesizes them and passes a final PASS report back to `implement-plan`.
 - Adapt Superpowers planning and skill-authoring principles only at contract-pinned versions. `generate-skills` remains the local authoring controller; TDD, debugging, verification, review, and parallel dispatch remain optional disciplines. Superpowers plan/execution/worktree/branch controllers do not own this workflow.
