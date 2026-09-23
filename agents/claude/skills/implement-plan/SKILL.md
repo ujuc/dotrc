@@ -83,7 +83,7 @@ For each todo in dependency order:
 
 1. Derive `{item-slug}` as `{ordinal}-{kebab-summary}` and map its exact paths, tests, criteria, inputs, and outputs.
 2. For behavior work, run the named test and record the expected failure before implementation.
-3. Implement only that item. Follow repository patterns and write `.plans/.blocker-{item-slug}.md` when the plan cannot be executed without a scope decision. Leave out a pre-existing bug, performance concern or improvement you notice outside the item unless the item cannot work without it; record it as a follow-up.
+3. Implement only that item. Follow repository patterns and write `.plans/.blocker-{item-slug}.md` when the plan cannot be executed without a scope decision. A pre-existing bug, performance concern or improvement you notice outside the item stays out of this change, even inside the item's files: if the item cannot work without addressing it, that is a scope decision and takes the blocker route; otherwise record it as a follow-up.
 4. Run the named focused checks, then launch an independent verifier writing `.plans/.verify-{item-slug}.md`.
 5. Require explicit `build:`, `typecheck:`, `lint:`, `tests:`, and `errors:` results. Any applicable FAIL blocks completion.
 6. Mark `[x]` only after fresh PASS and continue. Never begin the next item while the current one is unresolved.
@@ -101,7 +101,7 @@ Use only when repository policy allows it and independence is proven from the pl
 ## Blockers and Failures
 
 - **Explicit blocker:** show `Problem`, `Attempts`, and `Proposal`; remove the implementation flag; return to `annotate-plan` Phase B. Do not redesign scope inline.
-- **Verifier failure:** create `.plans/.debug-{item-slug}.md` through an independent debugger or the inline systematic-debugging invariant. Apply a fix only after root cause is demonstrated, then rerun the same verifier.
+- **Verifier failure:** create `.plans/.debug-{item-slug}.md` through an independent debugger or the inline systematic-debugging invariant. Apply a fix only after root cause is demonstrated, then rerun the same verifier. A root cause that is a pre-existing defect outside the item takes the blocker route from Sequential Execution step 3 instead.
 - **Scope divergence:** never run destructive checkout/reset over main-checkout work. Show the diff and ask whether to keep or revert it. Mark `(RESET)` only after the approved rollback, remove the flag, and return to `annotate-plan`.
 - **Cancellation or failed final verification:** remove the implementation flag and retain source artifacts. Never archive or claim completion.
 

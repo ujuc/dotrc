@@ -83,7 +83,7 @@ On **any** failure (tool not loaded, offline, rate limit, layout change), fall b
 
 ### Stage 3: Diagnosis
 
-Judge pass / fail per checklist category:
+Judge pass / fail per checklist category; record N/A only for a row with an explicit "N/A for ..." clause (currently Model carry-over):
 
 | Category | Source | Key question |
 |----------|--------|--------------|
@@ -95,7 +95,7 @@ Judge pass / fail per checklist category:
 | Output control | Anthropic | Is the desired output shape stated positively and concretely? |
 | Thinking & effort | Anthropic | Does the effort setting match task difficulty without requesting visible chain-of-thought? |
 | Tool use & agentic | Anthropic | Is action-vs-suggestion intent clear, with tools named when needed? |
-| Model carry-over | Anthropic | Does the prompt keep instructions written for an earlier model's habits that the target model's guide says to remove, such as narration suppression, blanket anti-formatting rules, or thinking toggles? Remove those before adding new ones. |
+| Model carry-over | Anthropic model guide | For a Claude target whose model guide Stage 2 fetched: does the prompt keep instructions written for an earlier model's habits that the guide says to remove, such as narration suppression, blanket anti-formatting rules, or thinking toggles? Remove those before adding new ones. N/A for another LLM, a Claude family-only, unknown, or unlisted model, or any run where Stage 2 did not fetch that guide (offline or fetch failure). |
 | Managed workflow | Local contract | Does an agentic prompt preserve canonical paths, writers, and approval boundaries? |
 | Engineering restraint | Local rule | Does it avoid test hard-coding, defensive bloat, and needless abstraction pressure? |
 
@@ -115,7 +115,7 @@ Pick the proposal format by change magnitude:
 
 **Prefer presenting options** when the user has a real choice: lay out "Option A (terse)" vs "Option B (strict)".
 
-Close with a one-line checklist coverage report: "11개 범주 중 8개 합격, 3개 개선 반영."
+Close with a one-line checklist coverage report that counts only categories not marked N/A in Stage 3: "적용 11개 범주 중 8개 합격, 3개 개선 반영." or, with Model carry-over N/A, "적용 10개 범주 중 8개 합격, 2개 개선 반영."
 
 ## Constraints
 

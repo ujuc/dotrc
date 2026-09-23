@@ -14,7 +14,7 @@ The signature AI-generated color scheme. A purple-to-blue gradient background wi
 
 Every element has `border-radius: 12px+` and `box-shadow` with large blur values. Nothing has sharp edges. The result is a soft, blobby aesthetic that lacks visual tension.
 
-**Detection**: Inspect card and button elements. If border-radius exceeds 12px on non-avatar elements and shadows have blur > 20px, flag it.
+**Detection**: Inspect card and button elements. If border-radius exceeds 12px on non-avatar elements and shadows have blur > 20px, flag it. Decide #11 first; if #11 is flagged, exclude pill-shaped buttons here.
 
 ### 3. Hero Section + 3-Column Feature Grid Formula
 
@@ -64,11 +64,13 @@ Inter or Poppins as the sole font family, used at default weights (400, 600, 700
 
 **Detection**: Check the font stack. If it is Inter or Poppins only, with no secondary typeface, no custom font features (`font-feature-settings`), and no unusual weight combinations, flag it.
 
-### 11. Current Generator Default Style
+### 11. Unprompted Default Style Cluster
 
-A cluster of styles that current generators fall back on when given no design direction: a cream or off-white page background, an italic accent word in headlines, numbered "01 / 02 / 03" section labels, monospace labels, and pill-shaped buttons. Each one can be a deliberate choice; the cluster without a stated direction is the signal.
+A cluster of styles that the "Frontend design defaults" section of [Prompting Claude Opus 5.5](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5#frontend-design-defaults) (checked 2026-09-23) lists as that model's defaults to avoid when it gets no design direction: a cream or off-white page background, an italic accent word in headlines, numbered "01/02/03" section labels, monospace labels, and pill-shaped buttons. Each one can be a deliberate choice; the cluster without a stated direction is the signal, whichever model built the page.
 
-**Detection**: Flag once when three or more of these appear together and neither the spec nor the approved design direction calls for them. When a later round removes a flagged pattern, check which default replaced it.
+**Detection**: Flag once when three or more of these appear together and neither the spec nor the approved design direction calls for them. When #11 is flagged, its pill-shaped buttons do not count again under #2. When a later round removes a flagged pattern, check which default replaced it.
+
+<!-- Maintainer: re-check the five styles against that guide section when the guide changes. -->
 
 ## Structural Anti-Patterns
 

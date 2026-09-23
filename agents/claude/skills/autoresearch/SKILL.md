@@ -17,7 +17,7 @@ Adapts Andrej Karpathy's autoresearch methodology (autonomous experimentation lo
 ## Model guidance
 
 Use Advanced to design evaluations and interpret mutations; Standard suits a bounded loop with settled criteria.
-Recommend Frontier for coupled failure modes that remain unexplained after Advanced analysis; keep the target's resolved model and effort level fixed within a comparison and record them with the baseline. A change to either starts a new baseline.
+Recommend Frontier for coupled failure modes that remain unexplained after Advanced analysis; keep the target's resolved model and effort level fixed within a comparison and record them with the baseline (Step 3). A change to either starts a new baseline (Step 4-5).
 Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
 ## The Core Job
@@ -77,7 +77,7 @@ Skill("{skill-name}") with prompt {input} → capture transcript
 bash -c "{cmd-using-target} < {input-file}" → capture stdout
 
 # API/CLI tool (when target is a prompt template)
-echo "{input}" | claude -p "$(cat {target})" → capture stdout
+echo "{input}" | claude -p --model <model-id> --effort <level> "$(cat {target})" → capture stdout
 ```
 
 If the target already has a `## Eval Criteria` section or sibling `evals.md`, present them to the user and ask whether to reuse, modify, or replace.
@@ -112,15 +112,15 @@ Run the target AS-IS before changing anything. This is experiment #0.
 1. Create working directory `${XDG_STATE_HOME:-$HOME/.local/state}/agents/autoresearch/{target-name}/{YYYY-MM-DD-NNN}/`, where `{target-name}` is `basename({target})` minus extension and NNN is the day's sequence.
 2. Create `results.tsv` inside the working directory with the header row.
 3. Copy the original file to `{working-directory}/{filename}.baseline`.
-4. Run the target `{runs}` times (the value confirmed in context-gathering, default `5`) using `{inputs}` and `{exec}`.
+4. Run the target `{runs}` times (the value confirmed in context-gathering, default `5`) using `{inputs}` and `{exec}`. Pin the model and effort through the method's own options where it has them (for example `claude -p --model <model-id> --effort <level>` with a full model ID such as `claude-opus-5-5`, not an alias). A `Skill(...)` run uses the target's `model`/`effort` frontmatter when set, otherwise the session's.
 5. Score every output against every eval in `{evals}`.
-6. Record the baseline score as experiment 0.
+6. Record the baseline score as experiment 0, with the resolved model ID and effort level in its description (`unknown` when the host does not expose one; treat `unknown` as unchanged unless the host reports a change).
 
 **results.tsv format (tab-separated):**
 
 ```
 experiment	score	max_score	pass_rate	status	stop_reason	description
-0	14	20	70.0%	baseline	-	original target — no changes
+0	14	20	70.0%	baseline	-	original target — no changes; model <id>, effort <level>
 ```
 
 **After baseline:** Report the baseline summary to the user. If baseline is 90%+, confirm with the user via AskUserQuestion whether optimization is worthwhile (diminishing returns near the ceiling).
@@ -171,6 +171,7 @@ Pick ONE thing to change. Never change multiple things at once.
 - Rewriting the entire file
 - Changing multiple things at once
 - Making vague changes without a clear hypothesis
+- Changing the target's `model` or `effort` frontmatter — that changes the comparison, not the target
 
 ### 4-3. Make the Change
 
@@ -178,11 +179,11 @@ Edit the target file with ONE targeted mutation.
 
 ### 4-4. Run and Score
 
-Run the target `{runs}` times with the same `{inputs}`. Score every output against `{evals}`.
+Run the target `{runs}` times with the same `{inputs}` and pinned `{exec}`, noting the model and effort the runs used. Score every output against `{evals}`.
 
 ### 4-5. Keep or Discard
 
-Compare against the **current baseline** (the last KEEP, or experiment 0 initially):
+Compare against the **current baseline** (the latest KEEP or `baseline` row; experiment 0 initially) only when this experiment ran on the model and effort of the latest `baseline` row. If either changed, revert the mutation, log the experiment as `discard` noting the change, re-run the reverted target `{runs}` times, and log that as a new `baseline` row with the new model and effort; it becomes the current baseline. That row takes the next experiment number, gets a `baseline` changelog entry, and counts toward neither `{budget}` nor the 95% streak. Otherwise:
 
 - **Score improved** → KEEP. The mutation is now the new baseline.
 - **Score unchanged** → KEEP only when every eval outcome is unchanged and the target is smaller; otherwise DISCARD.
@@ -231,7 +232,7 @@ After each experiment, append to `changelog.md`:
 
 When the loop stops, report to the user:
 
-1. **Score summary:** Baseline → Final (percent improvement)
+1. **Score summary:** Latest `baseline` row → Final (percent improvement); list earlier baselines with their model and effort, without a cross-model delta
 2. **Total experiments:** How many mutations tried
 3. **Keep rate:** Kept vs discarded
 4. **Top 3 changes** that helped most
@@ -276,7 +277,7 @@ is historical evidence, separate from this skill's runtime Eval Criteria.
 
 9. **Meta-recursion: target == this skill itself.** When the target file is autoresearch's own `SKILL.md`, the execution method must NOT be `Skill("autoresearch")` — that would invoke this skill within itself and either deadlock or create unbounded recursion. Pick one instead:
    - **Text-based static rubric** — score the SKILL.md content against new evals (clarity, structure, coverage). `runs=1` is sufficient; static text yields deterministic scores.
-   - **Synthetic transcript via `claude -p`** — pipe `claude -p "$(cat {target})"` with sample user prompts, score the planning quality of the output.
+   - **Synthetic transcript via `claude -p`** — pipe `claude -p --model <model-id> --effort <level> "$(cat {target})"` with sample user prompts, score the planning quality of the output.
    - **Wet execution on a separate dummy target** — run autoresearch on a small unrelated file (e.g., a short prompt or config) and score the resulting `results.tsv` / `changelog.md` against the runtime evals.
 
    Never let the target path appear inside its own `{exec}` definition.
@@ -291,8 +292,10 @@ Self-referential checks. The autoresearch skill itself can be optimized using th
 EVAL 1: Baseline established
   Question: Does results.tsv contain a row with experiment=0 and
             status=baseline before any mutation runs?
-  Pass: Row exists with the unmutated target's score.
-  Fail: Mutation occurred before experiment 0 was logged.
+  Pass: Row exists with the unmutated target's score and its recorded
+        model and effort (or `unknown`).
+  Fail: Mutation occurred before experiment 0 was logged, or the row
+        lacks model and effort (or `unknown`).
 
 EVAL 2: One-change discipline
   Question: For every kept experiment N (N>0), does the diff between
