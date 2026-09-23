@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/sungjin6111/.codex/hooks/graft/graft-hooks.cjs\" session-start",
+            "command": "node ~/.config/dotrc/agents/codex/hooks/graft/graft-hooks.cjs session-start",
             "timeout": 10000
           }
         ]
@@ -39,7 +39,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/sungjin6111/.codex/hooks/graft/graft-hooks.cjs\" prompt",
+            "command": "node ~/.config/dotrc/agents/codex/hooks/graft/graft-hooks.cjs prompt",
             "timeout": 15000
           }
         ]
@@ -62,7 +62,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/sungjin6111/.codex/hooks/graft/graft-hooks.cjs\" post-edit",
+            "command": "node ~/.config/dotrc/agents/codex/hooks/graft/graft-hooks.cjs post-edit",
             "timeout": 10000
           }
         ]
@@ -73,7 +73,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/sungjin6111/.codex/hooks/graft/graft-hooks.cjs\" stop",
+            "command": "node ~/.config/dotrc/agents/codex/hooks/graft/graft-hooks.cjs stop",
             "timeout": 10000
           }
         ]
