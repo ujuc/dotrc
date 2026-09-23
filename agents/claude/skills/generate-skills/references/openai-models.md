@@ -34,10 +34,11 @@ written for earlier GPT models.
 
 **Freshness**: re-fetch `source_urls` only when `today - last_upstream_check >
 check_interval_days`. When that gate fires, also fetch `secondary_source_url`
-and each table model's page, refresh "Catalog facts", and compare the catalog's
-model list with the table below; a flagship or GPT-5.6/GPT-6 model missing here
-is drift — report it in one line and route cache maintenance to
-`skill-improver generate-skills`. On any fetch failure, including an
+and each table model's page, use the refreshed values in-session, and compare
+the catalog's model list with the table below; a changed value or a flagship or
+GPT-5.6/GPT-6 model missing here is drift — report it in one line and route
+cache maintenance to `skill-improver generate-skills`. A dispatch never edits
+this file or its date. On any fetch failure, including an
 egress-policy block, use this file and say so in one line:
 *"OpenAI 모델 가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."*
 

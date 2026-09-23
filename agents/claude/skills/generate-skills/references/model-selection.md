@@ -67,8 +67,8 @@ when the profile differs materially from the current setup. State it once per
 stage, not before every command. For example:
 
 > 이 작업은 변경 범위가 정해진 표준 실행 수준이므로 Terra 또는 Sonnet을
-> 권장합니다. 변경 분류나 충돌 해결에 복잡한 판단이 필요하면 Sol 또는 Opus
-> 수준으로 상향을 권장합니다.
+> 권장합니다. 변경 분류나 충돌 해결에 복잡한 판단이 필요하면 GPT-5.6 Sol 또는
+> Opus 수준으로 상향을 권장합니다.
 
 When switching is unavailable:
 
@@ -89,7 +89,7 @@ When switching is unavailable:
 
 ## Source basis
 
-Checked 2026-09-09. The role profiles and pairings above are repository policy
+Checked 2026-09-09; OpenAI pairings revised 2026-09-23. The role profiles and pairings above are repository policy
 inferred from vendor descriptions, not vendor certifications of equivalence.
 
 - [OpenAI model catalog](https://developers.openai.com/api/docs/models): Luna
