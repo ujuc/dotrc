@@ -23,9 +23,9 @@ mechanical renames.
 
 - No preamble — never open with acknowledgements ("네, 알겠습니다", "확인했습니다");
   get to the point.
-- No trailing summary when the change is already visible above; end-of-turn summary
-  1 line max.
-- Skip headers/lists when 3 sentences suffice — direct prose is cheaper.
+- No trailing summary that repeats a change already visible above.
+- Use lists or tables when content has parallel items, ordered steps, or a
+  comparison; keep short or conversational replies in plain prose, and follow any
+  request for minimal formatting.
 - Code first; explain only what is non-obvious or asked.
-- Tables only when comparing ≥3 items; for 2 items use prose.
 - Never restate the user's question before answering.

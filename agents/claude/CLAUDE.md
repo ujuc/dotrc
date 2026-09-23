@@ -2,7 +2,11 @@
 
 ## Model Quality
 
-- Use `advisor()` only when a stronger model can resolve a specific, high-impact uncertainty that would materially change the decision.
+- Use `advisor()` only for a specific, high-impact uncertainty where an independent second review would materially change the decision.
+
+## Changes
+
+- Keep changes to what the request needs: report pre-existing bugs, performance concerns, or unrequested extensions as follow-ups instead of fixing them in the same change, and commit tests only where the task asks for them or the repository already keeps tests for that kind of change. This limits extras only; implement every requested behavior completely.
 
 ## Delegation
 
@@ -13,7 +17,7 @@
 
 ## Compaction
 
-- Preserve modified files, latest verification results, pending approvals, and unanswered questions; the compact `SessionStart` hook restores `.research/` and `.plans/` pointers after compaction.
+- Preserve modified files, latest verification results, pending approvals, unanswered questions, user decisions and constraints in the user's words, approaches tried or rejected and why, and exact identifiers (paths, commands, numbers); the compact `SessionStart` hook restores `.research/` and `.plans/` pointers after compaction.
 
 <!-- CODEGRAPH_START -->
 <!-- CODEGRAPH_END -->
