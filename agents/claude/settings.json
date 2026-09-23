@@ -163,13 +163,15 @@
   "outputStyle": "explanatory-concise",
   "language": "한국어",
   "spinnerTipsEnabled": false,
-  "alwaysThinkingEnabled": true,
   "effortLevel": "xhigh",
   "modelSettings": {
     "claude-fable-5-1": {
-      "effortLevel": "low"
+      "effortLevel": "high"
     },
     "claude-opus-5": {
+      "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
       "effortLevel": "high"
     }
   },
