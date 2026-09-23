@@ -291,7 +291,7 @@ Using the freshly verified `references/frontmatter-spec.md` from Step 0:
 2. **Field compatibility**: distinguish standard, host-specific, and local fields.
    `license` and `metadata` remain standard fields; absence from one host table
    does not mean they were removed.
-3. **New fields worth adopting**: suggest `context`, `agent`, `allowed-tools` etc. when they would help; suggest `effort` only with measured evidence (see `references/model-selection.md` step 4).
+3. **New fields worth adopting**: suggest `context`, `agent`, `allowed-tools` etc. when they would help; suggest `effort` only with measured evidence (see `references/frontmatter-spec.md` → `effort`) and re-check a level carried over from another model (`references/model-selection.md` step 4).
 4. **`description` quality**: WHAT + WHEN coverage, trigger phrasing.
 5. **Structural health**: SKILL.md line count (500-line ceiling), whether content should be split into `references/`.
 6. **Redundancy audit**: detect body content that duplicates dispatched agent definitions, sibling skills, or standard LLM knowledge. Follow `references/redundancy-check.md`. Typical findings: constraints mirrored between skill and agent, prompt templates restating agent rules, generic markdown conventions.
