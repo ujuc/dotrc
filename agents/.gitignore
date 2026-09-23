@@ -84,6 +84,7 @@ claude/jobs
 claude/security
 claude/daemon*
 claude/remote*
+claude/state
 **/.last_*
 **/.last-*
 **/*log*
