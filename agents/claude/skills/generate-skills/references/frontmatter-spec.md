@@ -351,7 +351,7 @@ group: planning
 | `meta` | 🧪 메타·관리 | Skill management, session lifecycle |
 
 - `validate-skill` fails when this field is missing or holds a value outside the 8 slugs.
-- The slug list is defined in `tools/skill-core/src/rules.rs::ALLOWED_GROUPS`. Any change there must be reflected in this section, in `skills/README.md`, and in `skills/CLAUDE.md`.
+- The slug list is defined in `tools/skill-core/src/rules.rs::ALLOWED_GROUPS`. Any change there must be reflected in this section and in `skills/README.md`.
 - Do NOT auto-fix a missing `group` field — `skill-improver` reports it as manual because guessing from directory name or description risks wrong placement.
 
 ---

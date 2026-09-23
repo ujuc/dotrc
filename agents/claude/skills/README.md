@@ -101,5 +101,5 @@ Superpowers 6.3.0의 brainstorming·writing-plans·writing-skills 원칙은 공�
 
 ## References
 
-- [`CLAUDE.md`](./CLAUDE.md) — skill 작성 규약과 conventions
+- [`AGENTS.md`](./AGENTS.md) — skill 작성 규약과 conventions (`CLAUDE.md`는 이를 import하고 Claude 전용 규칙만 더한다)
 - [`../CLAUDE.md`](../CLAUDE.md) — Claude Code global configuration
