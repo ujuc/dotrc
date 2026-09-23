@@ -2,8 +2,9 @@
 source_urls:
   - https://developers.openai.com/api/docs/guides/latest-model?model=gpt-6-astra
   - https://developers.openai.com/api/docs/guides/latest-model?model=gpt-5.6
-secondary_source_url: https://developers.openai.com/api/docs/models  # catalog; not yet cached
-last_upstream_check: 2026-09-23  # captured from page clippings dated 2026-09-23
+  - https://developers.openai.com/api/docs/guides/reasoning
+secondary_source_url: https://developers.openai.com/api/docs/models  # catalog; model pages at /models/<API model ID>
+last_upstream_check: 2026-09-23  # fetched live 2026-09-23 (rendered pages and .md exports)
 check_interval_days: 14
 ---
 
@@ -32,12 +33,23 @@ workload."* For GPT-5.6 and GPT-6 targets, they supersede prompting guidance
 written for earlier GPT models.
 
 **Freshness**: re-fetch `source_urls` only when `today - last_upstream_check >
-check_interval_days`. When that gate fires, also fetch `secondary_source_url`,
-fill "Not yet cached" from it, and compare its model list with the table below;
-a listed model missing here is drift — report it in one line and route cache
-maintenance to `skill-improver generate-skills`. On any fetch failure, including
-an egress-policy block, use this file and say so in one line:
+check_interval_days`. When that gate fires, also fetch `secondary_source_url`
+and each table model's page, refresh "Catalog facts", and compare the catalog's
+model list with the table below; a flagship or GPT-5.6/GPT-6 model missing here
+is drift — report it in one line and route cache maintenance to
+`skill-improver generate-skills`. On any fetch failure, including an
+egress-policy block, use this file and say so in one line:
 *"OpenAI 모델 가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."*
+
+**How to fetch**: append `.md` to a page URL for verbatim Markdown
+(`/api/docs/models/gpt-6-sol.md`; the guide pages are
+`/api/docs/guides/latest-model/<model>.md`) and read it with `curl -sL`. Read
+positioning sentences and the catalog's reasoning ratings from the rendered page
+(WebFetch or a browser such as ego-browser), because the exports can lag: on
+2026-09-23 `/api/docs/models.md` still recommended GPT-5.6 Terra and Luna where
+the rendered catalog named GPT-6 Sol and Luna. Per-model `.md` values matched
+the rendered pages that day. WebFetch summarizes through a small model, so
+quote from `curl` or browser text, not from a WebFetch answer.
 
 ---
 
@@ -45,9 +57,9 @@ an egress-policy block, use this file and say so in one line:
 
 | Family | API model ID | OpenAI positioning | Reasoning effort |
 |--------|--------------|--------------------|------------------|
-| GPT-6 | `gpt-6-astra` | *"our highest level of capability"*; *"our most intelligent model yet"* | No `none`: *"use `low` instead"* |
-| GPT-6 | `gpt-6-sol` | *"strong reasoning on demanding tasks"* | Supports `none` |
-| GPT-6 | `gpt-6-luna` | *"efficient, repeatable work at scale"* | Supports `none` |
+| GPT-6 | `gpt-6-astra` | *"our highest level of capability"*; *"our most intelligent model yet"* | `low`, `medium`, `high`, `xhigh`, `max`; no `none`: *"use `low` instead"*; default not stated |
+| GPT-6 | `gpt-6-sol` | *"strong reasoning on demanding tasks"* | `none`, `low`, `medium`, `high`, `xhigh`, `max`; default `medium` |
+| GPT-6 | `gpt-6-luna` | *"efficient, repeatable work at scale"* | Same as GPT-6 Sol |
 | GPT-5.6 | `gpt-5.6-sol` (alias `gpt-5.6`) | *"the model for flagship capability"* | `none`, `low`, `medium`, `high`, `xhigh`, `max`; default `medium` |
 | GPT-5.6 | `gpt-5.6-terra` | *"a balance of intelligence and cost"* | Same as GPT-5.6 Sol |
 | GPT-5.6 | `gpt-5.6-luna` | *"efficient, high-volume workloads"* | Same as GPT-5.6 Sol |
@@ -69,28 +81,57 @@ Also stated by OpenAI:
   occasionally intervene on legitimate work, particularly in dual-use areas"*.
   GPT-6 Astra adds asynchronous misalignment monitoring.
 
-## Not yet cached
+## Catalog facts
 
-공식 문서에서 확인하지 못했다: the catalog (`secondary_source_url`) was
-blocked by the authoring environment's egress policy on 2026-09-23. Until it is
-cached, do not assume:
+Values are copied as printed on each model's page
+(`https://developers.openai.com/api/docs/models/<API model ID>`); prices are
+Standard text-token rates in USD per 1M tokens.
 
-- GPT-6's default reasoning effort or its full effort list; only `none` support
-  and the `minimal` note above are stated.
-- Context window, maximum output, pricing, or knowledge cutoff for any model.
-- Where GPT-6 Sol and GPT-6 Luna rank against the GPT-5.6 models.
-- Whether a `gpt-6` alias exists.
+| API model ID | Catalog tagline | Reasoning rating | Knowledge cutoff | Input / cached input / output |
+|--------------|-----------------|------------------|------------------|-------------------------------|
+| `gpt-6-astra` | *"Our most capable model, built for the hardest end-to-end work"* | Highest | Apr 30, 2026 | $10 / $1 / $50 |
+| `gpt-6-sol` | *"Built to power complex coding and agentic workflows."* | Highest | Apr 20, 2026 | $2 / $0.2 / $10 |
+| `gpt-6-luna` | *"Our most efficient model for focused, high-volume tasks."* | High | May 18, 2026 | $0.1 / $0.01 / $0.5 |
+| `gpt-5.6-sol` | *"Flagship model for complex professional work"* | Highest | Feb 16, 2026 | $4 / $0.4 / $20 (promotional) |
+| `gpt-5.6-terra` | *"GPT-5.6 model that balances intelligence and cost"* | Higher | Feb 16, 2026 | $2 / $0.2 / $12 |
+| `gpt-5.6-luna` | *"GPT-5.6 model optimized for cost-sensitive workloads"* | High | Feb 16, 2026 | $0.2 / $0.02 / $1.2 |
+
+- All six list *"1,050,000 context window"*, *"Maximum input tokens: 922,000"*,
+  and *"128,000 max output tokens"*, with text and image input and text output.
+- Long prompts: *"Prompts with more than 272K input tokens are priced at 2x
+  input and cache rates and 1.5x output for the full request"* (GPT-6 pages;
+  the GPT-5.6 pages say *"2x input and 1.5x output"*). All six: *"Cache writes
+  are billed at 1.25x the uncached input token rate."*
+- GPT-5.6 Sol: *"GPT-5.6 Sol’s promotional pricing is available at least
+  through November 21, 2026."* Re-check its price after that date.
+- Defaults: *"GPT-6 Sol and Luna also default to `medium` reasoning effort."*
+  No fetched page states GPT-6 Astra's default. Sending `none` to Astra fails:
+  *"Setting reasoning.effort (Responses) or reasoning_effort (Chat Completions)
+  to none returns HTTP 400."*
+- Aliases: *"The `gpt-5.6` alias routes requests to GPT-5.6 Sol."* The catalog
+  lists no `gpt-6` alias (checked 2026-09-23): Astra's snapshot list holds only
+  `gpt-6-astra`, and `/api/docs/models/gpt-6` returns 404.
+- Placement across families is inconsistent upstream, so record it without
+  resolving it. The catalog says *"Choose GPT-6 Sol to balance intelligence and
+  cost, or GPT-6 Luna for cost-sensitive, high-volume workloads."* The reasoning
+  guide still says *"For lower cost, consider gpt-5.6-terra, or gpt-5.6-luna for
+  the lowest cost and latency."* The reasoning rating comes from the rendered
+  catalog only, not from the `.md` export.
 
 ## Choosing model and effort
 
 - Resolve the workload profile in `model-selection.md` first. Its OpenAI
-  candidates are GPT-5.6 Luna, Terra, Sol and GPT-6 Astra; GPT-6 Sol and Luna
-  are not placed yet (see "Not yet cached").
+  candidates are GPT-6 Luna or GPT-5.6 Luna (Lightweight), GPT-6 Sol or GPT-5.6
+  Terra (Standard), GPT-5.6 Sol (Advanced), and GPT-6 Astra (Frontier). GPT-6
+  Sol is placed by the catalog's "balance intelligence and cost" line even
+  though its catalog reasoning rating equals GPT-5.6 Sol's (see "Catalog
+  facts").
 - GPT-5.6 effort, per OpenAI: *"Use `medium` as a balanced starting point and
   `low` for latency-sensitive workloads."* *"Use `high` or `xhigh` when more
   reasoning produces a measured quality gain."* *"Reserve `max` for the hardest
   quality-first workloads."*
-- GPT-6 Astra: never request `none`; `low` is the floor.
+- GPT-6 Astra: never request `none`; `low` is the floor. Its default effort is
+  unstated, so set one explicitly. GPT-6 Sol and Luna default to `medium`.
 - Thinking amount is an effort or mode setting, not prompt text: for pro mode,
   *"You do not need to ask the model to “use pro mode,” “think harder,” or
   generate several candidate answers."*
