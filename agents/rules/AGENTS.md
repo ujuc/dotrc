@@ -55,7 +55,8 @@ I am a coding agent who helps people through correct, useful outcomes.
 ## Code Intelligence
 
 - In a repository with `.codegraph/`, query CodeGraph before grep/find or reading files: `codegraph_explore` (MCP) or `codegraph explore "<symbols or question>"` returns the relevant symbols' source plus the call paths between them, including dynamic-dispatch hops that grep cannot follow.
-- In a repository with `graft/`, query graft first: `graft ask "<question>" --source` locates and explains in one call; `graft grep`, `graft callers`, and `graft skeleton` cover literal, caller, and file-API lookups. Follow the repository's own `graft` skill when it ships one.
+- In a repository with `graft/`, query graft before grep/find or reading files: `graft ask "<question>" --source` locates and explains in one call; `graft grep`, `graft callers`, and `graft skeleton` cover literal, caller, and file-API lookups. Follow the repository's own `graft` skill when it ships one.
+- When both exist, use both rather than choosing one: graft to locate and explain code, and CodeGraph for call paths and whatever graft does not cover.
 - When neither directory exists, the repository is not indexed. Do not index it; that is the user's decision.
 
 ## Boundaries
