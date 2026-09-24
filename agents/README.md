@@ -42,7 +42,7 @@ Amp는 `~/.claude/skills/`를 직접 읽고 Pi extension도 같은 경로를 등
 런타임 상태(세션, 캐시, sqlite, 인증 파일 등)가 함께 존재하므로, 파일을 하나씩
 열거하는 대신 화이트리스트 방식을 쓴다: `codex/*` + `!codex/AGENTS.md` `!codex/README.md`
 `!codex/hooks.json` `!codex/hooks` `!codex/skills`, `pi/agent/*` + `!pi/agent/extensions`. 새로운 런타임 파일
-종류가 느어누어도 패턴을 더 늘릴 필요 없이 그대로 제외된다.
+종류가 늘어나도 패턴을 더 늘릴 필요 없이 그대로 제외된다.
 
 ## 공통 워크플로 계약
 
