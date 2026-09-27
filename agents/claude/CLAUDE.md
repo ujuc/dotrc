@@ -3,6 +3,8 @@
 ## Model Quality
 
 - Use `advisor()` only for a specific, high-impact uncertainty where an independent second review would materially change the decision.
+- Match effort to phase: low–medium for interviews and sketches, medium for implementation, high for verification, review, and brownfield debugging, xhigh for security review and long autonomous runs.
+- Effort fixes hidden edge cases, not misunderstanding: when a failure comes from a wrong premise, fix the spec or contract before raising effort.
 
 ## Changes
 
