@@ -152,7 +152,7 @@ Overall PASS requires every active acceptance criterion PASS and every selected 
 ## Feedback Loop and Completion
 
 - **PASS:** re-invoke `implement-plan` with the exact synthesized path as `final_report` and the retained `follow_ups`. Only that finalization call validates existing evidence and invokes archive.
-- **FAIL:** return exact findings and the retained `follow_ups` to `implement-plan`; remove/invalidate the stale final verifier before implementation changes. Require item fixes, a new full verifier, and a new fresh evaluation round.
+- **FAIL:** return exact findings and the retained `follow_ups` to `implement-plan`, which removes the stale final verifier before implementation changes, requires item fixes and a new full verifier, and then requests a fresh evaluation round.
 - Default maximum is three managed evaluation rounds. If round 2 repeats a root issue from round 1, investigate whether the contract, plan, implementation, or evaluator boundary is wrong before round 3. After round 3 FAIL, write/update handoff and ask the user rather than silently expanding scope.
 
 Completion is valid only after `implement-plan` reports successful archive into contract destinations. Relay its out-of-item follow-ups to the user with the result.

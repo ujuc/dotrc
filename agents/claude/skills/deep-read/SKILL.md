@@ -61,7 +61,7 @@ Wait for all 3 agents to finish before Step 3 — `run_in_background` agents aut
 
 After all 3 agents complete, read `.partial/` files and merge into `.research/research-{topic}.md`.
 
-**PARTIAL markers.** If any partial file contains `<!-- PARTIAL: {reason} -->` (written by `researcher` per its Failure Policy), preserve the marker as a `> PARTIAL: {reason}` blockquote at the top of the corresponding section in the merged document. Also append one line to the `## Gotchas & Risks` section: `> PARTIAL research — {role} could not finish ("{reason}"); rerun that role before planning.` Never silently drop the marker — it is the user's signal that the research is incomplete.
+**PARTIAL markers.** If any partial file contains `<!-- PARTIAL: {reason} -->` (written by `researcher` per its `## Failure` section), preserve the marker as a `> PARTIAL: {reason}` blockquote at the top of the corresponding section in the merged document. Also append one line to the `## Gotchas & Risks` section: `> PARTIAL research — {role} could not finish ("{reason}"); rerun that role before planning.` Never silently drop the marker — it is the user's signal that the research is incomplete.
 
 Merge into `.research/research-{topic}.md`:
 

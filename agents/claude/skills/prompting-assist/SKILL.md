@@ -1,6 +1,6 @@
 ---
 name: prompting-assist
-description: "사용자가 LLM에 보낼 프롬프트를 개선·리뷰·피드백받고 싶어할 때 사용. '프롬프트 개선해줘', '이 프롬프트 리뷰해줘', '이 프롬프트 피드백 줘', 'system prompt 개선해줘', '프롬프팅 팁', 'improve my prompt', 'review this prompt', '/prompting-assist' 등 명시적 어구에만 발동하며, 일반 대화 속 '프롬프트'라는 단어만으로는 발동하지 않는다."
+description: "LLM 프롬프트를 Anthropic 프롬프팅 모범사례 기반 체크리스트로 진단하고 Before/After diff 또는 전체 재작성안을 제시한다. 사용자가 LLM에 보낼 프롬프트를 개선·리뷰·피드백받고 싶어할 때 사용. '프롬프트 개선해줘', '이 프롬프트 리뷰해줘', '이 프롬프트 피드백 줘', 'system prompt 개선해줘', '프롬프팅 팁', 'improve my prompt', 'review this prompt', '/prompting-assist' 등 명시적 어구에만 발동하며, 일반 대화 속 '프롬프트'라는 단어만으로는 발동하지 않는다."
 group: writing
 allowed-tools: Read, Edit, AskUserQuestion, ToolSearch, WebFetch, Bash(workflow-hooks:*)
 ---
@@ -46,7 +46,7 @@ If intent is ambiguous, ask one clarifying question first: "이 프롬프트를 
    - If a file path is given, `Read` it.
    - If absent, request once: "어떤 프롬프트를 보고 싶으신가요?"
 
-2. **Collect the minimum necessary context** via `AskUserQuestion` (batch the questions, do not re-ask):
+2. **Collect the minimum necessary context** via `AskUserQuestion` (batch the questions, do not re-ask; if it is unavailable, ask the same questions as one plain-text message):
    - Target model: specific Claude model (name/version if known) / Claude family only / another LLM / unknown
    - Primary use case: one-shot / agentic / tool-calling / long-context / coding
    - Hard constraints: response length / cost / latency / output format

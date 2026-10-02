@@ -47,7 +47,7 @@ execution engine.
 
 ## Before Starting: Gather Context
 
-**STOP. Do not run any experiments until all fields below are confirmed with the user via AskUserQuestion.**
+**STOP. Do not run any experiments until all fields below are confirmed with the user via AskUserQuestion.** If AskUserQuestion is unavailable, ask the same fields as one plain-text message and wait for the answer.
 
 If `$ARGUMENTS` (the `[target-path]` from `argument-hint`) is non-empty, prefill field 1 with it and confirm. If empty, ask the user.
 

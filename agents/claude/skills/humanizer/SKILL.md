@@ -236,7 +236,7 @@ Genre changes the application bar. Decide in this order:
 1. User specified → follow it.
 2. Infer from file extension/path (e.g. `README.md` → technical doc, under `blog/` → blog).
 3. Infer from content (code-block ratio, tone, format).
-4. If unclear, confirm with AskUserQuestion.
+4. If unclear, confirm with AskUserQuestion; if it is unavailable, ask the same question as plain text and wait for the answer.
 
 | Type | Application bar | Voice handling |
 |------|-----------------|-------------|
