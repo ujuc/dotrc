@@ -1,0 +1,22 @@
+id: positive-trigger-003
+name: Positive Trigger 3
+description: Decision-only probe; Korean prose whose only English is inline code must be classified ko, never mixed.
+tags:
+  - positive-trigger
+inputs:
+  prompt: |
+    A user gives humanizer the text below. Do not run tools or write files.
+    Answer only with `lang=<ko|en|mixed>; track=<monolith|inline>`.
+
+    `src/router/language_classifier.ts`의 `detectLanguage()`와 `protected_span_count`,
+    `/etc/app/config.yaml`, `LanguageRouteResult`를 확인했습니다.
+    문제는 한국어 문장이 아니라 백틱 안의 경로와 식별자가 비율에 들어간다는 점입니다.
+expected:
+  should_trigger: true
+graders:
+  - type: text
+    name: routes-korean-technical-prose-to-monolith
+    config:
+      regex_match:
+        - "(?i)lang\\s*=\\s*ko\\b"
+        - "(?i)track\\s*=\\s*monolith"

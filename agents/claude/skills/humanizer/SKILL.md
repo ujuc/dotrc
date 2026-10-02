@@ -3,7 +3,7 @@ name: humanizer
 argument-hint: "[--strict | redo] [텍스트 또는 파일 경로] [장르: ...] [강도: ...]"
 description: |
   AI가 쓴 글의 흔적을 자연스러운 사람의 글로 바꾸는 윤문 오케스트레이터(한국어 주력, 영어는 fast만).
-  AI 글 자연스럽게, AI 티 제거, ChatGPT 문체 고쳐, 번역투 고쳐, 사람이 쓴 것처럼 윤문, 휴머나이저, humanize, remove AI tone, 2차 윤문, /humanizer 요청 시 사용한다. redo·--strict는 모드 인자다.
+  AI 글 자연스럽게, AI 티 제거, ChatGPT 문체 고쳐, 번역투 고쳐, 사람이 쓴 것처럼 윤문, 휴머나이저, humanize, remove AI tone, 2차 윤문, /humanizer 요청 시 사용한다. 요청이 없어도 이슈·PR 본문, README, 사용자용 문서처럼 사람이 읽을 한국어 글을 새로 쓰거나 고쳤고 그 부분의 문장이 100자 이상이면, 내보내거나 승인받기 직전에 그 부분만 fast 모드로 사용한다(커밋 메시지, 대화 답변, 에이전트 지침·프롬프트, 워크플로 산출물, 불릿·표·코드 위주 글은 제외). redo·--strict는 모드 인자다.
 group: writing
 allowed-tools:
   - Read
@@ -40,8 +40,16 @@ humanizer v2.0 — {fast|strict|redo} 모드 / run_id: {YYYY-MM-DD-NNN} / 언어
 1. User says `redo`, or "특정 카테고리만 다시" / "이 문단만" / "2차 윤문" → **redo**
 2. User says `--strict`, or "정밀 모드" / "4인 파이프라인" → **strict**
 3. Korean input over 8,000 chars → **strict auto-upgrade** (one-line notice to the user)
-4. English-only input → **fast forced** (strict is Korean-only)
+4. `en` or `mixed` input → **fast forced** (strict is Korean-only)
 5. Otherwise → **fast (default)**
+
+**Proactive run (no user request):** fast only.
+
+- Input is only the span written or changed in this turn, never untouched existing text.
+- Korean over 8,000 chars → skip with a one-line notice; never auto-upgrade to strict.
+- Never ask for genre; default to 기술 문서 when steps 1–3 of the content-type matrix do not decide.
+- Use `final.md` as the handed-over text and report one status line instead of the four-part response.
+- On grade C/D or a sub-agent HOLD, keep the original and say so.
 
 **Optional arguments (given in natural language):**
 
@@ -54,7 +62,7 @@ humanizer v2.0 — {fast|strict|redo} 모드 / run_id: {YYYY-MM-DD-NNN} / 언어
 1. Create `${XDG_STATE_HOME:-$HOME/.local/state}/agents/humanizer/{YYYY-MM-DD-NNN}/`. NNN is the day's sequence. This is runtime state, not a managed workflow artifact.
 2. Save the input text to `01_input.txt`.
 3. Estimate genre from the first 300 chars (an explicit user value wins).
-4. Detect language: Hangul ratio 70%+ → ko, Latin ratio 70%+ → en, else mixed.
+4. Detect language from prose only: drop fenced code blocks, inline code, and URLs, then count Hangul syllables and Latin letters in what remains. Hangul ratio 70%+ → ko, Latin ratio 70%+ → en, else mixed. If nothing remains, return the input unchanged.
 5. On redo, reuse the most recent humanizer state subdirectory when the user signals "이전 거 다시".
 
 ## Fast mode (default)
@@ -78,7 +86,7 @@ The monolith runs detection → rewrite → self-validation → output in one ca
 
 The monolith is Korean-only, so the orchestrator handles English inline from this body.
 
-1. Load `references/patterns-en.md` + `references/patterns-common.md`.
+1. Load `references/patterns-en.md` + `references/patterns-common.md`. For `mixed`, also load `references/patterns-ko.md`.
 2. Decide the application bar via the content-type matrix below.
 3. First-pass scan with the catalog cheat-sheet; assign severity (P1/P2/P3).
 4. Fix — P1 always, P2 by context, P3 optional. Apply the 30/50% change-rate guard.
@@ -87,8 +95,13 @@ The monolith is Korean-only, so the orchestrator handles English inline from thi
 
 ### Mixed input
 
+`mixed` means Korean and English prose coexist after the Phase 1 masking. Korean prose whose
+only English is code, paths, or identifiers is `ko` and goes to the monolith.
+
 Do not split Korean to the monolith and English to inline handling. Process the **whole text
 inline as the English fast track** (the monolith is Korean-only and would damage English spans).
+Apply `patterns-ko.md` to Korean sentences, `patterns-en.md` to English sentences, and
+`patterns-common.md` to both.
 
 ### Fast response format
 
@@ -103,7 +116,7 @@ After writing the artifacts, return these four briefly to the user:
 
 ## Strict mode (`--strict` or over-8,000-char auto-upgrade)
 
-**Korean only.** If `--strict` arrives with English input, force fast + notice:
+**Korean only.** If `--strict` arrives with `en` or `mixed` input, force fast + notice:
 "strict 모드는 한국어 전용입니다. 영어는 fast 모드만 지원합니다."
 
 ### Phase A — Detection
