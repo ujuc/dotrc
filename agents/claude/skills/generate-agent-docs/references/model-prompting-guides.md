@@ -5,9 +5,10 @@ source_urls:
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5.md
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5.md    # base guide inherited by 5.5
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8.md  # legacy; still listed in the upstream model-guide table
-  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5.md
+  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5.md
+  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5.md  # base guide inherited by 5.5
 secondary_source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md
-last_upstream_check: 2026-09-23
+last_upstream_check: 2026-10-02
 check_interval_days: 14
 ---
 
@@ -32,11 +33,12 @@ Stage 4 (verifying). Everything else in those guides is out of scope; see
 
 **Inheritance**: Opus 5.5 — *"Existing Claude Opus 5 prompts should perform
 well without changes"*; Fable 5.1 — *"Your existing Claude Fable 5 prompts
-should perform well on Claude Fable 5.1 without changes"*. Rules below that
-quote Opus 5 or Fable 5 therefore still apply to the current models unless a
-rule says otherwise. Where a newer guide does not restate a finding, never
-attribute it to Opus 5.5 or Fable 5.1 (upstream: *"treat it as measured on
-that model and re-check it"*).
+should perform well on Claude Fable 5.1 without changes"*; Sonnet 5.5 —
+*"Existing Claude Sonnet 5 prompts should perform well without changes"*. Rules
+below that quote Opus 5, Fable 5 or Sonnet 5 therefore still apply to the
+current models unless a rule says otherwise. Where a newer guide does not
+restate a finding, never attribute it to Opus 5.5, Fable 5.1 or Sonnet 5.5
+(upstream: *"treat it as measured on that model and re-check it"*).
 
 **Freshness**: re-fetch `source_urls` only when `today - last_upstream_check >
 check_interval_days` (`ToolSearch` `select:WebFetch` first — deferred tool).
@@ -81,12 +83,15 @@ See D1 for the model-specific counterpoint.
 Fable 5: instructions that *"tell the model to echo, transcribe, or explain
 its internal reasoning as response text can trigger the
 `reasoning_extraction` refusal category ... causing elevated fallbacks."*
-Opus 5.5 has the same category, *"new if you're coming from Claude Opus 5"*.
+Opus 5.5 has the same category, *"new if you're coming from Claude Opus 5"*,
+and Sonnet 5.5 lists it too: *"If your prompts ask the model to include its
+reasoning in the response, remove those instructions"*.
 Opus 5: *"If your system prompt contains a rule instructing the model not to
 think or not to reason, remove it; that kind of instruction increases tag
 leakage."* Opus 5.5: *"remove the no-thinking rule either way."*
 Opus 5.5: *"Lowering effort reduces thinking ... more reliably than prompt
-instructions do."*
+instructions do."* Sonnet 5.5: *"Asking it in the system prompt to think less
+doesn't reliably reduce its thinking."*
 
 Show-your-reasoning and don't-think lines cause harm; think-harder lines steer
 thinking less reliably than effort does. Reasoning visibility is an application
@@ -151,6 +156,9 @@ of each instruction: **does the current model already do this by default?**
 Both current guides reaffirm this. Opus 5.5 migration: *"Instructions tuned
 for Claude Opus 5's behavior may no longer be needed"*. Fable 5.1, on
 narration suppressors: *"Remove lines like that before adding anything."*
+Sonnet 5.5 names two more to drop: tool-discouraging lines such as *"only use
+tools when strictly necessary"* or *"minimize tool calls"*, and *"hold all
+findings for the final response"*.
 
 ### S2 — No runtime model branching
 
@@ -172,7 +180,13 @@ across models** — never as `if <model> then <behavior>`.
 - Claude Code on Fable (code.claude.com/docs/en/model-config): *"Skip the
   verification reminders"*.
 
-Generic verification lines in project docs are expendable on both families
+- Sonnet 5.5 pulls both ways by effort: at `low` it *"sometimes reports a
+  change as done without running a check that exercises it"*, and the guide
+  offers a run-a-real-check paragraph; at `xhigh`/`max` it *"can start its own
+  rounds of review and verification, sometimes with subagents"*, and the guide
+  offers a stop-and-report paragraph instead.
+
+Generic verification lines in project docs are expendable on all three families
 (W1). Independent verifier roles remain a skill/harness design choice.
 
 The reconciliation that holds for both turns on **whose work is verified**:
@@ -187,7 +201,9 @@ The reconciliation that holds for both turns on **whose work is verified**:
 
 Fable 5.1 and Opus 5.5: adaptive thinking always on (cannot be disabled);
 default effort `high` on Fable 5.1, `medium` on Opus 5.5. Sonnet 5: adaptive,
-default `high`. Legacy Opus 5: default `high`. *"Effort level names don't
+default `high`. Sonnet 5.5: adaptive, default `high`; levels are
+*"recalibrated"* against Sonnet 5, and `between_tools` (accepted at `high` or
+below) is its lowest thinking setting. Legacy Opus 5: default `high`. *"Effort level names don't
 correspond to the same amount of thinking across models"* (Opus 5.5; Fable 5.1
 says the same), and the default changed within the Opus family.
 These are API/harness configuration, not project knowledge: never write
@@ -204,6 +220,8 @@ send-to-user tool, refusal fallback wiring, `thinking.display` and
 progress-update reminders, unattended-run continuation loops and early-stop
 system-prompt blocks, elapsed-time budgets, pasted-content tagging, chat-only
 thinking lines, the multi-app "explore broadly" line, tool-call batching
-reminders, and system-prompt blocks for change/test scope, targeted edits or
+reminders, Sonnet 5.5's `between_tools`/`display: "updates"` wiring, JSON-output
+parsing, mid-turn message placement and tolerant tool-call handling, and
+system-prompt blocks for change/test scope, targeted edits or
 compaction summaries (context-engineering-claude5.md C4). These tune an
 application's runtime or system prompt, not a repository's documentation.
