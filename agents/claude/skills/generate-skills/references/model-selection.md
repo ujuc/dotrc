@@ -89,7 +89,8 @@ When switching is unavailable:
 
 ## Source basis
 
-Checked 2026-09-09; OpenAI pairings revised 2026-09-23. The role profiles and pairings above are repository policy
+Checked 2026-09-09; OpenAI pairings revised 2026-09-23; Claude lineup re-checked
+2026-10-02. The role profiles and pairings above are repository policy
 inferred from vendor descriptions, not vendor certifications of equivalence.
 
 - [OpenAI model catalog](https://developers.openai.com/api/docs/models): Luna
@@ -111,7 +112,12 @@ inferred from vendor descriptions, not vendor certifications of equivalence.
   intelligence, Opus covers long-running agentic coding and knowledge work and
   is the suggested starting point, and Fable targets demanding reasoning and
   long-horizon agentic work or cases where Opus at higher effort still falls
-  short.
+  short. Re-checked 2026-10-02: the lineup is Fable 5.1, Opus 5.5, Sonnet 5.5
+  (released 2026-09-28, *"The best combination of speed and intelligence"*) and
+  Haiku 4.5. The Sonnet 5.5 guide keeps it below Opus: *"For the hardest
+  long-horizon work, an Opus model is the better choice."* Claude Mythos 5.1 is
+  *"the same model as Claude Fable 5.1, offered by invitation only"*; it is not
+  a separate profile candidate.
 - [Claude cost and intelligence guidance](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence):
   evaluate effort and cost per completed task; a stronger model may avoid retries.
 - [Codex subagent model and reasoning controls](https://learn.chatgpt.com/docs/agent-configuration/subagents#choosing-models-and-reasoning):
