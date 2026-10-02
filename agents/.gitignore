@@ -93,6 +93,7 @@ claude/state
 
 ### Manual backups taken before editing config (e.g. settings.json.bak)
 *.bak
+*.doctor-bak
 
 ### autoresearch runtime artifacts (working dirs created by autoresearch skill)
 **/autoresearch-*/
