@@ -10,7 +10,7 @@ support across providers. Check current host availability before selecting one.
 | Profile | Choose for | OpenAI candidates | Claude candidates | Move up when |
 | --- | --- | --- | --- | --- |
 | **Lightweight** | Clear, repeatable extraction, classification, formatting, exact lookups, or reporting a deterministic check | GPT-6 Luna, GPT-5.6 Luna | Claude Haiku | The task needs interpretation, state-changing decisions, or coordination across files. |
-| **Standard** | Bounded tool use, routine commits with known scope, local fixes with clear acceptance criteria, focused exploration | GPT-6 Sol, GPT-5.6 Terra | Claude Sonnet | Requirements conflict, changes cross components, or preserving semantics needs substantial judgment. |
+| **Standard** | Bounded tool use, routine commits with known scope, local fixes with clear acceptance criteria, focused exploration | GPT-6.1 Sol, GPT-5.6 Terra | Claude Sonnet | Requirements conflict, changes cross components, or preserving semantics needs substantial judgment. |
 | **Advanced** | Multi-file implementation, architecture decisions, difficult debugging, nuanced writing, semantic/security review, synthesis | GPT-5.6 Sol | Claude Opus | Long-horizon dependencies, costly ambiguity, or a reproduced reasoning failure exceeds this profile. |
 | **Frontier** | The hardest interconnected work, consequential unresolved tradeoffs, long autonomous reasoning, or demonstrated gaps at Advanced | GPT-6 Astra | Claude Fable | Reassess inputs, tools, scope and stopping conditions; the top profile is not an unlimited retry budget. |
 
@@ -89,8 +89,8 @@ When switching is unavailable:
 
 ## Source basis
 
-Checked 2026-09-09; OpenAI pairings revised 2026-09-23; Claude lineup re-checked
-2026-10-02. The role profiles and pairings above are repository policy
+Checked 2026-09-09; OpenAI pairings revised 2026-09-23 and 2026-10-02; Claude
+lineup re-checked 2026-10-02. The role profiles and pairings above are repository policy
 inferred from vendor descriptions, not vendor certifications of equivalence.
 
 - [OpenAI model catalog](https://developers.openai.com/api/docs/models): Luna
@@ -98,8 +98,10 @@ inferred from vendor descriptions, not vendor certifications of equivalence.
   handles complex professional work, and Astra targets the hardest work.
   Checked 2026-09-23, the catalog adds "Choose GPT-6 Sol to balance intelligence
   and cost, or GPT-6 Luna for cost-sensitive, high-volume workloads", which
-  places them beside Terra and GPT-5.6 Luna. The reasoning guide still points
-  to Terra and GPT-5.6 Luna for lower cost, so both stay. Details are in
+  places them beside Terra and GPT-5.6 Luna. Checked 2026-10-02, GPT-6.1 Sol
+  replaces GPT-6 Sol in that line, and its page claims "Near-Astra performance
+  for complex work at a lower cost". The reasoning guide still points to Terra
+  and GPT-5.6 Luna for lower cost, so both stay. Details are in
   [openai-models.md](openai-models.md).
 - [OpenAI model guidance](https://developers.openai.com/api/docs/guides/latest-model)
   (checked 2026-09-23): GPT-5.6 Sol is "the model for flagship capability",
