@@ -141,7 +141,7 @@ Caller-provided arguments influence the commit:
 
 ## Prohibitions
 
-- Do NOT add `Co-Authored-By` (the system handles this).
+- Do NOT invent `Co-Authored-By` trailers. Add one only when the harness supplies attribution text (Claude Code: the `attribution.commit` setting), and use it verbatim.
 - Do NOT add sign-offs (`Signed-off-by`).
 - Do NOT push — commit only, unless push was explicitly requested.
 
