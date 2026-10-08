@@ -75,6 +75,35 @@ When switching is unavailable:
 > 이 작업에는 Terra 또는 Sonnet 수준을 권장합니다. 현재 세션에서는 모델을
 > 전환할 수 없어 기존 모델로 진행하며, 실제 모델이 바뀌었다고 보고하지 않습니다.
 
+## Dispatch routing
+
+A skill that dispatches a worker through the host `Agent` tool resolves the
+profile to these call arguments. Never write them into frontmatter.
+
+| Profile | `model` / `effort` | Typical work |
+| --- | --- | --- |
+| Lightweight | `haiku` / `medium` | Deterministic checks, structured extraction, commits touching ≤2 files and ≤40 changed lines, waza launcher runs |
+| Standard | `sonnet` / `medium` | Bounded implementation, multi-file commits, focused exploration, research partial reports |
+| Advanced | `opus` / `high` | Design, semantic review, synthesis, debugging, humanizer strict verifiers |
+| Frontier | `fable` / `xhigh` | Interdependent problems unresolved at Advanced |
+
+Procedure:
+
+1. Classify the step with the skill's stated rule and tell the user in one
+   line which profile was chosen and why (예: "파일 1개, 12줄이라 Lightweight(haiku)로 초안을 뽑습니다").
+2. If the step sits between two rows, ask with `AskUserQuestion`; the options
+   are the two rows.
+3. Call `advisor` at most once, only when the choice materially changes cost
+   or outcome and the evidence does not settle it.
+4. Pass `model` and `effort` as `Agent` arguments. An explicit user model
+   choice for the session or task wins over the table.
+
+Read-only roles dispatch as `Explore` (no `Edit`/`Write`; `Bash` available) and
+return their report as text for the caller to write. Roles that must write
+their own files dispatch as `general-purpose`. Role instructions live under the
+calling skill's `references/roles/` and the dispatch prompt begins with
+"Read `<absolute role path>` first and follow it."
+
 ## Examples
 
 | Current step | Recommendation |
