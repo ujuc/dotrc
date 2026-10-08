@@ -342,7 +342,7 @@ group: planning
 | slug | 한글 라벨 | Used for |
 |------|----------|----------|
 | `planning` | 🧭 기획·스펙 | Spec writing, sprint contracts |
-| `analysis` | 📐 분석·계획 | Codebase reading, plan annotation |
+| `analysis` | 📐 분석·계획 | Codebase reading |
 | `build` | 🛠 구현·실행 | Plan execution, multi-agent orchestration |
 | `verify` | ✅ 검증·QA | Functional / design QA |
 | `docs` | 📝 문서·커밋 | Commits, CLAUDE.md generation |

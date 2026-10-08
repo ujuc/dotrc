@@ -1,7 +1,7 @@
 # agents/
 
-Reference for the subagents in this directory: the five planning-pipeline
-workers (`deep-read` → `annotate-plan` → `implement-plan`) plus auxiliary
+Reference for the subagents in this directory: the four planning-pipeline
+workers (`deep-read` → Superpowers `writing-plans` → `implement-plan`) plus auxiliary
 agents.
 
 Agents here are pipeline workers, not general-purpose assistants. They are
@@ -16,7 +16,6 @@ This file is the **reference** for callers and contributors.
 
 | Agent              | Calling skill       | Recommended profile | Tools                                     | Writes code | Output path                       | Advisor |
 |--------------------|---------------------|--------|-------------------------------------------|-------------|-----------------------------------|---------|
-| `reference-finder` | `annotate-plan`     | Standard | Read, Write, Glob, Grep, advisor          | no          | `.plans/.partial/references.md`   | ≤1      |
 | `researcher`       | `deep-read` (×3)    | Standard / Advanced | Read, Write, Glob, Grep, advisor          | no          | `.research/.partial/{role}.md`    | ≤1      |
 | `verifier`         | `implement-plan`    | Lightweight / Standard | Read, Write, Glob, Grep, Bash, advisor    | no          | `.plans/.verify-{item-slug}.md`   | emergency only |
 | `implementer`      | `implement-plan`    | Standard / Advanced | Read, Write, Edit, Glob, Grep, Bash, advisor | **yes**  | source files + `.plans/.blocker-{item-slug}.md` on failure | ≤1 (pre-blocker) |
@@ -49,8 +48,8 @@ apply to every agent:
 3. **Markdown headings are part of the contract.** Callers grep for specific
    headings to split and merge partials — do not rename or drop headings.
 4. **On partial or degraded output, prepend `<!-- PARTIAL: {reason} -->`.**
-   `deep-read` and `annotate-plan` preserve this marker through their merge
-   logic so the user can decide whether to retry.
+   `deep-read` preserves this marker through its merge logic so the user can
+   decide whether to retry.
 5. **Never modify files outside the output path**, except `implementer`,
    which modifies source files scoped to its assigned todo item.
 
@@ -66,17 +65,17 @@ apply to every agent:
  │   .research/research-{feature}.md
  │            │
  │            ▼
- │       annotate-plan ─────────── reference-finder
- │            │                          │
- │            ▼                          ▼
- │   .plans/plan-{feature}.md   .plans/.references/{feature}.md
+ │       writing-plans (Superpowers)
+ │            │
+ │            ▼
+ │   .plans/plan-{feature}.md
  │            │
  │            ▼
  │       implement-plan
  │            │
  │   ┌────────┼─────────┬─────────┐
  │   ▼        ▼         ▼         ▼
- │ implementer verifier debugger  (back to annotate-plan Phase B on RESET)
+ │ implementer verifier debugger  (back to writing-plans on RESET)
  │   │        │         │
  │   ▼        ▼         ▼
  │  source   .verify-   .debug-
@@ -89,21 +88,19 @@ apply to every agent:
 Artifact paths read by multiple skills:
 
 - `.research/research-*.md` — produced by `deep-read`, consumed by
-  `annotate-plan` Phase A.
-- `.plans/.references/{feature}.md` — produced by `reference-finder` during
-  `annotate-plan` Phase A, consumed by `implementer`.
-- `.plans/plan-{feature}.md` — produced by `annotate-plan`, consumed by
+  `writing-plans`.
+- `.plans/plan-{feature}.md` — produced by `writing-plans`, consumed by
   `implement-plan`.
 - `.plans/.verify-{slug}.md` — produced by `verifier`, polled by
   `implement-plan` Step 3 Mode A.
 - `.plans/.blocker-{slug}.md` — produced by `implementer`, consumed by
-  `implement-plan` Step 5a and `annotate-plan` Phase B.
+  `implement-plan` Step 5a and `writing-plans` revisions.
 - `.plans/.debug-{slug}.md` — produced by `debugger`, consumed by
-  `implement-plan` Step 5a and `annotate-plan` Phase B.
+  `implement-plan` Step 5a and `writing-plans` revisions.
 
 ## Advisor Common Guide
 
-All five pipeline agents (and `skill-engineer`) have `advisor` in their
+All four pipeline agents (and `skill-engineer`) have `advisor` in their
 `tools:` frontmatter, but the call budget is deliberately tight:
 
 - `advisor()` takes **no parameters** — the agent's full execution context

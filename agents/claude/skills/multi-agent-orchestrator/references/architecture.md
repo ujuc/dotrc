@@ -24,7 +24,7 @@ The architecture separates coherent responsibilities:
 - `spec-planner` owns product intent and architectural design.
 - `sprint-contract-negotiator` owns testable acceptance boundaries.
 - `deep-read` owns repository evidence.
-- `annotate-plan` is the only implementation-plan writer.
+- Superpowers `writing-plans` is the only implementation-plan writer.
 - `implement-plan` is the only managed executor and archive caller.
 - QA owns functional runtime acceptance and defect severity.
 - Design owns Design Quality, Originality, Craft, and Visual Usability.
@@ -73,7 +73,7 @@ Failures return to the owning stage:
 - product ambiguity → `spec-planner`;
 - acceptance ambiguity → new contract negotiation before implementation;
 - evidence gap → `deep-read`;
-- plan gap or repository drift → `annotate-plan`;
+- plan gap or repository drift → `writing-plans`;
 - implementation, test, or debug failure → `implement-plan`;
 - evaluator report defect → the report's evaluator;
 - synthesis defect → orchestrator.
@@ -91,10 +91,10 @@ Archive preserves product intent, acceptance contract, research, plan, and optio
 Useful Superpowers principles are adapted, not installed as a competing controller:
 
 - brainstorming informs product discovery and approval gates;
-- writing-plans informs exact paths, commands, and verification detail;
+- writing-plans is invoked directly as the plan writer, held to the contract path and plan format;
 - TDD, systematic debugging, verification, review, and safe parallel dispatch remain optional implementation disciplines.
 
-Within managed runs, `annotate-plan` replaces `writing-plans`, and `implement-plan` replaces `subagent-driven-development` and `executing-plans`. Generic worktree and branch-finishing workflows do not override repository Git policy.
+Within managed runs, `implement-plan` replaces `subagent-driven-development` and `executing-plans`. Generic worktree and branch-finishing workflows do not override repository Git policy.
 
 ## Evolution Rule
 

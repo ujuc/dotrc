@@ -1,7 +1,7 @@
 ---
 name: multi-agent-orchestrator
 description: "canonical 스펙·계약·연구·계획·구현 스킬과 선택적 독립 평가를 하나의 장기 실행 파이프라인으로 조율하고, 평가 종합 리포트와 컨텍스트 핸드오프 문서를 작성한다."
-when_to_use: "멀티에이전트, 파이프라인 실행, multi-agent-orchestrator, /multi-agent-orchestrator, 에이전트 오케스트레이션, full harness run, autonomous build session, plan and build this, 기획부터 구현까지 해줘 요청 시 사용한다. 스펙 작성만, 플랜 작성만, 승인된 플랜 구현만 같은 단일 단계 요청은 spec-planner, annotate-plan, implement-plan이 각각 맡는다. 멀티에이전트 개념 설명이나 CI 파이프라인 실행에는 사용하지 않는다."
+when_to_use: "멀티에이전트, 파이프라인 실행, multi-agent-orchestrator, /multi-agent-orchestrator, 에이전트 오케스트레이션, full harness run, autonomous build session, plan and build this, 기획부터 구현까지 해줘 요청 시 사용한다. 스펙 작성만, 플랜 작성만, 승인된 플랜 구현만 같은 단일 단계 요청은 spec-planner, writing-plans, implement-plan이 각각 맡는다. 멀티에이전트 개념 설명이나 CI 파이프라인 실행에는 사용하지 않는다."
 group: build
 argument-hint: "[1-4 sentence prompt]"
 allowed-tools: Read Write Edit Glob Grep Bash Agent AskUserQuestion advisor
@@ -23,7 +23,7 @@ Apply the [shared selection guide](../generate-skills/references/model-selection
 spec-planner when architectural
   → sprint-contract-negotiator
   → deep-read when repository evidence is needed
-  → annotate-plan
+  → writing-plans (Superpowers)
   → user plan approval
   → implement-plan(evaluators=[...])
   → optional fresh QA/design evaluators
@@ -59,7 +59,7 @@ Do not choose a technology stack the user or repository did not choose. Do not m
 | Product classification/design | `spec-planner` | `spec.md` only for architectural work |
 | Done negotiation | `sprint-contract-negotiator` | `.sprint/contract.md` plus its audit files |
 | Repository research | `deep-read` | `.research/research-*.md` |
-| Implementation plan and annotations | `annotate-plan` | `.plans/plan-{feature}.md` plus baseline/cycle |
+| Implementation plan and revisions | Superpowers `writing-plans` | `.plans/plan-{feature}.md` |
 | Implementation and archive | `implement-plan` | code, verifier/blocker/debug state, durable docs |
 | Functional runtime evaluation | `qa-evaluator` | `.plans/.qa-{feature}-r{round}.md` |
 | Visual evaluation | `frontend-design-evaluator` | `.plans/.design-{feature}-r{round}.md` |
@@ -90,7 +90,7 @@ Invoke `deep-read` only when existing repository behavior, data flow, dependenci
 
 ### 4. Plan and Approval
 
-Invoke `annotate-plan` with exact spec, contract, and material research paths. Require complete `## Workflow Sources`, contract coverage, exact file/test paths, and verification commands. Stop at the plan review gate. Process user edits through annotation cycles until the user explicitly approves implementation.
+Invoke Superpowers `writing-plans` with exact spec, contract, and material research paths and the [managed plan requirements](references/communication-protocol.md#managed-plan-requirements). Require complete `## Workflow Sources`, contract coverage, exact file/test paths, and verification commands. Stop at the plan review gate. Process user edits through `writing-plans` revisions until the user explicitly approves implementation.
 
 ## Implementation Stage
 
@@ -98,7 +98,7 @@ Invoke `implement-plan` with the exact feature, selected evaluator set, and any 
 
 - With no evaluators, expect fresh full verification followed by immediate archive. The orchestrator does not synthesize a report.
 - With evaluators, require exact `AWAITING_EVALUATION` and retain its `follow_ups` unchanged for re-entry. Any premature archive is a protocol failure.
-- On any other exit (blocker, RESET, cancellation, verification or archive failure), retain the `follow_ups` that exit reports and let `implement-plan` and `annotate-plan` own recovery. Do not edit code in the orchestrator role.
+- On any other exit (blocker, RESET, cancellation, verification or archive failure), retain the `follow_ups` that exit reports and let `implement-plan` and `writing-plans` own recovery. Do not edit code in the orchestrator role.
 - Each `implement-plan` return that lists `follow_ups` replaces the retained list. They are out-of-item notes for the user, relayed when the run completes or stops; never pass them to evaluators or copy them into a synthesis.
 
 Repository Git instructions control execution mode. Never impose generic branches, commits, worktrees, merges, or PRs.
@@ -163,7 +163,7 @@ When context must reset, write only `.plans/.handoff-{feature}.md` with active s
 
 ## Optional Superpowers Boundary
 
-Cross-cutting Superpowers disciplines may assist stage owners with TDD, systematic debugging, fresh verification, review, or safe parallel dispatch. They do not write managed workflow state. Within this pipeline, `annotate-plan` replaces `writing-plans`, and `implement-plan` replaces SDD/`executing-plans`; repository Git rules override generic worktree and branch completion workflows.
+Cross-cutting Superpowers disciplines may assist stage owners with TDD, systematic debugging, fresh verification, review, or safe parallel dispatch. Apart from `writing-plans`, which writes the plan under the managed plan requirements, they do not write managed workflow state. Within this pipeline, `implement-plan` replaces SDD/`executing-plans`; repository Git rules override generic worktree and branch completion workflows.
 
 ## Eval Criteria
 

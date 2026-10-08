@@ -283,7 +283,7 @@ mod tests {
     fn embedded_contract_is_valid() {
         let contract = load().expect("embedded workflow contract must be valid");
         assert_eq!(contract.schema_version, 1);
-        assert_eq!(contract.artifact("plan").unwrap().writer, "annotate-plan");
+        assert_eq!(contract.artifact("plan").unwrap().writer, "writing-plans");
         assert_eq!(
             contract
                 .superpowers

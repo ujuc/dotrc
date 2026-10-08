@@ -32,8 +32,7 @@ CASES: list[tuple[str, set[str]]] = [
     ("커밋해줘", {"commit"}),
     ("CLAUDE.md 업데이트해줘", {"generate-agent-docs"}),
     ("커밋하면서 CLAUDE.md도 같이 갱신해줘", {"commit"}),  # collision probe
-    ("플랜 만들어줘", {"annotate-plan"}),
-    ("기획서 만들어줘", {"spec-planner"}),  # collision probe vs annotate-plan
+    ("기획서 만들어줘", {"spec-planner"}),
     ("플랜대로 구현해", {"implement-plan"}),
     ("기획부터 구현까지 해줘", {"multi-agent-orchestrator"}),
     ("done 기준 먼저 정하자", {"sprint-contract-negotiator"}),

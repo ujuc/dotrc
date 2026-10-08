@@ -13,13 +13,13 @@ All managed communication is file-based. Each artifact has one writer; all other
 | Product spec | `spec.md` | `spec-planner` | contract, research, planning, implementation, evaluators |
 | Acceptance contract | `.sprint/contract.md` | `sprint-contract-negotiator` | research, planning, implementation, evaluators, synthesis |
 | Research | `.research/research-*.md` | `deep-read` | planning and implementation |
-| Plan | `.plans/plan-*.md` | `annotate-plan` | implementation, evaluators, synthesis |
+| Plan | `.plans/plan-*.md` | Superpowers `writing-plans` | implementation, evaluators, synthesis |
 | QA report | `.plans/.qa-{feature}-r{round}.md` | `qa-evaluator` | orchestrator synthesis and implementation feedback |
 | Design report | `.plans/.design-{feature}-r{round}.md` | `frontend-design-evaluator` | orchestrator synthesis and implementation feedback |
 | Synthesized report | `.plans/.evaluation-{feature}-r{round}.md` | `multi-agent-orchestrator` | `implement-plan` finalization |
 | Handoff | `.plans/.handoff-{feature}.md` | `multi-agent-orchestrator` | next orchestration session |
 
-Implementation verification, blocker, debug, implementation-flag, plan baseline, and annotation-cycle files use the exact transient patterns returned by `workflow-hooks contract`. Their owners may replace or clean them as specified by their skills; they are never durable workflow records.
+Implementation verification, blocker, debug, and implementation-flag files use the exact transient patterns returned by `workflow-hooks contract`. Their owners may replace or clean them as specified by their skills; they are never durable workflow records. The plan baseline and cycle patterns have no writer; archive keeps them only to clean files left by earlier plans.
 
 ## Workflow Sources
 
@@ -48,7 +48,17 @@ Use `- Sprint Contract: None` only when no active contract exists. Never include
 alternatives or explanatory prose in field values, or put `None` in a research
 list. The topic placeholder above must be replaced with an existing source path.
 
-`annotate-plan` owns this section. Archive rejects malformed, non-canonical, missing, or unsafe source paths. Legacy `## Research Sources` remains readable only for pre-contract plans; new plans never emit it.
+Archive rejects malformed, non-canonical, missing, or unsafe source paths. Legacy `## Research Sources` remains readable only for pre-contract plans; new plans never emit it.
+
+## Managed Plan Requirements
+
+Superpowers `writing-plans` is the sole plan writer. The contract overrides that skill's defaults, so whoever invokes it for a managed plan passes these as its plan-location and execution-method preferences:
+
+- Save to `.plans/plan-{feature}.md`, never `docs/superpowers/plans/`. Stop when a different active plan exists.
+- Include `## Workflow Sources` in the format above, and copy every active contract criterion and exclusion verbatim.
+- Give every task checkbox steps, exact implementation and test paths, `Consumes`/`Produces` interfaces, and a verification command.
+- Name `implement-plan` as the execution method in the plan header and the execution handoff; do not offer `subagent-driven-development` or `executing-plans`.
+- Revise the same file through `writing-plans` for user edits and for `.plans/.blocker-*.md` or `.plans/.debug-*.md` feedback. A change to scope, exclusions, or acceptance criteria under an active contract returns to `sprint-contract-negotiator` instead.
 
 ## Evaluator Rounds
 

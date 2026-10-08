@@ -76,7 +76,7 @@ The contract lists optional Superpowers disciplines. They provide engineering ch
 - Use requesting/receiving review only for an independent code-review pass. Review feedback returns here for execution.
 - Use parallel dispatch only for domains with disjoint files, interfaces, and state.
 
-Inside this managed pipeline, do not invoke Superpowers `writing-plans`, `subagent-driven-development`, `executing-plans`, `using-git-worktrees` when repository policy forbids it, or `finishing-a-development-branch`. `annotate-plan` and this skill own planning and execution state.
+Inside this managed pipeline, do not invoke Superpowers `subagent-driven-development`, `executing-plans`, `using-git-worktrees` when repository policy forbids it, or `finishing-a-development-branch`. Superpowers `writing-plans` owns the plan under the [managed plan requirements](../multi-agent-orchestrator/references/communication-protocol.md#managed-plan-requirements); this skill owns execution state.
 
 ## Sequential Execution
 
@@ -103,9 +103,9 @@ Use only when repository policy allows it and independence is proven from the pl
 
 Every exit below also reports the run's `follow_ups`, in the `AWAITING_EVALUATION` block layout, so the caller can pass them back on re-entry.
 
-- **Explicit blocker:** show `Problem`, `Attempts`, and `Proposal`; remove the implementation flag; return to `annotate-plan` Phase B. Do not redesign scope inline.
+- **Explicit blocker:** show `Problem`, `Attempts`, and `Proposal`; remove the implementation flag; return the blocker to `writing-plans` for a plan revision. Do not redesign scope inline.
 - **Verifier failure:** create `.plans/.debug-{item-slug}.md` through an independent debugger or the inline systematic-debugging invariant. Apply a fix only after root cause is demonstrated, then rerun the same verifier. A root cause that is a pre-existing defect outside the item takes the blocker route from Sequential Execution step 3 instead.
-- **Scope divergence:** never run destructive checkout/reset over main-checkout work. Show the diff and ask whether to keep or revert it. Mark `(RESET)` only after the approved rollback, remove the flag, and return to `annotate-plan`.
+- **Scope divergence:** never run destructive checkout/reset over main-checkout work. Show the diff and ask whether to keep or revert it. Mark `(RESET)` only after the approved rollback, remove the flag, and return to `writing-plans`.
 - **Cancellation or failed final verification:** remove the implementation flag and retain source artifacts. Never archive or claim completion.
 
 ## Full Verification and Evaluation Handoff

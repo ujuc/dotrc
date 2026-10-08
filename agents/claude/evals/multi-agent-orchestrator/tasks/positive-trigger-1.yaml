@@ -14,5 +14,5 @@ graders:
       regex_match:
         - "spec-planner"
         - "sprint-contract-negotiator"
-        - "annotate-plan"
+        - "writing-plans"
         - "implement-plan"

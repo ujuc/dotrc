@@ -3,7 +3,7 @@
   "contract_version": "1.0.0",
   "workflow": {
     "single_active": true,
-    "plan_writer": "annotate-plan",
+    "plan_writer": "writing-plans",
     "execution_engine": "implement-plan",
     "git_policy": "project-instructions"
   },
@@ -25,7 +25,7 @@
     },
     "plan": {
       "pattern": ".plans/plan-*.md",
-      "writer": "annotate-plan",
+      "writer": "writing-plans",
       "context": true
     },
     "qa_report": {
@@ -85,7 +85,6 @@
       "dispatching-parallel-agents"
     ],
     "excluded_workflow_skills": [
-      "writing-plans",
       "subagent-driven-development",
       "executing-plans",
       "using-git-worktrees",
