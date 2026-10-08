@@ -7,8 +7,9 @@ source_urls:
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8.md  # legacy; still listed in the upstream model-guide table
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5.md
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5.md  # base guide inherited by 5.5
+  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-haiku-5-5.md
 secondary_source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md
-last_upstream_check: 2026-10-02
+last_upstream_check: 2026-10-08
 check_interval_days: 14
 ---
 
@@ -34,10 +35,13 @@ Stage 4 (verifying). Everything else in those guides is out of scope; see
 **Inheritance**: Opus 5.5 — *"Existing Claude Opus 5 prompts should perform
 well without changes"*; Fable 5.1 — *"Your existing Claude Fable 5 prompts
 should perform well on Claude Fable 5.1 without changes"*; Sonnet 5.5 —
-*"Existing Claude Sonnet 5 prompts should perform well without changes"*. Rules
-below that quote Opus 5, Fable 5 or Sonnet 5 therefore still apply to the
-current models unless a rule says otherwise. Where a newer guide does not
-restate a finding, never attribute it to Opus 5.5, Fable 5.1 or Sonnet 5.5
+*"Existing Claude Sonnet 5 prompts should perform well without changes"*;
+Haiku 5.5 — *"Existing Claude Haiku 4.5 prompts should perform well without
+changes"*. Rules below that quote Opus 5, Fable 5 or Sonnet 5 therefore still
+apply to their successors unless a rule says otherwise; Haiku 5.5 inherits from
+Haiku 4.5, which this cache does not quote, so only rules naming Haiku 5.5 apply
+to it. Where a newer guide does not restate a finding, never attribute it to
+Opus 5.5, Fable 5.1, Sonnet 5.5 or Haiku 5.5
 (upstream: *"treat it as measured on that model and re-check it"*).
 
 **Freshness**: re-fetch `source_urls` only when `today - last_upstream_check >
@@ -91,7 +95,8 @@ think or not to reason, remove it; that kind of instruction increases tag
 leakage."* Opus 5.5: *"remove the no-thinking rule either way."*
 Opus 5.5: *"Lowering effort reduces thinking ... more reliably than prompt
 instructions do."* Sonnet 5.5: *"Asking it in the system prompt to think less
-doesn't reliably reduce its thinking."*
+doesn't reliably reduce its thinking."* Haiku 5.5: *"telling the model in the
+prompt to answer directly didn't stop it from thinking."*
 
 Show-your-reasoning and don't-think lines cause harm; think-harder lines steer
 thinking less reliably than effort does. Reasoning visibility is an application
@@ -185,8 +190,11 @@ across models** — never as `if <model> then <behavior>`.
   offers a run-a-real-check paragraph; at `xhigh`/`max` it *"can start its own
   rounds of review and verification, sometimes with subagents"*, and the guide
   offers a stop-and-report paragraph instead.
+- Haiku 5.5 matches Sonnet 5.5's low end: at `low` and `medium` it *"sometimes
+  reports a code change as done without running a check"*, and the guide offers
+  a run-a-real-check paragraph.
 
-Generic verification lines in project docs are expendable on all three families
+Generic verification lines in project docs are expendable on all four families
 (W1). Independent verifier roles remain a skill/harness design choice.
 
 The reconciliation that holds for both turns on **whose work is verified**:
@@ -203,7 +211,9 @@ Fable 5.1 and Opus 5.5: adaptive thinking always on (cannot be disabled);
 default effort `high` on Fable 5.1, `medium` on Opus 5.5. Sonnet 5: adaptive,
 default `high`. Sonnet 5.5: adaptive, default `high`; levels are
 *"recalibrated"* against Sonnet 5, and `between_tools` (accepted at `high` or
-below) is its lowest thinking setting. Legacy Opus 5: default `high`. *"Effort level names don't
+below) is its lowest thinking setting. Haiku 5.5: adaptive, on by default,
+default `medium`; the first Haiku with effort levels, and `disabled` is accepted
+only at `high` or below. Legacy Opus 5: default `high`. *"Effort level names don't
 correspond to the same amount of thinking across models"* (Opus 5.5; Fable 5.1
 says the same), and the default changed within the Opus family.
 These are API/harness configuration, not project knowledge: never write
@@ -220,7 +230,8 @@ send-to-user tool, refusal fallback wiring, `thinking.display` and
 progress-update reminders, unattended-run continuation loops and early-stop
 system-prompt blocks, elapsed-time budgets, pasted-content tagging, chat-only
 thinking lines, the multi-app "explore broadly" line, tool-call batching
-reminders, Sonnet 5.5's `between_tools`/`display: "updates"` wiring, JSON-output
+reminders, Sonnet 5.5's `between_tools`/`display: "updates"` wiring, Haiku 5.5's
+current-date search nudge and chatbot system-prompt adherence block, JSON-output
 parsing, mid-turn message placement and tolerant tool-call handling, and
 system-prompt blocks for change/test scope, targeted edits or
 compaction summaries (context-engineering-claude5.md C4). These tune an

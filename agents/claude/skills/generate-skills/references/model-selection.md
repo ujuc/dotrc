@@ -117,7 +117,12 @@ inferred from vendor descriptions, not vendor certifications of equivalence.
   short. Re-checked 2026-10-02: the lineup is Fable 5.1, Opus 5.5, Sonnet 5.5
   (released 2026-09-28, *"The best combination of speed and intelligence"*) and
   Haiku 4.5. The Sonnet 5.5 guide keeps it below Opus: *"For the hardest
-  long-horizon work, an Opus model is the better choice."* Claude Mythos 5.1 is
+  long-horizon work, an Opus model is the better choice."* Re-checked
+  2026-10-08: Haiku 5.5 replaces Haiku 4.5 (*"For high-volume,
+  latency-sensitive tasks such as classification, extraction, and routing"*;
+  default effort `medium`). Its prompting guide points `xhigh`/`max` work to
+  Sonnet 5.5: *"also run your evals on Claude Sonnet 5.5 and compare
+  performance, cost, and speed"* — the Lightweight-to-Standard move-up signal. Claude Mythos 5.1 is
   *"the same model as Claude Fable 5.1, offered by invitation only"*; it is not
   a separate profile candidate.
 - [Claude cost and intelligence guidance](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence):
