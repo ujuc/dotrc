@@ -124,7 +124,7 @@ Q&A or progress updates.
 
 1. **Background agents can silently fail.** `run_in_background: true` returns before the subagent finishes. Verify each returned text is non-empty and write it to `.partial/*.md` before merging — if any is missing, re-dispatch that single role rather than merging with a hole.
 2. **Topic slug collisions are active-state conflicts.** Re-running `deep-read src/auth` must stop when `.research/research-auth.md` exists. Finish/archive or explicitly abandon the active workflow before creating replacement research.
-3. **Large targets hit subagent context limits.** For directories over ~50 files, instruct each researcher to stream findings to its output file as it goes, not accumulate in memory. Consider narrowing `Target:` to a subfolder per role if an agent reports truncation.
+3. **Large targets hit subagent context limits.** For directories over ~50 files, instruct each researcher to keep its returned report compact and cite rather than quote, since it returns the report as text. Consider narrowing `Target:` to a subfolder per role if an agent reports truncation.
 4. **Merge drift when partials use different heading levels.** The Required sections in the Step 2 table are enforced — if a partial omits `# Architecture Overview`, the merge mapping breaks silently. Grep each partial for the required headings before merging; if any is missing, re-prompt that one agent with stricter instructions.
 
 ## Eval Criteria
