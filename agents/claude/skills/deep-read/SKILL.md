@@ -39,7 +39,7 @@ Before dispatching researchers:
 
 ### 2. Launch 3 Parallel Researcher Agents
 
-Spawn 3 agents in a single message using `Agent` with `subagent_type: "researcher"` and `run_in_background: true`. Agent system rules (citations, exploration depth, no modification) live in `~/.claude/agents/researcher.md` and are not restated here.
+Spawn 3 agents in a single message using `Agent` with `subagent_type: "Explore"`, `run_in_background: true`, and Standard `model`/`effort` from [dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing). Each prompt starts with "Read `<abs>/references/roles/researcher.md` first and follow it." Role rules (citations, exploration depth, no modification) live in that file and are not restated here.
 
 | Agent | Focus | Output | Required sections |
 |-------|-------|--------|-------------------|
@@ -49,19 +49,23 @@ Spawn 3 agents in a single message using `Agent` with `subagent_type: "researche
 
 Agent prompt template:
 ```
-Focus: {role description}.
+Read <abs>/references/roles/researcher.md first and follow it.
+Role: {structure|dataflow|risks}.
 Target: {target path}.
-Output: {output path}.
+Output label: {output path}.
 Required top-level sections: {from table}.
+Return the report as your final text.
 ```
 
 Wait for all 3 agents to finish before Step 3 — `run_in_background` agents auto-notify on completion. Do not start merging on partial completion.
+
+Write each returned text verbatim to its `.research/.partial/{role}.md` before merging.
 
 ### 3. Merge Results
 
 After all 3 agents complete, read `.partial/` files and merge into `.research/research-{topic}.md`.
 
-**PARTIAL markers.** If any partial file contains `<!-- PARTIAL: {reason} -->` (written by `researcher` per its `## Failure` section), preserve the marker as a `> PARTIAL: {reason}` blockquote at the top of the corresponding section in the merged document. Also append one line to the `## Gotchas & Risks` section: `> PARTIAL research — {role} could not finish ("{reason}"); rerun that role before planning.` Never silently drop the marker — it is the user's signal that the research is incomplete.
+**PARTIAL markers.** If any partial file contains `<!-- PARTIAL: {reason} -->` (the researcher role returns it as its first line), preserve the marker as a `> PARTIAL: {reason}` blockquote at the top of the corresponding section in the merged document. Also append one line to the `## Gotchas & Risks` section: `> PARTIAL research — {role} could not finish ("{reason}"); rerun that role before planning.` Never silently drop the marker — it is the user's signal that the research is incomplete.
 
 Merge into `.research/research-{topic}.md`:
 
@@ -112,13 +116,13 @@ self-review does not count as independent review. Skip consultation for routine
 Q&A or progress updates.
 
 ## Constraints
-- Observation and documentation only. No code modifications during merge. Per-agent rules are enforced by `~/.claude/agents/researcher.md`.
+- Observation and documentation only. No code modifications during merge. Per-worker rules are in `references/roles/researcher.md`.
 - Create `.research/` if missing. Never commit `.research/.partial/`.
 - Only this skill writes the managed research artifact. An orchestrator may invoke it but must not synthesize or rename its output.
 
 ## Gotchas
 
-1. **Background agents can silently fail.** `run_in_background: true` returns before the subagent writes its output. Always verify each `.partial/*.md` exists and is non-empty before merging — if any is missing, re-dispatch that single role rather than merging with a hole.
+1. **Background agents can silently fail.** `run_in_background: true` returns before the subagent finishes. Verify each returned text is non-empty and write it to `.partial/*.md` before merging — if any is missing, re-dispatch that single role rather than merging with a hole.
 2. **Topic slug collisions are active-state conflicts.** Re-running `deep-read src/auth` must stop when `.research/research-auth.md` exists. Finish/archive or explicitly abandon the active workflow before creating replacement research.
 3. **Large targets hit subagent context limits.** For directories over ~50 files, instruct each researcher to stream findings to its output file as it goes, not accumulate in memory. Consider narrowing `Target:` to a subfolder per role if an agent reports truncation.
 4. **Merge drift when partials use different heading levels.** The Required sections in the Step 2 table are enforced — if a partial omits `# Architecture Overview`, the merge mapping breaks silently. Grep each partial for the required headings before merging; if any is missing, re-prompt that one agent with stricter instructions.
@@ -144,7 +148,7 @@ EVAL 2: Merge completeness
 
 EVAL 3: Citation density
   Question: Do >=80% of factual claims in the merged document cite a
-            `path:line` reference (per researcher.md rules)?
+            `path:line` reference (per the researcher role rules)?
   Pass: Citation ratio >= 0.8 on a sample of 20 claims.
   Fail: Ratio below threshold — re-run failing role(s).
 
