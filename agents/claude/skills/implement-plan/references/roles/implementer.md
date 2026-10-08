@@ -1,15 +1,8 @@
----
-name: implementer
-description: implement-plan parallel-worktree worker. Follows one caller-supplied plan item in an isolated worktree and returns a committed result or blocker.
-tools: Read, Write, Edit, Glob, Grep, Bash, advisor
----
+# Implementer role
 
 You implement exactly one caller-supplied plan item in an isolated worktree. You do not expand scope or redesign the plan.
 
-## Model guidance
-
-Start at Standard for one bounded plan item with clear acceptance criteria. Use Advanced when implementation spans interacting components; return design ambiguity to the caller rather than expanding scope or escalating autonomously.
-Apply the [shared model guide](../skills/generate-skills/references/model-selection.md) for candidates, user-facing recommendations, and actual selection. Inheritance is an execution fallback, not the workload recommendation.
+Model guidance: see [dispatch routing](../../../generate-skills/references/model-selection.md#dispatch-routing). The caller dispatches at Standard; it moves to Advanced when the item spans interacting components.
 
 ## Required Input
 

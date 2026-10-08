@@ -85,7 +85,7 @@ For each todo in dependency order:
 1. Derive `{item-slug}` as `{ordinal}-{kebab-summary}` and map its exact paths, tests, criteria, inputs, and outputs.
 2. For behavior work, run the named test and record the expected failure before implementation.
 3. Implement only that item. Follow repository patterns and write `.plans/.blocker-{item-slug}.md` when the plan cannot be executed without a scope decision. A pre-existing bug, performance concern or improvement you notice outside the item stays out of this change, even inside the item's files: if the item cannot work without addressing it, that is a scope decision and takes the blocker route; otherwise record it as a follow-up, one `- <repo-relative path>: <finding>` line in the run's `follow_ups`, which every exit reports.
-4. Run the named focused checks, then launch an independent verifier writing `.plans/.verify-{item-slug}.md`.
+4. Run the named focused checks, then dispatch the verifier: `Agent` with `subagent_type: "Explore"`, `model`/`effort` from [dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing) (Lightweight for a per-item run), and the prompt "Read `<abs>/references/roles/verifier.md` first and follow it. Item: {item-slug}. Changed files: {paths}. Named tests: {commands}." Write the returned text verbatim to `.plans/.verify-{item-slug}.md`.
 5. Require explicit `build:`, `typecheck:`, `lint:`, `tests:`, and `errors:` results. Any applicable FAIL blocks completion.
 6. Mark `[x]` only after fresh PASS and continue. Never begin the next item while the current one is unresolved.
 
@@ -93,7 +93,7 @@ For each todo in dependency order:
 
 Use only when repository policy allows it and independence is proven from the plan interfaces:
 
-1. Launch one implementer per disjoint item in isolated worktrees and require its exact worktree, branch, commit SHA, changed paths, checks, blocker path, and `follow_ups`; add each returned line to the run's `follow_ups`.
+1. Dispatch one implementer per disjoint item (`Agent` with `subagent_type: "general-purpose"`, `isolation: "worktree"`, Standard routing, prompt "Read `<abs>/references/roles/implementer.md` first and follow it." plus the required inputs it lists) and require its exact worktree, branch, commit SHA, changed paths, checks, blocker path, and `follow_ups`; add each returned line to the run's `follow_ups`.
 2. Wait for all already-launched siblings before handling a blocker; never orphan worktrees.
 3. Verify each returned SHA independently in its worktree. Fix and reverify there.
 4. Integrate only the exact verified SHA using the repository-approved method. On conflict, abort and ask the user; never auto-resolve a dependency-classification failure.
@@ -104,7 +104,7 @@ Use only when repository policy allows it and independence is proven from the pl
 Every exit below also reports the run's `follow_ups`, in the `AWAITING_EVALUATION` block layout, so the caller can pass them back on re-entry.
 
 - **Explicit blocker:** show `Problem`, `Attempts`, and `Proposal`; remove the implementation flag; return the blocker to `writing-plans` for a plan revision. Do not redesign scope inline.
-- **Verifier failure:** create `.plans/.debug-{item-slug}.md` through an independent debugger or the inline systematic-debugging invariant. Apply a fix only after root cause is demonstrated, then rerun the same verifier. A root cause that is a pre-existing defect outside the item takes the blocker route from Sequential Execution step 3 instead.
+- **Verifier failure:** rerun the verifier at Advanced routing so its report carries `## Diagnosis`, or apply the inline systematic-debugging invariant. Apply a fix only after root cause is demonstrated, then rerun the verifier at the item's normal routing. A root cause that is a pre-existing defect outside the item takes the blocker route from Sequential Execution step 3 instead.
 - **Scope divergence:** never run destructive checkout/reset over main-checkout work. Show the diff and ask whether to keep or revert it. Mark `(RESET)` only after the approved rollback, remove the flag, and return to `writing-plans`.
 - **Cancellation or failed final verification:** remove the implementation flag and retain source artifacts. Never archive or claim completion.
 
@@ -112,7 +112,7 @@ Every exit below also reports the run's `follow_ups`, in the `AWAITING_EVALUATIO
 
 After all todos are checked:
 
-1. Run one fresh full verifier for the build/test suite and every active acceptance criterion. Write `.plans/.verify-final-{feature}.md`.
+1. Dispatch one fresh verifier at Standard routing with "full verification" and the list of active acceptance criteria; write the returned text to `.plans/.verify-final-{feature}.md`.
 2. On FAIL, follow failure handling and do not claim completion.
 3. If `evaluators` is empty, proceed directly to archive with no final report.
 4. If one or more evaluators were selected, keep the active workflow state and implementation flag, and return exactly:
