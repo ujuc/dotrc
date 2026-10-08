@@ -89,6 +89,7 @@ claude/state
 **/.last-*
 **/*log*
 **/.ponytail*
+claude/ponytail-modes/
 **/.system*
 
 ### Manual backups taken before editing config (e.g. settings.json.bak)
