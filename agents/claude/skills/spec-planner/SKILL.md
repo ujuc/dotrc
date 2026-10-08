@@ -10,7 +10,7 @@ allowed-tools: Read, Write, Glob, Grep, Bash
 
 Classify a product request, clarify its intent, and write the canonical `spec.md` only when the work needs an architectural product specification. Define what to build and why; leave implementation choices to planning and execution stages.
 
-The design discipline here is adapted from Superpowers `brainstorming` at the version pinned in `workflow-hooks contract`. This skill does not invoke that workflow or create `docs/superpowers/specs/` state.
+The design discipline here is adapted from Superpowers `brainstorming`. This skill does not invoke that workflow or create `docs/superpowers/specs/` state.
 
 ## Model guidance
 

@@ -68,10 +68,9 @@ Apply this to every skill created or updated through this workflow.
 
 ### Shared workflow and Superpowers source
 
-Run `workflow-hooks contract` and require a non-empty
-`superpowers.adapted_from.writing_skills` pin. This local skill remains the
+Run `workflow-hooks contract` and retain its JSON. This local skill remains the
 authoring controller: it owns the Rust validator, group catalog, and Waza
-integration. Adapt the pinned Superpowers pressure-testing principles, but do
+integration. Adapt the Superpowers pressure-testing principles, but do
 not hand control to another skill-generation workflow.
 
 When creating or updating a managed workflow skill, compare every artifact
@@ -434,7 +433,7 @@ For team-wide distribution, see `references/distribution-guide.md` — repo chec
 - A failed upstream fetch preserves the cache and check date. Report cached
   evidence as cached, not freshly verified.
 - The first Rust launcher call may compile; explain a noticeable startup pause.
-- Superpowers is a pinned source. Local validation, catalog and managed
+- Superpowers is a source of principles only. Local validation, catalog and managed
   workflow ownership remain with this repository.
 
 ## Eval Criteria

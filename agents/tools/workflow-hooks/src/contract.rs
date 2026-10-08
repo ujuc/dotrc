@@ -71,7 +71,6 @@ pub struct SkillImproverMaintenance {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Superpowers {
-    pub adapted_from: BTreeMap<String, String>,
     pub optional_disciplines: Vec<String>,
     pub excluded_workflow_skills: Vec<String>,
 }
@@ -185,14 +184,6 @@ impl WorkflowContract {
             return Err("maintenance.skill_improver.timestamp must be a safe ~/ path".to_string());
         }
 
-        for pin in ["brainstorming", "writing_plans", "writing_skills"] {
-            let value = self
-                .superpowers
-                .adapted_from
-                .get(pin)
-                .ok_or_else(|| format!("superpowers.adapted_from missing pin: {pin}"))?;
-            require_text(&format!("superpowers.adapted_from.{pin}"), value)?;
-        }
         if self
             .superpowers
             .optional_disciplines
@@ -284,14 +275,6 @@ mod tests {
         let contract = load().expect("embedded workflow contract must be valid");
         assert_eq!(contract.schema_version, 1);
         assert_eq!(contract.artifact("plan").unwrap().writer, "writing-plans");
-        assert_eq!(
-            contract
-                .superpowers
-                .adapted_from
-                .get("writing_skills")
-                .map(String::as_str),
-            Some("6.3.0")
-        );
     }
 
     #[test]

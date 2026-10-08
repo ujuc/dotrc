@@ -60,7 +60,7 @@ Record a target-type policy mismatch as **B.7 — language policy drift** and as
    workflow_bin=${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}
    contract_json=$("$workflow_bin" contract) || exit 1
    ```
-   Validate `maintenance.skill_improver.interval_days`, `maintenance.skill_improver.timestamp`, and every `superpowers.adapted_from` pin. Never hard-code local substitutes when these keys exist. Resolve the timestamp path once here; Phase 6 writes it:
+   Validate `maintenance.skill_improver.interval_days` and `maintenance.skill_improver.timestamp`. Never hard-code local substitutes when these keys exist. Resolve the timestamp path once here; Phase 6 writes it:
    ```bash
    timestamp_path=$(jq -er '.maintenance.skill_improver.timestamp' <<<"$contract_json")
    case "$timestamp_path" in "~/"*) timestamp_path="$HOME/${timestamp_path#\~/}" ;; esac
@@ -72,13 +72,8 @@ Record a target-type policy mismatch as **B.7 — language policy drift** and as
    ```
 3. **Repository resolution**: resolve `repo_root` as `${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents`; verify its `AGENTS.md` and `claude/skills/`. Invocation CWD may be any project.
 4. **Validator path**: confirm `<repo_root>/claude/skills/generate-skills/scripts/validate-skill` exists. Use `repo_root` for every scan and command; do not require or mutate the caller's CWD.
-5. **Superpowers compatibility**: read `<repo_root>/claude/plugins/installed_plugins.json` without modifying it — entries live under `.plugins`, not at the root, and each key holds an array of per-scope installs:
-   ```bash
-   jq -r '.plugins["superpowers@claude-plugins-official"][] | select(.scope=="user") | .version' <file>
-   ```
-   Compare that version with all `superpowers.adapted_from` versions in the contract. If missing or mismatched, emit a non-blocking warning that adapted assumptions need review; do not edit the plugin cache, installed manifest, pins, or skills automatically.
-6. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking.
-7. **Waza availability** (non-blocking): resolve the launcher once and record whether measurement is possible for this run:
+5. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking.
+6. **Waza availability** (non-blocking): resolve the launcher once and record whether measurement is possible for this run:
    ```bash
    waza_run="<repo_root>/claude/skills/waza/scripts/waza-run.sh"
    bash "$waza_run" status
@@ -258,7 +253,7 @@ targets have no suites and are always SKIP. A launcher exit 1 or a missing
   unless their modification is explicitly approved.
 - Missing or invalid `group`: present the eight allowed slugs and obtain the
   user's choice; never infer a group from the name or description.
-- Contract ownership or Superpowers pin drift (B.8): update the approved contract
+- Contract ownership conflicts (B.8): update the approved contract
   and implementation together in a separate workflow.
 - E.1 proposals: evidence supports a draft, never an unattended procedure rewrite.
 - E.2 coverage gaps: route suggestions to `skill-engineer`, which owns triggers.
