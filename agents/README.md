@@ -9,7 +9,7 @@
 | 경로 | 역할 |
 | --- | --- |
 | `workflow-contract.json` | 관리형 산출물·작성자·보관·유지보수·Superpowers 경계 계약 |
-| `claude/` | Claude 전역 설정, 에이전트, 스킬 |
+| `claude/` | Claude 전역 설정, 스킬 |
 | `hooks/` | 공용 워크플로 훅의 셸 계약 테스트 |
 | `tools/workflow-hooks/` | 공용 훅 정책과 Claude/Codex 이벤트 변환을 구현하는 Rust CLI |
 | `amp/` | Amp 전역 설정, 지침, 플러그인 어댑터 (통짜 심링크 원본) |
