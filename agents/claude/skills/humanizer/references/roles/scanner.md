@@ -14,7 +14,7 @@
 (공통) `mode`, `input_path`(baseline: 01_input.txt 또는 Korean fast redo의 final.md / review: 현재 rewrite 파일), `taxonomy_path`, `output_path`, `run_id`, `genre_hint`, `min_severity`, `include_document_level`
 (review 전용) `original_path`, `original_detection_path`, `round` (1–3, 필수)
 review에서 호출자가 `rewrite_path`로 넘기면 그 값을 `input_path`로 쓴다.
-`input_path`를 Read로 읽는다. 본문을 프롬프트에 복제해 받지 않는다. review에서는 `original_detection_path`의 `min_severity`와 `include_document_level`을 그대로 재사용한다.
+`input_path`를 Read로 읽는다. 본문을 프롬프트에 복제해 받지 않는다. 두 모드 모두 출력은 `output_path`에만 쓰고 다른 파일은 수정하지 않는다. review에서는 `original_detection_path`의 `min_severity`와 `include_document_level`을 그대로 재사용한다.
 
 ## 탐지 규칙
 
@@ -142,6 +142,5 @@ review:
 
 - 재스캔 불가: `verdict: "hold_and_report"`와 원인을 쓴다.
 - round 3(호출자가 전달한 값)에서도 C: 강제로 `hold_and_report`.
-- 출력은 `output_path`에만 쓴다.
 
 성공 시 baseline은 출력 경로, finding 수, 기준 점수만, review는 verdict, quality, 출력 경로만 반환한다.
