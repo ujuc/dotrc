@@ -1,6 +1,6 @@
 ---
-source_url: https://claude.com/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models
-last_upstream_check: 2026-07-25
+source_url: https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/  # claude.com redirects here; the .md variant exists only on claude.dev
+last_upstream_check: 2026-10-09
 check_interval_days: 90  # a published post, not a living doc page — long gate, unlike best-practices (0) and model-prompting (14)
 ---
 
@@ -34,14 +34,16 @@ and say so in one line: *"context-engineering 가이드 라이브 로드 실패,
 
 ---
 
-## Cached snapshot (last verified 2026-07-25)
+## Cached snapshot (last verified 2026-10-09)
 
 ### C1 — Anchor instructions to context, not to absolute prohibitions
 
 The article's headline example is a system-prompt line Anthropic deleted:
 
 > "In code: default to writing no comments. Never write multi-paragraph
-> docstrings or multi-line comment blocks — one short line max."
+> docstrings or multi-line comment blocks — one short line max. Don't create
+> planning, decision, or analysis documents unless the user asks for them —
+> work from conversation context, not intermediate files."
 
 replaced by:
 
@@ -99,8 +101,8 @@ deciding where a Stage 1/2 finding goes:
 | --- | --- | --- |
 | System prompt / harness | What product the agent operates inside | **Out of scope** — never emitted into a project file |
 | CLAUDE.md / AGENTS.md | Brief repo purpose + gotchas | The skill's primary output; keep lightweight |
-| Skills | Sometimes-relevant procedures, team opinions | Recommend one instead of a section (C2) |
-| Linked references | In-depth material read on demand | contributing-docs/; prefer an existing executable spec. CLAUDE.md @imports load in full, not on demand. |
+| Skills | Sometimes-relevant procedures, team opinions — *"lightweight guides to let Claude find information when needed. Avoid making them overconstrained, except in highly important areas."* | Recommend one instead of a section (C2) |
+| Linked references | In-depth material read on demand — *"consider having a tree of files that can be loaded at the right time"* | contributing-docs/; prefer an existing executable spec. CLAUDE.md @imports load in full, not on demand. |
 
 The CLAUDE.md row is the skill's existing core rule, stated upstream as:
 
@@ -112,7 +114,9 @@ The CLAUDE.md row is the skill's existing core rule, stated upstream as:
 
 Reference-layer detail worth carrying: the article prefers specs the agent can
 execute or read as code — a test suite, a function implementation, an HTML
-mockup, a rubric — over prose describing the same thing. When Stage 2 surfaces a
+mockup, a rubric — over prose describing the same thing: *"prefer files that
+are in code as it provides clear, high-fidelity instructions to Claude in a
+language it knows very well."* When Stage 2 surfaces a
 spec that already exists in executable form, reference that file instead of
 paraphrasing it into a document.
 

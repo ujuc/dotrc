@@ -1,6 +1,6 @@
 ---
 source_url: https://martinfowler.com/articles/exploring-gen-ai/tdd-in-the-agent-loop.html
-last_upstream_check: 2026-08-14
+last_upstream_check: 2026-10-09
 check_interval_days: 90  # a published article, not a living doc page — same long gate as context-engineering-claude5.md
 ---
 
@@ -20,10 +20,13 @@ Birgitta Böckeler's evaluation (martinfowler.com, *exploring-gen-ai* series)
 found that mandating TDD inside an agent's autonomous loop produced no
 measurable quality gain — Opus-judged rankings favored non-TDD runs, mutation
 scores showed no meaningful difference — at *"at least 3x the tokens"*
-(*"Small: 8.50x, Medium: 2.96x, Large: 4.89x"*). Her conclusion: *"I
-personally have stopped telling my coding agents to write tests first, let
-alone do TDD."* This file carries the one rule that changes what the skill
-emits: **T1**.
+(*"Small: 8.50x, Medium: 2.96x, Large: 4.89x"*; many are cache hits, so
+*"how many times exactly is variable"*). One exception: a TDD run ranked first
+only after she *"strengthened the TDD prompt with a more explicit
+refactor-and-design-review step"*. Her conclusion: *"I personally have stopped
+telling my coding agents to write tests first, let alone do TDD ... until I
+see evals or other strong arguments that convince me otherwise."* This file
+carries the one rule that changes what the skill emits: **T1**.
 
 Consumers: stage3-generator.md (writing), stage4-verifier.md (rejecting),
 update-mode.md (flagging existing docs). T1 behaves like
@@ -37,7 +40,7 @@ On any fetch failure use this snapshot and say so in one line:
 
 ---
 
-## Cached snapshot (last verified 2026-08-14)
+## Cached snapshot (last verified 2026-10-09)
 
 ### T1 — Agent-directed TDD process mandates: reject by default, rewrite as outcome verification
 
@@ -68,9 +71,11 @@ rewrite toward the outcome the team actually wants verified.
   testing"* — a mutation-score bar, not a workflow
 - *"Give the agent access to static code analysis"*
 - Trend metrics: *"keep an eye on the trend of number of files touched per
-  change"*
-- The *"Approved Scenarios approach ... a form of semi-manual testing
-  supported by a bespoke test runner"* for confidence building
+  change"* and of tokens per change; *"run regular reviews of structure and
+  modularity"*
+- The Approved Scenarios approach, *"a form of semi-manual testing that is
+  supported by a bespoke test runner for each application"*, for confidence
+  building
 
 The rewrite must not itself violate W1: never rewrite a TDD mandate into
 self-verification scaffolding ("add a final verification step", "use a

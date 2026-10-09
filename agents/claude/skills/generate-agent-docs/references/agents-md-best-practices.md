@@ -1,6 +1,6 @@
 ---
 source_url: https://agents.md/
-last_upstream_check: 2026-08-22
+last_upstream_check: 2026-10-09
 check_interval_days: 30  # the standard site changes rarely; re-fetch only when stale
 ---
 
@@ -18,7 +18,7 @@ below.
 
 ---
 
-## Cached snapshot (last verified 2026-08-22)
+## Cached snapshot (last verified 2026-10-09)
 
 ### Format: plain markdown, no required fields
 
@@ -27,6 +27,9 @@ below.
 
 - No required fields or rigid structure. This skill defaults to plain Markdown;
   review existing frontmatter before proposing a structural change.
+- The site states no spec version. It is *"stewarded by the Agentic AI
+  Foundation under the Linux Foundation"* and reports adoption by over 60k
+  open-source projects.
 
 ### Recommended content
 
@@ -56,7 +59,8 @@ even though a standard one does not.
 - "Treat AGENTS.md as living documentation" — review obsolete entries as the
   code improves, preserving explicit project policy and authorized scope.
 - Migration: existing docs can be renamed to AGENTS.md with a
-  backward-compatible symlink for the old name.
+  backward-compatible symlink for the old name
+  (`mv AGENT.md AGENTS.md && ln -s AGENTS.md AGENT.md`).
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 source_url: https://code.claude.com/docs/en/best-practices.md
 secondary_source_url: https://code.claude.com/docs/en/memory.md
-last_upstream_check: 2026-09-23
+last_upstream_check: 2026-10-09
 check_interval_days: 0  # 0 = fetch on every run (user preference: always live; the doc changes often). WebFetch caches per-URL for ~15 min, so this is cheap.
 ---
 
@@ -48,7 +48,7 @@ behavior, the AGENTS.md import pattern, and the `.claude/rules/` format live on
 
 ---
 
-## Cached snapshot (last verified 2026-09-23)
+## Cached snapshot (last verified 2026-10-09)
 
 ### ✅ Include / ❌ Exclude (source: best-practices)
 
@@ -60,7 +60,7 @@ behavior, the AGENTS.md import pattern, and the `.claude/rules/` format live on
 | Repository etiquette (branch naming, PR conventions) | Information that changes frequently                |
 | Architectural decisions specific to your project     | Long explanations or tutorials                     |
 | Developer environment quirks (required env vars)     | File-by-file descriptions of the codebase          |
-| Common gotchas or non-obvious behaviors              | Self-evident practices like "write clean code"     |
+| Common gotchas or behaviors that aren't self-evident | Self-evident practices like "write clean code"     |
 
 ### Prune test — the real gate (source: best-practices)
 
@@ -76,10 +76,22 @@ applies broadly. *"For domain knowledge or workflows that are only relevant
 sometimes, use skills instead"* — recommend a skill, not a CLAUDE.md section,
 for sometimes-relevant workflows.
 
+Upstream's add/move triggers: *"Add to it when: Claude makes the same mistake
+a second time"*; *"If an entry is a multi-step procedure or only matters for
+one part of the codebase, move it to a skill or a path-scoped rule instead."*
+Two lines that contradict each other are a defect, not a nuance: *"if two
+instructions contradict each other, Claude may pick one arbitrarily."* Emphasis
+(`IMPORTANT`) works only on a single line: *"If you emphasize many lines, none
+of them stands out."*
+
 ### Size budget: upstream recommendation and local defaults
 
 The upstream memory page recommends targeting under 200 lines per CLAUDE.md
 file. This is guidance, not a parser limit or a mandatory combined ceiling.
+Claude Code warns at startup and in `/status` when one instruction file exceeds
+the recommended length, and again when files each within it add up past a
+combined limit; *"Each CLAUDE.md, rules file, and `@path` import counts as a
+separate file."* A file over 4 MiB is skipped entirely.
 
 Local defaults for this skill:
 - Aim for about 100 combined lines in root CLAUDE.md plus imported AGENTS.md.
@@ -101,7 +113,12 @@ Local defaults for this skill:
 - Relative paths resolve relative to the importing file, not the working
   directory. Recursive imports allowed, maximum depth 4 hops.
 - Import parsing skips code spans and fenced code blocks — wrap a path in
-  backticks (`` `@README` ``) to mention it without importing it.
+  backticks (`` `@README` ``) to mention it without importing it. A quoted
+  path is not imported either; escape spaces with a backslash instead.
+- An import outside the working directory in a project file triggers a
+  one-time approval dialog; user-scope files load it without the dialog.
+- Project-root CLAUDE.md survives compaction; nested CLAUDE.md files and
+  `paths`-scoped rules load again on demand.
 
 ### AGENTS.md — the official cross-agent pattern (source: memory)
 
@@ -114,8 +131,23 @@ in your working directory or above it"*, Claude reads *"Your `CLAUDE.md` files
 only"*.
 
 > Reading `AGENTS.md` directly requires Claude Code v2.1.277 or later. In some
-> sessions, such as those on Amazon Bedrock or with telemetry disabled, Claude
-> can't read `AGENTS.md`, so import it from a `CLAUDE.md` there instead.
+> sessions Claude can't read `AGENTS.md`, so import it from a `CLAUDE.md`
+> there instead.
+
+Sessions that read `CLAUDE.md` only: versions before v2.1.277, the built-in
+`AGENTS.md` plugin disabled via `/plugin`, sometimes the first session after
+upgrading from v2.1.276 or earlier, and before v2.1.281 Amazon Bedrock or
+telemetry-disabled sessions. The **Project instructions** setting (`/config`)
+takes `claude-md-or-agents-md` (default), `claude-md-and-agents-md`,
+`claude-md`, or `managed-only`, and is honored only in user, `--settings`, or
+managed settings.
+
+What counts for the default-read table: `CLAUDE.md`, `.claude/CLAUDE.md`, or
+`CLAUDE.local.md` at or above the working directory (not `~/.claude/CLAUDE.md`,
+managed CLAUDE.md, or `.claude/rules/`). Adding a `CLAUDE.local.md` therefore
+*"stops Claude from reading `AGENTS.md` for you"*. `.claude/AGENTS.md` and
+subdirectory `AGENTS.md` files are read; *"Not read: `AGENTS.local.md`,
+`AGENTS.override.md`, or anything under a `.agents/` directory."*
 
 > Keeping the import never makes Claude read `AGENTS.md` twice, whichever
 > **Project instructions** value you use.
@@ -133,7 +165,13 @@ Use plan mode for changes under `src/billing/`.
 
 - A symlink (`ln -s AGENTS.md CLAUDE.md`) also works when there is no
   Claude-specific content to add. On Windows prefer the `@AGENTS.md` import
-  (symlinks need Administrator/Developer Mode).
+  (symlinks need Administrator/Developer Mode); Edit/Write refuse to write
+  through the link and point at `AGENTS.md`, and git checks a committed symlink
+  out as a plain file unless `core.symlinks` is enabled.
+- **Remove earlier workarounds** (update mode): a CLAUDE.md that tells Claude
+  in words to read AGENTS.md becomes `@AGENTS.md` or is deleted; *"A
+  `SessionStart` hook that prints `AGENTS.md`: remove it. Once Claude reads
+  `AGENTS.md` directly, the hook adds a second copy to the context."*
 - **This skill adopts the import pattern as its default**: AGENTS.md is the
   primary cross-harness project document (Codex and Amp load it natively),
   CLAUDE.md is `@AGENTS.md` + Claude-only additions on top of the import
@@ -153,11 +191,17 @@ Use plan mode for changes under `src/billing/`.
 
 ### `.claude/rules/` format (source: memory)
 
-- Rule files are plain markdown; the only documented frontmatter field is
-  `paths` (a glob array). Rules **without** `paths` load unconditionally at
-  launch, with the same priority as `.claude/CLAUDE.md`.
-- Path-scoped rules trigger when Claude reads files matching the pattern (not
-  on every tool use). Brace expansion is supported (`src/**/*.{ts,tsx}`).
+- Rule files are plain markdown; `paths` (a YAML list or comma-separated
+  string of globs) is the only field Claude Code reads — any other field is
+  ignored without an error, and frontmatter is stripped before loading. Rules
+  **without** `paths` load unconditionally at launch, with the same priority
+  as `.claude/CLAUDE.md`. *"If the YAML between the markers doesn't parse,
+  Claude Code ignores the frontmatter and loads the rule as if it had no
+  `paths`"* — a broken legacy frontmatter silently becomes an always-on rule.
+- A path-scoped rule loads when Claude uses Read, Write, or Edit on a matching
+  file, or views one with a Bash read such as `cat`/`head` on a single file.
+  Brace expansion is supported (`src/**/*.{ts,tsx}`). User-level rules load
+  before project rules; neither overrides the other.
 - `.md` files are discovered recursively; symlinks are supported. A symlink
   whose target is outside the working directory is treated like an external
   import: it loads only after external imports are approved for the project,
@@ -205,7 +249,12 @@ authorized; a concrete test command is not generic self-check scaffolding.
 - `/doctor` (v2.1.206+) proposes trims for a checked-in CLAUDE.md: cuts
   derivable content (directory layouts, dependency lists, architecture
   overviews), keeps pitfalls, rationale, and non-default conventions —
-  complementary to this skill's update mode.
+  complementary to this skill's update mode. `/doctor prompt-audit`
+  (v2.1.283+) audits CLAUDE.md, CLAUDE.local.md, AGENTS.md, rules and skills
+  for *"instructions written for older models, references to files or commands
+  that don't exist, and files that contradict each other"* and proposes edits;
+  it is user-invoked, so this skill consumes its report, never runs it.
+- `/context` confirms which instruction files actually loaded.
 
 ### Over-specified CLAUDE.md — the failure to avoid (source: best-practices)
 

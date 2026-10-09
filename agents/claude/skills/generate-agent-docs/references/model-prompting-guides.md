@@ -40,7 +40,8 @@ Haiku 5.5 — *"Existing Claude Haiku 4.5 prompts should perform well without
 changes"*. Rules below that quote Opus 5, Fable 5 or Sonnet 5 therefore still
 apply to their successors unless a rule says otherwise; Haiku 5.5 inherits from
 Haiku 4.5, which this cache does not quote, so only rules naming Haiku 5.5 apply
-to it. Where a newer guide does not restate a finding, never attribute it to
+to it. Mythos 5.1 and Mythos 5 are mapped upstream onto the Fable 5.1 and
+Fable 5 guides; they are not separate sources. Where a newer guide does not restate a finding, never attribute it to
 Opus 5.5, Fable 5.1, Sonnet 5.5 or Haiku 5.5
 (upstream: *"treat it as measured on that model and re-check it"*).
 
