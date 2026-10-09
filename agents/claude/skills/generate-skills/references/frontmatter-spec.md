@@ -347,7 +347,7 @@ group: planning
 | `build` | 🛠 구현·실행 | Plan execution |
 | `docs` | 📝 문서·커밋 | Commits, CLAUDE.md generation |
 | `writing` | ✍️ 글쓰기 | Prose humanization, prompt crafting |
-| `llm` | 🤖 외부 LLM | Calls to non-Claude models (Gemma, Codex) |
+| `llm` | 🤖 외부 LLM | Calls to non-Claude models (Codex) |
 | `meta` | 🧪 메타·관리 | Skill management, session lifecycle |
 
 - `validate-skill` fails when this field is missing or holds a value outside the 7 slugs.

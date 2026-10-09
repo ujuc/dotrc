@@ -2,7 +2,7 @@
 name: commit
 description: "한국어 Conventional Commits 규칙에 따라 git 커밋을 생성하고, 요청 시 push까지 수행한다. /commit, 커밋해줘, 변경사항 커밋, 커밋하고 푸시해줘, commit, commit and push 요청 시 사용한다. 프로젝트에 자체 commit 스킬이 있으면 그쪽에 위임한다."
 group: docs
-allowed-tools: Bash(git rev-parse:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git -C:*), Bash(git submodule:*), Bash(printf:*), Bash(wc:*), Bash(bash:*), Read, Edit, Glob, Agent
+allowed-tools: Bash(git rev-parse:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git -C:*), Bash(git submodule:*), Bash(printf:*), Bash(wc:*), Read, Edit, Glob, Agent
 ---
 
 # Git Commit
@@ -39,7 +39,7 @@ rules without editing this user-level skill.
      current session; reading frontmatter does not expand tool permissions.
      Do **not** also run the user-level
      `Format`, `Procedure`, `Doc updates`, `Push`, `Summary`, `Maintenance`,
-     `Gemma delegation`, or `Humanizer pass` sections; the project skill
+     or `Humanizer pass` sections; the project skill
      is intentionally taking over the entire workflow.
    - The user's original arguments (file paths, push hint, humanizer
      hint, ...) remain in conversation context, so the project skill
@@ -205,12 +205,6 @@ must stay aligned:
 - Breaking change notation (`<type>!:` or `BREAKING CHANGE:` footer)
 
 Stage both files together in the same commit so the two views never diverge.
-
-## Gemma delegation (optional)
-
-For very large changes (`git diff --cached --shortstat` ≥ 500 lines, ≥ 10 files changed, or the user gives a hint like `큰 diff` / `요약해서 커밋` / `gemma로 정리`), the body draft can be pre-summarized by Gemma through local Ollama. The subject and final body remain Claude-authored and reviewed.
-
-Call pattern, fallback rules, and result usage follow [Gemma delegation](references/gemma-delegation.md). Pass the Gemma summary to the drafter prompt as a `Summary:` line; it never replaces the drafter.
 
 ## Humanizer pass (optional)
 

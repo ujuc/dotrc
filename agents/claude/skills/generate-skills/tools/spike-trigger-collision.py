@@ -39,7 +39,6 @@ CASES: list[tuple[str, set[str]]] = [
     ("스킬 테스트해줘", {"waza"}),  # collision probe vs skill-improver
     ("이 글 AI 티 제거해줘", {"humanizer"}),
     ("이 프롬프트 리뷰해줘", {"prompting-assist"}),
-    ("gemma로 번역해", {"gemma"}),
     ("코드베이스 조사해줘", {"deep-read"}),
     ("이 함수 뭐하는지 설명해줘", set()),  # deep-read explicitly excludes this
     ("오늘 날씨 어때?", set()),

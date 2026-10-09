@@ -22,8 +22,8 @@ execution does not need the coordinator's full reasoning capacity.
 ## Selection and escalation
 
 1. Honor task-specific user model choices, privacy/local-only constraints, budget,
-   and required tools or input modalities. Keep explicit evaluation targets and
-   specialized backends such as Gemma separate from the orchestrating model.
+   and required tools or input modalities. Keep explicit evaluation targets
+   separate from the orchestrating model.
 2. Classify ambiguity, dependency breadth, consequences of a wrong decision, and
    how directly the result can be verified. Use each skill's recommendation as a
    starting point, then adjust for the actual input.

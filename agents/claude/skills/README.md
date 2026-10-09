@@ -11,10 +11,9 @@
 | `build` | 🛠 구현·실행 | `implement-plan` |
 | `docs` | 📝 문서·커밋 | `commit`, `generate-agent-docs` |
 | `writing` | ✍️ 글쓰기 | `humanizer`, `prompting-assist` |
-| `llm` | 🤖 외부 LLM | `gemma`, `codex:codex-cli-runtime`, `codex:codex-result-handling`, `codex:gpt-5-4-prompting` |
+| `llm` | 🤖 외부 LLM | `codex:codex-cli-runtime`, `codex:codex-result-handling`, `codex:gpt-5-4-prompting` |
 | `meta` | 🧪 메타·관리 | `generate-skills`, `skill-improver`, `autoresearch`, `waza` |
 
-`gemma`는 로컬 Ollama의 `gemma4:26b-mlx` 모델만 기본 실행 경로로 사용한다.
 `waza`는 Microsoft waza CLI의 유일한 호출 지점(`waza/scripts/waza-run.sh`)이며 `generate-skills`·`skill-improver`가 스킬 평가·회귀 확인에 사용한다.
 
 ## 모델 선택
@@ -37,7 +36,7 @@
 실제 모델은 사용자 선택과 호스트의 지원·허용 범위 안에서 지정한다. 전환할 수
 없으면 권장 모델과 현재 실행 상태를 구분해 알린다. `model` 생략에 따른 상속은
 실행상의 대체 수단이며 역할별 추천을 대신하지 않는다. 독립 검토는 별도 문맥으로
-확보하고, Gemma·Waza처럼 특정 모델을 실행 대상으로 삼는 설정은 별도로 유지한다.
+확보하고, Waza처럼 특정 모델을 실행 대상으로 삼는 설정은 별도로 유지한다.
 
 ## 워크플로우 색인
 
