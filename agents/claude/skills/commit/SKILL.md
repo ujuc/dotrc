@@ -2,7 +2,7 @@
 name: commit
 description: "한국어 Conventional Commits 규칙에 따라 git 커밋을 생성하고, 요청 시 push까지 수행한다. /commit, 커밋해줘, 변경사항 커밋, 커밋하고 푸시해줘, commit, commit and push 요청 시 사용한다. 프로젝트에 자체 commit 스킬이 있으면 그쪽에 위임한다."
 group: docs
-allowed-tools: Bash(git rev-parse:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git -C:*), Bash(git submodule:*), Bash(printf:*), Bash(wc:*), Bash(bash:*), Read, Edit, Glob
+allowed-tools: Bash(git rev-parse:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git -C:*), Bash(git submodule:*), Bash(printf:*), Bash(wc:*), Bash(bash:*), Read, Edit, Glob, Agent
 ---
 
 # Git Commit
@@ -11,9 +11,12 @@ Generate commits per the project's Korean Conventional Commits convention.
 
 ## Model guidance
 
-Use Standard for the commit workflow; Lightweight suits only isolated message formatting from an already reviewed diff.
-Recommend Advanced when mixed changes, submodule relationships, or unclear scope require semantic judgment; keep permission gates unchanged.
-Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
+The message draft is delegated by diff size, per [dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing):
+after staging, read `git diff --cached --shortstat`. ≤2 files and ≤40 changed
+lines → Lightweight (`haiku`/`medium`); otherwise Standard (`sonnet`/`medium`).
+Mixed or unclear scope is a staging question (Step 4), not a model question.
+Tell the user the chosen profile in one line. The commit itself, the 50/72
+checks, and doc updates stay in this skill.
 
 ## Project skill override
 
@@ -89,9 +92,28 @@ rules without editing this user-level skill.
 4. **Staging scope**: if the user passed file paths, stage those. If no hints were given and `git status` shows a coherent set (all changes belong to the same logical unit), proceed. If unrelated changes are mixed in — or the intended subset is ambiguous — ask before staging.
 5. Stage only the intended files with `git add`.
 6. If structural changes are detected, run an incremental doc update (see "Doc updates" below).
-7. **Draft the message, then self-check before committing.** Apply all three checks in order — failing any one means rewrite the draft:
+7. **Draft the message, then self-check before committing.**
 
-   1. **Subject length ≤ 50 characters** (including `<type>(<scope>):` prefix). Verify with `printf '%s' '<subject>' | wc -m` — Unicode character count, not bytes. `echo -n` is unreliable across shells; always use `printf '%s'`.
+   Dispatch the drafter: `Agent` with `subagent_type: "Explore"`, `model`/`effort`
+   from the routing above, and this prompt:
+
+   ```
+   Draft a git commit message for the staged diff. Run `git diff --cached` and
+   `git log --oneline -10` yourself. Rules: subject `<type>(<scope>): <한국어 제목 -다>`,
+   ≤50 characters including the prefix, no trailing period; scopes: {scopes from
+   project instructions}; body wrapped at 72 columns with Why/How lines when the
+   type is feat or fix, otherwise optional. Return exactly:
+   subject: <one line>
+   body:
+   <lines or empty>
+   ```
+
+   Treat the returned draft as the candidate for the checks below; rewrite it
+   yourself if any check fails.
+
+   Apply all three checks in order — failing any one means rewrite the draft:
+
+   1. **Subject length ≤ 50 characters** (including `<type>(<scope>):` prefix). Verify with `printf '%s' '<subject>' | wc -m` — Unicode character count, not bytes. `echo -n` is unreliable across shells; always use `printf '%s'`. For the body, `printf '%s\n' "<body>" | awk 'length > 72' | wc -l` must print `0`.
    2. **Body required?** Follow the policy below. If the change requires a body and the draft has none, add a Why / How block. If the change is trivial and the draft has a body, consider removing it.
    3. **Completion test**: read `이 커밋이 적용되면 [제목]` aloud. If it does not describe the resulting change naturally, rewrite the subject.
 
