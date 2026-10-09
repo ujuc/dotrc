@@ -169,3 +169,5 @@ fi
 if [[ -f ${XDG_CONFIG_HOME}/op/plugins.sh ]]; then
     source ${XDG_CONFIG_HOME}/op/plugins.sh
 fi
+
+export PATH="$HOME/.local/bin:$PATH"
