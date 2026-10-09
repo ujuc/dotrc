@@ -48,7 +48,6 @@
     "defaultMode": "auto",
     "disableBypassPermissionsMode": "disable"
   },
-  "model": "fable",
   "hooks": {
     "SessionStart": [
       {
