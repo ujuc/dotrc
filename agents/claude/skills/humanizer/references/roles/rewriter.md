@@ -1,26 +1,17 @@
----
-name: humanize-rewriter
-description: 탐지·리뷰 JSON의 finding에 근거해 의미와 확실성을 보존한 최소 한국어 윤문을 만들고 버전별 rewrite·diff 파일을 생성한다. humanizer strict·redo 모드에서 사용한다.
-tools: Read, Write
----
-
-<!-- Adapted from epoko77-ai/im-not-ai (MIT). See ~/.claude/skills/humanizer/LICENSE-THIRD-PARTY. -->
+<!-- Adapted from epoko77-ai/im-not-ai (MIT). See ../../LICENSE-THIRD-PARTY. -->
 
 # Korean Style Rewriter
 
 탐지된 AI 문체 구간만 국소 수정한다. 표현은 바꿀 수 있지만 정보, 주장, 태도, 확실성은 더하거나 빼지 않는다.
 
-## 모델 선택
-
-의미·태도·확실성을 보존하는 윤문에는 Advanced를 권장한다. 명시된 표현의 한정 치환은 Standard, 결과에 중대한 영향을 주는 의미 충돌이 해결되지 않을 때만 Frontier를 검토한다.
-모델 후보, 사용자 안내 문구, 실제 전환 조건은 [공통 선택 가이드](../skills/generate-skills/references/model-selection.md)를 따른다. 상속은 실행상의 대안이며 작업 수준에 대한 권고를 대신하지 않는다.
+모델 선택: [디스패치 라우팅](../../../generate-skills/references/model-selection.md#dispatch-routing)을 따른다. 호출자는 rewriter를 Advanced로 보낸다.
 
 ## 입력
 
 호출자가 매 round마다 절대 경로를 제공한다.
 
-- `original_path`: immutable `01_input.txt`, used for fidelity and cumulative change rate in every round
-- `source_path`: round 1 uses `original_path`; later rounds use the prior candidate
+- `original_path`: 변하지 않는 `01_input.txt`. 모든 round에서 충실도와 누적 변경률의 기준이다
+- `source_path`: round 1은 `original_path`, 이후 round는 직전 후보
 - `detection_path`: `02_detection.json`
 - `playbook_path`: `playbook-ko.md`
 - `rewrite_path`: 이번 round의 `03_rewrite.md`, `_v2.md`, 또는 `_v3.md`
@@ -39,7 +30,7 @@ tools: Read, Write
 - A-17 처방은 원문에서 확정할 수 있는 성분만 복원한다. 담당자·원인·범위·결과를 추정해 만들면 unresolved에 기록하고 적용하지 않는다.
 - finding 또는 review target이 없는 구간은 수정하지 않는다.
 - 장르, register, 헤딩·불릿 구조는 유지한다. 포맷 변경이 finding 자체일 때만 최소 조정한다.
-- Compute Levenshtein distance between the candidate and `original_path`; over 30% is a warning and over 50% stops and rolls back. Per-round distance is informational only.
+- 후보와 `original_path` 사이의 Levenshtein 거리를 계산한다. 30% 초과는 경고, 50% 초과는 중단 후 롤백이다. round별 거리는 참고용이다.
 
 완결문을 명사형 종결로 축약하지 않는다. D-1·I-1처럼 종결을 직결하는 처방도 서술어와 종결어미는 남긴다("검토했습니다" → "검토."는 A-16을 새로 만든다). 내용 없는 담화 표지나 중복 수사는 삭제할 수 있다. 평가·권고·확실성처럼 명제에 영향을 주는 표현은 삭제할 수 없다. hedging은 다양화할 수 있지만 강하게 단언해서는 안 된다.
 
@@ -78,7 +69,7 @@ tools: Read, Write
 - span 불일치: 건너뛰고 unresolved에 기록한다.
 - suggested fix가 의미를 바꿈: 적용하지 않고 unresolved에 기록한다.
 - 수치·고유명사·인용·보호 문자열(코드·경로·식별자·오류 메시지) 변화 또는 시제 주입 감지: 해당 edit 즉시 롤백한다.
-- 50% 초과: 마지막 안전본을 supplied rewrite path에 쓰고 경고를 기록한다.
+- 50% 초과: 마지막 안전본을 전달받은 rewrite path에 쓰고 경고를 기록한다.
 
 ## 반환
 

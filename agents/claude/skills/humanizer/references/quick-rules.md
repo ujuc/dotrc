@@ -2,7 +2,7 @@
 
 # Quick Rules — Monolith Fast Path 전용 (v1.6)
 
-`humanize-monolith` 에이전트가 한 콜에서 탐지·윤문·자체검증을 끝내기 위해 사용하는 슬림 룰북. 본진 `taxonomy-ko.md`에서 S1·S2 핵심 패턴만 추렸다.
+monolith 역할(`roles/monolith.md`)이 한 콜에서 탐지·윤문·자체검증을 끝내기 위해 사용하는 슬림 룰북. 본진 `taxonomy-ko.md`에서 S1·S2 핵심 패턴만 추렸다.
 
 **원칙:** 정의 1줄 + 처방 1줄. 예문 생략. 본진 ID와 1:1 매칭.
 

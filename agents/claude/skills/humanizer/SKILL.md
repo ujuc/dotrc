@@ -19,7 +19,7 @@ allowed-tools:
 # Humanizer — AI-Writing-Trace Removal Orchestrator
 
 Finds AI-generated traces in Korean/English text and rewrites them into natural human prose.
-Dual track: Fast mode (default, single call) and Strict mode (4-agent pipeline).
+Dual track: Fast mode (default, single call) and Strict mode (3-agent pipeline).
 
 ## Model guidance
 
@@ -38,7 +38,7 @@ humanizer v2.0 — {fast|strict|redo} 모드 / run_id: {YYYY-MM-DD-NNN} / 언어
 **Mode priority:**
 
 1. User says `redo`, or "특정 카테고리만 다시" / "이 문단만" / "2차 윤문" → **redo**
-2. User says `--strict`, or "정밀 모드" / "4인 파이프라인" → **strict**
+2. User says `--strict`, or "정밀 모드" / "3인 파이프라인" → **strict**
 3. Korean input over 8,000 chars → **strict auto-upgrade** (one-line notice to the user)
 4. `en` or `mixed` input → **fast forced** (strict is Korean-only)
 5. Otherwise → **fast (default)**
@@ -69,7 +69,7 @@ humanizer v2.0 — {fast|strict|redo} 모드 / run_id: {YYYY-MM-DD-NNN} / 언어
 
 ### Korean input
 
-Call the `humanize-monolith` agent once via the `Agent` tool.
+Dispatch the monolith role once: `Agent` with `subagent_type: "general-purpose"`, Advanced routing from [dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing), prompt "Read `<abs>/references/roles/monolith.md` first and follow it." plus the arguments below.
 
 Call arguments:
 ```
@@ -110,7 +110,7 @@ After writing the artifacts, return these four briefly to the user:
 1. One-line status: `완료. 변경률 X% / 등급 Y / 자체검증 N/6 통과`
 2. The rewritten body (final.md content as a markdown block)
 3. summary.md's key tables (metrics + category detection + self-check)
-4. If the grade is B or lower, note "정밀 검증이 필요하면 `--strict`로 4인 파이프라인 실행 가능"
+4. If the grade is B or lower, note "정밀 검증이 필요하면 `--strict`로 3인 파이프라인 실행 가능"
 
 **Default wall-clock target:** ≤ 5,000 chars in 2–3 min, 8,000 chars in 5–7 min.
 
@@ -121,22 +121,22 @@ After writing the artifacts, return these four briefly to the user:
 
 ### Phase A — Detection
 
-Call `humanize-detector` with absolute `input_path`, `taxonomy_path`, and `output_path` plus `run_id`, `genre_hint`, `min_severity`, and `include_document_level: true`. Resolve `taxonomy_path` to [the Korean taxonomy](references/taxonomy-ko.md). It writes `02_detection.json`.
+Dispatch the scanner role in `baseline` mode (`general-purpose`, Standard routing, prompt "Read `<abs>/references/roles/scanner.md` first and follow it. mode: baseline") with absolute `input_path`, `taxonomy_path`, `output_path` plus `run_id`, `genre_hint`, `min_severity`, `include_document_level: true`. Resolve `taxonomy_path` to [the Korean taxonomy](references/taxonomy-ko.md). It writes `02_detection.json`.
 
 ### Phase B — Rewrite (up to 3 loops)
 
-Call `humanize-rewriter` with absolute `original_path`, `source_path`, `detection_path`, `playbook_path`, `rewrite_path`, and `diff_path`. Resolve `playbook_path` to [the Korean playbook](references/playbook-ko.md). `original_path` is always `01_input.txt`; round 1 also uses it as source, while later rounds use the prior candidate as source and receive the current review path. Use matching versions: `03_rewrite.md` + `03_rewrite_diff.json`, then `_v2`, then `_v3`. Change rate is always final candidate versus `original_path`.
+Dispatch the rewriter role (`general-purpose`, Advanced routing, prompt "Read `<abs>/references/roles/rewriter.md` first and follow it.") with absolute `original_path`, `source_path`, `detection_path`, `playbook_path`, `rewrite_path`, and `diff_path`. Resolve `playbook_path` to [the Korean playbook](references/playbook-ko.md). `original_path` is always `01_input.txt`; round 1 also uses it as source, while later rounds use the prior candidate as source and receive the current review path. Use matching versions: `03_rewrite.md` + `03_rewrite_diff.json`, then `_v2`, then `_v3`. Change rate is always final candidate versus `original_path`.
 
 ### Phase C — Parallel verification (agent team)
 
 Call the `Agent` tool twice in parallel with the current round's absolute paths:
 
-- `humanize-fidelity-auditor` (`original_path`, `rewrite_path`, `diff_path`, `output_path`) → `04_fidelity_audit{_vN}.json` (13-item semantic equivalence)
-- `humanize-naturalness-reviewer` (`original_path`, `original_detection_path`, `rewrite_path`, `taxonomy_path`, `output_path`) → `05_naturalness_review{_vN}.json` (residual + over-polish)
+- fidelity-auditor role (`general-purpose`, Advanced; "Read `<abs>/references/roles/fidelity-auditor.md` first and follow it.") with `original_path`, `rewrite_path`, `diff_path`, `output_path` → `04_fidelity_audit{_vN}.json` (13-item semantic equivalence)
+- scanner role in `review` mode (`general-purpose`, Advanced; "Read `<abs>/references/roles/scanner.md` first and follow it. mode: review") with `original_path`, `original_detection_path`, `rewrite_path`, `taxonomy_path`, `output_path`, and `round` (1–3) → `05_naturalness_review{_vN}.json` (residual + over-polish)
 
 ### Phase C verdict
 
-Precedence: any `hold_and_report` from either verifier stops first; otherwise fidelity `fail`, then `conditional_pass`, then the naturalness result.
+Precedence: any `hold_and_report` from either verifier stops first; otherwise fidelity `fail`, then `conditional_pass`, then the naturalness result. Pass `round` = 1, 2, or 3 to the scanner review call; it never infers the round from the file suffix.
 
 | fidelity | naturalness | verdict | follow-up |
 |---|---|---|---|
@@ -159,7 +159,7 @@ On a 2nd/3rd rewrite, split versions as `03_rewrite_v2.md` / `03_rewrite_v3.md`.
 
 ## Redo mode (`/humanizer redo [instruction]`)
 
-Identify the most recent humanizer state run (notice and exit if none). For English/mixed runs, redo the current `final.md` through the inline fast track and re-run its checks. For Korean fast runs lacking strict artifacts, scan `final.md` into `02_detection.json` before Phase B and use `final.md` as the prior candidate; fidelity still compares the new candidate with immutable `01_input.txt`.
+Identify the most recent humanizer state run (notice and exit if none). For English/mixed runs, redo the current `final.md` through the inline fast track and re-run its checks. For Korean fast runs lacking strict artifacts, run the scanner role in `baseline` mode on `final.md` into `02_detection.json` before Phase B and use `final.md` as the prior candidate; fidelity still compares the new candidate with immutable `01_input.txt`.
 
 **Parse the user instruction.** In the table, “targeted rerun” means strict Phase B for Korean and the equivalent inline fast edit/check for English or mixed text.
 
@@ -173,7 +173,7 @@ Identify the most recent humanizer state run (notice and exit if none). For Engl
 | "장르 바꿔서 X" | new run_id + changed genre_hint, restart from Phase A |
 | "이 변경 되돌려줘" | apply the matching fidelity-auditor rollback directive |
 
-Re-call `humanize-rewriter` + re-verify. Output is `03_rewrite_v2.md` (or v3).
+Re-dispatch the rewriter role + re-verify. Output is `03_rewrite_v2.md` (or v3).
 **Max round 3.** Beyond that, `hold_and_report` for human review.
 
 ## Safety net (all modes)
@@ -274,27 +274,25 @@ Read by language and mode:
 `patterns-ko.md` has a K↔A-J mapping table at the top for cross-referencing IDs between the
 fast and strict tracks.
 
-## Sub-agents (used by both strict and fast)
+## Worker roles
 
-- `humanize-monolith` — Fast Korean single call
-- `humanize-detector` — Strict Phase A
-- `humanize-rewriter` — Strict Phase B (also used by redo)
-- `humanize-fidelity-auditor` — Strict Phase C-1
-- `humanize-naturalness-reviewer` — Strict Phase C-2
+- `references/roles/monolith.md` — Fast Korean
+- `references/roles/scanner.md` — Strict Phase A baseline, Phase C-2 review, redo rescan
+- `references/roles/rewriter.md` — Strict Phase B, redo
+- `references/roles/fidelity-auditor.md` — Strict Phase C-1
 
-These live in `~/.config/dotrc/agents/claude/agents/` (= `~/.claude/agents/`).
+All four dispatch as `general-purpose` with routing from model-selection.md; they write only their own output files.
 
-When a harness cannot invoke these named Claude agents, use the inline fast
-path and load the same language references directly. Strict mode requires the
-named agents; report that limitation and fall back to fast mode only with the
+When a harness cannot dispatch these roles, use the inline fast
+path and load the same language references directly. Strict mode requires a host `Agent` tool; report that limitation and fall back to fast mode only with the
 user's approval.
 
 ## Consistency check
 
-Safety-net values (4-agent count, 30/50% guard, grade A–D thresholds, 6-item self-check, max 3
-rewrite loops) are duplicated across this file, `quick-rules.md`, and the sub-agent definitions
+Safety-net values (3-agent count, 30/50% guard, grade A–D thresholds, 6-item self-check, max 3
+rewrite loops) are duplicated across this file, `quick-rules.md`, and the role files
 by design. Run `scripts/check-consistency` after changing any of them to catch drift.
 
 ## Acknowledgements
 
-The strict pipeline, fast monolith, rulebooks, and sub-agent definitions are adapted from [`epoko77-ai/im-not-ai`](https://github.com/epoko77-ai/im-not-ai) v1.5 under the MIT License. Taxonomy patterns `A-16` and `A-17`, the protected-token expansion, and the tense-injection guard are adapted from [`snflkd/fluent-korean`](https://github.com/snflkd/fluent-korean), also MIT. See [`LICENSE-THIRD-PARTY`](./LICENSE-THIRD-PARTY) for provenance and local changes.
+The strict pipeline, fast monolith, rulebooks, and role files are adapted from [`epoko77-ai/im-not-ai`](https://github.com/epoko77-ai/im-not-ai) v1.5 under the MIT License. Taxonomy patterns `A-16` and `A-17`, the protected-token expansion, and the tense-injection guard are adapted from [`snflkd/fluent-korean`](https://github.com/snflkd/fluent-korean), also MIT. See [`LICENSE-THIRD-PARTY`](./LICENSE-THIRD-PARTY) for provenance and local changes.

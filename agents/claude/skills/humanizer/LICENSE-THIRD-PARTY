@@ -14,15 +14,14 @@ under the MIT License:
 - `references/quick-rules.md` (from `quick-rules.md`)
 - `references/taxonomy-ko.md` (from `ai-tell-taxonomy.md`)
 - `references/playbook-ko.md` (from `rewriting-playbook.md`)
-- `~/.config/dotrc/agents/claude/agents/humanize-monolith.md`
-- `~/.config/dotrc/agents/claude/agents/humanize-detector.md` (from `ai-tell-detector.md`)
-- `~/.config/dotrc/agents/claude/agents/humanize-rewriter.md` (from `korean-style-rewriter.md`)
-- `~/.config/dotrc/agents/claude/agents/humanize-fidelity-auditor.md` (from `content-fidelity-auditor.md`)
-- `~/.config/dotrc/agents/claude/agents/humanize-naturalness-reviewer.md` (from `naturalness-reviewer.md`)
+- `references/roles/monolith.md`
+- `references/roles/scanner.md` (merged from `ai-tell-detector.md` and `naturalness-reviewer.md`)
+- `references/roles/rewriter.md` (from `korean-style-rewriter.md`)
+- `references/roles/fidelity-auditor.md` (from `content-fidelity-auditor.md`)
 
 Modifications applied: file names changed to use `humanize-` prefix,
 internal cross-references updated accordingly, and reference paths
-pointed to this skill's `references/` directory.
+pointed to this skill's `references/` directory; the detector and naturalness reviewer were merged into one scanner role with `baseline` and `review` modes.
 
 ### MIT License
 
@@ -64,7 +63,7 @@ the MIT License:
   patterns, the protected-token expansion (code, identifiers, commands, paths,
   API fields, logs, error messages, commit messages), and the tense-injection
   guard
-- `SKILL.md` and the `humanize-*` sub-agent definitions — the same protected-token
+- `SKILL.md` and the `references/roles/*.md` role files — the same protected-token
   and tense-injection clauses
 
 Modifications applied: the upstream "always complete the sentence" norm was

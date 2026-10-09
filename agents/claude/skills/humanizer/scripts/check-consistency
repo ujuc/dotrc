@@ -7,9 +7,9 @@
 
 Safety-net values (pipeline agent count, 30/50% over-polish guard, 6-item self-check,
 grade A-D thresholds, max rewrite loops) are duplicated across SKILL.md, quick-rules.md,
-and the sub-agent definitions by design: each runs in an isolated context, so a local copy
+and the worker role files by design: each runs in an isolated context, so a local copy
 raises compliance. The duplication's risk is drift -- a one-place edit (the historical
-"5인->4인" mismatch) silently desyncs the others. This script asserts the values stay aligned.
+"5인->4인->3인" sequence) silently desyncs the others. This script asserts the values stay aligned.
 
 A regex can miss a reworded value, so a missing match is reported as a FAIL (never a silent
 pass). Exit 0 = all checks pass. Exit 1 = at least one mismatch. Exit 2 = a target file is missing.
@@ -23,16 +23,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent          # skills/humanizer
 REFS = ROOT / "references"
-AGENTS = ROOT.parent.parent / "agents"                 # claude/agents
+ROLES = ROOT / "references" / "roles"
 
 SKILL = ROOT / "SKILL.md"
 QUICK = REFS / "quick-rules.md"
 TAXONOMY = REFS / "taxonomy-ko.md"
-MONOLITH = AGENTS / "humanize-monolith.md"
-REWRITER = AGENTS / "humanize-rewriter.md"
-NATURAL = AGENTS / "humanize-naturalness-reviewer.md"
-DETECTOR = AGENTS / "humanize-detector.md"
-FIDELITY = AGENTS / "humanize-fidelity-auditor.md"
+MONOLITH = ROLES / "monolith.md"
+REWRITER = ROLES / "rewriter.md"
+SCANNER = ROLES / "scanner.md"
+FIDELITY = ROLES / "fidelity-auditor.md"
 
 
 def load(path: Path) -> list[str] | None:
@@ -47,8 +46,8 @@ def has(lines: list[str], pattern: str) -> bool:
     return any(rx.search(ln) for ln in lines)
 
 
-FILES = {p: load(p) for p in (SKILL, QUICK, TAXONOMY, MONOLITH, REWRITER, NATURAL,
-                              DETECTOR, FIDELITY)}
+FILES = {p: load(p) for p in (SKILL, QUICK, TAXONOMY, MONOLITH, REWRITER, SCANNER,
+                              FIDELITY)}
 
 missing = [str(p) for p, lines in FILES.items() if lines is None]
 if missing:
@@ -63,15 +62,15 @@ def check(name: str, target: Path, ok: bool, detail: str = "") -> None:
     results.append((f"{name} [{target.name}]", ok, detail))
 
 
-# 1. pipeline agent count == 4, with no stray "5" pipeline outside the historical note.
+# 1. pipeline agent count == 3, with no stray "4"/"5" pipeline outside the historical note.
 skill_lines = FILES[SKILL]
-has_four = has(skill_lines, r"4(인|-agent)")
+has_four = has(skill_lines, r"3(인|-agent)")
 stray_five = [
     ln.strip()
     for ln in skill_lines
-    if re.search(r"5(인|-agent)", ln) and "→" not in ln and "->" not in ln
+    if re.search(r"[45](인|-agent)", ln) and "→" not in ln and "->" not in ln
 ]
-check("pipeline-count=4", SKILL, has_four and not stray_five,
+check("pipeline-count=3", SKILL, has_four and not stray_five,
       f"four_found={has_four} stray_five={stray_five}")
 
 # 2. over-polish guard: both 30 and 50 present.
@@ -85,12 +84,12 @@ for p in (SKILL, QUICK, MONOLITH):
     check("self-check=6", p, has(lines, r"(6\s*항|6-item|6개|6/6|^\s*6\.)"))
 
 # 4. max rewrite loops == 3.
-for p in (SKILL, REWRITER, NATURAL):
+for p in (SKILL, REWRITER, SCANNER):
     lines = FILES[p]
     check("max-loops=3", p, has(lines, r"(3회|3차|round 3|3 loops?|최대 3|3 ?rounds?)"))
 
 # 5. grade scale A-D: all four defined (bold ID form).
-for p in (SKILL, QUICK, NATURAL):
+for p in (SKILL, QUICK, SCANNER):
     lines = FILES[p]
     check("grade-scale A-D", p, all(has(lines, rf"\*\*{g}\*\*") for g in "ABCD"))
 
@@ -106,11 +105,11 @@ for p in (SKILL, QUICK, MONOLITH, REWRITER, FIDELITY):
     check("tense-injection-guard", p, has(FILES[p], r"지연 가능성"))
 
 # 8. Protected tokens include code-adjacent strings (paths, identifiers, commit messages).
-for p in (SKILL, QUICK, MONOLITH, REWRITER, DETECTOR, FIDELITY):
+for p in (SKILL, QUICK, MONOLITH, REWRITER, SCANNER, FIDELITY):
     check("protected-code-strings", p, has(FILES[p], r"(커밋 메시지|commit messages)"))
 
 # 9. Reverse guard: brevity prescriptions must not manufacture a noun-phrase ending.
-for p in (SKILL, QUICK, MONOLITH, REWRITER, NATURAL):
+for p in (SKILL, QUICK, MONOLITH, REWRITER, SCANNER):
     check("noun-ending-reverse-guard", p, has(FILES[p], r"명사형 종결"))
 
 failed = [r for r in results if not r[1]]
