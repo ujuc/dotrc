@@ -183,7 +183,7 @@ Run the target `{runs}` times with the same `{inputs}` and pinned `{exec}`, noti
 
 ### 4-5. Keep or Discard
 
-Compare against the **current baseline** (the latest KEEP or `baseline` row; experiment 0 initially) only when this experiment ran on the model and effort of the latest `baseline` row. If either changed, revert the mutation, log the experiment as `discard` noting the change, re-run the reverted target `{runs}` times, and log that as a new `baseline` row with the new model and effort; it becomes the current baseline. That row takes the next experiment number, gets a `baseline` changelog entry, and counts toward neither `{budget}` nor the 95% streak. Otherwise:
+Compare against the **current baseline** (the latest KEEP or `baseline` row; experiment 0 initially) only when this experiment ran on the model and effort of the latest `baseline` row. If either changed, revert the mutation, log the experiment as `discard` noting the change, re-run the reverted target `{runs}` times, and log that as a new `baseline` row with the new model and effort; it becomes the current baseline. Do the same after any change to `{evals}`: scores from different eval sets are not comparable. That row takes the next experiment number, gets a `baseline` changelog entry, and counts toward neither `{budget}` nor the 95% streak. Otherwise:
 
 - **Score improved** → KEEP. The mutation is now the new baseline.
 - **Score unchanged** → KEEP only when every eval outcome is unchanged and the target is smaller; otherwise DISCARD.
