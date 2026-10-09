@@ -98,7 +98,6 @@
     "superpowers@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": false,
-    "ecc@ecc": false,
     "typescript-lsp@claude-plugins-official": false,
     "pyright-lsp@claude-plugins-official": false,
     "explanatory-output-style@claude-plugins-official": false,
@@ -117,13 +116,6 @@
         "source": "github",
         "repo": "anthropics/claude-plugins-official"
       }
-    },
-    "ecc": {
-      "source": {
-        "source": "git",
-        "url": "https://github.com/affaan-m/ECC.git"
-      },
-      "autoUpdate": true
     },
     "ponytail": {
       "source": {
