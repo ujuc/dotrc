@@ -6,12 +6,17 @@ all writes. An existing file is a baseline regardless of its author or origin.
 
 ## U1 — Audit selected targets
 
-1. Retain original contents of every selected existing file for preservation
-   checks. Record absent files and unresolved import dependencies.
+1. Retain original contents of every selected existing file in the
+   conversation for preservation checks; never write a copy to disk. Produce
+   diffs with `git diff` for tracked files, otherwise with process
+   substitution (`diff -u <(printf '%s' "$original") path`). Record absent
+   files and unresolved import dependencies.
 2. Inventory section headings, sizes, shared/Claude-only content, imports and
    supporting references. Inspect dependencies read-only even when unselected.
 3. Detect shared instructions in CLAUDE.md that belong in AGENTS.md, duplicate
-   rules, stale facts supported by repository evidence, and broken references.
+   rules, stale facts supported by repository evidence, broken references, and
+   pre-direct-read workarounds (a prose "read AGENTS.md" line or a SessionStart
+   hook printing it; claude-code-best-practices.md AGENTS.md section).
 4. Present a compact table: path, exists/missing, shared/Claude-only role, proposed
    change, evidence. Do not treat unfamiliar structure as proof of drift.
 5. If no selected files exist, use creation rules when generation is already
@@ -62,7 +67,8 @@ Write in dependency order:
 4. Selected Claude-specific .claude/rules/ files.
 
 Use the active harness's editing tool for surgical changes. For each patch,
-retain before/after content and authorized scope. Move shared clauses into
+retain before/after content and authorized scope in the conversation, not in
+a backup file. Move shared clauses into
 AGENTS.md before replacing their original CLAUDE.md location with the import;
 preserve all unrelated bytes. If a needed destination is outside explicit
 scope, present that dependency before altering either file.
