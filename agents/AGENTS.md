@@ -16,7 +16,7 @@
 - Add `.gitignore` entries when tools create new runtime files under `claude/`.
 - `claude/mcp.json` is empty by default; configure MCP through the Claude Code UI, which writes to `~/.claude.json`.
 - `rules/AGENTS.md` is shared by Claude, Amp, and Codex. Keep it self-contained, harness-neutral, and under 8 KB. Sync its Agent Identity with `rules/SOUL.md`.
-- Repository-root `.claude/<type>/` is project-local; `agents/claude/<type>/` is user-global. Put reusable agents and skills under `agents/claude/`.
+- Repository-root `.claude/<type>/` is project-local; `agents/claude/<type>/` is user-global. Put reusable skills under `agents/claude/`; worker roles live in the owning skill's `references/roles/`.
 - Amp loads `~/.claude/skills/` directly, and the Pi extension contributes the same path. Do not duplicate portable skills under harness directories.
 
 ## Managed Workflow
