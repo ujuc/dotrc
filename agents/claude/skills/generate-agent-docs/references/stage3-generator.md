@@ -2,26 +2,16 @@
 
 ## Execution and evidence
 
-Use the capability mapping in SKILL.md. One writer handles selected files;
-fresh-context delegation is preferred when available. On hosts without it,
-the orchestrator writes directly and reports the missing independent role.
+Use the capability mapping in SKILL.md. One writer handles selected files:
+dispatch the writer role (`references/roles/writer.md`) as `general-purpose`
+at Advanced routing with the prompt "Read `<abs>/references/roles/writer.md`
+first and follow it." followed by the inputs that file lists. On hosts without
+delegation, the orchestrator reads the same role file, writes directly and
+reports the missing independent role.
 
-Provide the writer with the following inputs:
-
-```text
-Selected files and authorized changes:
-Original contents (existing files):
-Confirmed project facts with source paths:
-User decisions and preserved exceptions:
-Effective upstream guidance, local defaults, and source status:
-```
-
-The writer reads this file, claude-code-best-practices.md,
-model-prompting-guides.md, context-engineering-claude5.md and tdd-agent-loop.md.
-Read agents-md-best-practices.md for shared targets, entry-router-guidelines.md
-only for requested governance, and SOUL.md only if identity content is requested.
-The static identity seed is optional inspiration, not a requirement to copy
-persona claims into project documentation.
+The role file names the rulebooks the writer reads; this file holds the
+per-file rules. The static identity seed is optional inspiration, not a
+requirement to copy persona claims into project documentation.
 
 Create only authorized missing files. Use update-mode.md for existing ones.
 Shared supporting documents precede AGENTS.md; AGENTS.md precedes any CLAUDE.md

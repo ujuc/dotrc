@@ -1,8 +1,8 @@
 # Stage 1: Project Analyzer
 
-> Defines how 3 parallel Explore agents analyze a target project. Explore agents
-> are read-only (no Write/Edit tool) — findings return as each agent's final
-> message, which the orchestrator receives as the Agent tool result.
+> Defines how the orchestrator dispatches the explorer role
+> (references/roles/explorer.md) up to four times and merges the results. The
+> role is read-only — findings return as each agent's final message.
 > Tier 2 reference — loaded during Stage 1 execution.
 
 ---
@@ -40,113 +40,33 @@ For simple projects, read files directly and proceed to the Merge Protocol secti
 
 ## Agent Definitions
 
-Spawn all three agents **in one message** with `run_in_background: true`. They
-are fully independent read-only tasks.
+Dispatch the explorer role (`references/roles/explorer.md`) once per focus,
+all **in one message** with `subagent_type: "Explore"`,
+`run_in_background: true`, and `model`/`effort` from
+[dispatch routing](../../generate-skills/references/model-selection.md#dispatch-routing):
+Standard by default, Lightweight only for literal inventory, Advanced for
+cross-package relationships or conflicting instructions. Resolve supported,
+permitted host model IDs; never pass capability levels as identifiers.
+Disclose unavailable switching and use the shared guide's fallback.
 
-Use SKILL.md's model guidance: Standard for bounded exploration, Lightweight
-only for literal inventory, and Advanced for cross-package relationships or
-conflicting instructions. Resolve supported, permitted host model IDs; never
-pass capability levels as identifiers. Disclose unavailable switching and use
-the shared guide's fallback rather than assuming every role should inherit.
-
-**Collection rule**: the `Explore` agent type has no Write/Edit tool — never
-instruct these agents to write files. Each returns its findings as its final
-message; the orchestrator collects them from the Agent tool results (use
-`TaskOutput` for background runs). If an agent dies or returns nothing, note
-the gap and continue with what exists.
-
-### Agent 1: config-explorer
-
-| Parameter       | Value                              |
-| --------------- | ---------------------------------- |
-| subagent_type   | Explore                            |
-| run_in_background | true                             |
-| description     | Detect project config files        |
-
-**Skip condition**: Project has 2 or fewer config files visible from a single glob.
-
-**Prompt template**:
+Prompt template:
 
 ```
-Explore the project at {target_path} and find every package, build, test,
-lint, and format configuration file, for whatever ecosystems are present.
-
-For each file record its path and the fields that matter downstream: scripts,
-dependency count, test command, entry point. Summarize — never paste raw
-file contents.
-
-Return your findings as your final message, raw markdown, no preamble:
-- a table of config files with their key fields
-- the detected build / test / lint commands
-- notes on anything unusual about the setup
+Read <abs>/references/roles/explorer.md first and follow it.
+Focus: {config|structure|docs}.
+Target: {target_path}.
 ```
 
----
+| Focus | Skip condition |
+| --- | --- |
+| `config` | 2 or fewer config files visible from a single glob |
+| `structure` | Flat single-package repository with no workspace or submodule indicators |
+| `docs` | No documentation files (CLAUDE.md, AGENTS.md, .cursor/rules/, CONTRIBUTING.md) and no CI config detected in the initial glob |
 
-### Agent 2: structure-explorer
-
-| Parameter       | Value                              |
-| --------------- | ---------------------------------- |
-| subagent_type   | Explore                            |
-| run_in_background | true                             |
-| description     | Analyze repository structure       |
-
-**Skip condition**: Flat single-package repository with no workspace or submodule indicators.
-
-**Prompt template**:
-
-```
-Analyze the repository structure at {target_path}. Observe patterns from names
-and the top-level layout — do not recursively read every file.
-
-Determine:
-1. Structure type: monorepo / single-package / hybrid / config-only. Monorepo
-   signals: a `workspaces` field (package.json, pnpm-workspace.yaml), or
-   `packages/`/`apps/` directories whose children carry their own package files
-2. Submodules: parse `.gitmodules` for paths and remote URLs, and infer from
-   each remote whether it is an independently maintained repository
-3. Nested package managers: subdirectories with their own package file
-4. Directory tree, top 2 levels only, with each major directory's apparent purpose
-
-Return your findings as your final message, raw markdown, no preamble: the
-structure type; a table of independent units with path, type, and tech stack;
-the annotated tree; a submodule table with path, remote URL, and whether it is
-independent; notes on anything unusual about the layout.
-```
-
----
-
-### Agent 3: docs-explorer
-
-| Parameter       | Value                              |
-| --------------- | ---------------------------------- |
-| subagent_type   | Explore                            |
-| run_in_background | true                             |
-| description     | Scan documentation and CI          |
-
-**Skip condition**: No documentation files (CLAUDE.md, AGENTS.md, .cursor/rules/, CONTRIBUTING.md) and no CI config detected in initial glob.
-
-**Prompt template**:
-
-```
-Scan documentation and CI configuration at {target_path}. One-line summary per
-file — never include full contents.
-
-Look for:
-1. Existing agent config, including the less obvious locations: CLAUDE.md
-   (root and every nested path), AGENTS.md, `.cursor/rules/*.mdc`,
-   `.github/copilot-instructions.md`
-2. Contributing docs: CONTRIBUTING.md, contributing-docs/, docs/
-3. CI/CD config — extract the test, build, and deploy commands it actually runs
-4. For every CLAUDE.md and AGENTS.md found: its line count and section headings
-
-Return your findings as your final message, raw markdown, no preamble: a table
-of agent-config files with line count and section headings; a table of
-contributing docs with one-line summaries; a table of CI pipelines with their
-test / build / deploy commands; notes on anything unusual — especially
-contradictions between two agent-config files, or sections that look
-deprecated.
-```
+**Collection rule**: the role is read-only and returns its findings as its
+final message; the orchestrator collects them from the Agent tool result or
+its completion notification. If an agent dies or returns nothing, note the gap
+and continue with what exists.
 
 ---
 
@@ -158,29 +78,15 @@ deprecated.
 
 **Skip condition (broad)**: Stage 1 results are sufficient, project is small or medium, or user response arrives quickly.
 
-| Parameter       | Value                              |
-| --------------- | ---------------------------------- |
-| subagent_type   | Explore                            |
-| run_in_background | true                             |
-| description     | Deep project analysis              |
-
-**Prompt template**:
+Same role, `Focus: deep`, Advanced routing:
 
 ```
-Deep analysis of {target_path} based on Stage 1 gaps.
-
-Address these specific open questions:
+Read <abs>/references/roles/explorer.md first and follow it.
+Focus: deep.
+Target: {target_path}.
+Gaps:
 1. {specific_gap_1} — e.g., "Determine relationship between packages/core and packages/cli"
 2. {specific_gap_2} — e.g., "Find external service dependencies (DB connections, API calls)"
-3. Cross-package dependencies: which packages import or depend on which others
-4. Non-obvious patterns: custom build steps, code generation, unusual testing patterns
-
-Cite file:line wherever relevant — never reproduce raw file contents.
-
-Return your findings as your final message, raw markdown, no preamble: one
-section per gap with its resolution; a cross-package dependency table (from,
-to, nature of the dependency); a list of non-obvious patterns with file:line
-citations.
 ```
 
 ---
@@ -191,8 +97,8 @@ After all launched agents complete, execute the following steps before advancing
 
 ### Step 1: Collect Findings
 
-Gather each launched agent's final message from its Agent tool result
-(`TaskOutput` for background runs):
+Gather each launched agent's final message from its Agent tool result or
+completion notification:
 
 - config-explorer findings
 - structure-explorer findings

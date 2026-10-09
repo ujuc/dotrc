@@ -3,7 +3,7 @@ name: generate-agent-docs
 description: "Claude·Codex 공통 AGENTS.md, Claude 전용 CLAUDE.md, .claude/rules, contributing-docs 등 에이전트 문서를 생성·갱신한다. CLAUDE.md 업데이트, AGENTS.md 갱신, 에이전트 문서 생성 요청에 사용한다. README·API 문서·CHANGELOG는 제외. (구 명칭 generate-claude-md)"
 when_to_use: "에이전트 문서(AGENTS.md, CLAUDE.md, nested CLAUDE.md, .claude/rules, contributing-docs)를 만들거나 고칠 때. 트리거: '/generate-agent-docs', 'generate-agent-docs', 'CLAUDE.md 업데이트', 'CLAUDE.md 만들어줘', 'AGENTS.md 갱신', 'AGENTS.md 생성해줘', '에이전트 문서 갱신', 'rules 생성', 'contributing-docs 추가', 'update CLAUDE.md', 'create AGENTS.md', 'refresh AGENTS.md'. 커밋 워크플로 안의 문서 갱신 단계는 commit 스킬이 처리한다."
 group: docs
-allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch TaskOutput advisor Bash(workflow-hooks:*)
+allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch advisor Bash(workflow-hooks:*)
 ---
 
 # Agent Docs Generator — Orchestrator
@@ -24,6 +24,11 @@ not claim Pi receives project instructions unless its host integration does.
 Use Advanced for instruction synthesis and semantic review; Standard suits bounded updates and repository discovery, while Lightweight suits literal inventory only.
 Recommend Frontier for unresolved conflicts across many instruction layers after Advanced review.
 Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
+When dispatching through `Agent`, resolve the profile to the `model`/`effort`
+arguments in [dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing):
+The explorer role defaults to Standard `Explore`, the writer role is
+Advanced `general-purpose`, and the verifier (Advanced) and blind-reviewer
+(Standard) roles are read-only `Explore`.
 
 ## Active harness capabilities
 
@@ -36,7 +41,7 @@ nonexistent tool or unsupported model alias.
 | Read/search/edit | Read, Glob, Grep, Edit, Write | Native file tools or shell reads and patch edits |
 | Fetch sources | ToolSearch then deferred WebFetch | Available web tool; try equivalent official HTML URL if markdown MIME fails |
 | Clarify intent | AskUserQuestion | Native user-input tool or ordinary interactive question |
-| Independent roles | Agent + TaskOutput | Fresh-context subagents with supplied inputs; otherwise direct work with independence marked unavailable |
+| Independent roles | Agent (background by default; the result arrives as a completion notification) | Fresh-context subagents with supplied inputs; otherwise direct work with independence marked unavailable |
 | Advisor | advisor() | Available independent reviewer; if absent, record skipped consultation and unresolved evidence |
 | Model selection | Role-based recommendation | Apply Model guidance; resolve actual IDs through the host and retain the session when switching is unavailable or not permitted |
 
@@ -58,10 +63,15 @@ Execute stages strictly in order. Update mode swaps in U1–U3
 | Stage | Purpose | Executed by | Reference |
 |-------|---------|-------------|-----------|
 | 0 | Live-fetch guidance, route generate/update, pick targets | Orchestrator | this file |
-| 1 | Analyze project; classify discoverable vs undiscoverable | 3 Explore agents (complex) or direct reads (simple); update adds U1 audit | references/stage1-analyzer.md |
+| 1 | Analyze project; classify discoverable vs undiscoverable | explorer role ×3 (`Explore`, complex) or direct reads (simple); update adds U1 audit | references/stage1-analyzer.md |
 | 2 | Interview user on unresolved items | Orchestrator via AskUserQuestion; update adds U2 drift report | this file + references/update-mode.md |
-| 3 | Write files | 1 general-purpose agent; update mode: U3 surgical edits by orchestrator | references/stage3-generator.md |
-| 4 | Verify: evidence checklist → bounded repair → selected blind review → final check | Independent roles when available | references/stage4-verifier.md |
+| 3 | Write files | writer role (`general-purpose`); update mode: U3 surgical edits by orchestrator | references/stage3-generator.md |
+| 4 | Verify: evidence checklist → bounded repair → selected blind review → final check | verifier and blind-reviewer roles (`Explore`) when available | references/stage4-verifier.md |
+
+Worker instructions live in references/roles/ (explorer, writer, verifier,
+blind-reviewer). Every dispatch prompt begins with "Read
+`<abs>/references/roles/<role>.md` first and follow it."; the stage files hold
+the orchestrator's side.
 
 Three reference files cut across Stages 3–4, constraining every documented
 instruction while Stage 4 rejects the lines that violate them:
@@ -193,8 +203,8 @@ Include orchestration policy only when the project's actual work needs it.
 
 ## Stage 1: Project Analysis
 
-**Reference**: references/stage1-analyzer.md (complexity criteria, agent
-prompt templates, merge protocol).
+**Reference**: references/stage1-analyzer.md (complexity criteria, dispatch
+template, merge protocol) and references/roles/explorer.md.
 
 Detect package/build/test/lint config, repository structure
 (monorepo/submodule), documentation/CI layout, and existing `.claude/rules/`
@@ -202,10 +212,10 @@ in the target directory.
 
 - Apply the [Stage 1 complexity criteria](references/stage1-analyzer.md#complexity-assessment).
   **Complex project** →
-  spawn 3 Explore agents in one message: config-explorer,
-  structure-explorer, docs-explorer. Explore agents are **read-only** — each
-  returns findings as its final message; collect from Agent tool results
-  (TaskOutput for background runs).
+  dispatch the explorer role three times in one message (`Focus:` config,
+  structure, docs). The role is **read-only** — each returns findings as its
+  final message; collect them from the Agent tool result or its completion
+  notification.
 - **Simple project** → read directly, no subagents.
 
 Merge findings, classify each as discoverable vs undiscoverable, separate
@@ -252,13 +262,13 @@ mode surfaces 10+ drift items.
 
 ## Stage 3: Generation
 
-**Reference**: references/stage3-generator.md (dispatch prompt template,
-per-file rules A–E, common writing rules).
+**Reference**: references/stage3-generator.md (per-file rules A–E, common
+writing rules) and references/roles/writer.md (dispatch inputs, boundaries).
 
-Use one writer via the capability mapping and the reference's dispatch inputs.
-Provide effective guidance, confirmed facts, prior decisions, selected targets
-and original contents. Use direct writing only when delegation is unavailable,
-and report that limitation.
+Dispatch the writer role with the inputs it lists: effective guidance,
+confirmed facts, prior decisions, selected targets and original contents. Use
+direct writing only when delegation is unavailable, and report that
+limitation.
 
 **5 possible targets**: root CLAUDE.md, AGENTS.md, contributing-docs/,
 nested CLAUDE.md, `.claude/rules/`. Generate only the applicable ones.
@@ -269,10 +279,11 @@ before the CLAUDE.md that imports it. Do not regenerate existing files.
 
 ## Stage 4: Verification
 
-Follow references/stage4-verifier.md as the single owner of the checklist,
-bounded repair loop, blind-review inputs and final status rules.
+Follow references/stage4-verifier.md for the bounded repair loop, blind-review
+inputs and final status rules; references/roles/verifier.md owns the checklist
+and references/roles/blind-reviewer.md the blind rubric.
 
-Provide the checklist verifier with originals/diffs, selected scope, confirmed
+Provide the verifier role with originals/diffs, selected scope, confirmed
 facts, prior decisions and exceptions, effective guidance, final paths and
 ordered writes. Missing required evidence is UNVERIFIED, not PASS.
 
@@ -311,7 +322,7 @@ instructions.
 | Use the cached best-practices without saying so | Announce the fallback in one line |
 | Give the blind Reviewer anything beyond the generated files | Generated file contents only |
 | Expand an update beyond existing authorization | Present the new scope or destructive change; reuse prior approval for unchanged scope (U3) |
-| Tell a Stage 1 Explore agent to write a file | Explore is read-only — findings return as final messages |
+| Tell the explorer, verifier or blind-reviewer role to write a file | They are read-only `Explore` roles — findings return as final text |
 | Add generic self-check scaffolding | Apply W1; preserve concrete team test gates and recommend automation without erasing policy |
 | Emit "read X, Y, Z before every edit" or a blanket "always ask before" rule | Route each document by situation and scope approval to destructive or out-of-scope actions (agents-md-best-practices.md A1, A3); keep explicit team safety boundaries |
 | Emit a TDD or test-first process mandate aimed at the agent's own loop | Rewrite as outcome-based verification (tdd-agent-loop.md T1) — keep it only as one of T1's Reconciliation survivors, e.g. a team decision confirmed in Stage 2 |
@@ -331,12 +342,13 @@ case is discovered.
    typing, but the question flow itself stays in the main agent.
 2. **references/SOUL.md is a static seed copy, not the live identity file.**
    The live identity is `~/.config/dotrc/agents/rules/SOUL.md` (last synced
-   2026-07-19). The bundled copy keeps generation reproducible across
+   2026-10-09, from the English Agent Identity in `agents/rules/AGENTS.md`). The bundled copy keeps generation reproducible across
    environments — do not substitute the live file at runtime; re-sync it
    deliberately during skill updates when the live identity has changed.
 3. **Blind Reviewer independence is the whole point.** If Phase 1/2 output or
    Stage 1/2 context leaks into the Reviewer prompt, the review becomes
-   confirmation and the FAIL filter loses its value.
+   confirmation and the FAIL filter loses its value. The role file receives
+   file names and contents only.
 4. **Model selection follows role needs and host capabilities.** Apply Model
    guidance; use only supported, permitted choices or disclose the fallback.
    Missing advisor or independent roles must be reported, never fabricated.
