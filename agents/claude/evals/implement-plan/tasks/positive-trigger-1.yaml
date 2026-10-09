@@ -1,15 +1,15 @@
 id: positive-trigger-001
 name: Positive Trigger 1
-description: Decision-only probe; the evaluation handoff status comes from SKILL.md.
+description: Decision-only probe; the post-verification archive step comes from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Every todo is checked, the final verifier passed, and two independent evaluators were selected for this run. Do not run tools or write files. What exact status does implement-plan return now, and does it archive?"
+  prompt: "Every todo is checked and the final verifier passed. Do not run tools or write files. What does implement-plan do next, and which workflow-hooks subcommand does it run?"
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: awaits-evaluation
+    name: archives
     config:
       regex_match:
-        - "AWAITING_EVALUATION"
+        - "archive"

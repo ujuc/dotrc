@@ -9,10 +9,6 @@ const REQUIRED_ARTIFACTS: &[&str] = &[
     "contract",
     "research",
     "plan",
-    "qa_report",
-    "design_report",
-    "evaluation_report",
-    "handoff",
 ];
 const REQUIRED_TRANSIENT: &[&str] = &[
     "implementation_flag",
@@ -27,7 +23,6 @@ const REQUIRED_ARCHIVE: &[&str] = &[
     "contract",
     "research_directory",
     "plan_directory",
-    "evaluation_report",
 ];
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -239,7 +234,7 @@ fn validate_relative(name: &str, value: &str) -> Result<(), String> {
 }
 
 fn validate_tokens(name: &str, value: &str) -> Result<(), String> {
-    let remainder = value.replace("{feature}", "").replace("{round}", "");
+    let remainder = value.replace("{feature}", "");
     if remainder.contains('{') || remainder.contains('}') {
         Err(format!(
             "{name} contains an unsupported template token: {value}"
@@ -250,7 +245,7 @@ fn validate_tokens(name: &str, value: &str) -> Result<(), String> {
 }
 
 fn template_matches(template: &str, value: &str) -> bool {
-    let pattern = template.replace("{feature}", "*").replace("{round}", "*");
+    let pattern = template.replace("{feature}", "*");
     wildcard_matches(pattern.as_bytes(), value.as_bytes())
 }
 
@@ -295,9 +290,9 @@ mod tests {
     }
 
     #[test]
-    fn templates_match_feature_and_round() {
+    fn templates_match_plan_pattern() {
         let contract = load().unwrap();
-        assert!(contract.matches_artifact("evaluation_report", ".plans/.evaluation-auth-r2.md"));
-        assert!(!contract.matches_artifact("evaluation_report", ".plans/.qa-auth-r2.md"));
+        assert!(contract.matches_artifact("plan", ".plans/plan-auth.md"));
+        assert!(!contract.matches_artifact("plan", ".plans/.verify-auth.md"));
     }
 }

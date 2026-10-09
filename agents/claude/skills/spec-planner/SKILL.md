@@ -71,7 +71,7 @@ Do not inflate spike or bounded work merely to create an artifact.
 
 ## Handoff
 
-An approved architectural `spec.md` feeds `sprint-contract-negotiator`. This skill does not write a sprint contract, research file, implementation plan, evaluator report, or code.
+An approved architectural `spec.md` feeds `sprint-contract-negotiator`. This skill does not write a sprint contract, research file, implementation plan, or code.
 
 ## Eval Criteria
 

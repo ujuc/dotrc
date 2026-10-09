@@ -47,7 +47,7 @@ description: What this skill does. When to use it.
 
 > **Portability.** Only `name`, `description`, `license`, `compatibility`, `metadata`, and `allowed-tools` belong to the Agent Skills standard. Every other field here — including `when_to_use`, `argument-hint`, `model`, `context`, and this repository's `group` — is Claude Code-only and is a **hard error**, not an ignored key, on claude.ai uploads (including enabling a personal skill for your claude.ai account), the Skills API, and `package_skill.py`. See [Portability outside Claude Code](#portability-outside-claude-code).
 
-> **Local extension (this repository):** every SKILL.md MUST also include a `group` field — one of 8 fixed slugs. `validate-skill` fails when it is missing or invalid, and the catalog table in `skills/README.md` mirrors it. See the [`group`](#group) section below.
+> **Local extension (this repository):** every SKILL.md MUST also include a `group` field — one of 7 fixed slugs. `validate-skill` fails when it is missing or invalid, and the catalog table in `skills/README.md` mirrors it. See the [`group`](#group) section below.
 
 ### `name`
 
@@ -334,7 +334,7 @@ compatibility: Requires ripgrep and network access to api.example.com
 
 > **Local extension** — required by this repository, not the upstream spec.
 
-Group slug used by the catalog table in `skills/README.md`. Every SKILL.md must declare exactly one of the 8 fixed slugs below.
+Group slug used by the catalog table in `skills/README.md`. Every SKILL.md must declare exactly one of the 7 fixed slugs below.
 
 ```yaml
 group: planning
@@ -344,14 +344,13 @@ group: planning
 |------|----------|----------|
 | `planning` | 🧭 기획·스펙 | Spec writing, sprint contracts |
 | `analysis` | 📐 분석·계획 | Codebase reading |
-| `build` | 🛠 구현·실행 | Plan execution, multi-agent orchestration |
-| `verify` | ✅ 검증·QA | Functional / design QA |
+| `build` | 🛠 구현·실행 | Plan execution |
 | `docs` | 📝 문서·커밋 | Commits, CLAUDE.md generation |
 | `writing` | ✍️ 글쓰기 | Prose humanization, prompt crafting |
 | `llm` | 🤖 외부 LLM | Calls to non-Claude models (Gemma, Codex) |
 | `meta` | 🧪 메타·관리 | Skill management, session lifecycle |
 
-- `validate-skill` fails when this field is missing or holds a value outside the 8 slugs.
+- `validate-skill` fails when this field is missing or holds a value outside the 7 slugs.
 - The slug list is defined in `tools/skill-core/src/rules.rs::ALLOWED_GROUPS`. Any change there must be reflected in this section and in `skills/README.md`.
 - Do NOT auto-fix a missing `group` field — `skill-improver` reports it as manual because guessing from directory name or description risks wrong placement.
 
@@ -453,4 +452,4 @@ After writing frontmatter, verify. Items marked **(manual)** are author-verified
 - [ ] If `compatibility` is set: a string of ≤ 500 characters — **(manual)**
 - [ ] If `metadata` is set: a flat map of string keys to string values — **(manual)**
 - [ ] If the skill is destined for claude.ai / the Skills API: frontmatter is restricted to the six spec fields — **(manual)**
-- [ ] `group` field is present and equals one of `planning`, `analysis`, `build`, `verify`, `docs`, `writing`, `llm`, `meta` (local-required)
+- [ ] `group` field is present and equals one of `planning`, `analysis`, `build`, `docs`, `writing`, `llm`, `meta` (local-required)

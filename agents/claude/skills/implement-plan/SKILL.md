@@ -22,11 +22,7 @@ Apply the [shared selection guide](../generate-skills/references/model-selection
 The caller may supply:
 
 - `{feature}` or an exact active plan path;
-- `evaluators`: the selected independent evaluators, empty for standalone execution;
-- `final_report`: an exact synthesized PASS report path, only when finalizing an evaluator-bearing run;
 - `follow_ups`: out-of-item follow-ups an earlier invocation of this feature returned, passed back on every re-entry; absent means None. Seed the run's `follow_ups` with them unchanged; they are not fix targets.
-
-An orchestrator passes these values but does not execute plan items or archive artifacts itself.
 
 ## Contract and State Preflight
 
@@ -40,17 +36,6 @@ An orchestrator passes these values but does not execute plan items or archive a
 5. Resolve one plan: use the requested feature, accept one glob match, ask when multiple plans exist, and stop when none exists.
 6. Parse every unchecked todo, exact affected/test path, `Consumes`/`Produces` dependency, acceptance criterion, exclusion, `## Workflow Sources`, verification command, and reference implementation. Verify every declared source exists at its canonical contract path before editing code.
 7. Read all applicable repository instructions, especially Git policy. Repository rules override generic branch, worktree, commit, merge, and PR advice.
-
-## Finalization-Only Entry
-
-When `final_report` is supplied, do not reimplement completed items:
-
-1. Require all todos checked, `.plans/.verify-final-{feature}.md` present with no FAIL, and no implementation change newer than that final verifier.
-2. Read the exact report. Require an overall PASS, exact references to selected QA/design source reports, and PASS for every active acceptance criterion. A score cannot override a failing criterion or severity.
-3. Confirm the report matches `.plans/.evaluation-{feature}-r{round}.md` and the same selected feature.
-4. Call the archive procedure in [Completion and Archive](#completion-and-archive) with `final_report` and return, reporting the supplied `follow_ups` as the out-of-item follow-ups. Do not run evaluator work or create a second synthesis.
-
-If the report is FAIL, do not enter finalization. Return its findings and the supplied `follow_ups` to normal implementation, remove the stale final verifier before changes, and require a fresh full verifier before another evaluation round.
 
 ## Execution Mode
 
@@ -76,7 +61,7 @@ The contract lists optional Superpowers disciplines. They provide engineering ch
 - Use requesting/receiving review only for an independent code-review pass. Review feedback returns here for execution.
 - Use parallel dispatch only for domains with disjoint files, interfaces, and state.
 
-Inside this managed pipeline, do not invoke Superpowers `subagent-driven-development`, `executing-plans`, `using-git-worktrees` when repository policy forbids it, or `finishing-a-development-branch`. Superpowers `writing-plans` owns the plan under the [managed plan requirements](../multi-agent-orchestrator/references/communication-protocol.md#managed-plan-requirements); this skill owns execution state.
+Inside this managed pipeline, do not invoke Superpowers `subagent-driven-development`, `executing-plans`, `using-git-worktrees` when repository policy forbids it, or `finishing-a-development-branch`. Superpowers `writing-plans` owns the plan under the [managed plan format](references/managed-plan.md); this skill owns execution state.
 
 ## Sequential Execution
 
@@ -101,36 +86,24 @@ Use only when repository policy allows it and independence is proven from the pl
 
 ## Blockers and Failures
 
-Every exit below also reports the run's `follow_ups`, in the `AWAITING_EVALUATION` block layout, so the caller can pass them back on re-entry.
+Every exit below also reports the run's `follow_ups` as `follow_ups: None` or one indented `- <repo-relative path>: <finding>` line each, so the caller can pass them back on re-entry.
 
 - **Explicit blocker:** show `Problem`, `Attempts`, and `Proposal`; remove the implementation flag; return the blocker to `writing-plans` for a plan revision. Do not redesign scope inline.
 - **Verifier failure:** rerun the verifier at Advanced routing so its report carries `## Diagnosis`, or apply the inline systematic-debugging invariant. Apply a fix only after root cause is demonstrated, then rerun the verifier at the item's normal routing. A root cause that is a pre-existing defect outside the item takes the blocker route from Sequential Execution step 3 instead.
 - **Scope divergence:** never run destructive checkout/reset over main-checkout work. Show the diff and ask whether to keep or revert it. Mark `(RESET)` only after the approved rollback, remove the flag, and return to `writing-plans`.
 - **Cancellation or failed final verification:** remove the implementation flag and retain source artifacts. Never archive or claim completion.
 
-## Full Verification and Evaluation Handoff
+## Full Verification
 
 After all todos are checked:
 
 1. Dispatch one fresh verifier with the same `Explore` call and role-file prompt as Sequential Execution step 4, at Standard routing, with "full verification" and the list of active acceptance criteria; write the returned text to `.plans/.verify-final-{feature}.md`.
 2. On FAIL, follow failure handling and do not claim completion.
-3. If `evaluators` is empty, proceed directly to archive with no final report.
-4. If one or more evaluators were selected, keep the active workflow state and implementation flag, and return exactly:
-   ```text
-   AWAITING_EVALUATION
-   feature: {feature}
-   plan: .plans/plan-{feature}.md
-   final_verifier: .plans/.verify-final-{feature}.md
-   evaluators: [selected evaluator names]
-   follow_ups: None
-   ```
-   When the run's `follow_ups` is not empty, replace `None` with one indented `- <repo-relative path>: <finding>` line each.
-   Do not archive. The orchestrator runs independent evaluation and writes the synthesis.
-5. A PASS synthesis re-invokes this skill with its exact `final_report` and the block's `follow_ups` for finalization-only entry. A FAIL synthesis returns findings and those `follow_ups` to implementation and invalidates the prior final verifier; fix only the findings, and the next block carries the `follow_ups` forward with any new ones.
+3. On PASS, proceed directly to archive.
 
 ## Completion and Archive
 
-Build JSON containing `cwd`, exact `plan`, all stable `item_slugs`, and `final_report` only when present. Run:
+Build JSON containing `cwd`, exact `plan`, and all stable `item_slugs`. Run:
 
 ```bash
 printf '%s' "$archive_input" | \
@@ -144,8 +117,7 @@ Durable outputs are:
 - `docs/specs/spec-{feature}.md` when a product spec was declared;
 - `docs/contracts/contract-{feature}.md` when a sprint contract was declared;
 - `docs/research/research-*.md` for declared research;
-- `docs/plans/plan-{feature}.md` always;
-- `docs/reports/report-{feature}.md` only for evaluator-bearing completion.
+- `docs/plans/plan-{feature}.md` always.
 
 On archive error, report the exact diagnostic and the run's `follow_ups`, leave active source state in place, and do not invent a filename or overwrite a destination. Confirm the implementation flag is absent after successful archive. Report item totals, verification evidence, out-of-item follow-ups, retained worktrees, and exact durable paths. Suggest commit only when changes remain uncommitted; push is always a separate explicit action.
 
@@ -164,11 +136,7 @@ EVAL 3: Repository policy
   Pass: Git/worktree behavior follows applicable project instructions.
   Fail: generic branch or worktree advice overrides the repository.
 
-EVAL 4: Evaluation boundary
-  Pass: selected evaluators cause AWAITING_EVALUATION; only synthesized PASS re-entry archives.
-  Fail: execution archives before evaluation or evaluation reimplements work.
-
-EVAL 5: Durable promotion
-  Pass: all declared canonical sources and optional final report move atomically to contract destinations.
+EVAL 4: Durable promotion
+  Pass: all declared canonical sources move atomically to contract destinations.
   Fail: unrelated state moves, a collision is overwritten, or completion is claimed after archive failure.
 ```

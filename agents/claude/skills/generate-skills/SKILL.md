@@ -126,7 +126,7 @@ Use AskUserQuestion to collect:
 2. **Target tools**: which tools does it call (built-in tools, MCP servers, external CLIs)?
 3. **Expected output**: what does running the skill produce (files, messages, code, ...)?
 4. **Trigger phrases**: what does the user actually say when they want this skill?
-5. **Catalog group**: choose one of `planning`, `analysis`, `build`, `verify`, `docs`, `writing`, `llm`, or `meta`.
+5. **Catalog group**: choose one of `planning`, `analysis`, `build`, `docs`, `writing`, `llm`, or `meta`.
 
 Use the answers to first identify the **domain type** in `references/skill-types.md`, then pick a **structural pattern** from `references/patterns.md`:
 
@@ -180,7 +180,7 @@ DOTRCDIR="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}"
 bash "${DOTRCDIR}/agents/claude/skills/generate-skills/scripts/init-skill" <skill-name> --group <slug> --path <target-path>
 ```
 
-`--group` is required (one of the 8 slugs — see `references/frontmatter-spec.md` → `group`); the validator fails without it, and it must be a deliberate choice, never guessed. By default this creates only `SKILL.md` with the required fields filled in plus commented-out placeholders for every optional frontmatter field (`when_to_use`, `paths`, `shell`, `effort`, `context`, `agent`, etc.). If the skill needs Tier-3 resources, pass `--with-references`, `--with-scripts`, and/or `--with-assets`. Fill in the body in Steps 3–4.
+`--group` is required (one of the 7 slugs — see `references/frontmatter-spec.md` → `group`); the validator fails without it, and it must be a deliberate choice, never guessed. By default this creates only `SKILL.md` with the required fields filled in plus commented-out placeholders for every optional frontmatter field (`when_to_use`, `paths`, `shell`, `effort`, `context`, `agent`, etc.). If the skill needs Tier-3 resources, pass `--with-references`, `--with-scripts`, and/or `--with-assets`. Fill in the body in Steps 3–4.
 
 Requires `cargo` (install via <https://rustup.rs>). First invocation compiles the binary (~6–30s); later runs are instant via Cargo's incremental cache.
 

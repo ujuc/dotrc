@@ -89,8 +89,7 @@ When drafting or repairing criteria, load the
 - One checkout has one active managed workflow.
 - Existing draft/review files are active state, not disposable scratch files.
 - A scope, exclusion, or acceptance change after finalization returns here only after the current contract/workflow is archived or explicitly abandoned by the user.
-- The orchestrator may invoke this skill, but only this skill writes contract artifacts.
-- This skill never writes research, plans, code, QA/design reports, or synthesized evaluation.
+- Only this skill writes contract artifacts; it never writes research, plans, or code.
 
 ## Eval Criteria
 

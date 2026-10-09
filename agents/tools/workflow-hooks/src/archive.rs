@@ -83,22 +83,6 @@ pub fn run(input: &Value, contract: &WorkflowContract) -> Result<Value, String> 
         )?);
     }
 
-    if let Some(final_report) = input.get("final_report").and_then(Value::as_str) {
-        validate_artifact_source(contract, "evaluation_report", final_report)?;
-        if !final_report_matches(final_report, feature) {
-            return Err(format!(
-                "Final report does not match plan feature {feature}: {final_report}"
-            ));
-        }
-        moves.push(artifact_move(
-            &cwd,
-            contract,
-            "evaluation_report",
-            final_report,
-            contract.render_archive("evaluation_report", feature)?,
-        )?);
-    }
-
     let plan_destination = format!("{}/{plan_name}", contract.archive("plan_directory")?);
     moves.push(artifact_move(
         &cwd,
@@ -368,32 +352,9 @@ fn cleanup(
             .transient("plan_cycle_pattern")?
             .replace('*', feature),
         format!(".plans/.verify-final-{feature}.md"),
-        format!(".plans/.handoff-{feature}.md"),
     ];
     for relative in exact {
         remove_if_exists(&cwd.join(relative))?;
-    }
-
-    let plans = cwd.join(".plans");
-    let Ok(entries) = fs::read_dir(&plans) else {
-        return Ok(());
-    };
-    let prefixes = [
-        format!(".qa-{feature}-r"),
-        format!(".design-{feature}-r"),
-        format!(".evaluation-{feature}-r"),
-    ];
-    for entry in entries.filter_map(Result::ok) {
-        let path = entry.path();
-        let Some(name) = path.file_name().and_then(|value| value.to_str()) else {
-            continue;
-        };
-        if path.is_file()
-            && name.ends_with(".md")
-            && prefixes.iter().any(|prefix| name.starts_with(prefix))
-        {
-            remove_if_exists(&path)?;
-        }
     }
     Ok(())
 }
@@ -404,13 +365,6 @@ fn required_string<'a>(input: &'a Value, key: &str) -> Result<&'a str, String> {
         .and_then(Value::as_str)
         .filter(|value| !value.is_empty())
         .ok_or_else(|| format!("Missing required string: {key}"))
-}
-
-fn final_report_matches(value: &str, feature: &str) -> bool {
-    value
-        .strip_prefix(&format!(".plans/.evaluation-{feature}-r"))
-        .and_then(|value| value.strip_suffix(".md"))
-        .is_some_and(|round| !round.is_empty() && round.bytes().all(|byte| byte.is_ascii_digit()))
 }
 
 fn strings(input: &Value, key: &str) -> Vec<String> {
@@ -499,19 +453,4 @@ mod tests {
         assert_eq!(error, WORKFLOW_SOURCES_ERROR);
     }
 
-    #[test]
-    fn final_report_round_must_be_numeric() {
-        assert!(final_report_matches(
-            ".plans/.evaluation-demo-r12.md",
-            "demo"
-        ));
-        assert!(!final_report_matches(
-            ".plans/.evaluation-demo-rreview.md",
-            "demo"
-        ));
-        assert!(!final_report_matches(
-            ".plans/.evaluation-other-r1.md",
-            "demo"
-        ));
-    }
 }

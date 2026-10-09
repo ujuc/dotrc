@@ -61,19 +61,14 @@ spec.md (아키텍처 작업)
   → .sprint/contract.md
   → .research/research-*.md (필요 시)
   → .plans/plan-*.md
-  → 승인·implement-plan
-  → 선택적 QA/design 별도 보고서
-  → multi-agent-orchestrator 종합
-  → implement-plan 최종화·보관
+  → 승인·implement-plan 구현·보관
 ```
 
 한 체크아웃에는 활성 워크플로를 하나만 둔다. Superpowers `writing-plans`만 계획을
-작성하고, `implement-plan`만 관리형 구현과 보관을 수행한다. QA는 기능
-수용성을, design evaluator는 Design Quality·Originality·Craft·Visual
-Usability를 담당하며 오케스트레이터만 두 결과를 종합한다.
+작성하고, `implement-plan`만 관리형 구현과 보관을 수행한다.
 
 완료 시 사용된 산출물을 `docs/specs/`, `docs/contracts/`, `docs/research/`,
-`docs/plans/`, `docs/reports/`로 이동한다. `.harness/`는 이전 체계이므로
+`docs/plans/`로 이동한다. `.harness/`는 이전 체계이므로
 감지만 하고 자동 이전·삭제하지 않는다.
 
 Superpowers의 brainstorming·writing-skills 원칙은 공통

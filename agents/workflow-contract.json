@@ -27,26 +27,6 @@
       "pattern": ".plans/plan-*.md",
       "writer": "writing-plans",
       "context": true
-    },
-    "qa_report": {
-      "pattern": ".plans/.qa-{feature}-r{round}.md",
-      "writer": "qa-evaluator",
-      "context": false
-    },
-    "design_report": {
-      "pattern": ".plans/.design-{feature}-r{round}.md",
-      "writer": "frontend-design-evaluator",
-      "context": false
-    },
-    "evaluation_report": {
-      "pattern": ".plans/.evaluation-{feature}-r{round}.md",
-      "writer": "multi-agent-orchestrator",
-      "context": true
-    },
-    "handoff": {
-      "pattern": ".plans/.handoff-{feature}.md",
-      "writer": "multi-agent-orchestrator",
-      "context": true
     }
   },
   "transient": {
@@ -61,8 +41,7 @@
     "spec": "docs/specs/spec-{feature}.md",
     "contract": "docs/contracts/contract-{feature}.md",
     "research_directory": "docs/research",
-    "plan_directory": "docs/plans",
-    "evaluation_report": "docs/reports/report-{feature}.md"
+    "plan_directory": "docs/plans"
   },
   "maintenance": {
     "skill_improver": {

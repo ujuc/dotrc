@@ -49,12 +49,10 @@ printf '# Product Demo\n' > "$context_fixture/spec.md"
 printf '# Contract Demo\n' > "$context_fixture/.sprint/contract.md"
 printf '# Research Demo\n' > "$context_fixture/.research/research-demo.md"
 printf '# Plan: demo\n' > "$context_fixture/.plans/plan-demo.md"
-printf '# Evaluation Demo\n' > "$context_fixture/.plans/.evaluation-demo-r2.md"
-printf '# Handoff Demo\n' > "$context_fixture/.plans/.handoff-demo.md"
 printf '# Legacy State\n' > "$context_fixture/.harness/legacy.md"
 touch "$context_fixture/.plans/.implementing"
 result=$(jq -n --arg cwd "$context_fixture" '{cwd:$cwd}' | "$BIN" context)
-assert_jq "$result" '.message | contains("Product Demo") and contains("Contract Demo") and contains("Research Demo") and contains("Plan: demo") and contains("Evaluation Demo") and contains("Handoff Demo") and contains("implementation is active")' "context lists the complete active workflow"
+assert_jq "$result" '.message | contains("Product Demo") and contains("Contract Demo") and contains("Research Demo") and contains("Plan: demo") and contains("implementation is active")' "context lists the complete active workflow"
 assert_jq "$result" '.message | contains("Legacy .harness workflow state detected") and contains("never migrate it automatically")' "context warns about legacy workflow state"
 
 result=$(jq -n --arg cwd "$context_fixture" --argjson files '["src/main.rs"]' '{cwd:$cwd,files:$files}' | "$BIN" typecheck)
@@ -111,7 +109,6 @@ cat > "$declared/.plans/plan-demo.md" <<'EOF'
 - Research:
   - `.research/research-demo.md`
 EOF
-printf '# Evaluation Demo\n' > "$declared/.plans/.evaluation-demo-r2.md"
 touch \
     "$declared/.plans/.implementing" \
     "$declared/.plans/.plan-demo.md.prev" \
@@ -120,30 +117,21 @@ touch \
     "$declared/.plans/.verify-1-build.md" \
     "$declared/.plans/.debug-1-build.md" \
     "$declared/.plans/.blocker-1-build.md" \
-    "$declared/.plans/.qa-demo-r2.md" \
-    "$declared/.plans/.design-demo-r2.md" \
-    "$declared/.plans/.evaluation-demo-r1.md" \
-    "$declared/.plans/.handoff-demo.md" \
-    "$declared/.plans/.qa-sibling-r2.md"
+    "$declared/.plans/.verify-final-sibling.md"
 result=$(jq -n \
     --arg cwd "$declared" \
     --arg plan '.plans/plan-demo.md' \
-    --arg final_report '.plans/.evaluation-demo-r2.md' \
     --argjson item_slugs '["1-build"]' \
-    '{cwd:$cwd,plan:$plan,final_report:$final_report,item_slugs:$item_slugs}' | "$BIN" archive)
-assert_jq "$result" '.moved == ["docs/specs/spec-demo.md","docs/contracts/contract-demo.md","docs/research/research-demo.md","docs/reports/report-demo.md","docs/plans/plan-demo.md"]' "archive reports the complete durable workflow"
+    '{cwd:$cwd,plan:$plan,item_slugs:$item_slugs}' | "$BIN" archive)
+assert_jq "$result" '.moved == ["docs/specs/spec-demo.md","docs/contracts/contract-demo.md","docs/research/research-demo.md","docs/plans/plan-demo.md"]' "archive reports the complete durable workflow"
 test -f "$declared/docs/specs/spec-demo.md" || fail "product spec was not archived"
 test -f "$declared/docs/contracts/contract-demo.md" || fail "sprint contract was not archived"
 test -f "$declared/docs/research/research-demo.md" || fail "declared research was not archived"
 test -f "$declared/docs/plans/plan-demo.md" || fail "declared plan was not archived"
-test -f "$declared/docs/reports/report-demo.md" || fail "final report was not archived"
 test ! -e "$declared/.plans/.verify-1-build.md" || fail "item verifier was not cleaned"
 test ! -e "$declared/.plans/.implementing" || fail "implementation flag was not cleaned"
-test ! -e "$declared/.plans/.qa-demo-r2.md" || fail "feature QA report was not cleaned"
-test ! -e "$declared/.plans/.design-demo-r2.md" || fail "feature design report was not cleaned"
-test ! -e "$declared/.plans/.evaluation-demo-r1.md" || fail "old evaluation report was not cleaned"
-test ! -e "$declared/.plans/.handoff-demo.md" || fail "feature handoff was not cleaned"
-test -e "$declared/.plans/.qa-sibling-r2.md" || fail "sibling feature report was removed"
+test ! -e "$declared/.plans/.verify-final-demo.md" || fail "final verifier was not cleaned"
+test -e "$declared/.plans/.verify-final-sibling.md" || fail "sibling feature verifier was removed"
 
 legacy="$TMP/legacy"
 mkdir -p "$legacy/.research" "$legacy/.plans"
@@ -172,7 +160,6 @@ make_full_archive_fixture() {
     printf '# Product %s\n' "$feature" > "$root/spec.md"
     printf '# Contract %s\n' "$feature" > "$root/.sprint/contract.md"
     printf '# Research %s\n' "$feature" > "$root/.research/research-$feature.md"
-    printf '# Evaluation %s\n' "$feature" > "$root/.plans/.evaluation-$feature-r1.md"
     cat > "$root/.plans/plan-$feature.md" <<EOF
 # Plan: $feature
 
@@ -184,7 +171,7 @@ make_full_archive_fixture() {
 EOF
 }
 
-for missing_kind in spec contract research report; do
+for missing_kind in spec contract research; do
     missing_full="$TMP/missing-$missing_kind"
     feature="missing-$missing_kind"
     make_full_archive_fixture "$missing_full" "$feature"
@@ -192,13 +179,11 @@ for missing_kind in spec contract research report; do
         spec) rm "$missing_full/spec.md" ;;
         contract) rm "$missing_full/.sprint/contract.md" ;;
         research) rm "$missing_full/.research/research-$feature.md" ;;
-        report) rm "$missing_full/.plans/.evaluation-$feature-r1.md" ;;
     esac
     if jq -n \
         --arg cwd "$missing_full" \
         --arg plan ".plans/plan-$feature.md" \
-        --arg final_report ".plans/.evaluation-$feature-r1.md" \
-        '{cwd:$cwd,plan:$plan,final_report:$final_report}' | "$BIN" archive >/dev/null 2>&1; then
+        '{cwd:$cwd,plan:$plan}' | "$BIN" archive >/dev/null 2>&1; then
         fail "archive accepted a missing $missing_kind source"
     fi
     test -f "$missing_full/.plans/plan-$feature.md" || fail "missing $missing_kind moved the plan"
@@ -236,18 +221,6 @@ if jq -n --arg cwd "$malformed" --arg plan '.plans/plan-malformed.md' '{cwd:$cwd
 fi
 grep -q 'Workflow Sources must use exactly' "$TMP/malformed.err" || fail "malformed archive omitted syntax guidance"
 test -f "$malformed/.plans/plan-malformed.md" || fail "malformed workflow sources moved the plan"
-
-mismatched_report="$TMP/mismatched-report"
-make_full_archive_fixture "$mismatched_report" mismatch
-printf '# Other Evaluation\n' > "$mismatched_report/.plans/.evaluation-other-r1.md"
-if jq -n \
-    --arg cwd "$mismatched_report" \
-    --arg plan '.plans/plan-mismatch.md' \
-    --arg final_report '.plans/.evaluation-other-r1.md' \
-    '{cwd:$cwd,plan:$plan,final_report:$final_report}' | "$BIN" archive >/dev/null 2>&1; then
-    fail "archive accepted a final report for another feature"
-fi
-test -f "$mismatched_report/.plans/plan-mismatch.md" || fail "mismatched report moved the plan"
 
 missing="$TMP/missing"
 mkdir -p "$missing/.plans"
@@ -287,7 +260,7 @@ fi
 test -f "$collision/.plans/plan-collision.md" || fail "collision moved the plan"
 test -f "$collision/.research/research-collision.md" || fail "collision moved legacy research"
 
-for collision_kind in specs contracts research plans reports; do
+for collision_kind in specs contracts research plans; do
     collision_full="$TMP/collision-$collision_kind"
     feature="collision-$collision_kind"
     make_full_archive_fixture "$collision_full" "$feature"
@@ -296,22 +269,19 @@ for collision_kind in specs contracts research plans reports; do
         contracts) destination="docs/contracts/contract-$feature.md" ;;
         research) destination="docs/research/research-$feature.md" ;;
         plans) destination="docs/plans/plan-$feature.md" ;;
-        reports) destination="docs/reports/report-$feature.md" ;;
     esac
     mkdir -p "$collision_full/$(dirname "$destination")"
     printf '# Existing\n' > "$collision_full/$destination"
     if jq -n \
         --arg cwd "$collision_full" \
         --arg plan ".plans/plan-$feature.md" \
-        --arg final_report ".plans/.evaluation-$feature-r1.md" \
-        '{cwd:$cwd,plan:$plan,final_report:$final_report}' | "$BIN" archive >/dev/null 2>&1; then
+        '{cwd:$cwd,plan:$plan}' | "$BIN" archive >/dev/null 2>&1; then
         fail "archive overwrote a $collision_kind destination collision"
     fi
     test -f "$collision_full/spec.md" || fail "$collision_kind collision moved the spec"
     test -f "$collision_full/.sprint/contract.md" || fail "$collision_kind collision moved the contract"
     test -f "$collision_full/.research/research-$feature.md" || fail "$collision_kind collision moved research"
     test -f "$collision_full/.plans/plan-$feature.md" || fail "$collision_kind collision moved the plan"
-    test -f "$collision_full/.plans/.evaluation-$feature-r1.md" || fail "$collision_kind collision moved the report"
 done
 
 printf 'workflow hook tests: PASS\n'
