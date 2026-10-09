@@ -108,8 +108,8 @@ rules without editing this user-level skill.
    <lines or empty>
    ```
 
-   Treat the returned draft as the candidate for the checks below; rewrite it
-   yourself if any check fails.
+   Treat the returned draft as the candidate for the checks below; if it is empty or fails any
+   check, write the draft yourself.
 
    Apply all three checks in order — failing any one means rewrite the draft:
 
@@ -210,7 +210,7 @@ Stage both files together in the same commit so the two views never diverge.
 
 For very large changes (`git diff --cached --shortstat` ≥ 500 lines, ≥ 10 files changed, or the user gives a hint like `큰 diff` / `요약해서 커밋` / `gemma로 정리`), the body draft can be pre-summarized by Gemma through local Ollama. The subject and final body remain Claude-authored and reviewed.
 
-Call pattern, fallback rules, and result usage follow [Gemma delegation](references/gemma-delegation.md).
+Call pattern, fallback rules, and result usage follow [Gemma delegation](references/gemma-delegation.md). Pass the Gemma summary to the drafter prompt as a `Summary:` line; it never replaces the drafter.
 
 ## Humanizer pass (optional)
 

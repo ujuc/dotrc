@@ -112,7 +112,7 @@ Every exit below also reports the run's `follow_ups`, in the `AWAITING_EVALUATIO
 
 After all todos are checked:
 
-1. Dispatch one fresh verifier at Standard routing with "full verification" and the list of active acceptance criteria; write the returned text to `.plans/.verify-final-{feature}.md`.
+1. Dispatch one fresh verifier with the same `Explore` call and role-file prompt as Sequential Execution step 4, at Standard routing, with "full verification" and the list of active acceptance criteria; write the returned text to `.plans/.verify-final-{feature}.md`.
 2. On FAIL, follow failure handling and do not claim completion.
 3. If `evaluators` is empty, proceed directly to archive with no final report.
 4. If one or more evaluators were selected, keep the active workflow state and implementation flag, and return exactly:

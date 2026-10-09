@@ -65,7 +65,7 @@ FAIL only when two auto-invocable skills can plausibly claim the same utterance 
 
 ## Model Fitness
 
-Use the shared model guide to assess the current step, not just the agent name
+Use the [shared model guide](../../../generate-skills/references/model-selection.md) to assess the current step, not just the agent name
 or parent model. Lightweight covers deterministic extraction and reporting;
 Standard covers bounded execution; Advanced covers substantial semantic or
 cross-component judgment; Frontier covers the hardest unresolved interactions.
@@ -82,7 +82,7 @@ unsupported overrides, concrete capability mismatches, conflicts with user
 constraints, an `effort` pinned without measured evidence ([`effort`
 rule](../../../generate-skills/references/frontmatter-spec.md#effort)), or one
 whose cited evidence names a model other than the pinned full model name or the
-verified effective model, with no re-check (shared model guide, step 4). An
+verified effective model, with no re-check ([shared model guide](../../../generate-skills/references/model-selection.md#selection-and-escalation), step 4). An
 alias such as `opus` is not a pin. If neither model is known, or the evidence
 names no model, report that carry-over check UNVERIFIED instead of a WARN.
 Omitting native `model` or `effort` is valid, but inheritance alone does not

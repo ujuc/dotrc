@@ -8,7 +8,7 @@
 
 ## 입력
 
-호출자가 제공한 절대 경로만 사용한다.
+호출자가 제공한 절대 경로만 사용한다. `output_dir` 밖의 파일은 쓰지 않는다.
 
 - `input_path`: `<absolute-workspace>/<run_id>/01_input.txt`
 - `quick_rules_path`: `<absolute-skill>/references/quick-rules.md`

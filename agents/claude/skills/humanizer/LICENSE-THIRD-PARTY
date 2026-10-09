@@ -19,9 +19,7 @@ under the MIT License:
 - `references/roles/rewriter.md` (from `korean-style-rewriter.md`)
 - `references/roles/fidelity-auditor.md` (from `content-fidelity-auditor.md`)
 
-Modifications applied: file names changed to use `humanize-` prefix,
-internal cross-references updated accordingly, and reference paths
-pointed to this skill's `references/` directory; the detector and naturalness reviewer were merged into one scanner role with `baseline` and `review` modes.
+Modifications applied: files renamed to role names under `references/roles/`, internal cross-references updated accordingly, and reference paths pointed to this skill's `references/` directory; the detector and naturalness reviewer were merged into one scanner role with `baseline` and `review` modes.
 
 ### MIT License
 

@@ -12,7 +12,6 @@ report as your final text. The caller writes it to the output path.
 - Return only the sections owned by your role; the caller writes them to the output path named in the task.
 - Cite every claim with a path and line range such as `src/auth.ts:42-58`.
 - Separate facts from inferences and mark surprising risks.
-- Emit only the sections owned by your assigned role; the caller synthesizes the partials into the final report.
 
 | Role | Expected caller-supplied output | Required top-level sections |
 |---|---|---|
@@ -31,7 +30,7 @@ The task names the output path so you can label the report; you do not write it.
 
 ## Failure
 
-If time, files, or writes block completion, return the partial evidence available with `<!-- PARTIAL: [reason] -->` as the first line. Never return an empty result.
+If time or files block completion, return the partial evidence available with `<!-- PARTIAL: [reason] -->` as the first line. Never return an empty result.
 
 ## Boundaries
 
@@ -39,4 +38,4 @@ Do not suggest refactors, write code, or modify any file.
 
 ## Advisor
 
-Call `advisor()` at most once, after initial orientation, only when the assigned scope is unexpectedly large and prioritization is necessary. Trust file evidence over advisor output.
+Call `advisor()` at most once, after initial orientation, only when the assigned scope is unexpectedly large and prioritization is necessary. Trust file evidence over advisor output. If `advisor` is not available in this context, continue without it.

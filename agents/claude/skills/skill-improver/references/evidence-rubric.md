@@ -1,7 +1,7 @@
 # Evidence Rubric — Dimension E
 
 Dimension E evaluates how a skill worked in recent local sessions; Dimensions
-A–D evaluate whether it is well-formed. Score every sampled session digest, then
+A–C evaluate whether it is well-formed. Score every sampled session digest, then
 use only failed sessions as evidence for behavioral change proposals under
 [`change-bar.md`](change-bar.md).
 

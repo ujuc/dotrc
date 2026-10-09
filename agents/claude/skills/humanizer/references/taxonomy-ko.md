@@ -4,7 +4,7 @@
 
 LLM(ChatGPT·Claude·Gemini 등)이 생성한 한글 글에서 반복적으로 관찰되는 "AI 티" 패턴을 10개 대분류 × 서브 패턴으로 정리한다. 탐지기·윤문가·리뷰어가 공유하는 단일 진실 원천(SSOT). 각 패턴마다 (1) 정의, (2) 시그니처 예문, (3) 심각도(S1 결정적 / S2 강함 / S3 약함), (4) 윤문 처방을 제공한다.
 
-> **v1.5 변경 (2026-04-26):** v1.2 voice profile · v1.3 candidate pool · v1.3.1 권한 위계는 제거됐다. 현재 4-agent strict pipeline + monolith fast path로 단순화됐고, 분류 체계는 v1.3.1까지 발굴된 패턴을 유지한다.
+> **v1.5 변경 (2026-04-26):** v1.2 voice profile · v1.3 candidate pool · v1.3.1 권한 위계는 제거됐다. 현재 3-agent strict pipeline + monolith fast path로 단순화됐고, 분류 체계는 v1.3.1까지 발굴된 패턴을 유지한다.
 
 > **Fidelity precedence:** 아래 처방은 의미·주장·태도·확실성·수치·행위자를 보존할 때만 적용한다. 원문에 없는 근거·수치·감정·주체를 만들거나 가능성·의무의 강도를 바꾸는 처방 예시는 적용하지 않는다.
 

@@ -9,7 +9,7 @@ argument-hint: "[skill-name ...]"
 # Skill Improver
 
 Audit skills and their worker role files, fix safe structural issues, and propose
-behavioral changes supported by recent sessions. Dimensions A–D check structure
+behavioral changes supported by recent sessions. Dimensions A–C check structure
 and semantics; Dimension E scores observed behavior. Repairs stop after three
 iterations per target.
 
@@ -45,7 +45,7 @@ An explicit `skill-improver` invocation runs immediately, independent of cadence
 
 ## Language Policy
 
-When auto-editing skill or agent metadata in Phase 4, preserve the user's language conventions:
+When auto-editing skill metadata in Phase 4, preserve the user's language conventions:
 
 - **Skills:** `description` / `when_to_use` are Korean and SKILL.md bodies are English, except functional examples and user-visible strings.
 - **Trigger keywords are functional identifiers.** Never paraphrase or translate them.
@@ -83,7 +83,7 @@ If any toolchain/path/repo check fails, report the issue with an actionable fix 
 
 ## Phase 1 — Inventory & Intent Extraction
 
-1. **Argument parsing**: if arguments specify skill or agent names, target those; otherwise sweep all skills in `claude/skills/` and `.claude/skills/`.
+1. **Argument parsing**: if arguments specify skill names, target those; otherwise sweep all skills in `claude/skills/` and `.claude/skills/`.
 2. **Catalog map**: collect `name` and `group` from user-scope `claude/skills/` for B.6. Validate project-scope `.claude/skills/` structurally but never add them to the user catalog. Trigger overlap remains exclusive to `skill-engineer`.
 3. **Per-target read**: for each target, parse:
    - Frontmatter: `name`, `description`, `model`, `allowed-tools`, plus optional fields per `frontmatter-spec.md`.
@@ -105,14 +105,14 @@ If any toolchain/path/repo check fails, report the issue with an actionable fix 
 
    Start with `$REPORT_DIR/inventory.json`; Phase 2 reads the condensed digests.
    **Never read raw `.jsonl` history directly.** If collection fails or samples
-   no sessions, record Dimension E as SKIP and continue A–D. Audit artifacts stay
+   no sessions, record Dimension E as SKIP and continue A–C. Audit artifacts stay
    under `REPORT_DIR`, never in a user project.
 
 ## Phase 2 — Test Scenario Generation
 
-Generate tests using a **test category matrix**: three skill dimensions and dimension E for observed behavior in both modes.
+Generate tests using a **test category matrix**: three skill dimensions and dimension E for observed behavior.
 
-### Dimension A — Structural (skill mode only)
+### Dimension A — Structural
 
 Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single execution covers all structural checks (frontmatter format, naming, size limits, **`group` field presence and slug validity**). Do not duplicate in Dimension B.
 
@@ -136,7 +136,7 @@ Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single exe
 - **Skills with scripts** (`scripts/` directory exists): for each *executable* under `scripts/`, run it directly (`./script --help`) so its shebang applies — forcing `bash` misreads a `uv run` PEP 723 script as shell and fails — and expect exit 0; when arguments are required, also run with no args and expect a clear usage error rather than a crash. Data files such as `*.jq` are not entry points — they are exercised by their launcher's self-check.
 - **Pipeline skills** (skills that reference other skill names): verify referenced skill names exist as actual skill directories.
 
-### Dimension E — Evidence (run-level, both modes)
+### Dimension E — Evidence (run-level)
 
 Scored **once per sweep**, not once per target: read every digest in
 `$REPORT_DIR/transcripts/` against [`references/evidence-rubric.md`](references/evidence-rubric.md), then attribute each
@@ -181,7 +181,7 @@ Display results as a table after each target completes.
 
 Classify each failure before editing:
 
-- **Mechanical:** only A/B/C/D failures matching the safe-fix table may be fixed
+- **Mechanical:** only A/B/C failures matching the safe-fix table may be fixed
   directly. Authority, scope, evidence, and workflow decisions remain manual.
 - **Behavioral:** apply [`references/change-bar.md`](references/change-bar.md).
   Write qualifying proposals under `$REPORT_DIR/proposed/<target>/`, retain a

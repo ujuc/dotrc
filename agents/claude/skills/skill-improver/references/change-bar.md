@@ -30,7 +30,7 @@ expected to fail this way?* If no, defer. If yes, check all conditions below.
 Propose only when all of these hold:
 
 - **Cause:** a missing, wrong, or underspecified instruction caused the failure
-  in a skill, agent definition, or in-repo guidance.
+  in a skill, role file, or in-repo guidance.
 - **Owner and rule:** you can name the owning surface and one reusable rule it
   should have stated.
 - **Prevention:** that rule, if present and followed, would have prevented the

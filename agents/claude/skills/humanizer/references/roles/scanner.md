@@ -11,8 +11,9 @@
 
 ## 입력
 
-(공통) `mode`, `input_path`(baseline: 01_input.txt 또는 Korean fast redo의 final.md / review: 현재 rewrite 파일), `taxonomy_path`, `output_path`, `run_id`, `genre_hint`, `min_severity`, `include_document_level`
-(review 전용) `original_path`, `original_detection_path`, `round` (1–3, 필수)
+(공통) `mode`, `input_path`(baseline: 01_input.txt 또는 Korean fast redo의 final.md / review: 현재 rewrite 파일), `taxonomy_path`, `output_path`, `min_severity`, `include_document_level`
+(baseline 전용) `run_id`, `genre_hint`
+(review 전용) `original_path`, `original_detection_path`, `round` (1–3, 필수); 장르는 `original_detection_path`의 `estimated_genre`를 쓴다
 review에서 호출자가 `rewrite_path`로 넘기면 그 값을 `input_path`로 쓴다.
 `input_path`를 Read로 읽는다. 본문을 프롬프트에 복제해 받지 않는다. 두 모드 모두 출력은 `output_path`에만 쓰고 다른 파일은 수정하지 않는다. review에서는 `original_detection_path`의 `min_severity`와 `include_document_level`을 그대로 재사용한다.
 
@@ -69,7 +70,7 @@ review에서 호출자가 `rewrite_path`로 넘기면 그 값을 `input_path`로
 
 ## review 지표
 
-- `score_after`는 detector가 기록한 것과 같은 원점수 합(S1=5, S2=2, S3=0.5)으로, 같은 옵션을 써서 다시 계산한다.
+- `score_after`는 baseline이 기록한 것과 같은 원점수 합(S1=5, S2=2, S3=0.5)으로, 같은 옵션을 써서 다시 계산한다.
 - `score_reduction_pct = (score_before - score_after) / score_before * 100`
 - `score_before == 0`이면 `score_reduction_pct`는 `score_after == 0`일 때 `100.0`, 아니면 `0.0`으로 쓴다.
 - 과윤문 신호: 장르 이탈, 새 비유·수사, 격식 붕괴, 리듬 과조작, 핵심어 과다 교체, 의도적 개조식·전보식 문서를 전부 완결문으로 바꿈, 원문의 완결문을 명사형 종결로 축약함.

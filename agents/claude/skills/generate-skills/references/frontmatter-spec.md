@@ -233,6 +233,7 @@ agent: Explore
 ```
 
 - Options: built-in agents (`Explore`, `Plan`, `general-purpose`) or custom subagents from `.claude/agents/`
+- Local policy: do not create `.claude/agents/` definitions; dispatch roles from `references/roles/`.
 - If omitted, uses `general-purpose`
 - Only meaningful when `context: fork` is set
 
