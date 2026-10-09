@@ -113,7 +113,7 @@ rules without editing this user-level skill.
 
    Apply all three checks in order — failing any one means rewrite the draft:
 
-   1. **Subject length ≤ 50 characters** (including `<type>(<scope>):` prefix). Verify with `printf '%s' '<subject>' | wc -m` — Unicode character count, not bytes. `echo -n` is unreliable across shells; always use `printf '%s'`. For the body, `printf '%s\n' "<body>" | awk 'length > 72' | wc -l` must print `0`.
+   1. **Subject length ≤ 50 characters** (including `<type>(<scope>):` prefix). Verify with `printf '%s' '<subject>' | wc -m` — Unicode character count, not bytes. `echo -n` is unreliable across shells; always use `printf '%s'`. For the body, `printf '%s\n' "<body>" | while IFS= read -r l; do [ "${#l}" -gt 72 ] && echo "$l"; done` must print nothing (`awk length` counts bytes on macOS, so Korean text would false-fail).
    2. **Body required?** Follow the policy below. If the change requires a body and the draft has none, add a Why / How block. If the change is trivial and the draft has a body, consider removing it.
    3. **Completion test**: read `이 커밋이 적용되면 [제목]` aloud. If it does not describe the resulting change naturally, rewrite the subject.
 
