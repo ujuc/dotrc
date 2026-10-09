@@ -123,7 +123,7 @@ experiment	score	max_score	pass_rate	status	stop_reason	description
 0	14	20	70.0%	baseline	-	original target — no changes; model <id>, effort <level>
 ```
 
-**After baseline:** Report the baseline summary to the user. If baseline is 90%+, confirm with the user via AskUserQuestion whether optimization is worthwhile (diminishing returns near the ceiling).
+**After baseline:** Report the baseline summary to the user. If baseline is 90%+, confirm with the user via AskUserQuestion (plain text when it is unavailable) whether optimization is worthwhile (diminishing returns near the ceiling).
 
 ---
 
