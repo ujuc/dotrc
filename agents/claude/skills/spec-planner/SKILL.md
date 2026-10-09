@@ -1,7 +1,7 @@
 ---
 name: spec-planner
 description: "제품 요청을 spike·bounded·architectural로 분류하고, bounded는 대화 내 짧은 설계 승인으로 마치며, architectural 작업에만 승인된 제품 스펙을 spec.md로 작성한다."
-when_to_use: "스펙 작성, 요구사항 확장, spec-planner, /spec-planner, 기획서 만들어줘, 제품 기획 시작, PRD 작성, expand this idea into a product spec, create a product spec 요청 시 사용한다. 구현 계획 작성 요청은 writing-plans가 맡는다. 승인된 스펙의 다음 단계는 sprint-contract-negotiator다."
+when_to_use: "스펙 작성, 요구사항 확장, spec-planner, /spec-planner, 기획서 만들어줘, 제품 기획 시작, PRD 작성, expand this idea into a product spec, create a product spec 요청 시 사용한다. 구현 계획 작성 요청은 writing-plans가 맡는다. 승인된 스펙의 다음 단계는 writing-plans다."
 group: planning
 allowed-tools: Read, Write, Glob, Grep, Bash
 ---
@@ -54,7 +54,7 @@ Do not inflate spike or bounded work merely to create an artifact.
 7. Self-review with [grading criteria](references/grading-criteria.md) before delivery:
    - no placeholders or unresolved template text;
    - no contradictory behavior or exclusions;
-   - scope is decomposed enough for contract negotiation;
+   - scope is decomposed enough for implementation planning;
    - ambiguous product decisions are resolved or listed explicitly;
    - implementation details do not constrain the later planner without a product reason.
 8. Report the selected class, key decisions, unresolved questions, and the canonical output path.
@@ -71,7 +71,7 @@ Do not inflate spike or bounded work merely to create an artifact.
 
 ## Handoff
 
-An approved architectural `spec.md` feeds `sprint-contract-negotiator`. This skill does not write a sprint contract, research file, implementation plan, or code.
+An approved architectural `spec.md` feeds Superpowers `writing-plans`. This skill does not write a research file, implementation plan, or code.
 
 ## Eval Criteria
 

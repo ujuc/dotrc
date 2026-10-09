@@ -115,7 +115,6 @@ The binary preflights every source and destination, rolls back partial file move
 Durable outputs are:
 
 - `docs/specs/spec-{feature}.md` when a product spec was declared;
-- `docs/contracts/contract-{feature}.md` when a sprint contract was declared;
 - `docs/research/research-*.md` for declared research;
 - `docs/plans/plan-{feature}.md` always.
 

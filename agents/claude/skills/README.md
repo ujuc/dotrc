@@ -6,7 +6,7 @@
 
 | slug | 한글 라벨 | 스킬 (`codex:` 접두는 플러그인) |
 | --- | --- | --- |
-| `planning` | 🧭 기획·스펙 | `spec-planner`, `sprint-contract-negotiator` |
+| `planning` | 🧭 기획·스펙 | `spec-planner` |
 | `analysis` | 📐 분석·계획 | `deep-read` |
 | `build` | 🛠 구현·실행 | `implement-plan` |
 | `docs` | 📝 문서·커밋 | `commit`, `generate-agent-docs` |
@@ -42,11 +42,10 @@
 ## 워크플로우 색인
 
 ```
-[아키텍처 작업] spec-planner → sprint-contract-negotiator → deep-read(필요 시)
+[아키텍처 작업] spec-planner → deep-read(필요 시)
                 → writing-plans → 승인 → implement-plan
-[범위가 작은 작업] 승인된 간단 설계 → sprint-contract-negotiator
-                → writing-plans → 승인 → implement-plan
-[완료 보관]     docs/{specs,contracts,research,plans}
+[범위가 작은 작업] 승인된 간단 설계 → writing-plans → 승인 → implement-plan
+[완료 보관]     docs/{specs,research,plans}
 [스킬 정비]     로컬 세션 기록 → skill-improver → generate-skills
                 (waza: 평가 스위트 baseline/after 회귀 확인)
 [글쓰기]        prompting-assist → (선택) humanizer 후처리
@@ -62,7 +61,7 @@
 `implement-plan`은 전체 검증 직후 바로 보관한다.
 
 ```
-spec-planner → sprint-contract-negotiator → deep-read? → writing-plans
+spec-planner → deep-read? → writing-plans
     → user approval → implement-plan → archive
 ```
 

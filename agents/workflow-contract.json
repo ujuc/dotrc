@@ -13,11 +13,6 @@
       "writer": "spec-planner",
       "context": true
     },
-    "contract": {
-      "path": ".sprint/contract.md",
-      "writer": "sprint-contract-negotiator",
-      "context": true
-    },
     "research": {
       "pattern": ".research/research-*.md",
       "writer": "deep-read",
@@ -39,7 +34,6 @@
   },
   "archive": {
     "spec": "docs/specs/spec-{feature}.md",
-    "contract": "docs/contracts/contract-{feature}.md",
     "research_directory": "docs/research",
     "plan_directory": "docs/plans"
   },

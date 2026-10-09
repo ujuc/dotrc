@@ -24,7 +24,7 @@
 
 ## Compaction
 
-- Preserve modified files, latest verification results, pending approvals, unanswered questions, user decisions and constraints in the user's words, approaches tried or rejected and why, and exact identifiers (paths, commands, numbers); the compact `SessionStart` hook restores `spec.md`, `.sprint/contract.md`, `.research/`, and `.plans/` pointers after compaction.
+- Preserve modified files, latest verification results, pending approvals, unanswered questions, user decisions and constraints in the user's words, approaches tried or rejected and why, and exact identifiers (paths, commands, numbers); the compact `SessionStart` hook restores `spec.md`, `.research/`, and `.plans/` pointers after compaction.
 
 <!-- CODEGRAPH_START -->
 <!-- CODEGRAPH_END -->

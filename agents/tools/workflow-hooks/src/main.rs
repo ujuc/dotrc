@@ -196,7 +196,7 @@ fn annotation(input: &Value, contract: &WorkflowContract) -> Value {
     let cwd = string(input, "cwd").map(PathBuf::from);
     let files = strings(input, "files");
     if files.iter().any(|file| {
-        ["spec", "contract", "research", "plan"]
+        ["spec", "research", "plan"]
             .iter()
             .any(|name| written_path_matches(file, cwd.as_deref(), contract, name))
     }) {

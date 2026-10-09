@@ -6,7 +6,6 @@ const CONTRACT_JSON: &str = include_str!("../../../workflow-contract.json");
 
 const REQUIRED_ARTIFACTS: &[&str] = &[
     "spec",
-    "contract",
     "research",
     "plan",
 ];
@@ -20,7 +19,6 @@ const REQUIRED_TRANSIENT: &[&str] = &[
 ];
 const REQUIRED_ARCHIVE: &[&str] = &[
     "spec",
-    "contract",
     "research_directory",
     "plan_directory",
 ];

@@ -34,7 +34,6 @@ CASES: list[tuple[str, set[str]]] = [
     ("커밋하면서 CLAUDE.md도 같이 갱신해줘", {"commit"}),  # collision probe
     ("기획서 만들어줘", {"spec-planner"}),
     ("플랜대로 구현해", {"implement-plan"}),
-    ("done 기준 먼저 정하자", {"sprint-contract-negotiator"}),
     ("스킬 평가해줘", {"waza"}),
     ("스킬 개선해줘", {"skill-improver"}),
     ("스킬 테스트해줘", {"waza"}),  # collision probe vs skill-improver

@@ -5,12 +5,11 @@ use std::fs;
 use std::io;
 use std::path::{Component, Path, PathBuf};
 
-const WORKFLOW_SOURCES_ERROR: &str = "Workflow Sources must use exactly: Product Spec, Sprint Contract, and Research with canonical backticked paths or None";
+const WORKFLOW_SOURCES_ERROR: &str = "Workflow Sources must use exactly: Product Spec and Research with canonical backticked paths or None";
 
 #[derive(Debug, PartialEq)]
 struct WorkflowSources {
     spec: Option<String>,
-    contract: Option<String>,
     research: Vec<String>,
 }
 
@@ -57,15 +56,6 @@ pub fn run(input: &Value, contract: &WorkflowContract) -> Result<Value, String> 
             "spec",
             &source,
             contract.render_archive("spec", feature)?,
-        )?);
-    }
-    if let Some(source) = sources.contract {
-        moves.push(artifact_move(
-            &cwd,
-            contract,
-            "contract",
-            &source,
-            contract.render_archive("contract", feature)?,
         )?);
     }
     for source in sources.research {
@@ -146,7 +136,6 @@ fn workflow_sources(cwd: &Path, feature: &str, plan: &str) -> Result<WorkflowSou
     };
     Ok(WorkflowSources {
         spec: None,
-        contract: None,
         research,
     })
 }
@@ -175,29 +164,25 @@ fn parse_workflow_sources(lines: &[&str]) -> Result<WorkflowSources, String> {
         .copied()
         .filter(|line| !line.is_empty())
         .collect();
-    if lines.len() < 3 {
+    if lines.len() < 2 {
         return Err(WORKFLOW_SOURCES_ERROR.to_string());
     }
 
     let spec = lines[0]
         .strip_prefix("- Product Spec: ")
         .ok_or_else(|| WORKFLOW_SOURCES_ERROR.to_string())?;
-    let contract = lines[1]
-        .strip_prefix("- Sprint Contract: ")
-        .ok_or_else(|| WORKFLOW_SOURCES_ERROR.to_string())?;
     let spec = parse_optional_path(spec)?;
-    let contract = parse_optional_path(contract)?;
 
-    let research = if lines[2] == "- Research: None" {
-        if lines.len() != 3 {
+    let research = if lines[1] == "- Research: None" {
+        if lines.len() != 2 {
             return Err(WORKFLOW_SOURCES_ERROR.to_string());
         }
         Vec::new()
-    } else if lines[2] == "- Research:" {
-        if lines.len() == 3 {
+    } else if lines[1] == "- Research:" {
+        if lines.len() == 2 {
             return Err(WORKFLOW_SOURCES_ERROR.to_string());
         }
-        lines[3..]
+        lines[2..]
             .iter()
             .map(|line| {
                 line.strip_prefix("  - ")
@@ -211,7 +196,6 @@ fn parse_workflow_sources(lines: &[&str]) -> Result<WorkflowSources, String> {
 
     Ok(WorkflowSources {
         spec,
-        contract,
         research,
     })
 }
@@ -432,22 +416,19 @@ mod tests {
     fn parses_complete_workflow_sources() {
         let sources = parse_workflow_sources(&[
             "- Product Spec: `spec.md`",
-            "- Sprint Contract: `.sprint/contract.md`",
             "- Research:",
             "  - `.research/research-demo.md`",
         ])
         .unwrap();
         assert_eq!(sources.spec.as_deref(), Some("spec.md"));
-        assert_eq!(sources.contract.as_deref(), Some(".sprint/contract.md"));
         assert_eq!(sources.research, [".research/research-demo.md"]);
     }
 
     #[test]
     fn rejects_missing_workflow_source_label() {
         let error = parse_workflow_sources(&[
-            "- Product Spec: None",
             "- Research: None",
-            "- Sprint Contract: None",
+            "- Product Spec: None",
         ])
         .unwrap_err();
         assert_eq!(error, WORKFLOW_SOURCES_ERROR);

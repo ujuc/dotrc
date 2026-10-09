@@ -1,6 +1,6 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Decision-only probe; the handoff target comes from SKILL.md, while the frontmatter names a different skill.
+description: Decision-only probe; the handoff target for an approved spec.md comes from the SKILL.md Handoff section.
 tags:
   - positive-trigger
 inputs:
@@ -9,7 +9,7 @@ expected:
   should_trigger: true
 graders:
   - type: text
-    name: hands-off-to-contract
+    name: hands-off-to-plan
     config:
       regex_match:
-        - "sprint-contract-negotiator"
+        - "writing-plans"

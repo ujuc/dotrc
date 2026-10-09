@@ -1,7 +1,7 @@
 # Grading Criteria for Spec Planner Output
 
 Use these criteria to self-review an approved architectural `spec.md` before
-delivery and handoff to `sprint-contract-negotiator`. Spike and bounded requests
+delivery and handoff to `writing-plans`. Spike and bounded requests
 do not need a managed spec. Apply the classification and approval rules in
 [the skill](../SKILL.md); this rubric does not expand approved scope.
 

@@ -21,7 +21,7 @@
 
 ## Managed Workflow
 
-- Keep one active workflow per checkout: `spec.md` (architecture-level work only) → `.sprint/contract.md` → optional `.research/research-*.md` → `.plans/plan-*.md` → explicit approval → implementation → durable `docs/{specs,contracts,research,plans}/`.
+- Keep one active workflow per checkout: `spec.md` (architecture-level work only) → optional `.research/research-*.md` → `.plans/plan-*.md` → explicit approval → implementation → durable `docs/{specs,research,plans}/`.
 - Superpowers `writing-plans` is the sole plan writer, at the contract plan path. `implement-plan` is the sole managed executor and archive caller.
 - `generate-skills` remains the local authoring controller; TDD, debugging, verification, review, and parallel dispatch remain optional disciplines. Superpowers execution/worktree/branch controllers do not own this workflow.
 

@@ -35,7 +35,7 @@ Take any editable target, define what "good output" looks like as binary yes/no 
 ## Managed workflow boundary
 
 Run `workflow-hooks contract` before accepting the target. Stop when `.harness/`
-exists. Never mutate paths owned by the contract (`spec.md`, `.sprint/`,
+exists. Never mutate paths owned by the contract (`spec.md`,
 `.research/`, `.plans/`, or their durable `docs/` destinations).
 
 When `.plans/.implementing` exists, proceed only when `implement-plan` invoked

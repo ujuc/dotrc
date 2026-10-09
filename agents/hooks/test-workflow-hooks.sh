@@ -44,15 +44,14 @@ result=$(jq -n --argjson files '["/tmp/project/src/main.rs"]' '{files:$files}' |
 assert_jq "$result" 'has("message") | not' "annotation ignores source files"
 
 context_fixture="$TMP/context"
-mkdir -p "$context_fixture/.sprint" "$context_fixture/.research" "$context_fixture/.plans" "$context_fixture/.harness"
+mkdir -p "$context_fixture/.research" "$context_fixture/.plans" "$context_fixture/.harness"
 printf '# Product Demo\n' > "$context_fixture/spec.md"
-printf '# Contract Demo\n' > "$context_fixture/.sprint/contract.md"
 printf '# Research Demo\n' > "$context_fixture/.research/research-demo.md"
 printf '# Plan: demo\n' > "$context_fixture/.plans/plan-demo.md"
 printf '# Legacy State\n' > "$context_fixture/.harness/legacy.md"
 touch "$context_fixture/.plans/.implementing"
 result=$(jq -n --arg cwd "$context_fixture" '{cwd:$cwd}' | "$BIN" context)
-assert_jq "$result" '.message | contains("Product Demo") and contains("Contract Demo") and contains("Research Demo") and contains("Plan: demo") and contains("implementation is active")' "context lists the complete active workflow"
+assert_jq "$result" '.message | contains("Product Demo") and contains("Research Demo") and contains("Plan: demo") and contains("implementation is active")' "context lists the complete active workflow"
 assert_jq "$result" '.message | contains("Legacy .harness workflow state detected") and contains("never migrate it automatically")' "context warns about legacy workflow state"
 
 result=$(jq -n --arg cwd "$context_fixture" --argjson files '["src/main.rs"]' '{cwd:$cwd,files:$files}' | "$BIN" typecheck)
@@ -96,16 +95,14 @@ result=$(jq -n \
 assert_jq "$result" '.hookSpecificOutput.hookEventName == "PostToolUse" and (.hookSpecificOutput.additionalContext | contains("review"))' "native hook parses apply_patch paths"
 
 declared="$TMP/declared"
-mkdir -p "$declared/.sprint" "$declared/.research" "$declared/.plans"
+mkdir -p "$declared/.research" "$declared/.plans"
 printf '# Product Demo\n' > "$declared/spec.md"
-printf '# Contract Demo\n' > "$declared/.sprint/contract.md"
 printf '# Research Demo\n' > "$declared/.research/research-demo.md"
 cat > "$declared/.plans/plan-demo.md" <<'EOF'
 # Plan: demo
 
 ## Workflow Sources
 - Product Spec: `spec.md`
-- Sprint Contract: `.sprint/contract.md`
 - Research:
   - `.research/research-demo.md`
 EOF
@@ -123,9 +120,8 @@ result=$(jq -n \
     --arg plan '.plans/plan-demo.md' \
     --argjson item_slugs '["1-build"]' \
     '{cwd:$cwd,plan:$plan,item_slugs:$item_slugs}' | "$BIN" archive)
-assert_jq "$result" '.moved == ["docs/specs/spec-demo.md","docs/contracts/contract-demo.md","docs/research/research-demo.md","docs/plans/plan-demo.md"]' "archive reports the complete durable workflow"
+assert_jq "$result" '.moved == ["docs/specs/spec-demo.md","docs/research/research-demo.md","docs/plans/plan-demo.md"]' "archive reports the complete durable workflow"
 test -f "$declared/docs/specs/spec-demo.md" || fail "product spec was not archived"
-test -f "$declared/docs/contracts/contract-demo.md" || fail "sprint contract was not archived"
 test -f "$declared/docs/research/research-demo.md" || fail "declared research was not archived"
 test -f "$declared/docs/plans/plan-demo.md" || fail "declared plan was not archived"
 test ! -e "$declared/.plans/.verify-1-build.md" || fail "item verifier was not cleaned"
@@ -148,7 +144,6 @@ cat > "$no_research/.plans/plan-empty.md" <<'EOF'
 
 ## Workflow Sources
 - Product Spec: None
-- Sprint Contract: None
 - Research: None
 EOF
 result=$(jq -n --arg cwd "$no_research" --arg plan '.plans/plan-empty.md' '{cwd:$cwd,plan:$plan}' | "$BIN" archive)
@@ -156,28 +151,25 @@ assert_jq "$result" '.moved == ["docs/plans/plan-empty.md"]' "archive accepts ex
 
 make_full_archive_fixture() {
     local root=$1 feature=$2
-    mkdir -p "$root/.sprint" "$root/.research" "$root/.plans"
+    mkdir -p "$root/.research" "$root/.plans"
     printf '# Product %s\n' "$feature" > "$root/spec.md"
-    printf '# Contract %s\n' "$feature" > "$root/.sprint/contract.md"
     printf '# Research %s\n' "$feature" > "$root/.research/research-$feature.md"
     cat > "$root/.plans/plan-$feature.md" <<EOF
 # Plan: $feature
 
 ## Workflow Sources
 - Product Spec: \`spec.md\`
-- Sprint Contract: \`.sprint/contract.md\`
 - Research:
   - \`.research/research-$feature.md\`
 EOF
 }
 
-for missing_kind in spec contract research; do
+for missing_kind in spec research; do
     missing_full="$TMP/missing-$missing_kind"
     feature="missing-$missing_kind"
     make_full_archive_fixture "$missing_full" "$feature"
     case "$missing_kind" in
         spec) rm "$missing_full/spec.md" ;;
-        contract) rm "$missing_full/.sprint/contract.md" ;;
         research) rm "$missing_full/.research/research-$feature.md" ;;
     esac
     if jq -n \
@@ -198,7 +190,6 @@ cat > "$invalid_source/.plans/plan-invalid-source.md" <<'EOF'
 
 ## Workflow Sources
 - Product Spec: `.research/research-wrong.md`
-- Sprint Contract: None
 - Research: None
 EOF
 if jq -n --arg cwd "$invalid_source" --arg plan '.plans/plan-invalid-source.md' '{cwd:$cwd,plan:$plan}' | "$BIN" archive >/dev/null 2>&1; then
@@ -212,9 +203,8 @@ cat > "$malformed/.plans/plan-malformed.md" <<'EOF'
 # Plan: malformed
 
 ## Workflow Sources
-- Product Spec: None
 - Research: None
-- Sprint Contract: None
+- Product Spec: None
 EOF
 if jq -n --arg cwd "$malformed" --arg plan '.plans/plan-malformed.md' '{cwd:$cwd,plan:$plan}' | "$BIN" archive >/dev/null 2>"$TMP/malformed.err"; then
     fail "archive accepted malformed Workflow Sources"
@@ -260,13 +250,12 @@ fi
 test -f "$collision/.plans/plan-collision.md" || fail "collision moved the plan"
 test -f "$collision/.research/research-collision.md" || fail "collision moved legacy research"
 
-for collision_kind in specs contracts research plans; do
+for collision_kind in specs research plans; do
     collision_full="$TMP/collision-$collision_kind"
     feature="collision-$collision_kind"
     make_full_archive_fixture "$collision_full" "$feature"
     case "$collision_kind" in
         specs) destination="docs/specs/spec-$feature.md" ;;
-        contracts) destination="docs/contracts/contract-$feature.md" ;;
         research) destination="docs/research/research-$feature.md" ;;
         plans) destination="docs/plans/plan-$feature.md" ;;
     esac
@@ -279,7 +268,6 @@ for collision_kind in specs contracts research plans; do
         fail "archive overwrote a $collision_kind destination collision"
     fi
     test -f "$collision_full/spec.md" || fail "$collision_kind collision moved the spec"
-    test -f "$collision_full/.sprint/contract.md" || fail "$collision_kind collision moved the contract"
     test -f "$collision_full/.research/research-$feature.md" || fail "$collision_kind collision moved research"
     test -f "$collision_full/.plans/plan-$feature.md" || fail "$collision_kind collision moved the plan"
 done
