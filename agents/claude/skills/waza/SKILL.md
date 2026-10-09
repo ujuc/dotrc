@@ -14,9 +14,7 @@ Code, Amp, Codex, and Pi all call the same launcher. **Never invoke the `waza`
 binary directly** — every subcommand routes through `scripts/waza-run.sh` so
 one place owns preflight, model defaults, result paths, and report format.
 
-In Claude Code the `waza-runner` subagent wraps this same launcher; callers
-that need an isolated context (for example `generate-skills`) may dispatch it
-instead of running the script in the main context.
+In Claude Code a caller that wants an isolated context dispatches `Agent` with `subagent_type: "general-purpose"`, Lightweight routing from [dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing), and the prompt "Run `bash <abs>/scripts/waza-run.sh <dispatch>` and return stdout verbatim, keeping any `⚠️` line first." The launcher remains the only place that invokes the `waza` binary.
 
 ## Model guidance
 

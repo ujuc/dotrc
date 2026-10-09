@@ -102,7 +102,7 @@ The YAML tasks exercise decisions through the runner's supported text graders.
 They do not prove filesystem writes. Record actual fixture diffs and ordered
 writes separately for pair-empty, pair-migrate, import-only, authorized-update,
 and ownership. Inspect all read-only cases for absence of unintended writes.
-Use the waza-runner agent for optional automated runs; no direct CLI invocation.
+Dispatch a Lightweight general-purpose worker that runs waza-run.sh for optional automated runs; no direct CLI invocation.
 Mock runs and missing-runner skips cannot satisfy artifact assertions.
 
 Every case must be PASS, FAIL, SKIP, or UNVERIFIED with evidence and limitations.

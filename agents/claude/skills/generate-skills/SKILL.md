@@ -349,10 +349,7 @@ baseline for an existing skill. A new skill uses the no-guidance transcript as
 its baseline because no runnable skill exists yet. **All waza operations route
 through the [`waza` skill](../waza/SKILL.md) launcher
 `../waza/scripts/waza-run.sh` — this skill never invokes the `waza` CLI
-directly.** In Claude Code, dispatch the `waza-runner` agent
-([definition](../../agents/waza-runner.md)) when an isolated context is
-preferable; it forwards the same `scaffold`/`eval` dispatch string to the
-launcher. When Waza is unavailable, use fresh-context subagent scenarios and
+directly.** In Claude Code, dispatch a `general-purpose` worker at Lightweight routing that runs the launcher and returns stdout verbatim when an isolated context is preferable (see the `waza` SKILL.md). When Waza is unavailable, use fresh-context subagent scenarios and
 report that the evidence was not persisted by Waza.
 
 Use the `waza` SKILL.md for scaffolding, supported commands, existing-suite

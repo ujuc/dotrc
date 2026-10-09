@@ -106,5 +106,4 @@ The workspace and results directories live outside the dotrc repository under
 - Workspace config: `~/.claude/data/waza-workspace/.waza.yaml`
 - Result JSON: `~/.claude/data/waza/results/`
 - Skill launcher: `~/.claude/skills/waza/scripts/waza-run.sh`
-- `waza-runner` agent (Claude Code isolated-context wrapper): `~/.claude/agents/waza-runner.md`
 - Eval suites: `~/.claude/evals/<skill>/eval.yaml` (for example `~/.claude/evals/commit/eval.yaml`)
