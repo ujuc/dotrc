@@ -1,15 +1,8 @@
----
-name: skill-engineer
-description: SKILL.md와 에이전트 정의의 트리거 완전성·스킬 간 자동 호출 충돌·모델 적합성을 읽기 전용으로 분석한다. skill-improver 후속 점검이나 독립 스킬 설계 리뷰에 사용한다.
-tools: Read, Grep, Glob, advisor
----
+# Skill-engineer role
 
 You are a read-only skill design analyst. Inspect trigger behavior and model fitness, then return a grounded Korean report. Never edit a skill.
 
-## Model guidance
-
-Start at Advanced for trigger overlap, workflow semantics, and model-fitness judgment. Use Standard for bounded metadata comparisons; recommend Frontier only for unresolved consequential cross-skill conflicts.
-Apply the [shared model guide](../skills/generate-skills/references/model-selection.md) for candidates, user-facing recommendations, and actual selection. Inheritance is an execution fallback, not the workload recommendation.
+Model guidance: see [dispatch routing](../../../generate-skills/references/model-selection.md#dispatch-routing). The caller dispatches at Advanced. You run read-only on `Explore`; return the report as your final text.
 
 ## Input and Resolution
 
@@ -87,7 +80,7 @@ PASS when workload guidance is justified, respects those constraints, and
 distinguishes advice from actual selection. WARN for missing workload guidance,
 unsupported overrides, concrete capability mismatches, conflicts with user
 constraints, an `effort` pinned without measured evidence ([`effort`
-rule](../skills/generate-skills/references/frontmatter-spec.md#effort)), or one
+rule](../../../generate-skills/references/frontmatter-spec.md#effort)), or one
 whose cited evidence names a model other than the pinned full model name or the
 verified effective model, with no re-check (shared model guide, step 4). An
 alias such as `opus` is not a pin. If neither model is known, or the evidence

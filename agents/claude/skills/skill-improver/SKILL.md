@@ -1,6 +1,6 @@
 ---
 name: skill-improver
-description: "스킬/에이전트 정의를 구조·의미 점검과 최근 세션 기록에서 관찰된 실패로 감사해 안전한 기계적 결함은 자동 수정하고 행동 변경은 근거 있는 제안으로 남긴다. /skill-improver, skill-improver, 스킬 개선해줘, 에이전트 정의 개선, 스킬 최적화, improve skill 요청 시 사용한다. 스킬 테스트·eval 실행·점수 비교는 waza, 반복 변이 루프는 autoresearch가 맡는다."
+description: "스킬 정의를 구조·의미 점검과 최근 세션 기록에서 관찰된 실패로 감사해 안전한 기계적 결함은 자동 수정하고 행동 변경은 근거 있는 제안으로 남긴다. /skill-improver, skill-improver, 스킬 개선해줘, 에이전트 정의 개선, 스킬 최적화, improve skill 요청 시 사용한다. 스킬 테스트·eval 실행·점수 비교는 waza, 반복 변이 루프는 autoresearch가 맡는다."
 group: meta
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bash:*), Bash(git:*), Bash(date:*), Bash(jq:*), Bash(mktemp:*), Bash(diff:*), Agent, advisor
 argument-hint: "[skill-name ...]"
@@ -8,7 +8,7 @@ argument-hint: "[skill-name ...]"
 
 # Skill Improver
 
-Audit skills and agent definitions, fix safe structural issues, and propose
+Audit skills and their worker role files, fix safe structural issues, and propose
 behavioral changes supported by recent sessions. Dimensions A–D check structure
 and semantics; Dimension E scores observed behavior. Repairs stop after three
 iterations per target.
@@ -48,10 +48,9 @@ An explicit `skill-improver` invocation runs immediately, independent of cadence
 When auto-editing skill or agent metadata in Phase 4, preserve the user's language conventions:
 
 - **Skills:** `description` / `when_to_use` are Korean and SKILL.md bodies are English, except functional examples and user-visible strings.
-- **Agents:** preserve the existing definition's language; do not blanket-translate English or Korean bodies.
 - **Trigger keywords are functional identifiers.** Never paraphrase or translate them.
 
-Record a target-type policy mismatch as **B.7 — language policy drift** and ask before translating.
+Role files under `references/roles/` keep the language of the skill that owns them. Record a policy mismatch as **B.7 — language policy drift** and ask before translating.
 
 ## Phase 0 — Pre-flight Checks
 
@@ -84,17 +83,16 @@ If any toolchain/path/repo check fails, report the issue with an actionable fix 
 
 ## Phase 1 — Inventory & Intent Extraction
 
-1. **Argument parsing**: if arguments specify skill or agent names, target those; otherwise sweep all skills in `claude/skills/` and `.claude/skills/`, plus agent definitions in `claude/agents/` and `.claude/agents/` (and actual equivalents for other hosts).
-2. **Mode classification**: tag each target as `skill` (has `SKILL.md`) or `agent` (a definition under `claude/agents/` or `.claude/agents/`, excluding README and references). Mode determines which Phase 2 dimensions apply.
-3. **Catalog map**: collect `name` and `group` from user-scope `claude/skills/` for B.6. Validate project-scope `.claude/skills/` structurally but never add them to the user catalog. Trigger overlap remains exclusive to `skill-engineer`.
-4. **Per-target read**: for each target, parse:
+1. **Argument parsing**: if arguments specify skill or agent names, target those; otherwise sweep all skills in `claude/skills/` and `.claude/skills/`.
+2. **Catalog map**: collect `name` and `group` from user-scope `claude/skills/` for B.6. Validate project-scope `.claude/skills/` structurally but never add them to the user catalog. Trigger overlap remains exclusive to `skill-engineer`.
+3. **Per-target read**: for each target, parse:
    - Frontmatter: `name`, `description`, `model`, `allowed-tools`, plus optional fields per `frontmatter-spec.md`.
    - Body: core procedure steps, constraints, prohibited actions.
-   - Referenced file paths in the body (`references/`, `scripts/`, agent paths).
+   - Referenced file paths in the body (`references/`, `scripts/`, role files).
    - Trigger keywords from the description.
    - For managed workflow skills, ownership and paths from the retained workflow contract rather than prose inferred from peer skills.
-5. Summarize each target's intent in 1 line for Phase 2.
-6. **Evidence collection** (run-level, once per sweep): create the run's scratch directory and condense recent sessions into it.
+4. Summarize each target's intent in 1 line for Phase 2.
+5. **Evidence collection** (run-level, once per sweep): create the run's scratch directory and condense recent sessions into it.
 
    ```bash
    REPORT_DIR=$(mktemp -d "${TMPDIR:-/tmp}/skill-improver-XXXXXXXX")
@@ -112,36 +110,31 @@ If any toolchain/path/repo check fails, report the issue with an actionable fix 
 
 ## Phase 2 — Test Scenario Generation
 
-Generate tests using a **test category matrix**: three skill dimensions, a mode-specific dimension D for agents, and dimension E for observed behavior in both modes.
+Generate tests using a **test category matrix**: three skill dimensions and dimension E for observed behavior in both modes.
 
 ### Dimension A — Structural (skill mode only)
 
-Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single execution covers all structural checks (frontmatter format, naming, size limits, **`group` field presence and slug validity**). Do not duplicate in Dimension B. **Skip for agent mode** — no equivalent validator exists yet; rely on Dimension D.
+Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single execution covers all structural checks (frontmatter format, naming, size limits, **`group` field presence and slug validity**). Do not duplicate in Dimension B.
 
 ### Dimension B — Semantic (skill-improver's core value)
 
 | Test | What it checks | How |
 |------|----------------|-----|
 | **B.1 Description-body alignment** | Description's WHAT clause matches actual procedure steps | Read procedure, compare with description. Flag if description claims capabilities not present in the body, or misses major capabilities |
-| **B.5 Reference integrity** | All file paths in the body point to existing files | Glob/Read each referenced path. Flag broken references. **Skip for agent files** unless body explicitly mentions external paths |
+| **B.5 Reference integrity** | All file paths in the body point to existing files | Glob/Read each referenced path. Flag broken references. Role files under `references/roles/` are checked like any reference. |
 | **B.6 catalog sync** | A structurally valid **user-scope** `claude/skills/` skill is listed under its group in `<repo_root>/claude/skills/README.md` | Dimension A owns group validity. Project-scope `.claude/skills/` targets are SKIP. |
-| **B.7 Language policy** | Skill metadata/body follows the skill policy; agent language is preserved; triggers stay intact | Apply the target-type rules above and compare edits with the original trigger tokens |
+| **B.7 Language policy** | Skill metadata/body follows the skill policy; triggers stay intact | Apply the target-type rules above and compare edits with the original trigger tokens |
 | **B.8 Workflow ownership** | Managed skills use contract paths, one-writer ownership, lifecycle, cadence, and Superpowers boundary | Compare workflow claims with the retained contract; flag conflicts as manual design issues |
 | **B.9 Authority/scope** | Approval reuse, explicit policy, side-effect ownership | Apply references/quality-checks.md |
 | **B.10 Evidence contract** | Verifier inputs, evidence levels, final status | Apply references/quality-checks.md; inspect available suites without running the target |
 | **B.11 Host/source integrity** | Capability fallbacks and scoped source claims | Apply references/quality-checks.md; check section/role references too |
 
-> **Scope boundary**: trigger completeness, trigger uniqueness, and model fitness checks belong to the `skill-engineer` agent. Do not duplicate them here. To run those checks, dispatch `Agent("skill-engineer", "<target> [--check trigger|overlap|model|all]")` either inline (after Phase 5 passes) or as a standalone follow-up.
+> **Scope boundary**: trigger completeness, trigger uniqueness, and model fitness checks belong to the skill-engineer role. Do not duplicate them here. To run those checks, dispatch `Agent` with `subagent_type: "Explore"`, Advanced routing, and the prompt "Read `<abs>/references/roles/skill-engineer.md` first and follow it. Target: <target> [--check trigger|overlap|model|all]"; print the returned report.
 
 ### Dimension C — Type-specific (skills)
 
 - **Skills with scripts** (`scripts/` directory exists): for each *executable* under `scripts/`, run it directly (`./script --help`) so its shebang applies — forcing `bash` misreads a `uv run` PEP 723 script as shell and fails — and expect exit 0; when arguments are required, also run with no args and expect a clear usage error rather than a crash. Data files such as `*.jq` are not entry points — they are exercised by their launcher's self-check.
 - **Pipeline skills** (skills that reference other skill names): verify referenced skill names exist as actual skill directories.
-
-### Dimension D — Agent-specific (agent mode only)
-
-Use the Agent Definition Mode checklist below. Model inheritance is valid;
-explicit model values must follow the target host's schema and available models.
 
 ### Dimension E — Evidence (run-level, both modes)
 
@@ -165,25 +158,9 @@ whether tests cover cross-skill interactions and intent.
 
 Each test is a concrete check with expected outcome (PASS criteria).
 
-## Agent Definition Mode
-
-When the target is an agent `.md` file (not a `SKILL.md`):
-
-| Check | Required | Notes |
-|-------|----------|-------|
-| `name` frontmatter field | Yes | kebab-case, matches filename |
-| `description` frontmatter field | Yes | WHAT + WHEN format |
-| `model` frontmatter field | Host-dependent | Omit to inherit when supported; validate explicit values against the target host, not a fixed provider list |
-| `tools` field | Optional | Comma-separated list when restricted |
-| Role statement in body | Yes | First non-frontmatter paragraph defines the role |
-| Output format spec | Conditional | Required if the agent produces structured output |
-| External path references | Optional | Validate via B.5 only when present |
-
-**Skipped vs skill mode**: Dimension A (no agent-side validator), Dimension C (no `scripts/` siblings), B.5 by default (skip unless paths in body), B.6 by default (agents carry no skills `group:` frontmatter — SKIP).
-
 ## Phase 3 — Test Execution & Capture
 
-Execute tests in order: Dimension A → B → C/D → E. Dimension E is scored once for the whole sweep (Phase 2) and then reported per target.
+Execute tests in order: Dimension A → B → C → E. Dimension E is scored once for the whole sweep (Phase 2) and then reported per target.
 
 For each test:
 
@@ -232,8 +209,7 @@ run took 13–20 minutes against the local model, so budget the guard per target
 Record the result JSON path the report ends with (`- Result JSON: ...`) as
 `waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: the bare
 skill-name form auto-scaffolds a new suite, which is authoring work outside this
-skill's write boundary. No suite → Waza guard SKIP for that target; agent
-targets have no suites and are always SKIP. A launcher exit 1 or a missing
+skill's write boundary. No suite → Waza guard SKIP for that target. A launcher exit 1 or a missing
 `- Result JSON:` line leaves no baseline, and the guard is UNVERIFIED.
 
 ### Auto-fixable (apply with Edit tool)
@@ -392,6 +368,6 @@ is violated; missing applicable evidence is UNVERIFIED, never PASS.
 | 6 | Missing or invalid `group` | Report as manual and present the eight allowed slugs; never guess. |
 | 7 | E-track proposal or a sample without attributable failures | Every proposal cites a session ID and rubric label; no failures means no E-track edit. Keep explicit user-directed authoring separate. |
 | 8 | Session evidence collection and reporting | Use the collector, keep audit artifacts under mktemp `REPORT_DIR`, cite IDs plus paraphrases; no direct raw-history reads or digest quotes. |
-| 9 | Waza invocation in skill/agent definitions | Only `claude/skills/waza/scripts/waza-run.sh` contains direct Waza subcommands; skills and agents (including `waza-runner.md`) call that launcher. Exclude `waza-install.md` when scanning documentation. |
+| 9 | Waza invocation in skill definitions | Only `claude/skills/waza/scripts/waza-run.sh` contains direct Waza subcommands; skills call that launcher. Exclude `waza-install.md` when scanning documentation. |
 | 10 | Model recommendation and execution | Recommend a workload profile with supported candidates and escalation conditions; respect user choices and distinguish advice from actual switching. Inheritance is a fallback, not proof of fit. |
 | 11 | Waza regression guard | With `- Usable: yes` and a checked-in suite, a target about to receive a model-visible edit has a `--trials 3` baseline JSON before that edit and a `--trials 3 --baseline-json` rerun after it; only a `⚠️ **regression**` line that reproduces on one confirmation rerun reverts all of that iteration's model-visible fixes for the target and reclassifies them as manual. Launcher exit 1, a missing Result JSON, or `⚠️ incomparable` is UNVERIFIED; mock results are reference-only and never revert. Without Waza, a suite, or a model-visible edit, the guard is SKIP and no suite is scaffolded or edited. |
