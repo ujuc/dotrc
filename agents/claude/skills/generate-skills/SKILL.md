@@ -267,7 +267,7 @@ detail into references, keeping execution gates and load conditions inline.
 - Every `references/` path resolves to a real file.
 - Instructions are verifiable (no fuzzy phrasing).
 - No filler (no linter-style preaching, no speculation, no over-explaining).
-- **Redundancy audit**: the body must not restate rules already enforced by dispatched agent definitions, sibling skills, or standard LLM knowledge. Run the audit in `references/redundancy-check.md` whenever the body references an agent file, overlaps with an existing skill, or exceeds 150 lines.
+- **Redundancy audit**: the body must not restate rules already stated in dispatched role files, sibling skills, or standard LLM knowledge. Run the audit in `references/redundancy-check.md` whenever the body references a role file, overlaps with an existing skill, or exceeds 150 lines.
 - **Managed ownership audit**: for workflow skills, verify contract-owned paths,
   writers, archive behavior, and excluded controllers against
   `workflow-hooks contract` rather than peer prose.
@@ -293,7 +293,7 @@ Using the freshly verified `references/frontmatter-spec.md` from Step 0:
 3. **New fields worth adopting**: suggest `context`, `agent`, `allowed-tools` etc. when they would help; suggest `effort` only with measured evidence (see `references/frontmatter-spec.md` → `effort`) and re-check a level carried over from another model (`references/model-selection.md` step 4).
 4. **`description` quality**: WHAT + WHEN coverage, trigger phrasing.
 5. **Structural health**: SKILL.md line count (500-line ceiling), whether content should be split into `references/`.
-6. **Redundancy audit**: detect body content that duplicates dispatched agent definitions, sibling skills, or standard LLM knowledge. Follow `references/redundancy-check.md`. Typical findings: constraints mirrored between skill and agent, prompt templates restating agent rules, generic markdown conventions.
+6. **Redundancy audit**: detect body content that duplicates dispatched role files, sibling skills, or standard LLM knowledge. Follow `references/redundancy-check.md`. Typical findings: constraints mirrored between skill and role file, prompt templates restating role rules, generic markdown conventions.
 7. **Managed ownership**: when the skill participates in the managed lifecycle,
    compare its paths and sole-writer claims with `workflow-hooks contract`.
 8. **Model guidance**: retain task-level defaults and escalation triggers in the

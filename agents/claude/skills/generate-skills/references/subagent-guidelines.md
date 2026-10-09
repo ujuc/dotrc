@@ -32,10 +32,18 @@ inherited model when known; do not claim the recommendation changed the model.
 
 | Type | Strengths | Limitations |
 |------|-----------|-------------|
-| Explore | Fast codebase search, file pattern matching, keyword search | Cannot edit files or run arbitrary commands |
+| Explore | Fast codebase search, file pattern matching, keyword search | No `Edit`/`Write`; has `Bash`, so it can run checks and return text |
 | general-purpose | Full tool access, autonomous multi-step tasks | Slower startup, heavier context |
 
 **Default**: Prefer Explore for read-only investigation. Use general-purpose only when the task requires edits, validation scripts, or multi-tool orchestration.
+
+Worker roles a skill dispatches repeatedly live in that skill's
+`references/roles/<role>.md`. The dispatch prompt begins with "Read `<absolute
+role path>` first and follow it." Read-only roles use `Explore` and return
+text; writing roles use `general-purpose`. Choose `model`/`effort` per call
+from [dispatch routing](model-selection.md#dispatch-routing); never pin them in
+frontmatter. `Explore` does not load CLAUDE.md, so the role file carries every
+rule the worker needs.
 
 ---
 

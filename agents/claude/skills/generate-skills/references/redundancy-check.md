@@ -4,20 +4,19 @@ Operationalizes Design Principle #1 ("don't restate things Claude already knows"
 
 ## What to audit
 
-### 1. Agent definition overlap
+### 1. Role file overlap
 
-If a skill dispatches an agent, compare the skill with that agent's definition.
+If a skill dispatches a worker role, compare the skill with that `references/roles/` file.
 Shared role standards may be redundant; task inputs, dispatch conditions and
-inline safety gates still belong at the call site. Use the active host's agent
-directory; `~/.claude/agents/X.md` is the Claude Code example.
+inline safety gates still belong at the call site.
 
-**Check:** for each agent the skill invokes, open the agent's `.md` file and diff claims. Typical overlap zones:
+**Check:** for each agent the skill invokes, open the role file and diff claims. Typical overlap zones:
 
 - Output rules ("cite file:line", "write to given path")
 - Exploration depth ("read every file", "trace N levels")
 - Constraints ("no code modifications", "no refactoring suggestions")
 
-**Fix:** link to the agent definition for duplicated role standards. Preserve
+**Fix:** link to the role file for duplicated role standards. Preserve
 explicit project requirements and the intentional inline exceptions below.
 
 ### 2. Sibling skill overlap
@@ -50,13 +49,13 @@ The tool registry (Read, Grep, Write, Edit, Bash, etc.) already documents what e
 Run the audit when any of the following holds:
 
 - SKILL.md body exceeds 150 lines.
-- The skill references an agent file (likely duplication zone).
+- The skill references a role file (likely duplication zone).
 - The skill overlaps in domain with an existing skill (found during Step 1 Explore).
 - Update mode: every pass through Step U2.
 
 ## Procedure
 
-1. **List external references**: grep SKILL.md for `~/.claude/agents/`, `references/`, skill names, URLs.
+1. **List external references**: grep SKILL.md for `references/`, skill names, URLs.
 2. **For each reference**, read the source and extract its claims.
 3. **Diff** against SKILL.md. Mark any overlap.
 4. **Delete or delegate**: if overlap ≥ 2 sentences, either delete and point to the source, or split the shared content into a `references/` file.
@@ -72,6 +71,6 @@ Prefer "delete" over "rewrite". A terse instruction that delegates to a canonica
 ## Red flags that signal duplication
 
 - Two consecutive bullets that both restate "read every file".
-- A `## Constraints` section that lists the same DO-NOTs as the dispatched agent file.
-- A prompt template in the skill body that repeats citation or depth rules the agent already enforces.
-- Headers like "Output Rules" / "What NOT to do" mirrored between skill and agent.
+- A `## Constraints` section that lists the same DO-NOTs as the dispatched role file.
+- A prompt template in the skill body that repeats citation or depth rules the role file already states.
+- Headers like "Output Rules" / "What NOT to do" mirrored between skill and role file.
