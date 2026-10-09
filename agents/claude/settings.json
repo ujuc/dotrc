@@ -139,7 +139,8 @@
     }
   },
   "outputStyle": "explanatory-concise",
-  "language": "한국어",
+  "language": "Korean",
+  "feedbackDrafts": "notify",
   "spinnerTipsEnabled": false,
   "modelSettings": {
     "claude-fable-5-1": {
@@ -149,25 +150,37 @@
       "effortLevel": "high"
     },
     "claude-opus-5-5": {
-      "effortLevel": "high"
+      "effortLevel": "medium"
     }
   },
   "advisorModel": "fable",
-  "askUserQuestionTimeout": "5m",
+  "askUserQuestionTimeout": "never",
   "pluginConfigs": {
     "agents-md@builtin": {
+      "options": {
+        "instructionFiles": "claude-md-and-agents-md"
+      }
+    },
+    "cc-plugin-agents-md@builtin": {
       "options": {
         "instructionFiles": "claude-md-and-agents-md"
       }
     }
   },
   "tui": "fullscreen",
+  "timeFormat": "24-hour",
   "skipWorkflowUsageWarning": true,
   "theme": "dark-ansi",
   "editorMode": "normal",
-  "teammateMode": "tmux",
+  "preferredNotifChannel": "auto",
+  "switchModelsOnFlag": true,
+  "autoContinueAtUsageLimit": true,
+  "showTurnDuration": true,
+  "terminalProgressBarEnabled": true,
+  "teammateMode": "auto",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "useAutoModeDuringPlan": true
+  "useAutoModeDuringPlan": true,
+  "model": "fable"
 }
