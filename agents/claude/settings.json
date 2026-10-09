@@ -48,6 +48,7 @@
     "defaultMode": "auto",
     "disableBypassPermissionsMode": "disable"
   },
+  "model": "fable",
   "hooks": {
     "SessionStart": [
       {
@@ -181,6 +182,5 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "useAutoModeDuringPlan": true,
-  "model": "fable"
+  "useAutoModeDuringPlan": true
 }
