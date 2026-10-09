@@ -1,6 +1,6 @@
 ## Work Rules
 
-- Scopes: `skills` for `claude/skills/` and `claude/evals/`, `rules` for `rules/`, otherwise `agents`.
+- Commit scopes: `skills` for `claude/skills/` and `claude/evals/`, `rules` for `rules/`, otherwise `agents`.
 - After changing `agents/claude/skills/<name>/`, run `bash agents/claude/skills/generate-skills/scripts/validate-skill agents/claude/skills/<name>` from the repository root, then run `skill-improver`.
 - For suites under `agents/claude/evals/<skill>/`, run `bash agents/claude/skills/waza/scripts/waza-run.sh eval <skill>` (the `waza` skill); never invoke the `waza` CLI directly.
 
@@ -21,7 +21,7 @@
 
 ## Managed Workflow
 
-- Keep one active workflow per checkout: `spec.md` (architecture-level work only) → optional `.research/research-*.md` → `.plans/plan-*.md` → explicit approval → implementation → durable `docs/{specs,research,plans}/`.
+- Keep one active workflow per checkout: `spec.md` (architecture-level work only) → optional `.research/research-*.md` → `.plans/plan-*.md` → explicit approval → implementation → durable `docs/{specs,research,plans}/`. Work scoped to `agents/` runs its workflow from `agents/` (archive paths resolve against the working directory) and lands in `agents/docs/`; everything else lands in the repository-root `docs/`.
 - Superpowers `writing-plans` is the sole plan writer, at the contract plan path. `implement-plan` is the sole managed executor and archive caller.
 - `generate-skills` remains the local authoring controller; TDD, debugging, verification, review, and parallel dispatch remain optional disciplines. Superpowers execution/worktree/branch controllers do not own this workflow.
 

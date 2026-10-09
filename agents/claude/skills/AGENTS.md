@@ -8,5 +8,6 @@
 - Do not track plugin-generated `learned/` content.
 - State each skill's recommended workload profile and escalation conditions using [the model selection guide](generate-skills/references/model-selection.md). Resolve Lightweight, Standard, Advanced, or Frontier to a supported model for the current task; inheritance is a fallback, not the recommendation. Keep native model IDs separate from profile labels, respect explicit user choices, and distinguish advice from actual switching.
 - Worker roles a skill dispatches live in `references/roles/<role>.md`; dispatch built-in `Explore` (read-only) or `general-purpose` with per-call `model`/`effort` from `generate-skills/references/model-selection.md#dispatch-routing`. Do not create `~/.claude/agents/` definitions.
+- `Explore` workers load no CLAUDE.md or AGENTS.md, so a role file must carry every rule its worker needs.
 - Read the machine-readable workflow surface (artifact paths, writers, archive destinations, cadence, and Superpowers boundaries) with `workflow-hooks contract`.
 - `skill-improver` runs through the SessionStart cadence hook; do not also schedule it with cron.
