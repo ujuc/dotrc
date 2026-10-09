@@ -97,9 +97,11 @@ independent verification.
 2. Missing required evidence blocks only the claims that need it. Keep optional
    or non-attributable evidence visibly SKIP/UNVERIFIED. Do not label an audit as
    full end-to-end behavior verification.
-3. Phase 6 alone owns the successful maintenance-run timestamp. It records
+3. Within a run, only Phase 6 writes the maintenance timestamp. It records
    completion of the declared audit, not coverage of every integration. Do not
    update it while a required audit failure remains or the run is interrupted.
+   The SessionStart decline path writes the same file to stop re-prompting, so
+   the file means "last asked or completed", never "last examined".
 
 Session-derived behavior proposals follow [`change-bar.md`](change-bar.md) and
 remain drafts until accepted. Missing evidence prevents evidence-motivated
