@@ -6,7 +6,7 @@
 
 | slug | 한글 라벨 | 스킬 (`codex:` 접두는 플러그인) |
 | --- | --- | --- |
-| `planning` | 🧭 기획·스펙 | `spec-planner` |
+| `planning` | 🧭 기획·스펙 | `spec-planner`, `design-agent` |
 | `analysis` | 📐 분석·계획 | `deep-read` |
 | `build` | 🛠 구현·실행 | `implement-plan` |
 | `docs` | 📝 문서·커밋 | `commit`, `generate-agent-docs` |
@@ -44,6 +44,7 @@
 [아키텍처 작업] spec-planner → deep-read(필요 시)
                 → writing-plans → 승인 → implement-plan
 [범위가 작은 작업] 승인된 간단 설계 → writing-plans → 승인 → implement-plan
+[에이전트 프로그램] design-agent → docs/agent-designs/<name>.md → writing-plans → 승인 → implement-plan
 [완료 보관]     docs/{specs,research,plans}
 [스킬 정비]     로컬 세션 기록 → skill-improver → generate-skills
                 (waza: 평가 스위트 baseline/after 회귀 확인)
