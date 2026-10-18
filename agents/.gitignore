@@ -75,6 +75,7 @@ claude/metrics
 claude/teams
 claude/session-data
 claude/settings.local.json
+claude/settings.json
 claude/daemon.log
 claude/feedback
 claude/skills/ego-browser

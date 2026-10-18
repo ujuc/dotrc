@@ -369,7 +369,9 @@ install_agents() {
             for item in \
                 anthropics/claude-plugins-official\|claude-plugins-official \
                 dietrichgebert/ponytail\|ponytail \
-                ayghri/i-have-adhd\|i-have-adhd; do
+                ayghri/i-have-adhd\|i-have-adhd \
+                jarrodwatts/claude-hud\|claude-hud \
+                typesafe-ai/skills\|typesafe-ai; do
                 marketplace_source=${item%%|*}
                 marketplace_name=${item#*|}
                 if ! json_has_string_field "$marketplace_json" name "$marketplace_name"; then
@@ -383,7 +385,7 @@ install_agents() {
         if [ "$plugin_status" -ne 0 ]; then
             record_failure agents "List plugins" "$plugin_status" "claude plugin list --json"
         else
-            for item in superpowers@claude-plugins-official security-guidance@claude-plugins-official remember@claude-plugins-official ponytail@ponytail i-have-adhd@i-have-adhd; do
+            for item in superpowers@claude-plugins-official security-guidance@claude-plugins-official remember@claude-plugins-official ponytail@ponytail i-have-adhd@i-have-adhd claude-hud@claude-hud typesafe@typesafe-ai; do
                 if ! json_has_string_field "$plugin_json" id "$item"; then
                     run_step agents "Install plugin $item" claude plugin install "$item"
                 fi
@@ -393,6 +395,10 @@ install_agents() {
         record_failure agents "Find Claude after installation" 1 "command -v claude"
     fi
     install_agent_links
+    # settings.json is untracked on purpose; the README keeps the copy to paste.
+    if [ ! -f "$DOTRC_AGENTS_DIR/claude/settings.json" ]; then
+        record_failure agents "Write ~/.claude/settings.json from README (Claude > settings.json)" 1 "\${EDITOR:-vi} $DOTRC_AGENTS_DIR/claude/settings.json"
+    fi
 }
 
 preflight_static_links

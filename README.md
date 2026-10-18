@@ -225,6 +225,7 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 /plugin marketplace add dietrichgebert/ponytail
 /plugin marketplace add ayghri/i-have-adhd
 /plugin marketplace add jarrodwatts/claude-hud
+/plugin marketplace add typesafe-ai/skills
 
 # Plugins
 /plugin install superpowers@claude-plugins-official
@@ -233,6 +234,7 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 /plugin install ponytail@ponytail
 /plugin install i-have-adhd@i-have-adhd
 /plugin install claude-hud@claude-hud
+/plugin install typesafe@typesafe-ai
 ```
 
 - [superpowers](https://github.com/obra/superpowers) — workflow skills 및 superpowers framework
@@ -241,11 +243,179 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 - remember — 세션 기록 저장
 - [i-have-adhd](https://github.com/ayghri/i-have-adhd) — ADHD 친화 출력 형식
 - [claude-hud](https://github.com/jarrodwatts/claude-hud) — 컨텍스트·에이전트·todo를 보여주는 상태줄 (아래 `claude-hud` 절)
+- [typesafe](https://github.com/typesafe-ai/skills) — TypeSafe 판단 프리미티브 스킬
+
+#### settings.json
+
+`~/.claude/settings.json`은 추적하지 않는다(`agents/.gitignore`). `/ultra-config` 같은 mod와 `/config`가 수시로 고쳐 쓰는 파일이라
+커밋 노이즈만 늘었기 때문이다. 마지막으로 추적했던 전체 내용은 `git show a56ea6f:agents/claude/settings.json`으로 볼 수 있다.
+
+새 기기에서는 아래 내용을 `~/.claude/settings.json`에 그대로 넣는다. `enabledPlugins`·`extraKnownMarketplaces`는 위 `/plugin` 명령이,
+`statusLine`은 `/claude-hud:setup`이 써 주므로 뺐다. hooks·permissions·env·`pluginConfigs`를 바꿀 때는 이 블록도 함께 고친다.
+
+```json
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "respectGitignore": true,
+  "skillListingBudgetFraction": 0.05,
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDISH_MD_MODE": "sibling",
+    "MAX_MCP_OUTPUT_TOKENS": "10000"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(git -C:*)",
+      "Bash(gh:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(echo:*)",
+      "Bash(grep:*)",
+      "Bash(which:*)",
+      "Bash(command -v:*)",
+      "Bash(date:*)",
+      "Bash(uv:*)",
+      "Bash(brew bundle:*)",
+      "Bash(mise which:*)",
+      "Bash(ollama list:*)",
+      "Bash(waza:*)",
+      "Bash(yq:*)",
+      "Bash(mkdir:*)",
+      "Bash(ln:*)",
+      "Bash(cat:*)",
+      "Bash(jq:*)",
+      "Bash(mv:*)",
+      "Bash(rmdir:*)",
+      "Bash(cd:*)",
+      "WebFetch(domain:agents.md)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:github.blog)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "mcp__acp__Write",
+      "mcp__acp__Edit",
+      "mcp__acp__Bash",
+      "Skill(commit)",
+      "Skill(commit:*)",
+      "mcp__codegraph__*"
+    ],
+    "ask": [],
+    "defaultMode": "auto",
+    "disableBypassPermissionsMode": "disable"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/workflow-hooks hook"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/workflow-hooks hook"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "codegraph prompt-hook"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/workflow-hooks hook",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  },
+  "worktree": {
+    "baseRef": "fresh"
+  },
+  "outputStyle": "explanatory-concise",
+  "language": "Korean",
+  "feedbackDrafts": "notify",
+  "spinnerTipsEnabled": false,
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    },
+    "claude-opus-5": {
+      "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    },
+    "claude-sonnet-5-5": {
+      "effortLevel": "low"
+    }
+  },
+  "advisorModel": "fable",
+  "promptSuggestionEnabled": false,
+  "awaySummaryEnabled": false,
+  "askUserQuestionTimeout": "never",
+  "pluginConfigs": {
+    "agents-md@builtin": {
+      "options": {
+        "instructionFiles": "claude-md-and-agents-md"
+      }
+    },
+    "cc-plugin-agents-md@builtin": {
+      "options": {
+        "instructionFiles": "claude-md-and-agents-md"
+      }
+    },
+    "ponytail@ponytail": {
+      "options": {
+        "sendNames": true,
+        "ledger": true
+      }
+    }
+  },
+  "tui": "fullscreen",
+  "timeFormat": "24-hour",
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark-ansi",
+  "editorMode": "normal",
+  "preferredNotifChannel": "auto",
+  "switchModelsOnFlag": true,
+  "autoContinueAtUsageLimit": true,
+  "showTurnDuration": true,
+  "terminalProgressBarEnabled": true,
+  "teammateMode": "auto",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "useAutoModeDuringPlan": true
+}
+```
+
+- `hooks`: `~/.local/bin/workflow-hooks`(`cargo install --locked --path agents/tools/workflow-hooks --root ~/.local`)와 `codegraph prompt-hook`(CodeGraph 절)을 전제로 한다.
+- `modelSettings`·`advisorModel`·`useAutoModeDuringPlan` 등 프로필 성격의 값은 `/ultra-config apply baseline`이 다시 맞춘다.
 
 #### claude-hud
 
 설치 후 `/claude-hud:setup`을 실행하면 `statusLine`이 `~/.claude/settings.json`에 기록된다.
-`~/.claude`가 이 저장소의 `agents/claude`로 연결돼 있어 `agents/claude/settings.json` diff로 나타나므로 커밋한다.
+`settings.json`은 추적하지 않으므로(위 `settings.json` 절) 커밋할 것은 없다.
 `statusLine.command`에 bun 경로(`mise/installs/bun/<버전>`)가 들어가므로 bun을 올리면 `/claude-hud:setup`을 다시 실행한다.
 플러그인 업데이트에는 재설정이 필요 없다(런처가 최신 설치본을 실행).
 
@@ -347,7 +517,7 @@ curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install
 ```
 
 새 터미널에서 하네스에 MCP 서버를 연결한다. Claude Code의 경우
-`~/.claude.json`의 `mcpServers`, `agents/claude/settings.json`의
+`~/.claude.json`의 `mcpServers`, `~/.claude/settings.json`의
 `mcp__codegraph__*` 권한과 `codegraph prompt-hook`,
 `agents/claude/CLAUDE.md`의 `CODEGRAPH_START` 블록이 함께 갱신된다.
 
