@@ -20,8 +20,6 @@ same tools or that upstream recommendations are mandatory requirements.
   task. Report upstream drift; do not edit sibling/global caches, settings,
   catalogs or dates as incidental work. Register only user-scope skills when
   registration is part of the task; never register project-local skills globally.
-- Within an active managed implementation, authoring supports implement-plan's
-  selected items. It does not create competing plans, execution flags or archives.
 
 ## Capability and source contracts
 
@@ -75,5 +73,4 @@ final repairs; do not restart all checks without a new reason.
 When repository policy requires skill-improver after edits, run it once for the
 changed targets as a batch. Its bounded re-verification covers fixes within that
 run, including self-maintenance; do not recursively invoke either controller.
-The maintenance skill owns its successful-run timestamp. A targeted check is
-not consent to a periodic full sweep, commit or unrelated cleanup.
+A targeted check is not consent to a periodic full sweep, commit or unrelated cleanup.

@@ -2,7 +2,7 @@
 name: prompting-assist
 description: "LLM 프롬프트를 Anthropic 프롬프팅 모범사례 기반 체크리스트로 진단하고 Before/After diff 또는 전체 재작성안을 제시한다. 사용자가 LLM에 보낼 프롬프트를 개선·리뷰·피드백받고 싶어할 때 사용. '프롬프트 개선해줘', '이 프롬프트 리뷰해줘', '이 프롬프트 피드백 줘', 'system prompt 개선해줘', '프롬프팅 팁', 'improve my prompt', 'review this prompt', '/prompting-assist' 등 명시적 어구에만 발동하며, 일반 대화 속 '프롬프트'라는 단어만으로는 발동하지 않는다."
 group: writing
-allowed-tools: Read, Edit, AskUserQuestion, ToolSearch, WebFetch, Bash(workflow-hooks:*)
+allowed-tools: Read, Edit, AskUserQuestion, ToolSearch, WebFetch
 ---
 
 # Prompting Assist
@@ -54,10 +54,6 @@ If intent is ambiguous, ask one clarifying question first: "이 프롬프트를 
 If the model is unknown, use current general Claude guidance and state the
 assumption without inventing an exact model version.
 
-For prompts that operate the managed lifecycle, run `workflow-hooks contract`
-and preserve its artifact paths, sole writers, and excluded controllers unless
-the user explicitly asks to redesign that contract.
-
 ### Stage 2: Reference Load
 
 The diagnostic baseline is the **inline checklist in Stage 3**. For current,
@@ -96,7 +92,6 @@ Judge pass / fail per checklist category; record N/A only for a row with an expl
 | Thinking & effort | Anthropic | Does the effort setting match task difficulty without requesting visible chain-of-thought? |
 | Tool use & agentic | Anthropic | Is action-vs-suggestion intent clear, with tools named when needed? |
 | Model carry-over | Anthropic model guide | For a Claude target whose model guide Stage 2 fetched: does the prompt keep instructions written for an earlier model's habits that the guide says to remove, such as narration suppression, blanket anti-formatting rules, or thinking toggles? Remove those before adding new ones. N/A for another LLM, a Claude family-only, unknown, or unlisted model, or any run where Stage 2 did not fetch that guide (offline or fetch failure). |
-| Managed workflow | Local contract | Does an agentic prompt preserve canonical paths, writers, and approval boundaries? |
 | Engineering restraint | Local rule | Does it avoid test hard-coding, defensive bloat, and needless abstraction pressure? |
 
 For each failing item, record a **short justification + improvement direction**. Cite the checklist category (or a specific section of the fetched Anthropic guide).
@@ -115,14 +110,14 @@ Pick the proposal format by change magnitude:
 
 **Prefer presenting options** when the user has a real choice: lay out "Option A (terse)" vs "Option B (strict)".
 
-Close with a one-line checklist coverage report that counts only categories not marked N/A in Stage 3: "적용 11개 범주 중 8개 합격, 3개 개선 반영." or, with Model carry-over N/A, "적용 10개 범주 중 8개 합격, 2개 개선 반영."
+Close with a one-line checklist coverage report that counts only categories not marked N/A in Stage 3: "적용 10개 범주 중 8개 합격, 2개 개선 반영." or, with Model carry-over N/A, "적용 9개 범주 중 8개 합격, 1개 개선 반영."
 
 ## Constraints
 
 - **Preserve original intent.** Never change what the user is trying to do — only raise quality.
 - **Evidence-backed.** Attribute Anthropic guidance only to the fetched
-  reference. Label managed-workflow and engineering-restraint recommendations
-  as local contract/rule safeguards rather than Anthropic guidance.
+  reference. Label engineering-restraint recommendations as local rule
+  safeguards rather than Anthropic guidance.
 - **Language preservation.** Keep the prompt's original language in the artifact. Diagnosis and explanation follow the conversation language (default Korean).
 - **Brevity.** Diagnosis report: 1–2 lines per category. Strip filler.
 - **Model-version awareness.** Successive Claude model generations diverge in non-trivial ways. When the target model is unknown, state the assumption and proceed.

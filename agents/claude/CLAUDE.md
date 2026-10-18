@@ -19,8 +19,8 @@
 
 ## Writing
 
-- Before handing over or seeking approval for Korean prose written for human readers (issue and PR bodies, README, user-facing docs), run the `humanizer` skill in fast mode on the part written or changed when its sentences total 100+ characters. Skip commit messages, chat replies, agent instructions and prompts, managed workflow artifacts, and text that is mostly bullets, tables, or code.
+- Before handing over or seeking approval for Korean prose written for human readers (issue and PR bodies, README, user-facing docs), run the `humanizer` skill in fast mode on the part written or changed when its sentences total 100+ characters. Skip commit messages, chat replies, agent instructions and prompts, and text that is mostly bullets, tables, or code.
 
 ## Compaction
 
-- Preserve modified files, latest verification results, pending approvals, unanswered questions, user decisions and constraints in the user's words, approaches tried or rejected and why, and exact identifiers (paths, commands, numbers); the compact `SessionStart` hook restores `spec.md`, `.research/`, and `.plans/` pointers after compaction.
+- Preserve modified files, latest verification results, pending approvals, unanswered questions, user decisions and constraints in the user's words, approaches tried or rejected and why, and exact identifiers (paths, commands, numbers).

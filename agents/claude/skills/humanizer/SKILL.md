@@ -59,7 +59,7 @@ humanizer v2.0 — {fast|strict|redo} 모드 / run_id: {YYYY-MM-DD-NNN} / 언어
 
 ## Phase 1 — Input capture and run_id
 
-1. Create `${XDG_STATE_HOME:-$HOME/.local/state}/agents/humanizer/{YYYY-MM-DD-NNN}/`. NNN is the day's sequence. This is runtime state, not a managed workflow artifact.
+1. Create `${XDG_STATE_HOME:-$HOME/.local/state}/agents/humanizer/{YYYY-MM-DD-NNN}/`. NNN is the day's sequence. This is runtime state.
 2. Save the input text to `01_input.txt`.
 3. Estimate genre from the first 300 chars (an explicit user value wins).
 4. Detect language from prose only: drop fenced code blocks, inline code, and URLs, then count Hangul syllables and Latin letters in what remains. Hangul ratio 70%+ → ko, Latin ratio 70%+ → en, else mixed. If nothing remains, return the input unchanged.

@@ -36,9 +36,8 @@ behavioral FAIL→PASS. Preserve this distinction in reports.
 
 Additional self-maintenance case: two named skills, including skill-improver,
 were edited in one approved task. Run one targeted audit batch, bounded repairs,
-no recursive controller invocation and no periodic full sweep. A required audit
-failure prevents the successful-run timestamp; optional missing integration
-remains disclosed and is not counted as behavior PASS.
+no recursive controller invocation and no periodic full sweep. Optional missing
+integration remains disclosed and is not counted as behavior PASS.
 
 Inspect all source references after changes to section names or writer roles.
 Structural validation and existing keyword suites cannot establish these decisions.

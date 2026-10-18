@@ -10,7 +10,7 @@ argument-hint: "[skill-name]"
 
 Read `references/quality-criteria.md` before authoring. It governs authority,
 selected write scope, native tool equivalents and evidence levels, including
-updates to this skill. Reuse existing user approval and managed-plan decisions.
+updates to this skill. Reuse existing user approval.
 Claude tool/model names below are host-specific examples; map available
 capabilities and report missing independent roles rather than inventing them.
 
@@ -66,16 +66,12 @@ Apply this to every skill created or updated through this workflow.
 
 ## Step 0: Spec sanity check (before anything else)
 
-### Shared workflow and Superpowers source
+### Superpowers source
 
-Run `workflow-hooks contract` and retain its JSON. This local skill remains the
+This local skill remains the
 authoring controller: it owns the Rust validator, group catalog, and Waza
 integration. Adapt the Superpowers pressure-testing principles, but do
 not hand control to another skill-generation workflow.
-
-When creating or updating a managed workflow skill, compare every artifact
-path and writer claim with the retained contract. Contract changes and their
-Rust validation must be approved and updated together.
 
 The official skills doc changes often. Verify it before generating, but only
 re-fetch when the local copy is actually stale — `references/frontmatter-spec.md`
@@ -268,9 +264,6 @@ detail into references, keeping execution gates and load conditions inline.
 - Instructions are verifiable (no fuzzy phrasing).
 - No filler (no linter-style preaching, no speculation, no over-explaining).
 - **Redundancy audit**: the body must not restate rules already stated in dispatched role files, sibling skills, or standard LLM knowledge. Run the audit in `references/redundancy-check.md` whenever the body references a role file, overlaps with an existing skill, or exceeds 150 lines.
-- **Managed ownership audit**: for workflow skills, verify contract-owned paths,
-  writers, archive behavior, and excluded controllers against
-  `workflow-hooks contract` rather than peer prose.
 
 ## Step U1: Inspect the target skill (update mode)
 
@@ -294,9 +287,7 @@ Using the freshly verified `references/frontmatter-spec.md` from Step 0:
 4. **`description` quality**: WHAT + WHEN coverage, trigger phrasing.
 5. **Structural health**: SKILL.md line count (500-line ceiling), whether content should be split into `references/`.
 6. **Redundancy audit**: detect body content that duplicates dispatched role files, sibling skills, or standard LLM knowledge. Follow `references/redundancy-check.md`. Typical findings: constraints mirrored between skill and role file, prompt templates restating role rules, generic markdown conventions.
-7. **Managed ownership**: when the skill participates in the managed lifecycle,
-   compare its paths and sole-writer claims with `workflow-hooks contract`.
-8. **Model guidance**: retain task-level defaults and escalation triggers in the
+7. **Model guidance**: retain task-level defaults and escalation triggers in the
    body; inheritance alone is not a workload recommendation.
 
 Summarize the comparison and reuse any already approved update scope. Resolve
@@ -430,8 +421,8 @@ For team-wide distribution, see `references/distribution-guide.md` — repo chec
 - A failed upstream fetch preserves the cache and check date. Report cached
   evidence as cached, not freshly verified.
 - The first Rust launcher call may compile; explain a noticeable startup pause.
-- Superpowers is a source of principles only. Local validation, catalog and managed
-  workflow ownership remain with this repository.
+- Superpowers is a source of principles only. Local validation and catalog
+  remain with this repository.
 
 ## Eval Criteria
 

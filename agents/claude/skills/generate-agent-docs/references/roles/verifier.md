@@ -54,7 +54,7 @@ dependent check, never assumed PASS.
    decision. Team TDD and named test gates survive generic anti-scaffolding
    defaults. Do not infer approval from a rule's wording.
 8. **Execution integrity**: effective live/cache guidance is the one actually
-   used; no global skill/cache/date edits; managed ownership boundaries hold.
+   used; no global skill/cache/date edits.
    Report unavailable roles and source fallbacks accurately.
 
 ## Report

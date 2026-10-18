@@ -303,41 +303,6 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
     "defaultMode": "auto",
     "disableBypassPermissionsMode": "disable"
   },
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "startup|resume|clear|compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.local/bin/workflow-hooks hook"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.local/bin/workflow-hooks hook"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.local/bin/workflow-hooks hook",
-            "timeout": 30
-          }
-        ]
-      }
-    ]
-  },
   "worktree": {
     "baseRef": "fresh"
   },
@@ -400,7 +365,7 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 }
 ```
 
-- `hooks`: `~/.local/bin/workflow-hooks`(`cargo install --locked --path agents/tools/workflow-hooks --root ~/.local`)를 전제로 한다. `codegraph install`이 다시 넣는 `codegraph prompt-hook`은 지운다.
+- `hooks`: 두지 않는다. `codegraph install`이 다시 넣는 `codegraph prompt-hook`은 지운다.
 - `ultracode`: 모든 세션을 ultracode(상시 워크플로 오케스트레이션)로 시작한다. `/effort`의 토글은 세션에만 적용되고 이 값을 저장하지 않는다.
 - `modelSettings`·`advisorModel`·`useAutoModeDuringPlan` 등 프로필 성격의 값은 `/ultra-config apply baseline`이 다시 맞춘다.
 
@@ -455,11 +420,9 @@ bun add -g --ignore-scripts @earendil-works/pi-coding-agent
 ln -sf ${DOTRC_AGENTS_DIR}/pi ${HOME}/.pi
 ```
 
-`agent/extensions/workflow-hooks.ts`는 `agents/pi/` 디렉터리 전체가
-`~/.pi`로 심링크되므로 자동으로 배포된다. `pi/AGENTS.md`는 이 디렉터리를 편집할 때 쓰는 지침이며
+`pi/AGENTS.md`는 이 디렉터리를 편집할 때 쓰는 지침이며
 Pi 전역 지침이 아니다. Pi는 전역 지침을 `~/.pi/agent/AGENTS.md`에서 읽는데, 이 경로는 추적하지 않는다.
-`agent/` 아래에서는 `extensions/`만 추적하고,
-나머지 Pi 런타임 상태는 `agents/.gitignore`의 화이트리스트(`pi/agent/*` + `!pi/agent/extensions`)로 제외한다.
+`agent/` 아래 Pi 런타임 상태는 `agents/.gitignore`로 제외한다.
 
 ### [Codex](https://developers.openai.com/codex)
 

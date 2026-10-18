@@ -6,9 +6,9 @@
 
 | slug | 한글 라벨 | 스킬 (`codex:` 접두는 플러그인) |
 | --- | --- | --- |
-| `planning` | 🧭 기획·스펙 | `spec-planner`, `design-agent` |
-| `analysis` | 📐 분석·계획 | `deep-read` |
-| `build` | 🛠 구현·실행 | `implement-plan` |
+| `planning` | 🧭 기획·스펙 | — |
+| `analysis` | 📐 분석·계획 | — |
+| `build` | 🛠 구현·실행 | — |
 | `docs` | 📝 문서·커밋 | `commit`, `generate-agent-docs` |
 | `writing` | ✍️ 글쓰기 | `humanizer`, `prompting-assist` |
 | `llm` | 🤖 외부 LLM | `codex:codex-cli-runtime`, `codex:codex-result-handling`, `codex:gpt-5-4-prompting` |
@@ -41,36 +41,13 @@
 ## 워크플로우 색인
 
 ```
-[아키텍처 작업] spec-planner → deep-read(필요 시)
-                → writing-plans → 승인 → implement-plan
-[범위가 작은 작업] 승인된 간단 설계 → writing-plans → 승인 → implement-plan
-[에이전트 프로그램] design-agent → docs/agent-designs/<name>.md → writing-plans → 승인 → implement-plan
-[완료 보관]     docs/{specs,research,plans}
 [스킬 정비]     로컬 세션 기록 → skill-improver → generate-skills
                 (waza: 평가 스위트 baseline/after 회귀 확인)
 [글쓰기]        prompting-assist → (선택) humanizer 후처리
 ```
 
-`workflow-hooks contract`가 노출하는 `agents/workflow-contract.json`이 경로,
-작성자, 보관 위치, 유지보수 주기와 Superpowers 경계의 단일 진실이다.
-한 체크아웃에서는 하나의 워크플로만 활성화한다. Superpowers `writing-plans`만 계획을
-작성하고 `implement-plan`만 코드를 실행하고 완료 산출물을 보관한다.
-
-## Managed Pipeline
-
-`implement-plan`은 전체 검증 직후 바로 보관한다.
-
-```
-spec-planner → deep-read? → writing-plans
-    → user approval → implement-plan → archive
-```
-
-Superpowers의 brainstorming·writing-skills 원칙은 공통
-스킬에 맞게 반영했고, 계획은 `writing-plans`가 계약 경로에 직접 작성한다. `generate-skills`는 로컬 validator·카탈로그를 유지하며
-행동 기준 변경에 baseline/candidate 검증을 적용한다. TDD, 체계적 디버깅,
-완료 전 검증, 리뷰, 병렬 디스패치는 선택적
-보조 규율로 사용할 수 있지만 SDD/`executing-plans`, worktree,
-브랜치 완료 흐름은 관리형 워크플로의 실행 소유권을 대체하지 않는다.
+`generate-skills`는 로컬 validator·카탈로그를 유지하며
+행동 기준 변경에 baseline/candidate 검증을 적용한다.
 `skill-improver`는 정적 점검(A–D)에 더해 로컬 세션 기록을
 요약·채점하는 Dimension E를 수행한다. 트랜스크립트는 기기 밖으로 나가지 않고,
 관찰된 실패가 `references/change-bar.md`의 기준을 통과할 때만 동작 수정을

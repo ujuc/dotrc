@@ -86,7 +86,6 @@ done
 command -v jq >/dev/null || die "jq is required" 1
 [ -d "$projects_dir" ] || die "no session history at $projects_dir" 1
 
-# Cadence timestamps record when the user was asked, not which sessions were read.
 [ -n "$since" ] || since=$(date -u -v-45d +%F 2>/dev/null || date -u -d '45 days ago' +%F)
 
 # BSD and GNU stat disagree on the mtime format flag; pick once.

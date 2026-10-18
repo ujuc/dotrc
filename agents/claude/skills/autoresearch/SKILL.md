@@ -32,17 +32,6 @@ Take any editable target, define what "good output" looks like as binary yes/no 
 
 **Output:** An improved target file + `results.tsv` log + `changelog.md` of every mutation attempted.
 
-## Managed workflow boundary
-
-Run `workflow-hooks contract` before accepting the target. Stop when `.harness/`
-exists. Never mutate paths owned by the contract (`spec.md`,
-`.research/`, `.plans/`, or their durable `docs/` destinations).
-
-When `.plans/.implementing` exists, proceed only when `implement-plan` invoked
-this optimization for a file named in the approved plan. Otherwise stop and
-return the request to `implement-plan`; autoresearch is not a competing
-execution engine.
-
 ---
 
 ## Before Starting: Gather Context
@@ -327,11 +316,4 @@ EVAL 5: Stop condition honored
   Pass: Final row's `stop_reason` is `user_stop`, `budget_exhausted`,
         or `ceiling_3x`, matching the observed condition.
   Fail: Loop ran past budget or stopped without the matching reason.
-
-EVAL 6: Managed ownership preserved
-  Question: Before mutation, did the run reject contract-owned artifacts and
-            require implement-plan ownership when implementation is active?
-  Pass: Managed artifacts are untouched and active execution has an approved
-        implement-plan caller and plan-listed target.
-  Fail: Autoresearch mutates managed artifacts or bypasses implement-plan.
 ```

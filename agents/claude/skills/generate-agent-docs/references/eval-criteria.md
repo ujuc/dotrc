@@ -44,12 +44,9 @@ fast or unavailable blind review yields PARTIAL, not fully verified completion.
    unobserved team exception, unchecked final patch, unbounded repair loop,
    or fully verified completion with failed/unavailable required checks.
 
-6. **Managed boundary and trigger scope**
-   Pass: workflow-hooks contract is read, legacy .harness/ stops the run,
-   active implementation receives proposals rather than competing writes.
-   README/API/CHANGELOG and skill-review requests do not launch generation.
-   Fail: competing managed execution, ignored legacy state, or unrelated
-   document generation triggered by reviewing this skill.
+6. **Trigger scope**
+   Pass: README/API/CHANGELOG and skill-review requests do not launch generation.
+   Fail: unrelated document generation triggered by reviewing this skill.
 
 Artifact tests and decision probes belong to the checked-in evaluation suite.
 Mock keyword results are not evidence for any filesystem property.

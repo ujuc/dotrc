@@ -21,7 +21,7 @@ explicit project requirements and the intentional inline exceptions below.
 
 ### 2. Sibling skill overlap
 
-If another skill in the same category (e.g., `.plans/`, `.research/`, planning family) already defines a procedure, don't copy it — link to it.
+If another skill in the same category already defines a procedure, don't copy it — link to it.
 
 **Check:** search the selected project and active host's skill directories for
 the draft's procedure keywords; skim hits for duplicated procedures.

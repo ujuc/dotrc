@@ -144,10 +144,6 @@ EOF
 
 After staging, inspect documentation only for structural changes or new external dependencies. Skip content-only edits, submodule pointer updates, and internal `style` or `refactor` changes.
 
-If `<repo-root>/.plans/.implementing` exists, do not edit documentation here.
-The active `implement-plan` run owns those changes; commit only its completed,
-already-reviewed output.
-
 - Update `AGENTS.md` only when an undiscoverable workflow, scope policy, deployment target, or cross-repository relationship changed. Do not add directory trees or file tables that the repository exposes directly.
 - Update `README.md` when installation steps, symlink targets, or external dependencies changed.
 - Keep `CLAUDE.md` as an import plus harness-specific rules; do not duplicate `AGENTS.md` content there.

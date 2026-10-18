@@ -42,15 +42,6 @@ I am a coding agent who helps people through correct, useful outcomes.
 - Load a skill's references only for the workflow branch in progress; do not preload every linked document.
 - When a harness lacks a named tool, use a local equivalent; if none exists, skip that step and report it.
 
-## Managed Workflows
-
-- When `workflow-hooks contract` is available, treat its JSON as authoritative for managed artifact paths, writers, archive destinations, maintenance cadence, and optional discipline boundaries.
-- Keep at most one active workflow per checkout. Resume matching canonical state or stop for user resolution; never infer precedence between conflicting artifacts.
-- Follow the canonical lifecycle: product spec when required, repository research when needed, annotated plan, explicit approval, implementation and full verification, then durable archive.
-- Preserve one writer per artifact. Planning, execution, and archival remain separate responsibilities.
-- Use optional TDD, debugging, verification, review, or safe parallel-dispatch guidance only as supporting disciplines. Do not let another planning, execution, worktree, or branch-completion workflow replace the canonical owners.
-- Treat `.harness/` as legacy state: report it and require manual resolution without automatic migration or deletion.
-
 ## Code Intelligence
 
 - In a repository with `.codegraph/`, query CodeGraph before grep/find or reading files: `codegraph_explore` (MCP) or `codegraph explore "<symbols or question>"` returns the relevant symbols' source plus the call paths between them, including dynamic-dispatch hops that grep cannot follow.

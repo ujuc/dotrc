@@ -2,7 +2,7 @@
 name: skill-improver
 description: "스킬 정의를 구조·의미 점검과 최근 세션 기록에서 관찰된 실패로 감사해 안전한 기계적 결함은 자동 수정하고 행동 변경은 근거 있는 제안으로 남긴다. /skill-improver, skill-improver, 스킬 개선해줘, 에이전트 정의 개선, 스킬 최적화, improve skill 요청 시 사용한다. 스킬 테스트·eval 실행·점수 비교는 waza, 반복 변이 루프는 autoresearch가 맡는다."
 group: meta
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bash:*), Bash(git:*), Bash(date:*), Bash(jq:*), Bash(mktemp:*), Bash(diff:*), Agent, advisor
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bash:*), Bash(git:*), Bash(date:*), Bash(mktemp:*), Bash(diff:*), Agent, advisor
 argument-hint: "[skill-name ...]"
 ---
 
@@ -32,17 +32,6 @@ iterations per target.
   to fill a behavior-evidence gap; this skill reviews definitions, scripts, and
   existing evidence.
 
-## Periodic Execution
-
-The SessionStart hook runs `$HOME/.local/bin/workflow-hooks hook`. When the
-contract-configured interval is due, it offers a non-blocking full sweep.
-
-- **Declined:** the active agent records today's date to suppress repeat prompts.
-- **Accepted:** only Phase 6 records a successful audit; interrupted or failed
-  runs remain due next session.
-
-An explicit `skill-improver` invocation runs immediately, independent of cadence.
-
 ## Language Policy
 
 When auto-editing skill metadata in Phase 4, preserve the user's language conventions:
@@ -54,25 +43,15 @@ Role files under `references/roles/` keep the language of the skill that owns th
 
 ## Phase 0 — Pre-flight Checks
 
-1. **Shared contract**: run the installed policy surface and retain its JSON for this run:
-   ```bash
-   workflow_bin=${WORKFLOW_HOOKS_BIN:-$HOME/.local/bin/workflow-hooks}
-   contract_json=$("$workflow_bin" contract) || exit 1
-   ```
-   Validate `maintenance.skill_improver.interval_days` and `maintenance.skill_improver.timestamp`. Never hard-code local substitutes when these keys exist. Resolve the timestamp path once here; Phase 6 writes it:
-   ```bash
-   timestamp_path=$(jq -er '.maintenance.skill_improver.timestamp' <<<"$contract_json")
-   case "$timestamp_path" in "~/"*) timestamp_path="$HOME/${timestamp_path#\~/}" ;; esac
-   ```
-2. **Toolchain**: check `cargo` and `jq` are installed (`validate-skill` is a Rust binary and the contract is JSON):
+1. **Toolchain**: check `cargo` and `jq` are installed (`validate-skill` is a Rust binary and `scripts/collect-sessions` needs jq):
    ```bash
    command -v cargo &>/dev/null || { echo "cargo required: https://rustup.rs"; exit 1; }
-   command -v jq &>/dev/null || { echo "jq is required to read the workflow contract"; exit 1; }
+   command -v jq &>/dev/null || { echo "jq is required by scripts/collect-sessions"; exit 1; }
    ```
-3. **Repository resolution**: resolve `repo_root` as `${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents`; verify its `AGENTS.md` and `claude/skills/`. Invocation CWD may be any project.
-4. **Validator path**: confirm `<repo_root>/claude/skills/generate-skills/scripts/validate-skill` exists. Use `repo_root` for every scan and command; do not require or mutate the caller's CWD.
-5. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking.
-6. **Waza availability** (non-blocking): resolve the launcher once and record whether measurement is possible for this run:
+2. **Repository resolution**: resolve `repo_root` as `${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents`; verify its `AGENTS.md` and `claude/skills/`. Invocation CWD may be any project.
+3. **Validator path**: confirm `<repo_root>/claude/skills/generate-skills/scripts/validate-skill` exists. Use `repo_root` for every scan and command; do not require or mutate the caller's CWD.
+4. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking.
+5. **Waza availability** (non-blocking): resolve the launcher once and record whether measurement is possible for this run:
    ```bash
    waza_run="<repo_root>/claude/skills/waza/scripts/waza-run.sh"
    bash "$waza_run" status
@@ -90,7 +69,6 @@ If any toolchain/path/repo check fails, report the issue with an actionable fix 
    - Body: core procedure steps, constraints, prohibited actions.
    - Referenced file paths in the body (`references/`, `scripts/`, role files).
    - Trigger keywords from the description.
-   - For managed workflow skills, ownership and paths from the retained workflow contract rather than prose inferred from peer skills.
 4. Summarize each target's intent in 1 line for Phase 2.
 5. **Evidence collection** (run-level, once per sweep): create the run's scratch directory and condense recent sessions into it.
 
@@ -99,7 +77,7 @@ If any toolchain/path/repo check fails, report the issue with an actionable fix 
    bash "<repo_root>/claude/skills/skill-improver/scripts/collect-sessions" --out "$REPORT_DIR"
    ```
 
-   Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded. A manual run can narrow with `--since YYYY-MM-DD` or `--project PATH`. Do **not** derive the window from `timestamp_path` — the cadence prompt writes that file on decline as well as on completion, so it marks "last asked", not "last examined".
+   Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded. A manual run can narrow with `--since YYYY-MM-DD` or `--project PATH`.
 
    `bash scripts/test-collect-sessions` self-checks the collector against a synthetic history; run it after touching `condense.jq` or `inventory.jq`.
 
@@ -124,7 +102,6 @@ Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single exe
 | **B.5 Reference integrity** | All file paths in the body point to existing files | Glob/Read each referenced path. Flag broken references. Role files under `references/roles/` are checked like any reference. |
 | **B.6 catalog sync** | A structurally valid **user-scope** `claude/skills/` skill is listed under its group in `<repo_root>/claude/skills/README.md` | Dimension A owns group validity. Project-scope `.claude/skills/` targets are SKIP. |
 | **B.7 Language policy** | Skill metadata/body follows the skill policy; triggers stay intact | Apply the target-type rules above and compare edits with the original trigger tokens |
-| **B.8 Workflow ownership** | Managed skills use contract paths, one-writer ownership, lifecycle, cadence, and Superpowers boundary | Compare workflow claims with the retained contract; flag conflicts as manual design issues |
 | **B.9 Authority/scope** | Approval reuse, explicit policy, side-effect ownership | Apply references/quality-checks.md |
 | **B.10 Evidence contract** | Verifier inputs, evidence levels, final status | Apply references/quality-checks.md; inspect available suites without running the target |
 | **B.11 Host/source integrity** | Capability fallbacks and scoped source claims | Apply references/quality-checks.md; check section/role references too |
@@ -229,8 +206,6 @@ skill's write boundary. No suite → Waza guard SKIP for that target. A launcher
   unless their modification is explicitly approved.
 - Missing or invalid `group`: present the eight allowed slugs and obtain the
   user's choice; never infer a group from the name or description.
-- Contract ownership conflicts (B.8): update the approved contract
-  and implementation together in a separate workflow.
 - E.1 proposals: evidence supports a draft, never an unattended procedure rewrite.
 - E.2 coverage gaps: route suggestions to `skill-engineer`, which owns triggers.
 
@@ -272,8 +247,7 @@ behavior change unapplied; local reasoning is not an independent review.
    SKIP/UNVERIFIED → proceed to Phase 6. Do not claim behavior beyond its evidence.
 4. If failures remain and iteration count < 3 → return to Phase 4.
 5. At iteration 3, stop repairs and report remaining failures. Consult an available
-   advisor once if useful; absence is disclosed. Do not start another loop or
-   update the successful-run timestamp while a required failure remains.
+   advisor once if useful; absence is disclosed. Do not start another loop.
 
 ## Phase 6 — Summary & Commit
 
@@ -307,15 +281,6 @@ If any fixes were applied:
    than asking again. Otherwise leave the changes uncommitted.
 3. Follow the repository's Korean Conventional Commit rules.
 
-After the report (with or without fixes), update the periodic-run timestamp at `timestamp_path`, resolved in Phase 0 from the contract:
-
-```bash
-mkdir -p "$(dirname "$timestamp_path")"
-date -u +%Y-%m-%d >| "$timestamp_path"   # >| : the file already exists and zsh sets noclobber
-```
-
-This signals to the session-start protocol that skill-improver has run today, preventing repeat notifications next session. **Do not write the timestamp earlier in the workflow** — failed runs (Phase 0–5 errors) should re-prompt next session.
-
 ## Independent consultation
 
 Use an available advisor or separate reviewer context at these decision points:
@@ -335,7 +300,7 @@ disclose it and leave unresolved behavioral proposals unapplied.
 
 ## Deep Optimization Handoff
 
-If deeper eval-based optimization is warranted, finish this run first and recommend a separate `/autoresearch <target>` invocation. Do not launch autoresearch inside skill-improver's commit/timestamp transaction; it has its own confirmation, artifacts, validation, and commit cycle.
+If deeper eval-based optimization is warranted, finish this run first and recommend a separate `/autoresearch <target>` invocation. Do not launch autoresearch inside skill-improver's commit transaction; it has its own confirmation, artifacts, validation, and commit cycle.
 
 ## Gotchas
 
@@ -348,7 +313,7 @@ If deeper eval-based optimization is warranted, finish this run first and recomm
 4. Missing history can make the collector fail rather than emit an empty
    inventory. Both cases make Dimension E SKIP, never PASS or a structural FAIL.
 5. Beyond target files and the catalog, writes are limited to `REPORT_DIR`, an
-   explicitly requested commit, the Phase 6 timestamp, and Waza result JSON
+   explicitly requested commit, and Waza result JSON
    (baseline, after, and confirmation runs) under the gitignored `~/.claude/data/waza/results/`, subject to user and host write
    boundaries. Never scaffold or edit `claude/evals/` from this skill; suite
    authoring belongs to `generate-skills` through the `waza` skill.
@@ -363,11 +328,10 @@ is violated; missing applicable evidence is UNVERIFIED, never PASS.
 | 1 | `cargo` or validator launcher missing | Stop in Phase 0 with an actionable fix; no Phase 1+ work. |
 | 2 | Description auto-fix | Diff preserves every original Korean trigger; only WHAT changes. |
 | 3 | Fix introduces a regression | Revert the fix or discard its unapplied draft, reclassify as manual, and restore the prior result. |
-| 4 | Three repair iterations exhausted | Stop, report unresolved failures and actual consultation availability; no successful-run timestamp. |
-| 5 | Phase 6 completes with authorized timestamp access | Contract-configured file contains today's UTC date as YYYY-MM-DD. |
-| 6 | Missing or invalid `group` | Report as manual and present the eight allowed slugs; never guess. |
-| 7 | E-track proposal or a sample without attributable failures | Every proposal cites a session ID and rubric label; no failures means no E-track edit. Keep explicit user-directed authoring separate. |
-| 8 | Session evidence collection and reporting | Use the collector, keep audit artifacts under mktemp `REPORT_DIR`, cite IDs plus paraphrases; no direct raw-history reads or digest quotes. |
-| 9 | Waza invocation in skill definitions | Only `claude/skills/waza/scripts/waza-run.sh` contains direct Waza subcommands; skills call that launcher. Exclude `waza-install.md` when scanning documentation. |
-| 10 | Model recommendation and execution | Recommend a workload profile with supported candidates and escalation conditions; respect user choices and distinguish advice from actual switching. Inheritance is a fallback, not proof of fit. |
-| 11 | Waza regression guard | With `- Usable: yes` and a checked-in suite, a target about to receive a model-visible edit has a `--trials 3` baseline JSON before that edit and a `--trials 3 --baseline-json` rerun after it; only a `⚠️ **regression**` line that reproduces on one confirmation rerun reverts all of that iteration's model-visible fixes for the target and reclassifies them as manual. Launcher exit 1, a missing Result JSON, or `⚠️ incomparable` is UNVERIFIED; mock results are reference-only and never revert. Without Waza, a suite, or a model-visible edit, the guard is SKIP and no suite is scaffolded or edited. |
+| 4 | Three repair iterations exhausted | Stop, report unresolved failures and actual consultation availability. |
+| 5 | Missing or invalid `group` | Report as manual and present the eight allowed slugs; never guess. |
+| 6 | E-track proposal or a sample without attributable failures | Every proposal cites a session ID and rubric label; no failures means no E-track edit. Keep explicit user-directed authoring separate. |
+| 7 | Session evidence collection and reporting | Use the collector, keep audit artifacts under mktemp `REPORT_DIR`, cite IDs plus paraphrases; no direct raw-history reads or digest quotes. |
+| 8 | Waza invocation in skill definitions | Only `claude/skills/waza/scripts/waza-run.sh` contains direct Waza subcommands; skills call that launcher. Exclude `waza-install.md` when scanning documentation. |
+| 9 | Model recommendation and execution | Recommend a workload profile with supported candidates and escalation conditions; respect user choices and distinguish advice from actual switching. Inheritance is a fallback, not proof of fit. |
+| 10 | Waza regression guard | With `- Usable: yes` and a checked-in suite, a target about to receive a model-visible edit has a `--trials 3` baseline JSON before that edit and a `--trials 3 --baseline-json` rerun after it; only a `⚠️ **regression**` line that reproduces on one confirmation rerun reverts all of that iteration's model-visible fixes for the target and reclassifies them as manual. Launcher exit 1, a missing Result JSON, or `⚠️ incomparable` is UNVERIFIED; mock results are reference-only and never revert. Without Waza, a suite, or a model-visible edit, the guard is SKIP and no suite is scaffolded or edited. |

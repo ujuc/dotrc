@@ -3,7 +3,7 @@ name: generate-agent-docs
 description: "Claude·Codex 공통 AGENTS.md, Claude 전용 CLAUDE.md, .claude/rules, contributing-docs 등 에이전트 문서를 생성·갱신한다. CLAUDE.md 업데이트, AGENTS.md 갱신, 에이전트 문서 생성 요청에 사용한다. README·API 문서·CHANGELOG는 제외. (구 명칭 generate-claude-md)"
 when_to_use: "에이전트 문서(AGENTS.md, CLAUDE.md, nested CLAUDE.md, .claude/rules, contributing-docs)를 만들거나 고칠 때. 트리거: '/generate-agent-docs', 'generate-agent-docs', 'CLAUDE.md 업데이트', 'CLAUDE.md 만들어줘', 'AGENTS.md 갱신', 'AGENTS.md 생성해줘', '에이전트 문서 갱신', 'rules 생성', 'contributing-docs 추가', 'update CLAUDE.md', 'create AGENTS.md', 'refresh AGENTS.md'. 커밋 워크플로 안의 문서 갱신 단계는 commit 스킬이 처리한다."
 group: docs
-allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch advisor Bash(workflow-hooks:*)
+allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch advisor
 ---
 
 # Agent Docs Generator — Orchestrator
@@ -81,14 +81,6 @@ instruction belongs in a doc at all), and references/tdd-agent-loop.md (`T1`
 — whether a testing instruction prescribes process or outcome).
 
 ## Stage 0: Bootstrap & Routing
-
-### Managed workflow boundary
-
-Run `workflow-hooks contract` before project analysis. Stop when `.harness/`
-exists. If `.plans/.implementing` exists, this skill may analyze and propose
-documentation changes but must return them to the active `implement-plan` run
-instead of writing files itself. Without an active implementation flag,
-standalone user-approved surgical updates remain allowed.
 
 This skill is the **"refine over time"** layer on top of the built-in `/init`
 command. `/init` is a user-only slash command — it cannot be invoked
@@ -329,7 +321,6 @@ instructions.
 | Emit an instruction to show, suppress, or dial up the agent's reasoning | Never (W2) — risks `reasoning_extraction` refusals or tag leakage, and thinking amount is set by effort, not doc text |
 | Emit a sometimes-relevant multi-step procedure as a CLAUDE.md / AGENTS.md section | Recommend a skill and emit one reference line (C2) — every-session budget is for always-relevant content |
 | Add session logs or treat a Notes heading as grounds for deletion | Apply scoped C3; preserve intentional project policy and do not assume every host has auto-memory |
-| Edit project docs while `.plans/.implementing` exists | Return proposed edits to the active `implement-plan` run; do not become a second executor |
 | Claim full verification with missing evidence or skipped review | Report FAIL, UNVERIFIED or PARTIAL with the actual checklist, blind-review and final-check results |
 
 ## Gotchas
@@ -366,5 +357,5 @@ case is discovered.
 
 references/eval-criteria.md defines 6 checks: target/shared ownership,
 authorization/preservation, grounded policy, reference/execution integrity,
-verification evidence/status, and managed/trigger boundaries.
+verification evidence/status, and trigger scope.
 skill-improver / autoresearch / waza reuse them when optimizing this skill.

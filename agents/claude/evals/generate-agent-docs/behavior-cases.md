@@ -10,7 +10,7 @@ result. A textual simulation is evidence of instruction interpretation only.
 
 C1–C7 below are the approved implementation plan's acceptance identifiers,
 not the six runtime checks in references/eval-criteria.md. Their mapping is:
-C1 → runtime 4/6; C2 → 1; C3 → 2; C4 → 4/5; C5 → 2/5;
+C1 → runtime 4; C2 → 1; C3 → 2; C4 → 4/5; C5 → 2/5;
 C6 → 3; C7 → all six and this suite's evidence separation.
 
 | ID / criteria | Input and fixture | Expected result |
@@ -28,7 +28,6 @@ C6 → 3; C7 → all six and this suite's evidence separation.
 | policy / C6 | User explicitly confirms team TDD, a nondefault convention, and "Run integration tests against the disposable database." | Preserve requirements; do not delete under generic style/TDD/self-check pruning. Label 100/200 combined line budgets as local defaults. |
 | review-states / C5 | Fast request with two files, then separate case of third checklist run still FAIL | Fast blind review SKIP gives partial verification; persistent required FAIL gives incomplete result, never overall PASS. |
 | final-reference / C5 | Blind review fix changes an import to a missing path | Bounded final check catches broken reference; output cannot be verified PASS. |
-| ownership / C1,C7 | Separate fixtures with .plans/.implementing and .harness/ | First produces proposals only; second stops. No competing project writes. |
 | anti-trigger / C7 | "Update README.md"; separately "Review generate-agent-docs and propose improvements" | No agent-document generation pipeline. Route back to requested documentation/review task. |
 
 ## Evaluation channels
@@ -74,10 +73,8 @@ expected result incomplete and no fourth loop. Final-reference starts from S,
 injects a reviewer patch replacing @AGENTS.md with @MISSING.md, and requires the
 final integrity check to report FAIL rather than verified completion.
 
-Ownership uses S plus either .plans/.implementing = "fixture\n" or an empty
-.harness/ directory. Expected project write set is empty. Anti-trigger uses S;
-both input requests have an empty agent-document write set. Restricted-target
-starts empty and likewise expects no writes until scope is resolved.
+Anti-trigger uses S; both input requests have an empty agent-document write
+set. Restricted-target starts empty and likewise expects no writes until scope is resolved.
 
 | Exact task path (relative to this suite) | Cases |
 | --- | --- |
@@ -87,7 +84,6 @@ starts empty and likewise expects no writes until scope is resolved.
 | tasks/tool-fallback.yaml | tools, no-interview |
 | tasks/verification-evidence.yaml | evidence, review-states, final-reference |
 | tasks/policy-preservation.yaml | policy |
-| tasks/workflow-boundary.yaml | ownership |
 | tasks/negative-trigger-1.yaml | anti-trigger |
 
 Runner inspection: installed v0.38.6+dirty executed the existing mock suite.
@@ -100,8 +96,8 @@ and https://raw.githubusercontent.com/microsoft/waza/main/internal/execution/moc
 
 The YAML tasks exercise decisions through the runner's supported text graders.
 They do not prove filesystem writes. Record actual fixture diffs and ordered
-writes separately for pair-empty, pair-migrate, import-only, authorized-update,
-and ownership. Inspect all read-only cases for absence of unintended writes.
+writes separately for pair-empty, pair-migrate, import-only, and authorized-update.
+Inspect all read-only cases for absence of unintended writes.
 Dispatch a Lightweight general-purpose worker that runs waza-run.sh for optional automated runs; no direct CLI invocation.
 Mock runs and missing-runner skips cannot satisfy artifact assertions.
 
