@@ -229,7 +229,6 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 
 # Plugins
 /plugin install superpowers@claude-plugins-official
-/plugin install security-guidance@claude-plugins-official
 /plugin install remember@claude-plugins-official
 /plugin install ponytail@ponytail
 /plugin install i-have-adhd@i-have-adhd
@@ -239,7 +238,6 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 
 - [superpowers](https://github.com/obra/superpowers) — workflow skills 및 superpowers framework
 - [ponytail](https://github.com/dietrichgebert/ponytail) — 단순한 구현을 우선하는 개발 모드
-- security-guidance — 보안 리뷰
 - remember — 세션 기록 저장
 - [i-have-adhd](https://github.com/ayghri/i-have-adhd) — ADHD 친화 출력 형식
 - [claude-hud](https://github.com/jarrodwatts/claude-hud) — 컨텍스트·에이전트·todo를 보여주는 상태줄 (아래 `claude-hud` 절)
@@ -325,14 +323,6 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
             "command": "~/.local/bin/workflow-hooks hook"
           }
         ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "codegraph prompt-hook"
-          }
-        ]
       }
     ],
     "PostToolUse": [
@@ -370,6 +360,7 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
     }
   },
   "advisorModel": "fable",
+  "ultracode": true,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "askUserQuestionTimeout": "never",
@@ -409,7 +400,8 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 }
 ```
 
-- `hooks`: `~/.local/bin/workflow-hooks`(`cargo install --locked --path agents/tools/workflow-hooks --root ~/.local`)와 `codegraph prompt-hook`(CodeGraph 절)을 전제로 한다.
+- `hooks`: `~/.local/bin/workflow-hooks`(`cargo install --locked --path agents/tools/workflow-hooks --root ~/.local`)를 전제로 한다. `codegraph install`이 다시 넣는 `codegraph prompt-hook`은 지운다.
+- `ultracode`: 모든 세션을 ultracode(상시 워크플로 오케스트레이션)로 시작한다. `/effort`의 토글은 세션에만 적용되고 이 값을 저장하지 않는다.
 - `modelSettings`·`advisorModel`·`useAutoModeDuringPlan` 등 프로필 성격의 값은 `/ultra-config apply baseline`이 다시 맞춘다.
 
 #### claude-hud

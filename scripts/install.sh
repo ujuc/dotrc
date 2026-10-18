@@ -385,7 +385,7 @@ install_agents() {
         if [ "$plugin_status" -ne 0 ]; then
             record_failure agents "List plugins" "$plugin_status" "claude plugin list --json"
         else
-            for item in superpowers@claude-plugins-official security-guidance@claude-plugins-official remember@claude-plugins-official ponytail@ponytail i-have-adhd@i-have-adhd claude-hud@claude-hud typesafe@typesafe-ai; do
+            for item in superpowers@claude-plugins-official remember@claude-plugins-official ponytail@ponytail i-have-adhd@i-have-adhd claude-hud@claude-hud typesafe@typesafe-ai; do
                 if ! json_has_string_field "$plugin_json" id "$item"; then
                     run_step agents "Install plugin $item" claude plugin install "$item"
                 fi
