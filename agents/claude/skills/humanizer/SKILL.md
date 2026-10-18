@@ -3,7 +3,7 @@ name: humanizer
 argument-hint: "[--strict | redo] [텍스트 또는 파일 경로] [장르: ...] [강도: ...]"
 description: |
   AI가 쓴 글의 흔적을 자연스러운 사람의 글로 바꾸는 윤문 오케스트레이터(한국어 주력, 영어는 fast만).
-  AI 글 자연스럽게, AI 티 제거, ChatGPT 문체 고쳐, 번역투 고쳐, 사람이 쓴 것처럼 윤문, 휴머나이저, humanize, remove AI tone, 2차 윤문, /humanizer 요청 시 사용한다. 요청이 없어도 이슈·PR 본문, README, 사용자용 문서처럼 사람이 읽을 한국어 글을 새로 쓰거나 고쳤고 그 부분의 문장이 100자 이상이면, 내보내거나 승인받기 직전에 그 부분만 fast 모드로 사용한다(커밋 메시지, 대화 답변, 에이전트 지침·프롬프트, 워크플로 산출물, 불릿·표·코드 위주 글은 제외). redo·--strict는 모드 인자다.
+  AI 글 자연스럽게, AI 티 제거, ChatGPT 문체 고쳐, 번역투 고쳐, 사람이 쓴 것처럼 윤문, 휴머나이저, humanize, remove AI tone, 2차 윤문, /humanizer 요청 시 사용한다. 요청이 없어도 이슈·PR 본문, README, 사용자용 문서처럼 사람이 읽을 한국어 글을 새로 쓰거나 고쳤고 그 부분의 문장이 100자 이상이면, 내보내거나 승인받기 직전에 그 부분만 fast 모드로 사용한다(커밋 메시지, 대화 답변, 에이전트 지침·프롬프트, 불릿·표·코드 위주 글은 제외). redo·--strict는 모드 인자다.
 group: writing
 allowed-tools:
   - Read
