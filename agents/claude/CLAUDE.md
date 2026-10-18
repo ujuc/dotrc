@@ -19,7 +19,7 @@
 
 ## Writing
 
-- Before handing over or seeking approval for Korean prose written for human readers (issue and PR bodies, README, user-facing docs), run the `humanizer` skill in fast mode on the part written or changed when its sentences total 100+ characters. Skip commit messages, chat replies, agent instructions and prompts, and text that is mostly bullets, tables, or code.
+- Before handing over or seeking approval for Korean prose written for human readers, run the `humanizer` skill in fast mode when the proactive-use clause in its `when_to_use` applies; that clause is the only copy of the target, length, and exclusion rules.
 
 ## Compaction
 
