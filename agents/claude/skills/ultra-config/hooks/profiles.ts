@@ -65,7 +65,7 @@ export const PROFILES: Profile[] = [
       set(SUBAGENT.path, SUBAGENT.label, null, 'subagents keep the model they ask for'),
       cfg('workflows', true, 'multi-agent workflows available'),
       cfg('workflowKeywordTriggerEnabled', true, '"ultracode" starts a workflow'),
-      cfg('workflowSizeGuideline', 'large', 'room for large fan-outs'),
+      cfg('workflowSizeGuideline', 'medium', 'parallel agents when they help'),
       cfg('permissionMode', 'auto', 'the classifier approves safe actions'),
       cfg('useAutoModeDuringPlan', true, 'plan mode acts without prompts too'),
       cfg('autoCompact', true, 'long sessions keep going'),

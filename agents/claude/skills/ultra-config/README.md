@@ -41,7 +41,7 @@ In the pane everything is a press: a profile's name opens its detail (one is alw
 
 | Profile | For | Sets |
 | --- | --- | --- |
-| ● **Baseline** | My everyday setup (dotrc addition) | Model `default` (Opus; Fable only via `advisor()`), effort `high`, subagents unpinned, workflows on with the `ultracode` keyword, large workflows, `auto` permission mode also during plan, auto-compact on |
+| ● **Baseline** | My everyday setup (dotrc addition) | Model `default` (Opus; Fable only via `advisor()`), effort `high`, subagents unpinned, workflows on with the `ultracode` keyword, medium workflows, `auto` permission mode also during plan, auto-compact on |
 | ◔ **Token saver** | Spending fewer tokens | Model `sonnet`, effort `low`, subagents on `haiku`, Concise output, no prompt suggestions or recap, auto-compact on, small workflows, no `ultracode` keyword, MCP output capped at 10,000 tokens, fast mode off |
 | » **Fast flow** | Less waiting | Model `sonnet`, effort `medium`, edits auto-accepted, Concise output, prompt suggestions on, turn duration and progress bar on, medium workflows |
 | ◆ **Max quality** | The best result | Model `best`, effort `xhigh`, subagents keep their own model, default output, workflows on with large fan-outs and the `ultracode` keyword, checkpoints and auto-compact on |
