@@ -5,7 +5,6 @@
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDISH_MD_MODE": "sibling",
-    "CLAUDE_CODE_SUBAGENT_MODEL": "haiku",
     "MAX_MCP_OUTPUT_TOKENS": "10000"
   },
   "permissions": {
@@ -50,7 +49,7 @@
     "defaultMode": "auto",
     "disableBypassPermissionsMode": "disable"
   },
-  "model": "sonnet",
+  "model": "best",
   "hooks": {
     "SessionStart": [
       {
@@ -97,7 +96,10 @@
   "worktree": {
     "baseRef": "fresh"
   },
-  "workflowKeywordTriggerEnabled": false,
+  "statusLine": {
+    "type": "command",
+    "command": "'/Users/ujuc/.local/share/mise/installs/bun/1.4.3/bin/bun' --env-file /dev/null '/Users/ujuc/.claude/plugins/claude-hud/statusline.mjs'"
+  },
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
@@ -197,9 +199,5 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "useAutoModeDuringPlan": true,
-  "statusLine": {
-    "type": "command",
-    "command": "'/Users/ujuc/.local/share/mise/installs/bun/1.4.3/bin/bun' --env-file /dev/null '/Users/ujuc/.claude/plugins/claude-hud/statusline.mjs'"
-  }
+  "useAutoModeDuringPlan": true
 }
