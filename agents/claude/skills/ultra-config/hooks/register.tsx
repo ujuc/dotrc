@@ -1,8 +1,8 @@
 /**
  * ultra-config — Claude Mod
  *
- * A side pane with five profiles (Token saver, Fast flow, Max quality,
- * Guarded, Autopilot) that set Claude Code up for one way of working in one
+ * A side pane with six profiles (Baseline, Token saver, Fast flow, Max
+ * quality, Guarded, Autopilot) that set Claude Code up for one way of working in one
  * press. Each profile opens to show exactly what it sets, with one button to
  * activate it.
  *
@@ -332,7 +332,7 @@ export const register: Register = (on, options) => {
     await $.command
       .register({
         name: COMMAND,
-        description: 'Setting profiles: token saver, fast flow, max quality, guarded, autopilot',
+        description: 'Setting profiles: baseline, token saver, fast flow, max quality, guarded, autopilot',
         argumentHint: '[profile | apply <profile> | undo | close]',
       })
       .catch(err => $.ui.log(`ultra-config: /${COMMAND} not registered: ${message(err)}`))

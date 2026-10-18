@@ -51,9 +51,9 @@ const saver = PROFILES.find(p => p.id === 'saver')!
 const guarded = PROFILES.find(p => p.id === 'guarded')!
 
 describe('profiles', () => {
-  test('there are five, each with a distinct id, color and at least seven steps', () => {
-    expect(PROFILES.map(p => p.id)).toEqual(['saver', 'flow', 'quality', 'guarded', 'autopilot'])
-    expect(new Set(PROFILES.map(p => p.color)).size).toBe(5)
+  test('there are six, each with a distinct id, color and at least seven steps', () => {
+    expect(PROFILES.map(p => p.id)).toEqual(['baseline', 'saver', 'flow', 'quality', 'guarded', 'autopilot'])
+    expect(new Set(PROFILES.map(p => p.color)).size).toBe(6)
     for (const p of PROFILES) expect(p.steps.length).toBeGreaterThanOrEqual(7)
   })
 
@@ -315,17 +315,17 @@ describe('the command', () => {
 
 describe('the pane', () => {
   for (const surface of ['terminal', 'desktop'] as const) {
-    test(`${surface}: five profiles, the first open, another opens on press and Activate writes`, async ($, on) => {
+    test(`${surface}: six profiles, the first open, another opens on press and Activate writes`, async ($, on) => {
       const w = world(on)
       await $.session.start({ cwd: '/work', surface, isInteractive: true } as never)
       await $.command.run(run(''))
       const ui = await $.ui.mount({ plugin: 'ultra-config', surface, component: 'Pane', requestId: 'ultra-config', props: PANE } as never)
       for (const p of PROFILES) expect(await ui.find({ key: `pick:${p.id}` })).toBeDefined()
-      expect(await ui.find({ key: 'activate:saver' })).toBeDefined()
+      expect(await ui.find({ key: 'activate:baseline' })).toBeDefined()
       expect(await ui.find({ key: 'activate:flow' })).toBeUndefined()
       await ui.press({ key: 'pick:flow' })
       await ui.redraw()
-      expect(await ui.find({ key: 'activate:saver' })).toBeUndefined()
+      expect(await ui.find({ key: 'activate:baseline' })).toBeUndefined()
       expect(await ui.find({ type: 'Text', text: /edits\sgo\sthrough\swithout\sa\sprompt/ })).toBeDefined()
       await ui.press({ key: 'activate:flow' })
       await ui.redraw()

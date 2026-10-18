@@ -29,7 +29,7 @@ export type Effort = 'low' | 'medium' | 'high' | 'xhigh'
 export type EffortStep = { layer: 'effort'; value: Effort; why: string }
 export type Step = ConfigStep | SettingsStep | ListStep | EffortStep
 
-export type ProfileId = 'saver' | 'flow' | 'quality' | 'guarded' | 'autopilot'
+export type ProfileId = 'baseline' | 'saver' | 'flow' | 'quality' | 'guarded' | 'autopilot'
 
 export type Profile = {
   id: ProfileId
@@ -53,6 +53,24 @@ const effort = (value: Effort, why: string): EffortStep => ({ layer: 'effort', v
 export const SUBAGENT = { path: 'env.CLAUDE_CODE_SUBAGENT_MODEL', label: 'Subagent model' } as const
 
 export const PROFILES: Profile[] = [
+  {
+    id: 'baseline',
+    name: 'Baseline',
+    icon: '●',
+    color: '#ff6fae',
+    tagline: 'Default Opus, high effort, ultracode fan-outs, auto mode',
+    steps: [
+      cfg('model', 'default', 'Opus; the stronger model only through advisor()'),
+      effort('high', 'deep enough without xhigh latency'),
+      set(SUBAGENT.path, SUBAGENT.label, null, 'subagents keep the model they ask for'),
+      cfg('workflows', true, 'multi-agent workflows available'),
+      cfg('workflowKeywordTriggerEnabled', true, '"ultracode" starts a workflow'),
+      cfg('workflowSizeGuideline', 'large', 'room for large fan-outs'),
+      cfg('permissionMode', 'auto', 'the classifier approves safe actions'),
+      cfg('useAutoModeDuringPlan', true, 'plan mode acts without prompts too'),
+      cfg('autoCompact', true, 'long sessions keep going'),
+    ],
+  },
   {
     id: 'saver',
     name: 'Token saver',

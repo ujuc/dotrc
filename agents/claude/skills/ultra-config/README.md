@@ -1,6 +1,6 @@
 # ultra-config
 
-Five setting profiles in a side pane. Each one sets Claude Code up for one way of working: press a profile to see exactly what it sets, then press **Activate**. Every activation can be undone.
+Six setting profiles in a side pane. Each one sets Claude Code up for one way of working: press a profile to see exactly what it sets, then press **Activate**. Every activation can be undone.
 
 ```
 ⚙ ULTRA  CONFIG          default · default effort · default mode
@@ -33,7 +33,7 @@ Five setting profiles in a side pane. Each one sets Claude Code up for one way o
 | `/ultra-config undo` | Reverts the last activated profile (newest first) |
 | `/ultra-config close` | Closes the pane |
 
-Profile ids: `saver`, `flow`, `quality`, `guarded`, `autopilot`.
+Profile ids: `baseline`, `saver`, `flow`, `quality`, `guarded`, `autopilot`.
 
 In the pane everything is a press: a profile's name opens its detail (one is always open, the first to start), and **Activate** applies it (`a` while the pane has focus). There are no tabs or arrow-key menus, so nothing competes with Claude Code's own `←` for the agents view.
 
@@ -41,6 +41,7 @@ In the pane everything is a press: a profile's name opens its detail (one is alw
 
 | Profile | For | Sets |
 | --- | --- | --- |
+| ● **Baseline** | My everyday setup (dotrc addition) | Model `default` (Opus; Fable only via `advisor()`), effort `high`, subagents unpinned, workflows on with the `ultracode` keyword, large workflows, `auto` permission mode also during plan, auto-compact on |
 | ◔ **Token saver** | Spending fewer tokens | Model `sonnet`, effort `low`, subagents on `haiku`, Concise output, no prompt suggestions or recap, auto-compact on, small workflows, no `ultracode` keyword, MCP output capped at 10,000 tokens, fast mode off |
 | » **Fast flow** | Less waiting | Model `sonnet`, effort `medium`, edits auto-accepted, Concise output, prompt suggestions on, turn duration and progress bar on, medium workflows |
 | ◆ **Max quality** | The best result | Model `best`, effort `xhigh`, subagents keep their own model, default output, workflows on with large fan-outs and the `ultracode` keyword, checkpoints and auto-compact on |

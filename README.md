@@ -281,7 +281,7 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 cd ~ && npx claude-code-templates@latest --mod productivity/ultra-config
 ```
 
-- [ultra-config](https://github.com/davila7/claude-code-templates/tree/main/cli-tool/components/mods/productivity/ultra-config) — `/ultra-config`로 설정 프로필(Token saver, Fast flow, Max quality, Guarded, Autopilot) 전환. `~/.claude/settings.json`을 직접 고치므로 커밋 전 diff를 확인하고, 되돌릴 때는 `/ultra-config undo`
+- [ultra-config](https://github.com/davila7/claude-code-templates/tree/main/cli-tool/components/mods/productivity/ultra-config) — `/ultra-config`로 설정 프로필(Baseline, Token saver, Fast flow, Max quality, Guarded, Autopilot) 전환. `baseline`은 이 저장소에서 추가한 내 기준값(Opus 기본 모델, effort high, ultracode, auto 모드)으로, 다른 프로필을 써 보다 흐트러진 설정을 `/ultra-config apply baseline`으로 되돌린다. `~/.claude/settings.json`을 직접 고치므로 커밋 전 diff를 확인하고, 되돌릴 때는 `/ultra-config undo`
 
 ### [Pi](https://github.com/earendil-works/pi)
 
