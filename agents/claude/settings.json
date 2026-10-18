@@ -4,7 +4,9 @@
   "skillListingBudgetFraction": 0.05,
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "CLAUDISH_MD_MODE": "sibling"
+    "CLAUDISH_MD_MODE": "sibling",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "haiku",
+    "MAX_MCP_OUTPUT_TOKENS": "10000"
   },
   "permissions": {
     "allow": [
@@ -48,6 +50,7 @@
     "defaultMode": "auto",
     "disableBypassPermissionsMode": "disable"
   },
+  "model": "sonnet",
   "hooks": {
     "SessionStart": [
       {
@@ -144,16 +147,21 @@
   "spinnerTipsEnabled": false,
   "modelSettings": {
     "claude-fable-5-1": {
-      "effortLevel": "high"
+      "effortLevel": "xhigh"
     },
     "claude-opus-5": {
       "effortLevel": "high"
     },
     "claude-opus-5-5": {
       "effortLevel": "medium"
+    },
+    "claude-sonnet-5-5": {
+      "effortLevel": "low"
     }
   },
   "advisorModel": "fable",
+  "promptSuggestionEnabled": false,
+  "awaySummaryEnabled": false,
   "askUserQuestionTimeout": "never",
   "pluginConfigs": {
     "agents-md@builtin": {
@@ -181,5 +189,6 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "useAutoModeDuringPlan": true
+  "useAutoModeDuringPlan": true,
+  "workflowKeywordTriggerEnabled": false
 }
