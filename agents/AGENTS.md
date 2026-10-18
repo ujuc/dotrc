@@ -13,7 +13,7 @@
 - `hooks/test-workflow-hooks.sh` is the black-box contract suite for the installed policy surface; do not add runtime shell wrappers around the binary.
 - `claude/` is symlinked to `~/.claude`; files inside it must not reference outside the tree with relative paths.
 - `claude/` mixes tracked configuration with ignored runtime state. Follow `.gitignore`; write ignored state only when a checked-in hook or workflow owns that path.
-- Do not reference or modify `claude/deplicated/`; treat `claude/plugins/` as read-only.
+- Treat `claude/plugins/` as read-only.
 - Add `.gitignore` entries when tools create new runtime files under `claude/`.
 - `claude/mcp.json` is empty by default; configure MCP through the Claude Code UI, which writes to `~/.claude.json`.
 - `rules/AGENTS.md` is shared by Claude, Amp, and Codex. Keep it self-contained, harness-neutral, and under 8 KB. Sync its Agent Identity with `rules/SOUL.md`.
