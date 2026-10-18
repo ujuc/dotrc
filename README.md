@@ -241,6 +241,18 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 - [i-have-adhd](https://github.com/ayghri/i-have-adhd) — ADHD 친화 출력 형식
 - [everything-claude-code](https://github.com/affaan-m/everything-claude-code) — 마켓플레이스만 등록, 플러그인은 비활성
 
+#### Mods ([claude-code-templates](https://github.com/davila7/claude-code-templates))
+
+`--mod`는 현재 디렉터리의 `.claude/skills/<name>/`에 받는다. 상주시킬 mod는 홈에서 받아
+`agents/claude/skills/<name>/`에 그대로 커밋하고(업스트림 `plugin.json`의 author·license 유지),
+시험만 할 mod는 프로젝트 디렉터리에서 받아 저장소를 건드리지 않는다. 갱신은 같은 명령을 다시 실행한 뒤 diff를 리뷰한다.
+
+```sh
+cd ~ && npx claude-code-templates@latest --mod productivity/ultra-config
+```
+
+- [ultra-config](https://github.com/davila7/claude-code-templates/tree/main/cli-tool/components/mods/productivity/ultra-config) — `/ultra-config`로 설정 프로필(Token saver, Fast flow, Max quality, Guarded, Autopilot) 전환. `~/.claude/settings.json`을 직접 고치므로 커밋 전 diff를 확인하고, 되돌릴 때는 `/ultra-config undo`
+
 ### [Pi](https://github.com/earendil-works/pi)
 
 bun으로 전역 설치한다. `~/.bun/bin`은 `zshrc`의 `path`에 등록되어 있어 별도 별칭이
