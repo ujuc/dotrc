@@ -222,7 +222,6 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 ```sh
 # Marketplaces
 /plugin marketplace add anthropics/claude-plugins-official
-/plugin marketplace add affaan-m/ECC
 /plugin marketplace add dietrichgebert/ponytail
 /plugin marketplace add ayghri/i-have-adhd
 /plugin marketplace add jarrodwatts/claude-hud
@@ -242,7 +241,6 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 - remember — 세션 기록 저장
 - [i-have-adhd](https://github.com/ayghri/i-have-adhd) — ADHD 친화 출력 형식
 - [claude-hud](https://github.com/jarrodwatts/claude-hud) — 컨텍스트·에이전트·todo를 보여주는 상태줄 (아래 `claude-hud` 절)
-- [everything-claude-code](https://github.com/affaan-m/everything-claude-code) — 마켓플레이스만 등록, 플러그인은 비활성
 
 #### claude-hud
 

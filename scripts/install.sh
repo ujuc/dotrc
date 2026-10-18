@@ -368,7 +368,6 @@ install_agents() {
         else
             for item in \
                 anthropics/claude-plugins-official\|claude-plugins-official \
-                affaan-m/ECC\|ecc \
                 dietrichgebert/ponytail\|ponytail \
                 ayghri/i-have-adhd\|i-have-adhd; do
                 marketplace_source=${item%%|*}
