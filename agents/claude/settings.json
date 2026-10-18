@@ -97,6 +97,7 @@
   "worktree": {
     "baseRef": "fresh"
   },
+  "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
@@ -111,7 +112,8 @@
     "code-simplifier@claude-plugins-official": false,
     "claude-md-management@claude-plugins-official": false,
     "i-have-adhd@i-have-adhd": true,
-    "typesafe@typesafe-ai": true
+    "typesafe@typesafe-ai": true,
+    "claude-hud@claude-hud": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -138,6 +140,12 @@
       "source": {
         "source": "github",
         "repo": "typesafe-ai/skills"
+      }
+    },
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
       }
     }
   },
@@ -190,5 +198,8 @@
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "useAutoModeDuringPlan": true,
-  "workflowKeywordTriggerEnabled": false
+  "statusLine": {
+    "type": "command",
+    "command": "'/Users/ujuc/.local/share/mise/installs/bun/1.4.3/bin/bun' --env-file /dev/null '/Users/ujuc/.claude/plugins/claude-hud/statusline.mjs'"
+  }
 }

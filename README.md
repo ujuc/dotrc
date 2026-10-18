@@ -225,6 +225,7 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 /plugin marketplace add affaan-m/ECC
 /plugin marketplace add dietrichgebert/ponytail
 /plugin marketplace add ayghri/i-have-adhd
+/plugin marketplace add jarrodwatts/claude-hud
 
 # Plugins
 /plugin install superpowers@claude-plugins-official
@@ -232,6 +233,7 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 /plugin install remember@claude-plugins-official
 /plugin install ponytail@ponytail
 /plugin install i-have-adhd@i-have-adhd
+/plugin install claude-hud@claude-hud
 ```
 
 - [superpowers](https://github.com/obra/superpowers) — workflow skills 및 superpowers framework
@@ -239,7 +241,37 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 - security-guidance — 보안 리뷰
 - remember — 세션 기록 저장
 - [i-have-adhd](https://github.com/ayghri/i-have-adhd) — ADHD 친화 출력 형식
+- [claude-hud](https://github.com/jarrodwatts/claude-hud) — 컨텍스트·에이전트·todo를 보여주는 상태줄 (아래 `claude-hud` 절)
 - [everything-claude-code](https://github.com/affaan-m/everything-claude-code) — 마켓플레이스만 등록, 플러그인은 비활성
+
+#### claude-hud
+
+설치 후 `/claude-hud:setup`을 실행하면 `statusLine`이 `~/.claude/settings.json`에 기록된다.
+`~/.claude`가 이 저장소의 `agents/claude`로 연결돼 있어 `agents/claude/settings.json` diff로 나타나므로 커밋한다.
+`statusLine.command`에 bun 경로(`mise/installs/bun/<버전>`)가 들어가므로 bun을 올리면 `/claude-hud:setup`을 다시 실행한다.
+플러그인 업데이트에는 재설정이 필요 없다(런처가 최신 설치본을 실행).
+
+표시 옵션은 `/claude-hud:configure`로 바꾸거나 `~/.claude/plugins/claude-hud/config.json`을 직접 고친다.
+`agents/.gitignore`가 `claude/plugins/*`를 제외하므로 이 파일은 추적되지 않는다. 새 환경에서는 아래 내용으로 만든다.
+
+```json
+{
+  "lineLayout": "compact",
+  "showSeparators": false,
+  "display": {
+    "showTools": false,
+    "showAgents": true,
+    "showTodos": true,
+    "showSkills": true,
+    "showMcp": true,
+    "showEffortLevel": true,
+    "showDuration": true,
+    "showConfigCounts": true
+  }
+}
+```
+
+디렉터리별 덮어쓰기는 `~/.claude/claude-hud.json`(같은 구조, 값이 우선)에 직접 쓴다. 나머지 옵션은 claude-hud README 참고.
 
 #### Mods ([claude-code-templates](https://github.com/davila7/claude-code-templates))
 
