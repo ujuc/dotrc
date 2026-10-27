@@ -1,6 +1,6 @@
 ---
 name: autoresearch
-description: "편집 가능한 대상(프롬프트, 설정, 코드 등)을 반복 실행-평가-변이하여 자율적으로 최적화한다. Karpathy의 autoresearch 방법론(execute → score → mutate → keep/discard) 기반."
+description: "편집 가능한 대상(프롬프트, 설정, 코드 등)을 실행 → 채점 → 변이 → 유지/폐기 루프로 자율 최적화한다."
 when_to_use: "사용자가 `/autoresearch` 또는 autoresearch 실행을 명시적으로 요청했을 때만 사용한다. 자동 실험과 eval 루프 요청만으로는 실행하지 않는다."
 group: meta
 disable-model-invocation: true
@@ -10,165 +10,121 @@ allowed-tools: Read, Write, Edit, Bash, AskUserQuestion
 
 # Autoresearch
 
-Adapts Andrej Karpathy's autoresearch methodology (autonomous experimentation loops) to any editable artifact — skills, prompts, configurations, code, queries, or any file where output quality can be measured.
-
----
+Hill-climb any editable target (skill, prompt, config, code, query) against binary evals: run, score, make one mutation, keep or discard, repeat. Output: the improved target in place, plus `results.tsv` and `changelog.md` in the run directory.
 
 ## Model guidance
 
-Use Advanced to design evaluations and interpret mutations; Standard suits a bounded loop with settled criteria.
-Recommend Frontier for coupled failure modes that remain unexplained after Advanced analysis; keep the target's resolved model and effort level fixed within a comparison and record them with the baseline (Step 3). A change to either starts a new baseline (Step 4-5).
-Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
-
-## The Core Job
-
-Take any editable target, define what "good output" looks like as binary yes/no checks, then run an autonomous loop that:
-
-1. Runs the target using test inputs and the specified execution method
-2. Scores every output against the eval criteria
-3. Mutates the target file to fix failures
-4. Keeps mutations that improve the score, discards the rest
-5. Repeats until the score ceiling is hit or the budget is exhausted
-
-**Output:** An improved target file + `results.tsv` log + `changelog.md` of every mutation attempted.
-
----
+Use Advanced to design evals and interpret mutations; Standard suits a bounded loop with settled criteria. Recommend Frontier for coupled failure modes Advanced analysis leaves unexplained. For other model choices, apply the [shared selection guide](../generate-skills/references/model-selection.md).
 
 ## Before Starting: Gather Context
 
-**STOP. Do not run any experiments until all fields below are confirmed with the user via AskUserQuestion.** If AskUserQuestion is unavailable, ask the same fields as one plain-text message and wait for the answer.
-
-If `$ARGUMENTS` (the `[target-path]` from `argument-hint`) is non-empty, prefill field 1 with it and confirm. If empty, ask the user.
+**STOP. Run no experiment until the user confirms every field below via AskUserQuestion** (or one plain-text message when it is unavailable, then wait). Prefill field 1 from `$ARGUMENTS` when non-empty.
 
 | # | Field | Example values | Default |
 |---|-------|---------------|---------|
-| 1 | **Target file** (`{target}`) | `~/.claude/skills/foo/SKILL.md`, `config.yaml`, `prompts/extract.md`, `queries/top.sql` | from `$ARGUMENTS` |
-| 2 | **Execution method** (`{exec}`) | see exec patterns below | none |
-| 3 | **Test inputs** (`{inputs}`) | 3–5 scenarios as a list | none |
-| 4 | **Eval criteria** (`{evals}`) | 3–6 binary checks ([references/eval-guide.md](references/eval-guide.md)) | none |
+| 1 | **Target file** (`{target}`) | `~/.claude/skills/foo/SKILL.md`, `config.yaml`, `prompts/extract.md` | from `$ARGUMENTS` |
+| 2 | **Execution method** (`{exec}`) | see patterns below | none |
+| 3 | **Test inputs** (`{inputs}`) | 3–5 scenarios | none |
+| 4 | **Eval criteria** (`{evals}`) | 3–6 binary checks (Step 2) | none |
 | 5 | **Runs per experiment** (`{runs}`) | integer | `5` |
 | 6 | **Budget cap** (`{budget}`) | integer | `20` |
 
-**Choosing `runs` and `budget`:**
+- `runs`: `1` for deterministic targets (static text rubric, fixed-output scripts); `3–5` for variable LLM output; `8+` only when noise swamps small deltas. Cost scales linearly with `runs × budget`.
+- `budget` (total experiments): `5–10` for exploratory runs or small, near-ceiling targets; `20` typical; `30+` only for large targets with many independent failure modes (returns fall off past ~25).
 
-- `runs` controls how many times each experiment is executed to reduce noise. Use **`1`** for deterministic targets (static text rubric, scripts with fixed output). Use **`3–5`** when the exec produces variable LLM output (prompts, skill invocations). Use **`8+`** only when noise dominates and you need tight confidence on small score deltas — costs scale linearly.
-- `budget` caps total experiments. Use **`5–10`** for exploratory short runs or when the target is small and likely near its ceiling already. Use the default **`20`** for typical optimization. Use **`30+`** only for large targets with many independent failure modes; expect diminishing returns past 25 in practice.
-
-### Execution method patterns
-
-Pick the pattern that fits the target. Each must produce a single string output that can be scored.
+Execution patterns; each must yield one scorable string:
 
 ```
-# Skill invocation (when target is a SKILL.md)
+# Skill invocation (target is a SKILL.md)
 Skill("{skill-name}") with prompt {input} → capture transcript
 
-# Shell command (when target is a script/config)
+# Shell command (target is a script/config)
 bash -c "{cmd-using-target} < {input-file}" → capture stdout
 
-# API/CLI tool (when target is a prompt template)
+# CLI (target is a prompt template)
 echo "{input}" | claude -p --model <model-id> --effort <level> "$(cat {target})" → capture stdout
 ```
 
-If the target already has a `## Eval Criteria` section or sibling `evals.md`, present them to the user and ask whether to reuse, modify, or replace.
+**Self-target:** never let `{target}` appear inside its own `{exec}`. When the target is autoresearch's own `SKILL.md`, `Skill("autoresearch")` recurses without end; use a static text rubric with new evals (`runs=1`), a synthetic transcript (`claude -p` with the SKILL.md as the prompt and sample user requests as input, scoring the plan), or a wet run of autoresearch on a small unrelated dummy target, scored against [evals.md](evals.md).
 
----
+If the target already has a `## Eval Criteria` section or sibling `evals.md`, present them to the user and ask whether to reuse, modify, or replace.
 
 ## Step 1: Read the Target
 
-Before changing anything, read and understand the target completely.
-
-1. Read the target file in full
-2. Read any related files it references or depends on
-3. Identify the target's core purpose, structure, and expected output
-4. Note any existing quality checks or anti-patterns
-
-Do NOT skip this. You need to understand what the target does before you can improve it.
-
----
+Read the target in full and every file it references or depends on. Note its purpose, expected output, and any existing checks or anti-patterns before changing anything.
 
 ## Step 2: Build the Eval Suite
 
-Convert the user's eval criteria into structured tests. Write 3-6 binary pass/fail evals.
+Write 3–6 evals, each a yes/no question about the output (no scales, no "partially"):
 
-See [references/eval-guide.md](references/eval-guide.md) for the eval format, rules for good evals, scoring formula, and type-specific examples.
+```
+EVAL [n]: [Short name]
+Question: [Yes/no question about the output]
+Pass condition: [what "yes" looks like]
+Fail condition: [what triggers "no"]
+```
 
----
+- **Consistent:** two independent reviewers reach the same answer ("Does every referenced path exist on disk?", not "Is it accurate?").
+- **Outcome, not process or surface:** "Does the output reflect the config's settings?", not "Did it read the config?"; no gameable proxies like "fewer than 200 words".
+- **Distinct:** drop an eval that always passes when another does.
+- Fewer than 3 misses quality dimensions; more than 6 and the target starts parroting the criteria.
+- Settle the set before the loop; changing it mid-run forces a re-baseline (Step 4-5).
+
+Scoring: `max_score = evals × runs`, `pass_rate = passes / max_score`. Compare pass rates, not raw scores.
 
 ## Step 3: Establish Baseline
 
-Run the target AS-IS before changing anything. This is experiment #0.
+Run the target as-is first; this is experiment 0.
 
-1. Create working directory `${XDG_STATE_HOME:-$HOME/.local/state}/agents/autoresearch/{target-name}/{YYYY-MM-DD-NNN}/`, where `{target-name}` is `basename({target})` minus extension and NNN is the day's sequence.
-2. Create `results.tsv` inside the working directory with the header row.
-3. Copy the original file to `{working-directory}/{filename}.baseline`.
-4. Run the target `{runs}` times (the value confirmed in context-gathering, default `5`) using `{inputs}` and `{exec}`. Pin the model and effort through the method's own options where it has them (for example `claude -p --model <model-id> --effort <level>` with a full model ID such as `claude-opus-5-5`, not an alias). A `Skill(...)` run uses the target's `model`/`effort` frontmatter when set, otherwise the session's.
-5. Score every output against every eval in `{evals}`.
-6. Record the baseline score as experiment 0, with the resolved model ID and effort level in its description (`unknown` when the host does not expose one; treat `unknown` as unchanged unless the host reports a change).
+1. Create `${XDG_STATE_HOME:-$HOME/.local/state}/agents/autoresearch/{target-name}/{YYYY-MM-DD-NNN}/` (`{target-name}` = `basename({target})` minus extension; NNN = the day's sequence). Run artifacts live here, not in the target's repository.
+2. Create `results.tsv` there with the header row.
+3. Copy the original to `{run-dir}/{filename}.baseline`. The improved target overwrites the original in place; this copy is the only backup.
+4. Run the target `{runs}` times with `{inputs}` and `{exec}`. Pin model and effort through the method's own options (`claude -p --model <model-id> --effort <level>` with a full ID such as `claude-opus-5-5`, not an alias). `Skill(...)` uses the target's `model`/`effort` frontmatter when set, else the session's.
+5. Score every output against every eval.
+6. Log experiment 0 with the resolved model ID and effort in its description (`unknown` when the host does not expose one; treat `unknown` as unchanged unless the host reports a change).
 
-**results.tsv format (tab-separated):**
+`results.tsv` (tab-separated):
 
 ```
 experiment	score	max_score	pass_rate	status	stop_reason	description
 0	14	20	70.0%	baseline	-	original target — no changes; model <id>, effort <level>
 ```
 
-**After baseline:** Report the baseline summary to the user. If baseline is 90%+, confirm with the user via AskUserQuestion (plain text when it is unavailable) whether optimization is worthwhile (diminishing returns near the ceiling).
-
----
+Report the baseline. At 90%+, ask the user (AskUserQuestion, or plain text) whether optimizing is still worth it.
 
 ## Step 4: Run the Experiment Loop
 
-This is the core autoresearch loop. Once started, run autonomously until stopped.
-
-**LOOP:**
+Once started, run autonomously until a stop condition.
 
 ### 4-1. Analyze Failures
 
-Look at which evals fail most. Read the actual outputs. Classify the failure into one of these named patterns:
+Find the evals that fail most, read the actual outputs, and name the pattern:
 
-| Pattern | How to detect | Typical fix direction |
-|---------|---------------|------------------------|
-| **Format drift** | Output structure differs across runs (JSON/Markdown/list shape varies) | Add explicit format example; specify required headers/keys |
-| **Missing instruction** | A specific eval fails because the target never tells the model what to do for that case | Add a single-sentence rule addressing the gap |
-| **Ambiguous instruction** | Output varies semantically across runs on the same input | Reword the instruction; add disambiguating example |
-| **Buried instruction** | Critical rule appears late in the file and is ignored | Move it to the top of the relevant section |
-| **Over-optimization** | One eval improves while another regresses | Soften the dominant instruction; add counter-example |
-| **Eval misalignment** | All evals pass but output is clearly bad, OR all fail despite reasonable output | Fix evals (Step 2), not target |
+| Pattern | How to detect | Fix direction |
+|---------|---------------|---------------|
+| **Format drift** | Output structure varies across runs | Add a format example; name required headers/keys |
+| **Missing instruction** | An eval fails because the target never covers that case | Add one sentence for the gap |
+| **Ambiguous instruction** | Meaning varies across runs on the same input | Reword; add a disambiguating example |
+| **Buried instruction** | A critical rule sits late and is ignored | Move it to the top of its section |
+| **Over-optimization** | One eval improves while another regresses | Soften the dominant instruction; add a counter-example |
+| **Eval misalignment** | All pass on clearly bad output, or all fail on reasonable output | Fix the evals (Step 2), not the target |
+| **Overfitting** | Better on test inputs, worse on novel ones | Add input variety (Gather Context) |
 
-If the failure does not fit any pattern, log "novel" in the experiment row and propose a fix anyway — but flag it for Eval Criteria review.
+A failure that fits none: log `novel` in the row, propose a fix anyway, and flag the eval criteria for review.
 
 ### 4-2. Form a Hypothesis
 
-Pick ONE thing to change. Never change multiple things at once.
+Pick ONE change with a clear hypothesis. Position is priority, and removing a rule the target model already follows (e.g. carry-over from an earlier model) is a valid mutation. Never rewrite the whole file, bundle changes, or change the target's `model`/`effort` frontmatter (that changes the comparison, not the target).
 
-**Good mutations (prompts/skills):**
-- Add a specific instruction addressing the most common failure
-- Reword an ambiguous instruction to be more explicit
-- Add an anti-pattern ("Do NOT do X") for a recurring mistake
-- Move a buried instruction higher (priority = position)
-- Add or improve an example showing correct behavior
-- Remove an instruction causing over-optimization for one thing, or one the target model already follows by default (e.g., carry-over rules written for an earlier model)
-
-**Good mutations (code/config):**
-- Adjust a parameter or threshold value
-- Change algorithm or logic flow
-- Reorganize structure or ordering
-- Toggle an option on/off
-- Simplify a complex section
-
-**Bad mutations:**
-- Rewriting the entire file
-- Changing multiple things at once
-- Making vague changes without a clear hypothesis
-- Changing the target's `model` or `effort` frontmatter — that changes the comparison, not the target
+Stay sequential: each mutation is judged against the last KEEP. Parallel candidates are beam search, a different algorithm; do not run them here.
 
 ### 4-3. Make the Change
 
-Edit the target file with ONE targeted mutation.
+Edit the target with that one mutation.
 
 ### 4-4. Run and Score
 
-Run the target `{runs}` times with the same `{inputs}` and pinned `{exec}`, noting the model and effort the runs used. Score every output against `{evals}`.
+Run `{runs}` times with the same `{inputs}` and pinned `{exec}`, noting the model and effort used. Score against `{evals}`.
 
 ### 4-5. Keep or Discard
 
@@ -178,11 +134,11 @@ Compare against the **current baseline** (the latest KEEP or `baseline` row; exp
 - **Score unchanged** → KEEP only when every eval outcome is unchanged and the target is smaller; otherwise DISCARD.
 - **Score worse** → DISCARD.
 
-On DISCARD, revert the file fully. This makes score-neutral simplification the only tie that can win.
+On DISCARD, revert the file fully; partial reverts accumulate drift.
 
 ### 4-6. Log and Report
 
-Append a row to `results.tsv`. Report progress to the user:
+Append a row to `results.tsv` and report:
 
 ```
 [Experiment N] score/max (pass_rate%) — KEEP/DISCARD — one-line description
@@ -190,16 +146,15 @@ Append a row to `results.tsv`. Report progress to the user:
 
 ### 4-7. Repeat
 
-Go back to 4-1. Continue until any of:
-- User manually stops the loop.
-- `{budget}` experiment cap reached.
-- 95%+ pass rate for 3 consecutive experiments (diminishing returns).
+Return to 4-1 until any of:
 
-When stopping, set the final row's `stop_reason` to exactly `user_stop`, `budget_exhausted`, or `ceiling_3x`; leave it `-` on other rows.
+- the user stops the loop → `user_stop`;
+- `{budget}` experiments reached → `budget_exhausted`;
+- 95%+ pass rate for 3 consecutive experiments → `ceiling_3x`.
 
-**If out of ideas:** Re-read failing outputs. Try removal instead of addition; do not bundle multiple mutations.
+Set the final row's `stop_reason` to exactly that value; leave it `-` on other rows.
 
----
+**Out of ideas, or the target has grown:** re-read failing outputs and try a removal or consolidation, still one change at a time.
 
 ## Step 5: Write the Changelog
 
@@ -215,105 +170,17 @@ After each experiment, append to `changelog.md`:
 **Remaining failures:** [What still fails, if anything]
 ```
 
----
-
 ## Step 6: Deliver Results
 
-When the loop stops, report to the user:
+When the loop stops, report:
 
-1. **Score summary:** Latest `baseline` row → Final (percent improvement); list earlier baselines with their model and effort, without a cross-model delta
-2. **Total experiments:** How many mutations tried
-3. **Keep rate:** Kept vs discarded
+1. **Score summary:** latest `baseline` row → final (percent improvement); list earlier baselines with their model and effort, without a cross-model delta
+2. **Total experiments**
+3. **Keep rate:** kept vs discarded
 4. **Top 3 changes** that helped most
 5. **Remaining failure patterns**
 6. **File locations** of `results.tsv` and `changelog.md`
 
----
+## Look up the rest
 
-## Output Structure
-
-Experiment artifacts live in shared user state rather than the target repository. Cleanup is one `rm -rf` of the run directory; the original target stays in place (the improved version overwrites it).
-
-```
-${XDG_STATE_HOME:-$HOME/.local/state}/agents/autoresearch/{target-name}/{run-id}/
-├── results.tsv
-├── changelog.md
-└── {filename}.baseline
-```
-
-The improved target file is saved back to its original location — only the unchanged baseline copy lives inside the working directory.
-
----
-
-## Worked Example
-
-See the [recorded meta-optimization example](references/eval-guide.md#worked-example)
-when choosing a static rubric or interpreting KEEP/DISCARD results. The example
-is historical evidence, separate from this skill's runtime Eval Criteria.
-
----
-
-## Gotchas
-
-1. **Never skip the baseline.** Without it, you cannot measure improvement.
-2. **One change at a time.** Multi-variable changes make it impossible to attribute improvement.
-3. **Revert fully on discard.** Partial reverts accumulate drift.
-4. **Evals can be wrong.** If all evals pass but output quality is bad, fix the evals first — go back to Step 2.
-5. **Overfitting to test inputs.** If the target improves on test inputs but degrades on novel inputs, the test inputs lack variety — go back to context gathering.
-6. **Size creep.** Each kept mutation adds complexity. Periodically check if the target has grown significantly and consolidate if needed.
-7. **Sequential by construction.** This skill implements hill-climbing — each mutation is evaluated against the last KEEP. Do not parallelize candidate mutations; that is beam search and changes the algorithm. If the user wants beam search, treat it as a different skill.
-8. **Explicit invocation only.** `disable-model-invocation: true` prevents an expensive mutation loop from starting on description matching alone. Run it through `/autoresearch` or an explicit user request; the `group:` field remains mirrored in [`../README.md`](../README.md).
-
-9. **Meta-recursion: target == this skill itself.** When the target file is autoresearch's own `SKILL.md`, the execution method must NOT be `Skill("autoresearch")` — that would invoke this skill within itself and either deadlock or create unbounded recursion. Pick one instead:
-   - **Text-based static rubric** — score the SKILL.md content against new evals (clarity, structure, coverage). `runs=1` is sufficient; static text yields deterministic scores.
-   - **Synthetic transcript via `claude -p`** — pipe `claude -p --model <model-id> --effort <level> "$(cat {target})"` with sample user prompts, score the planning quality of the output.
-   - **Wet execution on a separate dummy target** — run autoresearch on a small unrelated file (e.g., a short prompt or config) and score the resulting `results.tsv` / `changelog.md` against the runtime evals.
-
-   Never let the target path appear inside its own `{exec}` definition.
-
----
-
-## Eval Criteria
-
-Self-referential checks. The autoresearch skill itself can be optimized using these.
-
-```
-EVAL 1: Baseline established
-  Question: Does results.tsv contain a row with experiment=0 and
-            status=baseline before any mutation runs?
-  Pass: Row exists with the unmutated target's score and its recorded
-        model and effort (or `unknown`).
-  Fail: Mutation occurred before experiment 0 was logged, or the row
-        lacks model and effort (or `unknown`).
-
-EVAL 2: One-change discipline
-  Question: For every kept experiment N (N>0), does the diff between
-            target@N and target@N-1 represent a single coherent change
-            (one section edited, one parameter adjusted, one
-            instruction added/removed)?
-  Pass: Every kept diff is one logical change.
-  Fail: Any kept diff bundles multiple unrelated changes.
-
-EVAL 3: Full revert on discard
-  Question: After a DISCARD experiment, does the target file's content
-            match the prior baseline byte-for-byte (excluding
-            whitespace-only edits)?
-  Pass: File matches prior baseline.
-  Fail: Partial revert detected.
-
-EVAL 4: Changelog completeness
-  Question: Does changelog.md contain one entry per experiment with
-            all five fields (Score, Change, Reasoning, Result,
-            Remaining failures)?
-  Pass: Every experiment row in results.tsv has a matching
-        changelog entry with all five fields populated.
-  Fail: Any entry missing or any field empty.
-
-EVAL 5: Stop condition honored
-  Question: Did the loop stop on exactly one of: (a) explicit user
-            stop, (b) {budget} cap reached, (c) 95%+ for 3
-            consecutive experiments?
-  Pass: Final row's `stop_reason` is `user_stop`, `budget_exhausted`,
-        or `ceiling_3x`, matching the observed condition.
-  Fail: Loop ran past budget or stopped without the matching reason.
-```
+- Eval ideas per target type, or a recorded static-rubric run to check KEEP/DISCARD calls against → [references/eval-guide.md](references/eval-guide.md)
