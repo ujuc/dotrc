@@ -1,61 +1,17 @@
-# Subagent Guidelines for Skill Generation
+# Subagents in skill generation
 
-> When and how to use subagents during skill generation. Tier 3 reference — load only when needed.
+Spawn one only when at least two hold: doing it inline would pull 500+ tokens of
+raw data into the main context, it can run while the user answers or you draft,
+and its result fits in a summary. Use `Explore` for read-only work and
+`general-purpose` only when the worker must edit or run validation, picking
+`model`/`effort` per call from [dispatch routing](model-selection.md#dispatch-routing).
+Never pass a tier label as a model ID.
 
----
+## Explore-1: Existing skill survey
 
-## Decision Criteria
-
-Ask these 3 questions before spawning a subagent:
-
-| # | Question | If Yes |
-|---|----------|--------|
-| 1 | Will the main agent accumulate 500+ tokens of raw data by doing this directly? | Subagent candidate |
-| 2 | Can this run in parallel with user wait time or another task? | Subagent candidate |
-| 3 | Can the result be delivered as a summary? | Subagent suitable |
-
-**Rule**: 2+ Yes → use a subagent. All No → do it directly.
-
----
-
-## Available Subagent Types
-
-The types and parameters below are Claude Code examples. Map each role to the
-active host's supported delegation API and tool access. Use `model-selection.md`
-to choose a workload level, then resolve an actually available model and tool
-capabilities. Lightweight suits a bounded inventory; Standard suits structural
-analysis and routine review; Advanced suits conflicting instructions or uncertain
-judgment. Frontier is for unresolved, broad decisions. These are recommendations,
-not equivalent benchmark ranks across providers. Never pass a tier label as a
-model ID. If model selection is unavailable, state the recommendation and actual
-inherited model when known; do not claim the recommendation changed the model.
-
-| Type | Strengths | Limitations |
-|------|-----------|-------------|
-| Explore | Fast codebase search, file pattern matching, keyword search | No `Edit`/`Write`; has `Bash`, so it can run checks and return text |
-| general-purpose | Full tool access, autonomous multi-step tasks | Slower startup, heavier context |
-
-**Default**: Prefer Explore for read-only investigation. Use general-purpose only when the task requires edits, validation scripts, or multi-tool orchestration.
-
-Worker roles a skill dispatches repeatedly live in that skill's
-`references/roles/<role>.md`. The dispatch prompt begins with "Read `<absolute
-role path>` first and follow it." Read-only roles use `Explore` and return
-text; writing roles use `general-purpose`. Choose `model`/`effort` per call
-from [dispatch routing](model-selection.md#dispatch-routing); never pin them in
-frontmatter. `Explore` does not load CLAUDE.md, so the role file carries every
-rule the worker needs.
-
----
-
-## Workflow Integration
-
-### Explore-1: Existing Skill Survey (Step 1)
-
-**Trigger**: AskUserQuestion sent to user AND $ARGUMENTS lacks sufficient context.
-
-**When to skip**: $ARGUMENTS already provides skill name, purpose, and pattern.
-
-**Prompt template**:
+Step 1, in the background while the user answers; read the summary before Step 2.
+Skip it when `$ARGUMENTS` already gives the name, purpose and pattern.
+Lightweight; Standard when similarities need interpretation across workflows.
 
 ```
 Explore the skills directory to find:
@@ -67,22 +23,11 @@ Explore the skills directory to find:
 Report as a brief summary: skill count, similar skills (name + one-line purpose), dominant patterns.
 ```
 
-**Agent parameters**:
-- `subagent_type`: `Explore`
-- Workload: **Lightweight** for a bounded inventory; **Standard** if similarities
-  require interpretation across several workflows.
-- `description`: "Survey existing skills"
-- `run_in_background`: `true` — the subagent runs independently; consume its summary only *after* AskUserQuestion returns and before starting Step 2.
+## Explore-2: Reference skill analysis
 
----
-
-### Explore-2: Reference Skill Analysis (Step 4)
-
-**Trigger**: Step 1 identified a similar-pattern skill worth studying.
-
-**When to skip**: No similar skills found, or the pattern is straightforward enough.
-
-**Prompt template**:
+Step 4, in the foreground while drafting, when Step 1 found a similar skill
+worth studying. Standard; Advanced for conflicting role ownership or policy
+dependencies.
 
 ```
 Analyze the skill at {similar_skill_path}:
@@ -94,24 +39,13 @@ Analyze the skill at {similar_skill_path}:
 Return a structural summary (not full content) that can inform SKILL.md drafting.
 ```
 
-**Agent parameters**:
-- `subagent_type`: `Explore`
-- Workload: **Standard**; escalate to **Advanced** for conflicting role ownership
-  or policy dependencies.
-- `description`: "Analyze reference skill"
-- `run_in_background`: `false` (result needed before finalizing draft)
+## Reviewer
 
----
-
-### Reviewer: Independent Validation (Step 5)
-
-**Trigger**: Generated skill includes `references/` or `scripts/` directories.
-
-**When to skip**:
-- Skill is minimal (SKILL.md only, no bundled resources)
-- User explicitly requested fast generation
-
-**Prompt template**:
+Step 5, foreground, `general-purpose`, before the final report; the main agent
+fixes what it finds. Standard for routine structure, Advanced for evidence
+quality or workflow contracts, Frontier for unresolved broad tradeoffs.
+Independence comes from a separate context with the evidence and without the
+author's self-assessment, not from a different model.
 
 ```
 You are reviewing a newly generated skill at {skill_path}.
@@ -130,56 +64,3 @@ If unavailable, report the uncertainty instead of inventing an independent pass.
 Report: PASS/FAIL per criterion, with specific issues for any FAIL.
 Do NOT fix issues — only report them.
 ```
-
-**Agent parameters**:
-- `subagent_type`: `general-purpose`
-- Workload: **Standard** for routine structure review, **Advanced** for evidence
-  quality or workflow contracts, **Frontier** for unresolved broad tradeoffs.
-  Resolve available models using `model-selection.md`; independence comes from
-  a separate reviewer/context, not a provider alias or a higher tier.
-- Advisor: use the host's supported advisor/delegation equivalent for uncertain
-  findings. Share review evidence without the author's self-assessment; report
-  missing independent-review capability explicitly.
-- `description`: "Blind review generated skill"
-- `run_in_background`: `false` (must receive results before reporting to user)
-
----
-
-## Parallelism Rules
-
-### Safe to parallelize
-
-- Explore-1 + AskUserQuestion wait (independent)
-- Explore-2 + SKILL.md draft writing (draft can incorporate results later)
-
-### Must NOT parallelize
-
-- Reviewer + final user report (reviewer results must be incorporated first)
-- Multiple Explore agents querying overlapping file sets (redundant work)
-
-### Execution timeline
-
-```
-Step 1: [Main]      AskUserQuestion ─── wait ──── response received
-        [Explore-1] Survey skills ───── done ──┘
-
-Steps 2-3: [Main only]
-
-Step 4: [Explore-2] Analyze ref skill ── done ─┐
-        [Main]      Draft SKILL.md ──────────── incorporate results
-
-Step 5: [Main]      Run validate-skill
-        [Reviewer]  Independent review ── results ── fix issues
-```
-
----
-
-## Anti-patterns
-
-| Anti-pattern | Why it's wrong | Do instead |
-|--------------|----------------|------------|
-| Spawning a subagent for a single file read | Overhead exceeds benefit | Use Read tool directly |
-| Running Explore when $ARGUMENTS has all info | Wastes tokens on known data | Skip Explore-1 |
-| Letting Reviewer fix issues it finds | Breaks blind review independence | Main agent fixes based on report |
-| Parallelizing dependent steps | Results arrive too late to use | Run sequentially |
-| Spawning general-purpose for read-only tasks | Unnecessary tool access, slower | Use Explore instead |

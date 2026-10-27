@@ -1,27 +1,10 @@
 # `description` writing guide
 
-> How to write the `description` field in SKILL.md frontmatter, with examples.
+Write `[WHAT sentence]. [WHEN sentence].`: WHAT is the minimum capability label,
+not a workflow summary; WHEN names the requests that should load the skill. The
+matcher compares it with raw user input, so trigger phrases decide accuracy.
 
----
-
-## The WHAT + WHEN formula
-
-`description` must include two things:
-
-1. **WHAT**: the minimum capability label, without an internal workflow summary.
-2. **WHEN**: in what situations / requests it should be used.
-
-```
-[WHAT sentence]. [WHEN sentence].
-```
-
-The system matches `description` against user input to auto-load the skill. Description quality determines trigger accuracy.
-
----
-
-## Good examples
-
-### English
+## Examples
 
 ```yaml
 description: >-
@@ -30,23 +13,7 @@ description: >-
   "component documentation", or "design-to-code handoff".
 ```
 
-```yaml
-description: >-
-  Sets up a new Next.js project with TypeScript, ESLint, and testing
-  configuration. Use when user asks to "create a project",
-  "initialize Next.js", or "scaffold a new app".
-```
-
-```yaml
-description: >-
-  Applies test-driven development.
-  Use when implementing features, fixing bugs, or when user mentions
-  "TDD", "test first", or "red-green-refactor".
-```
-
-### Korean
-
-Korean descriptions are kept verbatim because trigger phrases are language-specific.
+Korean descriptions keep their trigger phrases verbatim:
 
 ```yaml
 description: >-
@@ -60,94 +27,33 @@ description: >-
   "스프린트", "Linear 태스크", "프로젝트 계획", "티켓 생성" 언급 시 사용한다.
 ```
 
-```yaml
-description: >-
-  CLAUDE.md 및 AGENTS.md 파일을 가이드 원칙에 따라 생성한다.
-  CLAUDE.md 작성, AGENTS.md 생성, 에이전트 문서 정리 요청 시 사용한다.
-```
-
----
-
-## Bad → fixed
-
-### Too vague
+**Trigger on the action, not the domain.** A domain-wide trigger loads the skill
+for work that does not need it:
 
 ```yaml
-# Bad: doesn't say what it does or when to use it
-description: Helps with projects.
-
-# Fix: state WHAT + WHEN
-description: >-
-  Creates project scaffolding with recommended directory structure and configs.
-  Use when starting a new project or asking to "set up a project".
-```
-
-### Missing trigger
-
-```yaml
-# Bad: WHAT only, no WHEN
-description: Creates sophisticated multi-page documentation systems.
-
-# Fix: add WHEN (trigger phrases)
-description: >-
-  Creates multi-page documentation from source code and comments.
-  Use when user asks for "generate docs", "API documentation",
-  or "document this project".
-```
-
-### Trigger names the domain, not the action
-
-```yaml
-# Bad: any mention of the domain loads the skill
+# Bad
 description: >-
   Create and validate Postgres schema migrations.
   Use when working with databases, queries, models, or persistence.
 
-# Fix: trigger on the action the skill actually performs
+# Fix
 description: >-
   Create and validate Postgres schema migrations.
   Use when adding or changing a migration, or reviewing its rollout.
 ```
 
-Domain-wide triggers load instructions the model does not need for most of
-that domain's work. Keep the description as short as it can be while the
-trigger stays unambiguous.
+Write triggers in the user's words, not internal jargon ("organize projects",
+not "Project entity model"). Keep the description as short as an unambiguous
+trigger allows: about 100–300 characters, front-loaded, no empty modifiers.
 
-### Internal jargon only
+## Trigger tuning
 
-```yaml
-# Bad: not phrasing the user would actually say
-description: Implements the Project entity model with hierarchical relationships.
+**Under-triggering** (not loaded for related requests): first check the
+[invocation controls](frontmatter-spec.md#invocation-control-matrix); a
+manual-only skill is not expected to auto-load, so keep its selected mode.
+Otherwise add the phrases users actually say, with synonyms, abbreviations and
+colloquial variants ("PR 만들어줘", "풀리퀘 생성", "pull request").
 
-# Fix: rewrite from the user's perspective
-description: >-
-  Sets up project hierarchy with parent-child relationships and permissions.
-  Use when user asks to "organize projects", "create project structure",
-  or "set up project permissions".
-```
-
-### Contains XML tags
-
-```yaml
-# Bad: XML tags are forbidden
-description: Use for <important>project setup</important> tasks.
-
-# Fix: drop the tags
-description: >-
-  Handles project setup tasks including directory creation and config files.
-  Use when user asks to "set up" or "initialize" a project.
-```
-
----
-
-## Length tips
-
-- **Agent Skills limit**: 1,024 characters for `description` alone.
-- **Claude Code listing cap**: 1,536 characters for `description` plus
-  `when_to_use`; a separate truncation limit, not the standard's field limit.
-- **Recommended**: 100–300 characters (just the essentials).
-- Drop empty modifiers: "sophisticated", "comprehensive", "advanced", ...
-- Front-load concrete trigger phrases.
-- Use YAML folded scalar (`>-`) for readability when the description is multi-line.
-
-> For trigger remediation, see [Trigger tuning](review-checklist.md#trigger-tuning).
+**Over-triggering** (loaded for unrelated work): add a negative trigger ("Do NOT
+use for simple data exploration"), narrow the scope, and drop generic lead words
+such as "help" and "manage".

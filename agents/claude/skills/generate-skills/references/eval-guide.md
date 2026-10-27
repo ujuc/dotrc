@@ -1,21 +1,10 @@
-# Eval Guide for Skills
+# Eval guide for skills
 
-> How to define binary evaluation criteria for skills.
+## Binary criteria
 
----
-
-## Why Binary Evals
-
-Scales (1-7, 1-10) compound variability and give unreliable results across runs.
-Binary outcomes apply to checks actually evaluated with adequate evidence.
-Missing required evidence is UNVERIFIED; inapplicable checks are SKIP. Neither
-is a passing result. Report [evidence levels](quality-criteria.md#evidence-and-completion) separately.
-
----
-
-## Writing Good Evals
-
-### Format
+Write 3–6 yes/no checks, under `## Eval Criteria` at the bottom of `SKILL.md` or
+in a root `evals.md` (autoresearch reads both). Fewer misses coverage; more makes
+the skill optimize for the eval surface.
 
 ```
 EVAL [number]: [Short name]
@@ -24,24 +13,13 @@ Pass condition: [What "yes" looks like — be specific]
 Fail condition: [What triggers a "no"]
 ```
 
-### Rules
-
-1. **Binary outcomes, explicit evidence status.** Use PASS/FAIL when evaluable;
-   otherwise SKIP/UNVERIFIED with the reason. A missing run cannot be guessed.
-2. **Specific enough to be consistent.** Two reviewers should reach the same answer independently.
-3. **Not so narrow the skill games it.** "Contains fewer than 200 words" makes the skill optimize for brevity at the expense of everything else.
-4. **3-6 evals is the sweet spot.** Fewer misses coverage. More causes the skill to parrot eval criteria instead of improving.
-
-### Good vs Bad Examples
-
-| Bad (vague/scaled) | Good (binary/specific) |
-|---|---|
-| Is the output readable? | Are all words spelled correctly with no truncated sentences? |
-| Rate code quality 1-5 | Does the code pass the project's lint rules without warnings? |
-| Is the tone professional? | Does the output avoid first-person pronouns and slang? |
-| How accurate is it? | Does every file path referenced in the output exist on disk? |
-
----
+- Two reviewers must reach the same answer alone ("Does every file path in the
+  output exist on disk?", not "How accurate is it?").
+- Grade the output, not the effort ("contains data from the file", not "read the file").
+- Not so narrow the skill can game it: "fewer than 200 words" buys brevity at any cost.
+- If one check always passes with another, drop one. If every check passes on a
+  bad output, the checks are wrong.
+- Report each result with the statuses in [evidence levels](../SKILL.md#evidence-levels).
 
 ## Waza suites
 
@@ -66,46 +44,28 @@ cannot: their `contains` graders check words that already appear in the prompt.
   `⚠️ incomparable` when engine, model, trials, or the task set differ, and
   skips the run entirely when eval.yaml already shows the mismatch.
 - **Trigger precision.** `inject_skill_body: false` with a `skill_invocation`
-  grader measures whether the agent calls the `skill` tool. Validate the
-  channel first: in a 2026-09-13 probe the local `gemma4:26b-mlx` never invoked
-  `commit` on a direct commit request (0 invocations, 272k tokens), so a 0 there
-  reflects the eval model, not the skill. Trust a positive-trigger grader only
-  after a control task shows the model invoking some skill under the same
-  executor and model.
-- **Budget.** One 3-trial copilot-sdk run measured 13–20 minutes on the local
-  model; keep Waza suites to 3–6 tasks. A diet eval follows
+  grader measures whether the agent calls the `skill` tool. Trust a
+  positive-trigger grader only after a control task shows the same executor and
+  model invoking some skill: a local model may never invoke one, so a 0 there
+  reflects the eval model, not the skill.
+- **Budget.** A 3-trial copilot-sdk run takes 13–20 minutes on the local model;
+  keep suites to 3–6 tasks. A diet eval follows
   [skill-diet's eval](../../skill-diet/references/eval.md) instead.
 
-## Baseline and evidence integrity
+### Running baseline and candidate
 
-Preserve exact prompts, fixture bytes, injected events and expected actions.
-Compare the unchanged skill and candidate using the same inputs and execution
-channel. Do not infer failure merely because a lower-priority sentence conflicts
-with a user instruction that already produces the correct outcome.
+The [`waza` skill](../../waza/SKILL.md) owns scaffolding, commands, existing-suite
+preservation and result paths. Its launcher refuses baselines it cannot compare:
 
-Mock echo/keyword checks validate plumbing only. Artifact claims require actual
-files, before/after comparisons and write-order evidence; live-tool claims require
-actual tool results. A textual replay proves interpretation only. Do not compare
-raw scores across different suites, executors or input sets.
+1. Scaffold, then refine the placeholder tasks against real triggers and outputs
+   **before** the baseline. Changing task IDs, the executor or
+   `trials_per_task` afterwards makes the candidate `⚠️ incomparable`; rerun the
+   baseline on the unchanged skill instead of comparing across suites.
+2. Run baseline and candidate with the same `--trials 3` and distinct labels,
+   passing the baseline JSON to the candidate run with `--baseline-json`.
+3. Read the verdict, not the raw delta: `⚠️ **regression**` (rounded weighted Δ
+   below −0.1 by default) blocks the candidate until inspected; a smaller drop is
+   run-to-run noise; a `reference-only` mock result and an `⚠️ incomparable`
+   report are not behavior evidence.
 
-Give evidence verifiers the facts, decisions, original files/diffs and scope they
-must judge. Keep blind reviewers limited to observable properties; missing context
-is not grounds for deleting a team rule. Rerun affected checks after final fixes.
-
-## Placement
-
-When defining evals for a new skill, record them in one of:
-
-- **SKILL.md bottom section** — under an `## Eval Criteria` heading
-- **Separate `evals.md`** — in the skill's root directory
-
-Either location works. The autoresearch skill checks both when starting optimization.
-
----
-
-## Common Pitfalls
-
-1. **Eval measures effort, not output.** "Did the skill read the file?" is process. "Does the output contain data from the file?" is outcome.
-2. **Evals overlap.** If eval 3 always passes when eval 2 passes, one of them is redundant.
-3. **Evals test the wrong thing.** If all evals pass but the output is bad, the evals are wrong — not the skill.
-4. **Too many evals.** Beyond 6, the skill starts optimizing for the eval surface rather than the actual job.
+A new skill uses the no-guidance transcript as its baseline, since no runnable skill exists yet.

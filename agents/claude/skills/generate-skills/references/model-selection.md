@@ -1,9 +1,8 @@
 # Workload-Based Model Selection
 
-This is a local recommendation policy for skills and agents. Profiles describe
-work, not API model IDs. Models in the same row are candidates for similar roles;
-the pairing does not claim equal performance, price, context limits, or tool
-support across providers. Check current host availability before selecting one.
+Local recommendation policy. Profiles describe work, not API model IDs. Models
+in one row are candidates for similar roles, not equals in performance, price,
+context or tool support. Check host availability before selecting one.
 
 ## Starting profiles
 
@@ -104,58 +103,17 @@ their own files dispatch as `general-purpose`. Role instructions live under the
 calling skill's `references/roles/` and the dispatch prompt begins with
 "Read `<absolute role path>` first and follow it."
 
-## Examples
-
-| Current step | Recommendation |
-| --- | --- |
-| Summarize a supplied diff or format a commit message | Lightweight; preserve supplied facts and scope. |
-| Inspect known changes, run required checks, stage the accepted scope and commit | Standard; unresolved staging scope requires clarification, not a guessed commit. |
-| Untangle mixed changes or reason through a merge conflict | Advanced; model choice does not authorize staging or resolving unapproved scope. |
-| Implement an isolated fix with a clear reproducer | Standard; move to Advanced when the cause crosses components. |
-| Design a migration spanning APIs, storage and compatibility | Advanced; Frontier for the hardest unresolved interactions or long-horizon constraints. |
-| Run an existing test and report its exit status | Lightweight; interpreting a subtle regression can need Standard or Advanced. |
-| Audit skill syntax / review workflow semantics / resolve a difficult cross-skill conflict | Lightweight / Advanced / Frontier as the actual work requires. |
-
 ## Source basis
 
-Checked 2026-09-09; OpenAI pairings revised 2026-09-23 and 2026-10-02; Claude
-lineup re-checked 2026-10-02. The role profiles and pairings above are repository policy
-inferred from vendor descriptions, not vendor certifications of equivalence.
+Repository policy inferred from vendor descriptions, not vendor certifications
+of equivalence. Last checked: OpenAI 2026-10-02, Claude 2026-10-08.
 
-- [OpenAI model catalog](https://developers.openai.com/api/docs/models): Luna
-  emphasizes cost-sensitive volume, Terra balances intelligence and cost, Sol
-  handles complex professional work, and Astra targets the hardest work.
-  Checked 2026-09-23, the catalog adds "Choose GPT-6 Sol to balance intelligence
-  and cost, or GPT-6 Luna for cost-sensitive, high-volume workloads", which
-  places them beside Terra and GPT-5.6 Luna. Checked 2026-10-02, GPT-6.1 Sol
-  replaces GPT-6 Sol in that line, and its page claims "Near-Astra performance
-  for complex work at a lower cost". The reasoning guide still points to Terra
-  and GPT-5.6 Luna for lower cost, so both stay. Details are in
-  [openai-models.md](openai-models.md).
-- [OpenAI model guidance](https://developers.openai.com/api/docs/guides/latest-model)
-  (checked 2026-09-23): GPT-5.6 Sol is "the model for flagship capability",
-  Terra offers "a balance of intelligence and cost", Luna suits "efficient,
-  high-volume workloads", and GPT-6 Astra is the "highest level of capability".
-  API IDs, effort support, and Codex dispatch notes live in
-  [openai-models.md](openai-models.md).
+- [OpenAI model catalog](https://developers.openai.com/api/docs/models) and
+  [latest-model guide](https://developers.openai.com/api/docs/guides/latest-model);
+  API IDs, effort support and Codex dispatch notes are in [openai-models.md](openai-models.md).
 - [Claude model overview](https://platform.claude.com/docs/en/models/overview)
-  (checked 2026-09-23): Haiku emphasizes speed, Sonnet balances speed and
-  intelligence, Opus covers long-running agentic coding and knowledge work and
-  is the suggested starting point, and Fable targets demanding reasoning and
-  long-horizon agentic work or cases where Opus at higher effort still falls
-  short. Re-checked 2026-10-02: the lineup is Fable 5.1, Opus 5.5, Sonnet 5.5
-  (released 2026-09-28, *"The best combination of speed and intelligence"*) and
-  Haiku 4.5. The Sonnet 5.5 guide keeps it below Opus: *"For the hardest
-  long-horizon work, an Opus model is the better choice."* Re-checked
-  2026-10-08: Haiku 5.5 replaces Haiku 4.5 (*"For high-volume,
-  latency-sensitive tasks such as classification, extraction, and routing"*;
-  default effort `medium`). Its prompting guide points `xhigh`/`max` work to
-  Sonnet 5.5: *"also run your evals on Claude Sonnet 5.5 and compare
-  performance, cost, and speed"* — the Lightweight-to-Standard move-up signal. Claude Mythos 5.1 is
-  *"the same model as Claude Fable 5.1, offered by invitation only"*; it is not
-  a separate profile candidate.
-- [Claude cost and intelligence guidance](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence):
-  evaluate effort and cost per completed task; a stronger model may avoid retries.
+  and [cost and intelligence guidance](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence):
+  compare cost per completed task; a stronger model may avoid retries. Claude
+  Mythos 5.1 is the invitation-only Fable 5.1, not a separate candidate.
 - [Codex subagent model and reasoning controls](https://learn.chatgpt.com/docs/agent-configuration/subagents#choosing-models-and-reasoning):
-  actual execution settings belong to the host's agent configuration or supported
-  invocation parameters.
+  execution settings belong to the host's agent configuration or invocation parameters.

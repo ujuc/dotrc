@@ -1,6 +1,6 @@
 ---
 name: generate-skills
-description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트(before/after/none eval)를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza가 맡는다."
+description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza가 맡는다."
 group: meta
 disable-model-invocation: true
 argument-hint: "[skill-name]"
@@ -8,18 +8,18 @@ argument-hint: "[skill-name]"
 
 # Skill creation / update workflow
 
-Read `references/quality-criteria.md` before authoring. It governs authority,
-selected write scope, native tool equivalents and evidence levels, including
-updates to this skill. Reuse existing user approval.
-Claude tool/model names below are host-specific examples; map available
-capabilities and report missing independent roles rather than inventing them.
+Tool and model names below are Claude Code examples. Use the active host's file,
+patch, fetch, question and fresh-context delegation equivalents, and report a
+missing independent role instead of inventing one. These rules also govern
+edits to this skill. Paths in this body resolve from this skill directory.
 
 ## Model guidance
 
 Use **Standard** for scoped authoring, **Advanced** for conflicting policies or
 uncertain evidence, **Frontier** for unresolved cross-workflow decisions and
-**Lightweight** for mechanical validation. Apply `references/model-selection.md`
-to resolve available models or recommend one when the host cannot switch.
+**Lightweight** for mechanical validation. Resolve a profile to an available
+model with [model selection](references/model-selection.md); when the host
+cannot switch, recommend one without claiming a switch.
 
 ## Mode detection
 
@@ -33,393 +33,197 @@ Inspect `$ARGUMENTS` to choose a mode:
   `scripts/diet-adapter-claude` symlinked as `adapter`, `--parallel 2`, a pinned
   `--model`. The shipping commit carries `Skill-Diet: <skill-name>`.
 - **Create mode**: anything else
-  → Run Step 0 → Steps 1–5
+  → Run Step 0 → Step 1 below → Steps 2–4 in [create mode](references/create-mode.md) → Step 5
 
-If `$ARGUMENTS` is empty, ask the user via AskUserQuestion which mode and which target skill.
+If `$ARGUMENTS` is empty, ask which mode and which target skill.
 
----
+## Scripts
 
-## Reference routing
+Launch them by absolute path: this skill is global, so CWD-relative paths break
+outside the dotrc repo. The Rust launchers need `cargo`; the first run compiles.
 
-Load references when their condition applies; do not preload the directory.
-Paths in this body resolve from this skill directory. Links inside a reference
-resolve from that reference's directory.
+```bash
+DOTRCDIR="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}"  # zshrc exports it only in interactive shells
+GS="${DOTRCDIR}/agents/claude/skills/generate-skills/scripts"
+bash "$GS/init-skill" <skill-name> --group <slug> --path <parent-dir> [--with-references] [--with-scripts] [--with-assets]
+bash "$GS/validate-skill" <skill-dir>
+bash "$GS/skill-diet-eval" check <skill-dir>   # SKILL.md bytes for the commit message; fails on a broken link or anchor
+bash "$GS/skill-diet-growth" <skill-dir>       # one line: within budget | diet-recommended | no diet baseline
+bash "$GS/skill-diet-upstream" check           # one advisory line; `pull <tag>` only when the user asks
+bash "$GS/register-skill" "${DOTRCDIR}/agents/claude/skills/README.md" --name <skill-name> --group <slug>
+```
 
-| When | Reference |
-| --- | --- |
-| Resolving authority, scope or evidence | [Quality criteria](references/quality-criteria.md) |
-| Choosing workload or delegation | [Model selection](references/model-selection.md), [subagent guidelines](references/subagent-guidelines.md) |
-| Designing or restructuring | [Design principles](references/design-principles.md), [skill types](references/skill-types.md), [patterns](references/patterns.md) |
-| Scaffolding or writing metadata | [Skill structure](references/skill-structure.md), [frontmatter spec](references/frontmatter-spec.md), [description examples](references/description-examples.md) |
-| Defining output or injecting context | [Output patterns](references/output-patterns.md), [dynamic context](references/dynamic-context.md) |
-| Reviewing an update | [Redundancy audit](references/redundancy-check.md), [review checklist](references/review-checklist.md), [eval guide](references/eval-guide.md) |
-| Distributing a completed skill | [Distribution guide](references/distribution-guide.md) |
-| Editing an existing skill, sizing it, or teaching a tool | [skill-diet](../skill-diet/SKILL.md), [tool skills](../skill-diet/references/tool-skills.md) |
+## Authority and scope
+
+- Explicit user decisions and repository rules beat optimization defaults. Keep
+  concrete test gates, nondefault conventions and safety boundaries; a model
+  prompting guide does not override them.
+- Reuse approved plans and patches without asking again per file. Ask only for a
+  material open choice, new scope, a destructive action, or a rule that demands
+  fresh approval, and name that reason.
+- A missing companion file is a scope decision, not permission to create it.
+- Fetch sources read-only. Unless cache maintenance is the selected task, report
+  drift and leave sibling or global caches, settings, catalogs and check dates alone.
+- With no question tool, ask in plain text when interactive; when headless, keep
+  writes that depend on an unanswered material choice pending.
+- Label each guidance claim as upstream requirement, upstream recommendation,
+  local policy, or model-specific finding, keeping its scope: a per-file size
+  recommendation is not a combined hard limit.
+- After renaming a section or role, audit the prose that cites it, not only file existence.
+
+## Evidence levels
+
+| Level | Proves | Does not prove |
+| --- | --- | --- |
+| Structure/schema | Metadata, paths, parsing, size | Skill decisions or file changes |
+| Decision replay | Interpretation of fixed inputs in a fresh context | Real tool runs, delivered questions, a finished pipeline |
+| Artifact application | Actual output bytes, write order, preservation | Untested hosts or branches |
+| Live integration | The exercised host/tool flow | Other hosts, versions or cases |
+
+- Record PASS, FAIL, SKIP (not applicable) or UNVERIFIED (required evidence
+  missing) per check. Neither SKIP nor UNVERIFIED passes; missing required
+  evidence blocks the completion claim.
+- Mock or keyword-echo scores are plumbing smoke, never behavior PASS. Do not
+  compare raw scores across a changed suite, executor or input set.
+- Keep exact baseline inputs, fixture bytes and outputs, and rerun the same cases
+  on the candidate. If an explicit instruction already makes the baseline pass,
+  report the removed contradiction, not an invented FAIL→PASS.
+- Give a verifier originals or diffs, scope, facts and user decisions. A blind
+  reviewer judges only what its inputs show; missing approval evidence is no
+  ground for deleting a team rule. Recheck only the criteria a final repair touched.
 
 ## Language policy
 
-Apply this to every skill created or updated through this workflow.
+- `description` → Korean: its trigger phrases are matched against `$ARGUMENTS` and user wording.
+- SKILL.md body, `references/`, `scripts/`, init templates → English.
+- Keep Korean verbatim where it is functional: `$ARGUMENTS` trigger keywords,
+  Korean examples in description guides, Korean Conventional Commits examples,
+  user-facing output text, and target-language corpora or rulebooks.
+- Updating a legacy skill: translate Korean body prose to English, keeping the above.
 
-- **`description` field → Korean.** This is the only part the user sees. Korean trigger phrases are also matched against `$ARGUMENTS` and the user's natural utterances, so Korean wording is functional, not just stylistic.
-- **SKILL.md body, references/, scripts/, init templates → English.** This content is read by the LLM. English is more token-efficient and avoids translation drift in instructional prose.
-- **Keep Korean verbatim where it has functional value:** trigger keywords used for `$ARGUMENTS` matching (e.g., `업데이트`, `수정`), Korean usage examples in description-writing guides, Korean Conventional Commits examples, and any text the user is expected to read (e.g., user-facing summary blocks defined inside a skill).
-- **Keep target-language corpora and linguistic rulebooks in their analyzed
-  language.** Translating a Korean pattern catalog into English destroys the
-  data the skill must inspect.
-- **When updating a legacy skill** that has Korean prose in the body or references, translate the prose to English while preserving the items above.
+## Step 0: Spec freshness
 
----
+This skill stays the authoring controller (Rust validator, group catalog, Waza
+integration). Borrow Superpowers pressure-testing ideas, but never hand control
+to another skill-generation workflow.
 
-## Step 0: Spec sanity check (before anything else)
+1. Lines 1–6 of [frontmatter-spec.md](references/frontmatter-spec.md) hold
+   `source_url`, `spec_url`, `last_upstream_check` and `check_interval_days`
+   (default 14). Within the interval, go to the mode's first step without fetching.
+2. Otherwise WebFetch both URLs (**[SPEC]** rules exist only at `spec_url`; try
+   the HTML page when a Markdown response fails). Diff fields, string
+   substitutions and the invocation-control matrix against the spec's
+   Field Reference; use verified guidance in-session and report drift.
+3. Rewrite the spec or its date only when cache maintenance is in the selected
+   write scope, confirming a large change set with the user first. Unchanged
+   upstream content alone does not authorize a date write. When fetching fails
+   or is not permitted, leave both untouched and continue with a one-line notice
+   that the spec is cached as of `last_upstream_check`. Report fetched or cached either way.
+4. Relay the one line from `skill-diet-upstream check`; pull a tag only when the user asks.
 
-### Superpowers source
+## Step 1: Capture the use case (create mode)
 
-This local skill remains the
-authoring controller: it owns the Rust validator, group catalog, and Waza
-integration. Adapt the Superpowers pressure-testing principles, but do
-not hand control to another skill-generation workflow.
+Ask (AskUserQuestion or plain text) for the problem or scenario, target tools
+(built-ins, MCP servers, external CLIs), expected output, trigger phrases users
+actually say, and the catalog group: one of `planning`, `analysis`, `build`,
+`docs`, `writing`, `llm`, `meta`. Then pick the domain type and structural
+pattern in [create mode](references/create-mode.md#step-1-capture-the-use-case)
+and confirm the pattern and group before scaffolding.
 
-The official skills doc changes often. Verify it before generating, but only
-re-fetch when the local copy is actually stale — `references/frontmatter-spec.md`
-carries its own freshness metadata in YAML frontmatter.
+## Behavior baseline
 
-### Procedure
-
-1. Read the YAML frontmatter at the top of `references/frontmatter-spec.md`:
-   - `source_url` — Claude Code docs URL to fetch
-   - `spec_url` — Agent Skills standard URL to fetch (rules marked **[SPEC]**
-     are stated only there, never on the Claude Code page)
-   - `last_upstream_check` — YYYY-MM-DD of the last verified check
-   - `check_interval_days` — cadence threshold (defaults to 14 when missing)
-2. Compute `today - last_upstream_check`:
-   - **Within interval** → continue with Step 1 in create mode or Step U1 in update mode without fetching.
-   - **Beyond interval** → continue to step 3.
-3. WebFetch `source_url` and extract the Frontmatter reference section, **and**
-   WebFetch `spec_url` for the standard's own field rules. Checking only
-   `source_url` leaves every **[SPEC]** rule unverified.
-4. Diff against the "Field Reference" section in `references/frontmatter-spec.md`.
-5. Use verified guidance in-session and report drift. Update this reference and
-   its check date only when cache maintenance is explicitly in the selected
-   write scope. Another project's skill task must not change this global cache.
-6. Record fetched/cached status; unchanged source content alone does not authorize
-   a freshness-date write outside that scope.
-7. Run `bash scripts/skill-diet-upstream check` and relay its one line; it never
-   blocks. Pull a newer tag only when the user asks.
-
-### What to compare
-
-- Field additions / removals / behavior changes
-- String substitution changes
-- Invocation control matrix changes
-
-### Notes
-
-- If WebFetch fails (network error, rate limit, page layout change), keep the
-  existing `references/frontmatter-spec.md` **and** `last_upstream_check`
-  untouched, then continue with the selected mode's next step and a short notice that the local spec may be stale.
-- If the upstream change set is large, summarize it for the user and confirm
-  before rewriting the local copy.
-
----
-
-## Step 1: Capture the use case
-
-Use AskUserQuestion to collect:
-
-1. **Problem / scenario**: what concrete problem does this skill solve?
-2. **Target tools**: which tools does it call (built-in tools, MCP servers, external CLIs)?
-3. **Expected output**: what does running the skill produce (files, messages, code, ...)?
-4. **Trigger phrases**: what does the user actually say when they want this skill?
-5. **Catalog group**: choose one of `planning`, `analysis`, `build`, `docs`, `writing`, `llm`, or `meta`.
-
-Use the answers to first identify the **domain type** in `references/skill-types.md`, then pick a **structural pattern** from `references/patterns.md`:
-
-| Pattern | Best fit | Freedom |
-|---------|----------|---------|
-| Linear workflow | Fixed sequence of steps | Low–medium |
-| Interview-based | Requirements depend on user context | High |
-| Tool orchestration | Combines several tools | Medium |
-| Template fill | Produces a fixed-shape artifact | Low |
-| Validation / review | Quality-checking existing artifacts | Medium |
-
-Confirm the picked pattern, reason, and group with the user before scaffolding.
-
-### Parallel exploration (optional)
-
-After sending the AskUserQuestion, spawn an Explore subagent to survey existing skills while the user types. Follow `references/subagent-guidelines.md` → "Explore-1".
-
-Skip when `$ARGUMENTS` already contains enough information.
-
-### Behavior baseline
-
-Before drafting, classify the target as discipline, technique, pattern, or
-reference. Run the smallest scenario that exposes the current gap without the
-new guidance: three pressure scenarios for discipline skills, otherwise one
-application or retrieval scenario. For updates, run the unchanged skill as the
-baseline. Keep the prompts and observed failure so Step 5 can rerun exactly the
-same cases; if Waza is available for an existing skill, persist this baseline
-through the `waza` skill launcher before editing, after the suite's tasks are
-final and with `--trials 3` (see "Waza measurement" below). If baseline
-behavior passes, do not invent a failure. A reproduced instruction
-contradiction may justify a scoped consistency correction; otherwise avoid
-speculative guidance and retain the evidence level.
-
----
-
-## Step 2: Scaffold the structure
-
-Follow `references/skill-structure.md`.
-
-### Auto-init (preferred)
-
-Run `scripts/init-skill` (thin bash launcher over the Rust workspace in `tools/`).
-Launcher paths are anchored on `$DOTRCDIR` so they resolve from any working
-directory — this skill is global, and CWD-relative paths break outside the dotrc
-repo. `zshrc` exports `DOTRCDIR`, but only for interactive shells; each snippet
-re-derives it so the command also works from cron, CI, or a bare non-interactive
-shell.
-
-```bash
-DOTRCDIR="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}"
-bash "${DOTRCDIR}/agents/claude/skills/generate-skills/scripts/init-skill" <skill-name> --group <slug> --path <target-path>
-```
-
-`--group` is required (one of the 7 slugs — see `references/frontmatter-spec.md` → `group`); the validator fails without it, and it must be a deliberate choice, never guessed. By default this creates only `SKILL.md` with the required fields filled in plus commented-out placeholders for every optional frontmatter field (`when_to_use`, `paths`, `shell`, `effort`, `context`, `agent`, etc.). If the skill needs Tier-3 resources, pass `--with-references`, `--with-scripts`, and/or `--with-assets`. Fill in the body in Steps 3–4.
-
-Requires `cargo` (install via <https://rustup.rs>). First invocation compiles the binary (~6–30s); later runs are instant via Cargo's incremental cache.
-
-### Manual scaffold (when cargo / init-skill is unavailable)
-
-This creates a draft only. Completion and registration remain blocked until `cargo` is available for Step 5 validation.
-
-**Required:**
-
-1. Create the skill folder (kebab-case).
-2. Create `SKILL.md` (empty — Steps 3–4 will fill it).
-
-**Optional (depending on Step 1 outcome):**
-
-3. `references/` for detailed reference docs.
-4. `scripts/` for utility scripts.
-5. `assets/` for media.
-
-### Checks
-
-- Folder name is kebab-case.
-- No `README.md` was created.
-- Folder name does not start with `claude` or `anthropic`.
-
-## Step 3: Write the frontmatter
-
-Use `references/frontmatter-spec.md` together with `references/description-examples.md`.
-
-### Procedure
-
-1. Set non-empty `name`, `description`, and `group`. Match `name` to the folder;
-   use the selected catalog group, asking only if placement remains unclear.
-2. Write a concise WHAT + WHEN description using the selected trigger phrases.
-   Keep workflow details in the body, not discovery metadata.
-3. Select optional fields from the frontmatter spec for the intended host and
-   distribution path. Use manual invocation for destructive/expensive skills
-   and hide background knowledge from the user menu where appropriate.
-4. Keep workload guidance in the body. Omit fixed `model` assignments unless the
-   user requests a host-supported override; tier labels are not native IDs.
-
-Step 5 owns mechanical validation; review trigger accuracy here.
-
-## Step 4: Write the instructions
-
-Write the SKILL.md body following the pattern picked in Step 1.
-
-### Reference-skill analysis (optional)
-
-If Step 1 surfaced a similar-pattern skill worth studying, spawn an Explore subagent to dissect it in parallel with drafting. Fold the result into the draft. Follow `references/subagent-guidelines.md` → "Explore-2".
-
-### Dynamic context injection (optional)
-
-If the skill's body needs live shell output injected at load time (e.g. current branch, file listing, date), use the `` !`command` `` syntax documented in `references/dynamic-context.md` — Claude Code runs the command before the prompt reaches the model and substitutes its stdout.
-
-### Common rules
-
-- **State model guidance**: use `references/model-selection.md` for default levels,
-  escalation triggers and cheaper mechanical phases. Link it when shipped together;
-  otherwise adapt its wording locally. Resolve an available model API or recommend
-  a model without claiming a session switch.
-- **Be specific**: include runnable commands, exact paths, concrete acceptance criteria.
-- **Handle errors**: list failure modes and how to recover.
-- **Name the tools**: state which tools are used (Read, Write, Bash, AskUserQuestion, ...).
-- **Build a Gotchas section**: known failure points are the highest-value content in any skill. See `references/design-principles.md` principle 4.
-
-### Pick an output pattern
-
-When the output shape matters, see `references/output-patterns.md`:
-
-- **Template Pattern**: when the output format must be exact.
-- **Examples Pattern**: when input/output pairs convey the quality bar.
-
-### Apply degrees of freedom
-
-Pick instruction specificity per the freedom guide in `references/design-principles.md`.
-
-### Size limits
-
-Place each fact by [level](../skill-diet/SKILL.md#levels); the validator's
-500-line warning is the backstop.
-
-### Post-write checks
-
-- Every `references/` path resolves to a real file.
-- Instructions are verifiable (no fuzzy phrasing).
-- No filler (no linter-style preaching, no speculation, no over-explaining).
-- **Redundancy audit**: the body must not restate rules already stated in dispatched role files, sibling skills, or standard LLM knowledge. Run the audit in `references/redundancy-check.md` when its signal triggers hold.
+Before editing or drafting, classify the target as discipline, technique,
+pattern or reference, and run the smallest scenario that exposes the gap
+without the new guidance: three pressure scenarios for a discipline skill,
+otherwise one application or retrieval scenario. For an update the unchanged
+skill is the baseline. Keep the prompts and observed result for Step 5. With
+Waza usable on an existing skill, freeze the suite's tasks, then persist this
+baseline with `--trials 3` ([Waza suites](references/eval-guide.md#waza-suites)).
+If the baseline passes, do not invent a failure; a reproduced contradiction
+justifies only its scoped correction.
 
 ## Step U1: Inspect the target skill (update mode)
 
-1. Extract the target skill path / name from `$ARGUMENTS`.
-2. Read the target SKILL.md.
-3. Parse frontmatter fields (name, description, optional fields).
-4. Note whether `references/` and `scripts/` exist.
-5. Run `bash scripts/skill-diet-eval check <skill-dir>` for size and links.
-
-If the target cannot be identified, ask via AskUserQuestion.
+Resolve the target from `$ARGUMENTS` (ask if unclear), read its SKILL.md and
+frontmatter, note `references/` and `scripts/`, and run
+`skill-diet-eval check <skill-dir>` for size and links.
 
 ## Step U2: Compare against the latest spec (update mode)
 
-Using the freshly verified `references/frontmatter-spec.md` from Step 0:
+1. **Required fields**: add non-empty `name` and `description`; the update cannot complete without them.
+2. **Field compatibility**: separate standard, host-specific and local fields.
+   `license` and `metadata` stay standard even when one host table omits them.
+3. **New fields**: suggest `context`, `agent`, `allowed-tools` and the like where
+   they help; `effort` only with measured evidence, re-checking a level carried
+   over from another model ([model selection](references/model-selection.md#selection-and-escalation) step 4).
+4. **`description`**: WHAT + WHEN coverage and trigger phrasing.
+5. **Structural health**: `skill-diet-growth <skill-dir>`;
+   `diet-recommended`, or one idea stated twice, → offer Diet mode.
+6. **Redundancy**: run the audit below.
+7. **Model guidance**: keep a default profile and escalation trigger in the
+   body; inheritance alone is not a recommendation.
 
-1. **Missing required fields**: add non-empty `name` and `description`; update cannot complete without them.
-2. **Field compatibility**: distinguish standard, host-specific, and local fields.
-   `license` and `metadata` remain standard fields; absence from one host table
-   does not mean they were removed.
-3. **New fields worth adopting**: suggest `context`, `agent`, `allowed-tools` etc. when they would help; suggest `effort` only with measured evidence (see `references/frontmatter-spec.md` → `effort`) and re-check a level carried over from another model (`references/model-selection.md` step 4).
-4. **`description` quality**: WHAT + WHEN coverage, trigger phrasing.
-5. **Structural health**: `bash scripts/skill-diet-growth <skill-dir>`; `diet-recommended`, or one idea stated twice, → offer Diet mode.
-6. **Redundancy audit**: detect body content that duplicates dispatched role files, sibling skills, or standard LLM knowledge. Follow `references/redundancy-check.md`. Typical findings: constraints mirrored between skill and role file, prompt templates restating role rules, generic markdown conventions.
-7. **Model guidance**: retain task-level defaults and escalation triggers in the
-   body; inheritance alone is not a workload recommendation.
-
-Summarize the comparison and reuse any already approved update scope. Resolve
-only material unanswered choices or changes beyond that authorization.
+Summarize the comparison, reuse any approved scope, and ask only about material open choices.
 
 ## Step U3: Apply updates (update mode)
 
 Put each change through [Editing a skill](../skill-diet/SKILL.md#editing-a-skill),
-then for the approved scope use the active harness's patch/edit tool:
+then edit frontmatter, `description` and body within the approved scope, and go to Step 5.
 
-1. Add / modify / remove frontmatter fields.
-2. Rewrite `description` if needed.
-3. Reshape body sections if needed.
+## Redundancy audit
 
-Apply already approved changes without per-file reconfirmation. Present new
-scope or destructive changes only when existing authorization does not cover
-them. When done, proceed to Step 5.
+Run it in Step U2 and after writing a new skill. Cut a line that restates:
 
----
+- a dispatched worker's role file: keep the rule in the role file, since
+  workers load no CLAUDE.md; task inputs, dispatch conditions and inline safety
+  gates stay at the call site;
+- a sibling skill's procedure: name the skill instead;
+- standard LLM or tool knowledge: name the tool and trust its docs.
+
+Keep a duplicate only for an inline safety gate, an unversioned source, or a hot
+path. Prefer delete-and-link over rephrasing.
 
 ## Step 5: Validate
 
-### Automated checks
+Fail the workflow if `name`, `description` or `group` is missing or empty;
+validator warnings do not override this. If `cargo` is missing, stop and report
+the draft as unvalidated: no registration, no completion claim. Otherwise run
+`validate-skill` and `skill-diet-eval check` on the skill; fix and rerun until both pass.
 
-Before the validator, fail the workflow if `name`, `description`, or `group` is missing/empty; validator warnings do not override these local requirements. If `cargo` is unavailable, stop and report the draft as unvalidated; do not register or claim completion. Otherwise run `scripts/validate-skill` (thin bash launcher over the Rust workspace in `tools/`):
+**Size limits**: place each fact by [level](../skill-diet/SKILL.md#levels);
+skill-diet's budget decides when to slim, and the validator's 500-line warning
+is the backstop.
 
-```bash
-DOTRCDIR="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}"
-bash "${DOTRCDIR}/agents/claude/skills/generate-skills/scripts/validate-skill" <skill-directory>
-```
+**Behavior evaluation**: write 3–6 binary checks under `## Eval Criteria` or in
+`evals.md` ([eval guide](references/eval-guide.md)). Rerun the exact baseline
+scenarios and any tests that assert the skill's text on the candidate, recording
+each evidence level separately. Purely mechanical corrections may mark behavior
+N/A with structural evidence.
 
-First invocation compiles the validator (~6–30s, debug profile); later runs are instant via Cargo's incremental cache. Requires `cargo` (install via <https://rustup.rs>).
+**Waza**: when usable, run the candidate beside the baseline. All Waza operations
+go through the [`waza` skill](../waza/SKILL.md) launcher `../waza/scripts/waza-run.sh`;
+never call the `waza` CLI directly. Follow [Waza suites](references/eval-guide.md#waza-suites)
+and keep the baseline/candidate JSON paths for `skill-improver`. Without Waza,
+use fresh-context subagent scenarios and report that Waza did not persist the evidence.
 
-Then run `bash "${DOTRCDIR}/agents/claude/skills/generate-skills/scripts/skill-diet-eval" check <skill-directory>`:
-it prints SKILL.md bytes for the commit message and fails on a broken Markdown link
-or anchor in any file of the skill.
+**Independent review**: when the skill ships `references/` or `scripts/` and the
+user did not ask for a quick build, dispatch the blind reviewer in
+[subagent guidelines](references/subagent-guidelines.md#reviewer).
 
-If anything fails, return to the relevant step, fix, and re-run.
+**Trigger review**: automation checks form only. Confirm the phrases users say
+are in `description` and that it does not lead with generic words ("help",
+"manage"); use [trigger tuning](references/description-examples.md#trigger-tuning) when unsure.
 
-### Behavior evaluation
+**Registration**: register only user-scope skills, and only when registration is
+in scope; project-local skills never enter the global catalog. The README table
+mirrors the `group:` frontmatter, so `register-skill --group` must equal it. The
+launcher is idempotent and errors if the skill sits under another group; edit by
+hand only for layouts it cannot produce.
 
-Define binary (yes/no) eval criteria that measure output quality.
-Per `references/eval-guide.md`, write 3–6 yes/no checks under an `## Eval Criteria` section in SKILL.md or in a separate `evals.md`.
-Rerun the exact Step 1 baseline scenarios, and any tests that assert the skill's text, with the candidate skill. A
-behavior-shaping change needs evidence at the level its claim requires. Record
-structure, decision replay, artifact application and live integration separately.
-Mock scores never prove behavior. For consistency corrections, show removal of
-the reproduced contradiction without inventing a failed baseline. Purely
-mechanical corrections may mark behavior N/A with structural evidence.
-
-### Waza measurement (optional automation)
-
-If `waza` is usable, persist the Step 5 candidate run alongside the Step 1
-baseline for an existing skill. A new skill uses the no-guidance transcript as
-its baseline because no runnable skill exists yet. **All waza operations route
-through the [`waza` skill](../waza/SKILL.md) launcher
-`../waza/scripts/waza-run.sh` — this skill never invokes the `waza` CLI
-directly.** When Waza is unavailable, use fresh-context subagent scenarios and
-report that the evidence was not persisted by Waza.
-
-Use the `waza` SKILL.md for scaffolding, supported commands, existing-suite
-preservation and result paths. Author suites that carry signal per
-[Waza suites](references/eval-guide.md#waza-suites) — a mock executor or
-prompt-echo keyword graders cannot detect a regression.
-
-The launcher refuses baselines it cannot compare, so fix the inputs first:
-
-1. Scaffold, then refine the placeholder tasks against actual triggers and
-   outputs **before** the Step 1 baseline. Changing task IDs, the executor, or
-   `trials_per_task` afterwards makes the candidate `⚠️ incomparable`; rerun the
-   baseline on the unchanged skill instead of comparing across suites.
-2. Run the baseline and the candidate with the same `--trials 3` and distinct
-   labels, passing the baseline JSON to the candidate run with `--baseline-json`.
-3. Read the verdict, not the raw delta: `⚠️ **regression**` (rounded weighted Δ
-   below −0.1 by default) blocks the candidate until inspected; a smaller drop is
-   run-to-run noise; a `reference-only` mock result and an `⚠️ incomparable`
-   report are not behavior evidence.
-
-Retain baseline/candidate JSON paths for `skill-improver`.
-
-### Independent review (optional)
-
-If the generated skill includes `references/` or `scripts/`, use an available
-fresh-context reviewer with the tools needed for a blind review. Select its
-workload level using `references/model-selection.md`; uncertain findings may
-receive a second independent opinion through a supported delegation/advisor
-capability. Follow `references/subagent-guidelines.md`
-→ "Reviewer".
-
-Skip for minimal skills (SKILL.md only) or when the user requested a quick build.
-
-### Trigger review (the part automation cannot catch)
-
-Automation only checks form. Trigger accuracy needs a human eye.
-
-- Are the phrases users actually say present in `description`? (avoids under-triggering)
-- Does `description` lead with overly generic words ("help", "manage") that would over-trigger? (avoids over-triggering)
-
-When in doubt, follow the trigger-tuning guide in `references/review-checklist.md`.
-
-### Registration
-
-Once validation passes, register only selected user-scope skills when registration
-is in scope; project-local skills never enter the global catalog. The map is in `${DOTRCDIR}/agents/claude/skills/README.md`. The `group:` frontmatter is the single source of truth; the README table mirrors it and must stay in sync. Use the `register-skill` launcher — it is idempotent (re-running is a no-op) and errors if the skill is already listed under a different group:
-
-```bash
-DOTRCDIR="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}"
-bash "${DOTRCDIR}/agents/claude/skills/generate-skills/scripts/register-skill" \
-  "${DOTRCDIR}/agents/claude/skills/README.md" \
-  --name <skill-name> \
-  --group <group-slug>
-```
-
-The `--group` value must match the skill's `group:` frontmatter. Manual edit is still valid for layout changes the launcher can't produce (e.g. reordering entries within a row).
-
-If repository policy requires post-edit skill-improver, run one targeted batch
-for the changed skills. Re-verification inside that run is sufficient; never
-recursively invoke authoring or maintenance after self-edits.
-
-### Distribution (optional)
-
-For team-wide distribution, see `references/distribution-guide.md` — repo check-in vs. plugin marketplace, composing skills, and measuring usage.
-
----
+**Maintenance**: if repository policy requires skill-improver after edits, run
+one targeted batch for the changed skills. Its re-verification is enough: never
+recursively invoke authoring or maintenance after self-edits, and a targeted
+check is not consent to a full sweep, commit or unrelated cleanup.
 
 ## Gotchas
 
@@ -432,7 +236,7 @@ For team-wide distribution, see `references/distribution-guide.md` — repo chec
 
 ## Eval Criteria
 
-Use these binary checks with the evidence statuses in the eval guide.
+Use these binary checks with the evidence statuses above.
 
 | ID | PASS condition |
 | --- | --- |
@@ -442,3 +246,14 @@ Use these binary checks with the evidence statuses in the eval guide.
 | 4 | Body is at most 500 lines; a validator size warning still fails this criterion. |
 | 5 | The Step 5 validator exits 0 with no error-severity findings. |
 | 6 | Matching-input evidence supports the claimed level and preserves the workflow contract; mechanical corrections use structural evidence, and source-conflict repairs do not invent behavioral failures. |
+
+## Look up the rest
+
+- Create mode Steps 1–4, scaffolding, structure, output and dynamic context → [create-mode.md](references/create-mode.md)
+- Field rules, portability, invocation control, substitutions → [frontmatter-spec.md](references/frontmatter-spec.md)
+- Writing or tuning `description` → [description-examples.md](references/description-examples.md)
+- Degrees of freedom, gotchas, config, hooks, completion criteria → [design-principles.md](references/design-principles.md)
+- Workload profile, worker `model`/`effort` → [model-selection.md](references/model-selection.md)
+- Explore or reviewer subagents → [subagent-guidelines.md](references/subagent-guidelines.md)
+- Eval criteria and Waza suites → [eval-guide.md](references/eval-guide.md)
+- Editing an existing skill, sizing it, or teaching a tool → [skill-diet](../skill-diet/SKILL.md), [tool skills](../skill-diet/references/tool-skills.md)
