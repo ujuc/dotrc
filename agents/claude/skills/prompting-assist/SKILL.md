@@ -13,92 +13,62 @@ Use Standard for bounded prompt edits; Advanced suits conflicting instructions, 
 Recommend Frontier only when coupled failures survive Advanced analysis; the model being advised on remains the user's target, separate from the reviewing agent.
 Apply the [shared selection guide](../generate-skills/references/model-selection.md) to similar work and host-supported model choices.
 
-## Purpose
-
-Diagnose a user-authored prompt against Anthropic's official prompting best practices and propose concrete improvements. Activates only when prompt authoring / improvement is the explicit subject — not whenever the word "prompt" appears.
-
 ## Trigger Policy
 
-Korean trigger phrases are kept verbatim because they must match user utterances directly.
+Run only when improving a prompt is the explicit request. Activate on "프롬프트 개선해줘", "이 프롬프트 리뷰해줘" / "이 프롬프트 피드백 줘", "프롬프팅 팁 알려줘", "system prompt 개선해줘" and `/prompting-assist`; with no prompt given, Stage 1 asks for it.
 
-**Activate on:**
-- "프롬프트 개선해줘"
-- "이 프롬프트 리뷰해줘" / "이 프롬프트 피드백 줘"
-- "프롬프팅 팁 알려줘"
-- `/prompting-assist`
-- "system prompt 개선해줘"
-
-**Do NOT activate on:**
-- "프롬프트가 너무 길어서..." (word appears ≠ improvement request)
+Do not activate on:
+- "프롬프트가 너무 길어서..." (the word appears, no improvement request)
 - "프롬프트 엔지니어링이 뭐야?" (concept question)
 - "이 프롬프트 의미가 뭐야?" (interpretation request)
 
-If intent is ambiguous, ask one clarifying question first: "이 프롬프트를 개선해드릴까요, 아니면 의미를 설명해드릴까요?"
+If intent is ambiguous, first ask only: "이 프롬프트를 개선해드릴까요, 아니면 의미를 설명해드릴까요?"
 
-**vs `ecc:prompt-optimizer`:** if that plugin skill is installed, its English trigger surface ("improve my prompt", "optimize prompt") overlaps this skill's. The split: `prompting-assist` **diagnoses and rewrites** the prompt directly against Anthropic best practices; `ecc:prompt-optimizer` is **advisory-only** — it maps the request to ECC components and returns a paste-ready prompt without executing. Prefer `prompting-assist` for "review / improve this prompt"; route to `prompt-optimizer` only when the user explicitly wants ECC-component matching.
+If `ecc:prompt-optimizer` is installed, its triggers overlap. It only maps the request to ECC components and returns a paste-ready prompt; route there only when the user explicitly wants ECC-component matching.
 
 ## Workflow
 
 ### Stage 1: Context Collection
 
-1. **Acquire the prompt source.**
-   - If already pasted into chat, confirm the range.
-   - If a file path is given, `Read` it.
-   - If absent, request once: "어떤 프롬프트를 보고 싶으신가요?"
+1. **Get the prompt.** Pasted: confirm the range. File path: `Read` it. Absent: ask once, "어떤 프롬프트를 보고 싶으신가요?"
+2. **Ask in one batch** with `AskUserQuestion` (or one plain-text message if unavailable), never re-asking:
+   - Target model: specific Claude model (name/version) / Claude family only / another LLM / unknown
+   - Use case: one-shot / agentic / tool-calling / long-context / coding
+   - Hard constraints: length / cost / latency / output format
 
-2. **Collect the minimum necessary context** via `AskUserQuestion` (batch the questions, do not re-ask; if it is unavailable, ask the same questions as one plain-text message):
-   - Target model: specific Claude model (name/version if known) / Claude family only / another LLM / unknown
-   - Primary use case: one-shot / agentic / tool-calling / long-context / coding
-   - Hard constraints: response length / cost / latency / output format
-
-If the model is unknown, use current general Claude guidance and state the
-assumption without inventing an exact model version.
+If the model is unknown, use current general Claude guidance and state that assumption; never invent an exact model version.
 
 ### Stage 2: Reference Load
 
-The diagnostic baseline is the **inline checklist in Stage 3**. For current,
-authoritative phrasing and code snippets, **live-fetch** Anthropic's living
-prompting best-practices reference:
+Live-fetch Anthropic's best-practices page:
+`https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices`
 
-```
-https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices
-```
+If Stage 1 names a current Claude model, also fetch the guide its row in the page's "Model-specific guidance" table links to (never a stored URL), and apply it before the general techniques. No row: say so and use the general page.
 
-When Stage 1 names a specific current Claude model, also fetch that model's
-guide. Find it in the fetched page's "Model-specific guidance" table and apply
-it before the general techniques. Follow the table row rather than a stored
-URL, because the table changes as models ship. If the model has no row, say so
-and use the general page.
+On Claude Code, load `WebFetch` first with `ToolSearch` (`select:WebFetch`); elsewhere use the host's web tool. Never block on the network.
 
-On Claude Code, `WebFetch` is deferred: load it with `ToolSearch` (query
-`select:WebFetch`) before fetching. Other harnesses use their equivalent web
-read/search tool. If no web tool exists, use the inline checklist and label the
-result offline. Reusable official snippets may be quoted as examples.
-
-On **any** failure (tool not loaded, offline, rate limit, layout change), fall back to the Stage 3 inline checklist and tell the user in one line: "Anthropic 가이드 라이브 페치 실패 — 인라인 체크리스트 기반으로 진단합니다."
+On **any** failure (no web tool, tool not loaded, offline, rate limit, layout change), diagnose with the Stage 3 checklist and tell the user in one line: "Anthropic 가이드 라이브 페치 실패 — 인라인 체크리스트 기반으로 진단합니다."
 
 ### Stage 3: Diagnosis
 
-Judge pass / fail per checklist category; record N/A only for a row with an explicit "N/A for ..." clause (currently Model carry-over):
+Mark each category pass or fail. Only Model carry-over may be N/A.
 
-| Category | Source | Key question |
-|----------|--------|--------------|
-| Clarity & specificity | Anthropic | Is the desired outcome explicit? Are scope and exceptions clear? |
-| Context & motivation | Anthropic | Is the reason for each constraint stated? |
-| Examples | Anthropic | Are representative examples present where behavior is hard to describe? |
-| Structure | Anthropic | Are content types separated clearly, using XML tags when useful? |
-| Role & identity | Anthropic | Does a role add task-relevant context rather than decoration? |
-| Output control | Anthropic | Is the desired output shape stated positively and concretely? |
-| Thinking & effort | Anthropic | Does the effort setting match task difficulty without requesting visible chain-of-thought? |
-| Tool use & agentic | Anthropic | Is action-vs-suggestion intent clear, with tools named when needed? |
-| Model carry-over | Anthropic model guide | For a Claude target whose model guide Stage 2 fetched: does the prompt keep instructions written for an earlier model's habits that the guide says to remove, such as narration suppression, blanket anti-formatting rules, or thinking toggles? Remove those before adding new ones. N/A for another LLM, a Claude family-only, unknown, or unlisted model, or any run where Stage 2 did not fetch that guide (offline or fetch failure). |
-| Engineering restraint | Local rule | Does it avoid test hard-coding, defensive bloat, and needless abstraction pressure? |
+| Category | Key question |
+|----------|--------------|
+| Clarity & specificity | Is the desired outcome explicit? Are scope and exceptions clear? |
+| Context & motivation | Is the reason for each constraint stated? |
+| Examples | Are representative examples present where behavior is hard to describe? |
+| Structure | Are content types separated clearly, using XML tags when useful? |
+| Role & identity | Does a role add task-relevant context rather than decoration? |
+| Output control | Is the desired output shape stated positively and concretely? |
+| Thinking & effort | Does the effort setting match task difficulty without requesting visible chain-of-thought? |
+| Tool use & agentic | Is action-vs-suggestion intent clear, with tools named when needed? |
+| Model carry-over | Does the prompt keep instructions for an earlier model's habits that the fetched model guide says to remove (narration suppression, blanket anti-formatting rules, thinking toggles)? Remove those before adding new ones. N/A unless Stage 2 fetched a model guide for a Claude target. |
+| Engineering restraint (local rule) | Does it avoid test hard-coding, defensive bloat, and needless abstraction pressure? |
 
-For each failing item, record a **short justification + improvement direction**. Cite the checklist category (or a specific section of the fetched Anthropic guide).
+Keep the report to 1–2 lines per category. For each failure, give a justification and improvement direction, citing the category or a section of a fetched guide. Attribute to Anthropic only what the fetched pages say; label Engineering restraint as a local rule. Official snippets from them may be quoted as examples.
 
 ### Stage 4: Proposal
-
-Pick the proposal format by change magnitude:
 
 - **Small fix** (≤ 3 items): per-section diff
   ```
@@ -106,73 +76,14 @@ Pick the proposal format by change magnitude:
   After:  "Run independent tool calls in parallel; keep dependent calls sequential."
   Why:    Stage 3: Clarity & specificity; Tool use & agentic
   ```
-- **Full rewrite** (multiple failures): the improved prompt in full + a bullet list of key changes
+- **Full rewrite** (more failures): the whole improved prompt plus key changes as bullets.
 
-**Prefer presenting options** when the user has a real choice: lay out "Option A (terse)" vs "Option B (strict)".
+When the user has a real choice, offer options such as "Option A (terse)" vs "Option B (strict)".
 
-Close with a one-line checklist coverage report that counts only categories not marked N/A in Stage 3: "적용 10개 범주 중 8개 합격, 2개 개선 반영." or, with Model carry-over N/A, "적용 9개 범주 중 8개 합격, 1개 개선 반영."
+End with one coverage line counting only non-N/A categories: "적용 10개 범주 중 8개 합격, 2개 개선 반영." (with Model carry-over N/A: "적용 9개 범주 중 8개 합격, 1개 개선 반영.")
 
 ## Constraints
 
-- **Preserve original intent.** Never change what the user is trying to do — only raise quality.
-- **Evidence-backed.** Attribute Anthropic guidance only to the fetched
-  reference. Label engineering-restraint recommendations as local rule
-  safeguards rather than Anthropic guidance.
-- **Language preservation.** Keep the prompt's original language in the artifact. Diagnosis and explanation follow the conversation language (default Korean).
-- **Brevity.** Diagnosis report: 1–2 lines per category. Strip filler.
-- **Model-version awareness.** Successive Claude model generations diverge in non-trivial ways. When the target model is unknown, state the assumption and proceed.
-
-## References
-
-- [Anthropic prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) — living primary reference; live-fetch per Stage 2
-- The **Stage 3 inline checklist** is the offline fallback baseline when the live fetch fails
-
-## Gotchas
-
-1. **`WebFetch` is deferred — load it first.** `allowed-tools` only pre-grants permission; the tool is not callable until its schema is loaded via `ToolSearch` (`select:WebFetch`). On any fetch failure, fall back to the Stage 3 inline checklist and say so in one line — never block the diagnosis on the network.
-
-2. **Do not over-trigger.** The description intentionally encodes do/don't patterns. Treat the word "prompt" in a user sentence as a keyword, not an invocation. Default to one clarifying question when the intent is ambiguous.
-
-3. **Never edit the prompt in place without consent.** `Edit` is in `allowed-tools` for cases where the prompt lives in a file the user asked to be improved. Always show the proposal first, then apply the edit only after explicit confirmation.
-
-4. **Model-version drift.** Successive Claude generations differ enough (whether thinking can be turned off, effort defaults and what each level means, formatting and progress-update tendencies, parallel tool-call norms) that a checklist pass tuned for one generation can be a near-fail for another. When the target model is unknown, use current general Claude guidance and state the assumption without inventing an exact model version, as in Stage 1.
-
-## Eval Criteria
-
-```
-EVAL 1: Trigger precision
-  Question: Given a user utterance that only contains the word "프롬프트" without
-            an improvement-request framing, does the skill decline to activate
-            (or ask a clarifying question) instead of running a full diagnosis?
-  Pass: Skill does not run Stage 2–4 without an explicit improvement intent.
-  Fail: Skill begins full diagnosis on mere keyword presence.
-
-EVAL 2: Reference grounding
-  Question: Does every improvement recommendation cite a specific checklist
-            category and label official vs local provenance correctly?
-  Pass: Each recommendation has an anchor and only fetched guidance is
-        attributed to Anthropic.
-  Fail: Any recommendation lacks an anchor or presents a local rule as
-        Anthropic guidance.
-
-EVAL 3: Intent preservation
-  Question: Does the proposed prompt preserve the user's original goal,
-            scope, and persona?
-  Pass: Target task, constraints, and role remain intact; only phrasing/
-        structure/specificity changes.
-  Fail: Meaning drifts — task narrowed/broadened, constraints dropped, or
-        persona replaced.
-
-EVAL 4: Proposal structure
-  Question: Is the proposal formatted per Stage 4 (Before/After diff for
-            small fixes, full rewrite + key changes for larger ones) and
-            closed with a one-line coverage report?
-  Pass: Format matches change magnitude; coverage line present.
-  Fail: Format mismatched, or coverage report missing.
-
-EVAL 5: Language fidelity
-  Question: Is the rewritten prompt in the same language as the original,
-            with diagnosis written in the conversation language?
-  Pass: Prompt language preserved; diagnosis in conversation language.
-  Fail: Prompt translated silently, or diagnosis in the wrong language.
-```
+- **Preserve intent.** Keep the user's goal, scope, constraints and persona; change only quality.
+- **Language.** The prompt stays in its original language; diagnosis follows the conversation language (default Korean).
+- **Consent before editing.** For a prompt in a file, show the proposal first and `Edit` only after explicit confirmation.
