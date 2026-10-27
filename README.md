@@ -410,6 +410,18 @@ cd ~ && npx claude-code-templates@latest --mod productivity/ultra-config
 
 - [ultra-config](https://github.com/davila7/claude-code-templates/tree/main/cli-tool/components/mods/productivity/ultra-config) — `/ultra-config`로 설정 프로필(Baseline, Token saver, Fast flow, Max quality, Guarded, Autopilot) 전환. `baseline`은 이 저장소에서 추가한 내 기준값(Opus 기본 모델, effort high, ultracode, auto 모드)으로, 다른 프로필을 써 보다 흐트러진 설정을 `/ultra-config apply baseline`으로 되돌린다. `~/.claude/settings.json`을 직접 고치므로 커밋 전 diff를 확인하고, 되돌릴 때는 `/ultra-config undo`
 
+#### Subtree 스킬
+
+업스트림 스킬 저장소를 `git subtree --squash`로 `agents/claude/skills/<name>/`에 넣는다. 본문은 원본 그대로 두고 로컬에서는 `group:` 한 줄만 더한다.
+현재 버전은 squash 커밋의 `git-subtree-split:` 트레일러에 남는다. `generate-skills` Step 0과 `skill-improver` Phase 0이 새 릴리스 태그가 있으면 경고만 한다.
+
+```sh
+agents/claude/skills/generate-skills/scripts/skill-diet-upstream check        # 새 태그와 CHANGELOG 절 확인
+agents/claude/skills/generate-skills/scripts/skill-diet-upstream pull v0.2.0  # subtree pull --squash 후 링크·검증
+```
+
+- [skill-diet](https://github.com/nicobailon/skill-diet) (MIT, `v0.1.0`) — 스킬 편집 순서·크기 예산·before/after/none eval. `generate-skills` 다이어트 모드와 `skill-improver`의 `diet-recommended`가 사용한다
+
 ### [Pi](https://github.com/earendil-works/pi)
 
 bun으로 전역 설치한다. `~/.bun/bin`은 `zshrc`의 `path`에 등록되어 있어 별도 별칭이

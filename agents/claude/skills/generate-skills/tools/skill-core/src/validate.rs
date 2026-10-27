@@ -103,7 +103,11 @@ pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
     }
     findings.push(Finding::pass("Structure", "SKILL.md exists"));
 
-    if skill_dir.join("README.md").is_file() {
+    if skill_dir.join("README.md").is_file()
+        && rules::SUBTREE_SKILLS.contains(&folder_name.as_str())
+    {
+        findings.push(Finding::pass("Structure", "README.md kept from upstream subtree"));
+    } else if skill_dir.join("README.md").is_file() {
         findings.push(Finding::fail(
             "Structure",
             "README.md found (skill folders must not contain README.md)",

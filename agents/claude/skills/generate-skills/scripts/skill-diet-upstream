@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# skill-diet-upstream — Check or pull the skill-diet git subtree against upstream release tags.
+# Usage:
+#   skill-diet-upstream check        # advisory; always exits 0 and prints one "- skill-diet: ..." line
+#   skill-diet-upstream pull <tag>   # git subtree pull --squash; commits on the current branch
+#
+# Tracks release tags, not HEAD. The local patch (`group: meta` in SKILL.md frontmatter)
+# may conflict when upstream edits the description line: keep upstream's description and the group line.
+
+set -uo pipefail
+
+URL="https://github.com/nicobailon/skill-diet.git"
+RAW="https://raw.githubusercontent.com/nicobailon/skill-diet"
+PREFIX="agents/claude/skills/skill-diet"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(git -C "${SCRIPT_DIR}" rev-parse --show-toplevel)" || exit 1
+
+current_split() {
+  git -C "${ROOT}" log -1 --format=%B --grep="git-subtree-dir: ${PREFIX}" |
+    sed -n 's/^git-subtree-split: //p'
+}
+
+# Prints "<tag> <commit>" per release tag; annotated tags resolve to their peeled commit.
+remote_tags() {
+  git ls-remote --tags "${URL}" | awk '
+    { sub("refs/tags/", "", $2) }
+    $2 ~ /\^\{\}$/ { t = $2; sub(/\^\{\}$/, "", t); peeled[t] = $1; next }
+    { plain[$2] = $1 }
+    END { for (t in plain) print t, (t in peeled ? peeled[t] : plain[t]) }' | sort -V
+}
+
+case "${1:-}" in
+  check)
+    cur="$(current_split)"
+    tags="$(remote_tags 2>/dev/null)"
+    if [ -z "${tags}" ]; then
+      echo "- skill-diet: upstream unreachable; pinned ${cur:-unknown}"
+      exit 0
+    fi
+    cur_tag="$(awk -v c="${cur}" '$2 == c { print $1 }' <<<"${tags}" | tail -1)"
+    read -r latest latest_sha < <(tail -1 <<<"${tags}")
+    if [ "${latest_sha}" = "${cur}" ]; then
+      echo "- skill-diet: up to date (${latest})"
+    else
+      echo "- skill-diet: update available ${cur_tag:-${cur:0:7}} -> ${latest}; run: skill-diet-upstream pull ${latest}"
+      ver="${latest#v}"
+      curl -fsSL "${RAW}/${latest}/CHANGELOG.md" 2>/dev/null |
+        awk -v v="${ver}" 'index($0, "## [" v "]") == 1 { p = 1; print; next } p && /^## \[/ { exit } p'
+    fi
+    ;;
+  pull)
+    tag="${2:?usage: skill-diet-upstream pull <tag>}"
+    old="$(current_split)"
+    git -C "${ROOT}" subtree pull --prefix="${PREFIX}" "${URL}" "${tag}" --squash \
+      -m "chore(skills): skill-diet를 ${tag} 버전으로 올리다" || {
+      echo "error: subtree pull failed; resolve conflicts (keep upstream description + local 'group: meta'), then commit" >&2
+      exit 1
+    }
+    new="$(current_split)"
+    git -C "${ROOT}" diff --stat "${old}" "${new}" 2>/dev/null
+    if ! git -C "${ROOT}" diff --quiet "${old}" "${new}" -- scripts/eval.mjs references/adapter.md 2>/dev/null; then
+      echo "⚠️ eval.mjs or adapter.md changed: re-run 'skill-diet-eval calibrate <dir>' with diet-adapter-claude before the next diet"
+    fi
+    for d in skill-diet generate-skills skill-improver; do
+      bash "${SCRIPT_DIR}/skill-diet-eval" check "${ROOT}/agents/claude/skills/${d}" || echo "⚠️ broken links in ${d}"
+    done
+    bash "${SCRIPT_DIR}/validate-skill" "${ROOT}/${PREFIX}"
+    ;;
+  *)
+    sed -n '2,8p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+    [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]
+    ;;
+esac

@@ -44,6 +44,10 @@ pub const ALLOWED_GROUPS: &[&str] = &[
     "planning", "analysis", "build", "docs", "writing", "llm", "meta",
 ];
 
+/// Local extension: skills vendored with `git subtree` keep upstream files verbatim,
+/// so their README.md is allowed (see `skills/AGENTS.md`).
+pub const SUBTREE_SKILLS: &[&str] = &["skill-diet"];
+
 pub const ALLOWED_EFFORTS: &[&str] = &["low", "medium", "high", "xhigh", "max"];
 
 pub const ALLOWED_CONTEXTS: &[&str] = &["fork"];

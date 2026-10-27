@@ -12,7 +12,7 @@
 | `docs` | 📝 문서·커밋 | `commit`, `generate-agent-docs` |
 | `writing` | ✍️ 글쓰기 | `humanizer`, `prompting-assist` |
 | `llm` | 🤖 외부 LLM | `codex:codex-cli-runtime`, `codex:codex-result-handling`, `codex:gpt-5-4-prompting` |
-| `meta` | 🧪 메타·관리 | `generate-skills`, `skill-improver`, `autoresearch`, `waza` |
+| `meta` | 🧪 메타·관리 | `generate-skills`, `skill-improver`, `autoresearch`, `waza`, `skill-diet` |
 
 `waza`는 Microsoft waza CLI의 유일한 호출 지점(`waza/scripts/waza-run.sh`)이며 `generate-skills`·`skill-improver`가 스킬 평가·회귀 확인에 사용한다.
 
@@ -43,6 +43,8 @@
 ```
 [스킬 정비]     로컬 세션 기록 → skill-improver → generate-skills
                 (waza: 평가 스위트 baseline/after 회귀 확인)
+                skill-improver(diet-recommended) → generate-skills 다이어트 모드
+                (skill-diet eval: before/after/none을 실제 에이전트로 측정)
 [글쓰기]        prompting-assist → (선택) humanizer 후처리
 ```
 

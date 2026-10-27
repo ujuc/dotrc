@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# diet-adapter-claude — skill-diet eval adapter for Claude Code (contract: ../../skill-diet/references/adapter.md).
+# Usage: diet-adapter-claude <skill-dir|""> <prompt> <out-dir> <work-dir>
+#
+# Isolation keeps the real login: `--setting-sources project` hides user skills, plugins, hooks and
+# CLAUDE.md; built-in Claude Code skills stay. The skill under test is copied to
+# <work-dir>/.claude/skills/<name>/ and every recorded path is rewritten back to <skill-dir>.
+# Model: $EVAL_MODEL (eval.mjs --model). Tools: Bash, Read, Glob, Grep, Skill, Write, Edit; no MCP.
+
+set -uo pipefail
+
+case "${1-}" in -h | --help) sed -n "2,8p" "${BASH_SOURCE[0]}" | sed "s/^# \{0,1\}//"; exit 0 ;; esac
+
+skill_dir="${1-}"
+prompt="${2:?usage: diet-adapter-claude <skill-dir|\"\"> <prompt> <out-dir> <work-dir>}"
+out="${3:?out-dir required}"
+work="${4:?work-dir required}"
+command -v claude >/dev/null || { echo "error: claude not found" >&2; exit 1; }
+command -v jq >/dev/null || { echo "error: jq not found" >&2; exit 1; }
+
+cd "${work}" || exit 1
+work_real="$(pwd -P)"
+name=""
+if [ -n "${skill_dir}" ]; then
+  name="$(basename "${skill_dir}")"
+  mkdir -p .claude/skills
+  cp -R "${skill_dir}" ".claude/skills/${name}"
+fi
+
+# Claude Code keeps per-project state under ~/.claude/projects/<cwd, non-alphanumerics as ->; remove ours on exit.
+project_state="${HOME}/.claude/projects/$(printf '%s' "${work_real}" | sed 's/[^A-Za-z0-9]/-/g')"
+trap 'rm -rf "${project_state}"' EXIT
+trap 'kill 0; exit 143' TERM
+
+claude -p "${prompt}" \
+  --setting-sources project \
+  --strict-mcp-config \
+  --no-session-persistence \
+  --allowedTools "Bash,Read,Glob,Grep,Skill,Write,Edit" \
+  --output-format stream-json --verbose \
+  ${EVAL_MODEL:+--model "${EVAL_MODEL}"} \
+  >"${out}/stream.jsonl" 2>"${out}/stderr.log"
+echo "claude exit $?" >>"${out}/stderr.log"
+
+jq -s \
+  --arg skill_dir "${skill_dir}" --arg name "${name}" \
+  --arg w1 "${work}/.claude/skills/${name}" --arg w2 "${work_real}/.claude/skills/${name}" '
+  def back: if $name == "" then . else gsub($w2; $skill_dir) | gsub($w1; $skill_dir) end;
+  (map(select(.type == "result")) | last) as $r
+  | ($r.modelUsage // {} | [.[]]) as $m
+  | {
+      answer: ($r.result // ""),
+      tokens: (if ($m | length) > 0 then {
+          input: ($m | map(.inputTokens // 0) | add),
+          output: ($m | map(.outputTokens // 0) | add),
+          cacheRead: ($m | map(.cacheReadInputTokens // 0) | add),
+          cacheWrite: ($m | map(.cacheCreationInputTokens // 0) | add)
+        } else {
+          input: ($r.usage.input_tokens // 0),
+          output: ($r.usage.output_tokens // 0),
+          cacheRead: ($r.usage.cache_read_input_tokens // 0),
+          cacheWrite: ($r.usage.cache_creation_input_tokens // 0)
+        } end),
+      turns: ([.[] | select(.type == "assistant") | .message.id] | unique | length),
+      calls: [.[] | select(.type == "assistant") | .message.content[]? | select(.type == "tool_use")
+        | {name}
+          + (if .name == "Skill" then
+               {path: (if (.input.skill // "") == $name and $name != "" then "\($skill_dir)/SKILL.md"
+                       else "/\(.input.skill // "unknown")/SKILL.md" end)}
+             elif (.input.file_path // .input.path // null) != null then {path: ((.input.file_path // .input.path) | back)}
+             else {} end)
+          + (if .input.command then {command: (.input.command | back)} else {} end)]
+    }' "${out}/stream.jsonl" >"${out}/result.json" 2>>"${out}/stderr.log" || exit 1
+
+# No usage means the session never reached the model; eval.mjs must stop.
+jq -e '.tokens.output > 0' "${out}/result.json" >/dev/null || exit 1

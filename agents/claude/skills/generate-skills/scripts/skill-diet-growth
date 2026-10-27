@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# skill-diet-growth — Compare SKILL.md bytes with the last commit carrying `Skill-Diet: <name>`.
+# Usage: skill-diet-growth <skill-dir> [--max-pct 10]
+# Advisory: always exits 0 (2 on usage error) and prints one line:
+#   - <name>: diet-recommended (+N% since <sha>, A -> B bytes)
+#   - <name>: within budget (+N% since <sha>, A -> B bytes)
+#   - <name>: no diet baseline (B bytes)
+
+set -uo pipefail
+
+case "${1-}" in -h | --help) sed -n "2,7p" "${BASH_SOURCE[0]}" | sed "s/^# \{0,1\}//"; exit 0 ;; esac
+
+dir="${1:?usage: skill-diet-growth <skill-dir> [--max-pct 10]}"
+max_pct=10
+[ "${2:-}" = "--max-pct" ] && max_pct="${3:?--max-pct needs a number}"
+[ -f "${dir}/SKILL.md" ] || { echo "error: ${dir}/SKILL.md not found" >&2; exit 2; }
+
+name="$(basename "$(cd "${dir}" && pwd -P)")"
+root="$(git -C "${dir}" rev-parse --show-toplevel)" || exit 2
+rel="$(cd "${dir}" && pwd -P)"
+rel="${rel#"${root}"/}"
+now="$(wc -c <"${dir}/SKILL.md" | tr -d ' ')"
+
+base="$(git -C "${root}" log -1 --format=%h --grep="^Skill-Diet: ${name}$")"
+if [ -z "${base}" ]; then
+  echo "- ${name}: no diet baseline (${now} bytes)"
+  exit 0
+fi
+old="$(git -C "${root}" show "${base}:${rel}/SKILL.md" 2>/dev/null | wc -c | tr -d ' ')"
+[ "${old}" -gt 0 ] || { echo "- ${name}: no diet baseline (${now} bytes)"; exit 0; }
+
+pct=$(( (now - old) * 100 / old ))
+verdict="within budget"
+[ $(( now * 100 )) -gt $(( old * (100 + max_pct) )) ] && verdict="diet-recommended"
+sign=""; [ "${pct}" -ge 0 ] && sign="+"
+echo "- ${name}: ${verdict} (${sign}${pct}% since ${base}, ${old} -> ${now} bytes)"

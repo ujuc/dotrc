@@ -1,6 +1,7 @@
 # Skill Authoring
 
 - Follow `generate-skills/references/frontmatter-spec.md` for skill metadata.
+- `skill-diet/` is a git subtree of upstream: keep its text verbatim (only the `group` line is local) and update it with `generate-skills/scripts/skill-diet-upstream`.
 - Write skill bodies in English. `description`, `when_to_use`, user-visible trigger phrases, and target-language corpora or linguistic rulebooks may use their functional language.
 - Update `README.md` when a skill's purpose, triggers, model, group, or pipeline role changes.
 - Read `README.md` before changing a pipeline component; changes can break downstream contracts.
