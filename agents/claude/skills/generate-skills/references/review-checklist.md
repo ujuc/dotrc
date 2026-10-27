@@ -62,9 +62,6 @@ Automation only checks form. The items below need human judgment.
 
 ### Structure
 
-- [ ] Links inside reference documents resolve from their containing directory;
-      audit these separately because the validator scans SKILL.md only.
 - [ ] Bundled references are reachable from the entry point, with load conditions;
       examples and historical paths are clearly labeled.
-- [ ] If body exceeds 500 lines, identify content to split into `references/`.
 - [ ] Multi-workflow skills route to references per branch instead of preloading all of them.

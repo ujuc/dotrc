@@ -73,7 +73,8 @@ cannot: their `contains` graders check words that already appear in the prompt.
   after a control task shows the model invoking some skill under the same
   executor and model.
 - **Budget.** One 3-trial copilot-sdk run measured 13–20 minutes on the local
-  model; keep suites to 3–6 tasks.
+  model; keep Waza suites to 3–6 tasks. A diet eval follows
+  [skill-diet's eval](../../skill-diet/references/eval.md) instead.
 
 ## Baseline and evidence integrity
 

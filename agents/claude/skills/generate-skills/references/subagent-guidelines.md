@@ -121,7 +121,6 @@ You did NOT write this skill. Review it independently using these criteria:
 2. Frontmatter: Valid YAML? name matches folder? description has WHAT + WHEN?
 3. References: Do all paths in SKILL.md point to existing files?
 4. Instructions: Are they specific and actionable? Error handling included?
-5. Size: SKILL.md under 500 lines / 5000 words?
 
 For any criterion where your PASS/FAIL call is low-confidence, seek a second
 independent opinion through an available advisor or fresh-context reviewer.

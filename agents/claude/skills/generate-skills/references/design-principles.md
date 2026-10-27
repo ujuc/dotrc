@@ -72,16 +72,14 @@ Split information into 3 tiers. Agents load only what they need.
 ### Tier 2: SKILL.md body (loaded on trigger)
 
 - Core workflow and execution instructions
-- Local authoring budget: **500 lines**, with a target of at most **5,000 words**.
+- Place by need, not size: [skill-diet levels](../../skill-diet/SKILL.md#levels).
   The validator warns above 500 lines; the authoring eval treats it as failure.
-- Exceed this? Move content to Tier 3
 
 ### Tier 3: Bundled resources (loaded on demand)
 
 - `references/`: detailed rules, examples, checklists
 - `scripts/`: automation and validation scripts
 - `assets/`: images, diagrams, PDFs
-- No size limit
 
 ### Router pattern for multi-workflow skills
 

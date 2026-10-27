@@ -46,8 +46,7 @@ my-skill/
 Hold detailed reference docs that SKILL.md links to.
 
 - Checklists, specs, example collections, ...
-- Keep the body within 500 lines and aim for at most 5,000 words; move detailed
-  rules and examples here before the entry point exceeds that budget.
+- Move here what only some tasks need ([levels](../../skill-diet/SKILL.md#levels)).
 - Link each resource from SKILL.md with a load condition. Resolve Markdown links
   from the containing document: `references/api-guide.md` in SKILL.md, but
   `api-guide.md` in another reference in the same directory.

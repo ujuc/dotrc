@@ -1,16 +1,16 @@
 id: positive-trigger-002
 name: Positive Trigger 2
-description: Decision-only probe; the size limits come from SKILL.md.
+description: Decision-only probe; the 500-line validator backstop and the skill-diet budget routing come from SKILL.md.
 tags:
   - positive-trigger
 inputs:
-  prompt: "Do not run tools or write files. State the size limits for a SKILL.md body: the line limit and the word target."
+  prompt: "Do not run tools or write files. How is a SKILL.md body's size kept in check: what line count does the validator warn at, and which skill's budget decides when to slim it down?"
 expected:
   should_trigger: true
 graders:
   - type: text
-    name: body-size-limits
+    name: body-size-budget
     config:
       regex_match:
         - "\\b500\\b"
-        - "5,?000"
+        - "skill-diet"

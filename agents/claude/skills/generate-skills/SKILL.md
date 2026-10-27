@@ -1,6 +1,6 @@
 ---
 name: generate-skills
-description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza가 맡는다."
+description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트(before/after/none eval)를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza가 맡는다."
 group: meta
 disable-model-invocation: true
 argument-hint: "[skill-name]"
@@ -27,6 +27,11 @@ Inspect `$ARGUMENTS` to choose a mode:
 
 - **Update mode**: `$ARGUMENTS` contains any of `업데이트`, `수정`, `갱신`, `최신화`, `update`, `refresh`
   → Run Step 0 → Steps U1–U3 → Step 5 (validation)
+- **Diet mode**: `$ARGUMENTS` contains `다이어트` or `diet`
+  → Run Step 0 → [full diet](../skill-diet/references/diet.md) → Step 5. Eval via
+  `scripts/skill-diet-eval` in `~/.claude/data/skill-diet/<skill>-<YYYYMMDD>/` with
+  `scripts/diet-adapter-claude` symlinked as `adapter`, `--parallel 2`, a pinned
+  `--model`. The shipping commit carries `Skill-Diet: <skill-name>`.
 - **Create mode**: anything else
   → Run Step 0 → Steps 1–5
 
@@ -49,6 +54,7 @@ resolve from that reference's directory.
 | Defining output or injecting context | [Output patterns](references/output-patterns.md), [dynamic context](references/dynamic-context.md) |
 | Reviewing an update | [Redundancy audit](references/redundancy-check.md), [review checklist](references/review-checklist.md), [eval guide](references/eval-guide.md) |
 | Distributing a completed skill | [Distribution guide](references/distribution-guide.md) |
+| Editing an existing skill, sizing it, or teaching a tool | [skill-diet](../skill-diet/SKILL.md), [tool skills](../skill-diet/references/tool-skills.md) |
 
 ## Language policy
 
@@ -97,6 +103,8 @@ carries its own freshness metadata in YAML frontmatter.
    write scope. Another project's skill task must not change this global cache.
 6. Record fetched/cached status; unchanged source content alone does not authorize
    a freshness-date write outside that scope.
+7. Run `bash scripts/skill-diet-upstream check` and relay its one line; it never
+   blocks. Pull a newer tag only when the user asks.
 
 ### What to compare
 
@@ -255,15 +263,15 @@ Pick instruction specificity per the freedom guide in `references/design-princip
 
 ### Size limits
 
-Keep the body within 500 lines and aim for at most 5,000 words. Move optional
-detail into references, keeping execution gates and load conditions inline.
+Place each fact by [level](../skill-diet/SKILL.md#levels); the validator's
+500-line warning is the backstop.
 
 ### Post-write checks
 
 - Every `references/` path resolves to a real file.
 - Instructions are verifiable (no fuzzy phrasing).
 - No filler (no linter-style preaching, no speculation, no over-explaining).
-- **Redundancy audit**: the body must not restate rules already stated in dispatched role files, sibling skills, or standard LLM knowledge. Run the audit in `references/redundancy-check.md` whenever the body references a role file, overlaps with an existing skill, or exceeds 150 lines.
+- **Redundancy audit**: the body must not restate rules already stated in dispatched role files, sibling skills, or standard LLM knowledge. Run the audit in `references/redundancy-check.md` when its signal triggers hold.
 
 ## Step U1: Inspect the target skill (update mode)
 
@@ -271,7 +279,7 @@ detail into references, keeping execution gates and load conditions inline.
 2. Read the target SKILL.md.
 3. Parse frontmatter fields (name, description, optional fields).
 4. Note whether `references/` and `scripts/` exist.
-5. Count SKILL.md body lines.
+5. Run `bash scripts/skill-diet-eval check <skill-dir>` for size and links.
 
 If the target cannot be identified, ask via AskUserQuestion.
 
@@ -285,7 +293,7 @@ Using the freshly verified `references/frontmatter-spec.md` from Step 0:
    does not mean they were removed.
 3. **New fields worth adopting**: suggest `context`, `agent`, `allowed-tools` etc. when they would help; suggest `effort` only with measured evidence (see `references/frontmatter-spec.md` → `effort`) and re-check a level carried over from another model (`references/model-selection.md` step 4).
 4. **`description` quality**: WHAT + WHEN coverage, trigger phrasing.
-5. **Structural health**: SKILL.md line count (500-line ceiling), whether content should be split into `references/`.
+5. **Structural health**: `bash scripts/skill-diet-growth <skill-dir>`; `diet-recommended`, or one idea stated twice, → offer Diet mode.
 6. **Redundancy audit**: detect body content that duplicates dispatched role files, sibling skills, or standard LLM knowledge. Follow `references/redundancy-check.md`. Typical findings: constraints mirrored between skill and role file, prompt templates restating role rules, generic markdown conventions.
 7. **Model guidance**: retain task-level defaults and escalation triggers in the
    body; inheritance alone is not a workload recommendation.
@@ -295,7 +303,8 @@ only material unanswered choices or changes beyond that authorization.
 
 ## Step U3: Apply updates (update mode)
 
-For the approved scope, use the active harness's patch/edit tool:
+Put each change through [Editing a skill](../skill-diet/SKILL.md#editing-a-skill),
+then for the approved scope use the active harness's patch/edit tool:
 
 1. Add / modify / remove frontmatter fields.
 2. Rewrite `description` if needed.
@@ -320,18 +329,22 @@ bash "${DOTRCDIR}/agents/claude/skills/generate-skills/scripts/validate-skill" <
 
 First invocation compiles the validator (~6–30s, debug profile); later runs are instant via Cargo's incremental cache. Requires `cargo` (install via <https://rustup.rs>).
 
+Then run `bash "${DOTRCDIR}/agents/claude/skills/generate-skills/scripts/skill-diet-eval" check <skill-directory>`:
+it prints SKILL.md bytes for the commit message and fails on a broken Markdown link
+or anchor in any file of the skill.
+
 If anything fails, return to the relevant step, fix, and re-run.
 
 ### Behavior evaluation
 
 Define binary (yes/no) eval criteria that measure output quality.
 Per `references/eval-guide.md`, write 3–6 yes/no checks under an `## Eval Criteria` section in SKILL.md or in a separate `evals.md`.
-Rerun the exact Step 1 baseline scenarios with the candidate skill. A
+Rerun the exact Step 1 baseline scenarios, and any tests that assert the skill's text, with the candidate skill. A
 behavior-shaping change needs evidence at the level its claim requires. Record
 structure, decision replay, artifact application and live integration separately.
 Mock scores never prove behavior. For consistency corrections, show removal of
 the reproduced contradiction without inventing a failed baseline. Purely
-mechanical corrections may mark behavior N/A with structural evidence. The autoresearch skill can reuse these criteria later.
+mechanical corrections may mark behavior N/A with structural evidence.
 
 ### Waza measurement (optional automation)
 
@@ -340,7 +353,7 @@ baseline for an existing skill. A new skill uses the no-guidance transcript as
 its baseline because no runnable skill exists yet. **All waza operations route
 through the [`waza` skill](../waza/SKILL.md) launcher
 `../waza/scripts/waza-run.sh` — this skill never invokes the `waza` CLI
-directly.** In Claude Code, dispatch a `general-purpose` worker at Lightweight routing that runs the launcher and returns stdout verbatim when an isolated context is preferable (see the `waza` SKILL.md). When Waza is unavailable, use fresh-context subagent scenarios and
+directly.** When Waza is unavailable, use fresh-context subagent scenarios and
 report that the evidence was not persisted by Waza.
 
 Use the `waza` SKILL.md for scaffolding, supported commands, existing-suite
@@ -352,12 +365,10 @@ The launcher refuses baselines it cannot compare, so fix the inputs first:
 
 1. Scaffold, then refine the placeholder tasks against actual triggers and
    outputs **before** the Step 1 baseline. Changing task IDs, the executor, or
-   `trials_per_task` afterwards makes the candidate `⚠️ incomparable` (exit 1,
-   and the run is skipped when eval.yaml already shows the mismatch); rerun the
+   `trials_per_task` afterwards makes the candidate `⚠️ incomparable`; rerun the
    baseline on the unchanged skill instead of comparing across suites.
 2. Run the baseline and the candidate with the same `--trials 3` and distinct
    labels, passing the baseline JSON to the candidate run with `--baseline-json`.
-   One 3-trial copilot-sdk run took 13–20 minutes against the local model.
 3. Read the verdict, not the raw delta: `⚠️ **regression**` (rounded weighted Δ
    below −0.1 by default) blocks the candidate until inspected; a smaller drop is
    run-to-run noise; a `reference-only` mock result and an `⚠️ incomparable`
@@ -418,11 +429,6 @@ For team-wide distribution, see `references/distribution-guide.md` — repo chec
   needs a local adaptation; invocation CWD is never the reference base.
 - Forked skills must supply required context rather than assume conversation
   history. Check host behavior in the frontmatter spec.
-- A failed upstream fetch preserves the cache and check date. Report cached
-  evidence as cached, not freshly verified.
-- The first Rust launcher call may compile; explain a noticeable startup pause.
-- Superpowers is a source of principles only. Local validation and catalog
-  remain with this repository.
 
 ## Eval Criteria
 

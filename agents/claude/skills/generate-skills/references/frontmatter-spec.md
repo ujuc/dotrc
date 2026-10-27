@@ -285,7 +285,7 @@ paths:
 
 ### `shell`
 
-Shell used for `` !`<command>` `` inline injections and ` ```! ` fenced blocks inside the skill.
+Shell used for `` !`<command>` `` inline injections and fenced blocks whose info string is `!` inside the skill.
 
 ```yaml
 shell: powershell

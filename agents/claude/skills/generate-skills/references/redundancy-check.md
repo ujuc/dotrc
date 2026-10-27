@@ -48,7 +48,7 @@ The tool registry (Read, Grep, Write, Edit, Bash, etc.) already documents what e
 
 Run the audit when any of the following holds:
 
-- SKILL.md body exceeds 150 lines.
+- One idea appears in two places across SKILL.md, references, and tool docs.
 - The skill references a role file (likely duplication zone).
 - The skill overlaps in domain with an existing skill (found during Step 1 Explore).
 - Update mode: every pass through Step U2.
