@@ -4,8 +4,6 @@
 
 LLM(ChatGPT·Claude·Gemini 등)이 생성한 한글 글에서 반복적으로 관찰되는 "AI 티" 패턴을 10개 대분류 × 서브 패턴으로 정리한다. 탐지기·윤문가·리뷰어가 공유하는 단일 진실 원천(SSOT). 각 패턴마다 (1) 정의, (2) 시그니처 예문, (3) 심각도(S1 결정적 / S2 강함 / S3 약함), (4) 윤문 처방을 제공한다.
 
-> **v1.5 변경 (2026-04-26):** v1.2 voice profile · v1.3 candidate pool · v1.3.1 권한 위계는 제거됐다. 현재 3-agent strict pipeline + monolith fast path로 단순화됐고, 분류 체계는 v1.3.1까지 발굴된 패턴을 유지한다.
-
 > **Fidelity precedence:** 아래 처방은 의미·주장·태도·확실성·수치·행위자를 보존할 때만 적용한다. 원문에 없는 근거·수치·감정·주체를 만들거나 가능성·의무의 강도를 바꾸는 처방 예시는 적용하지 않는다.
 
 ## 심각도 기준
@@ -13,21 +11,6 @@ LLM(ChatGPT·Claude·Gemini 등)이 생성한 한글 글에서 반복적으로 �
 - **S1 결정적(critical)**: 한 번만 나와도 "이건 AI"라고 거의 확신하게 되는 패턴. 무조건 제거.
 - **S2 강함(high)**: 1~2회는 자연스러울 수 있으나 문서에서 3회 이상 반복되면 티 남. 밀도 기반 제거.
 - **S3 약함(low)**: 개별로는 문제 아님. 다른 패턴과 중첩될 때 AI 인상을 강화. 리듬 조정 수준.
-
-## 목차
-
-A. 번역투(Translation-ese)
-B. 영어 인용·용어 과다
-C. 구조적 AI 패턴 (서식·레이아웃)
-D. AI 특유의 관용구 (Signature Phrases)
-E. 리듬·문장 길이 균일성
-F. 과도한 수식·중복
-G. 과도한 Hedging (완곡)
-H. 접속사 남발
-I. 형식명사·의존명사 과다
-J. 시각 장식 남용
-
----
 
 ## A. 번역투 (Translation-ese) — S1~S2
 
@@ -428,46 +411,3 @@ J. 시각 장식 남용
 - `severity_weighted_score`: included finding의 raw weighted sum (S1=5, S2=2, S3=0.5). 정규화하지 않으며 reviewer는 같은 options로 이 값을 다시 계산한다.
 - `ai_tell_density`: 탐지 span 총 글자 수 / 전체 글자 수.
 - Span offsets are zero-based Unicode code points with exclusive `end`. Document-level findings use `scope: "document"` and set `text_span`, `start`, and `end` to `null`; every finding includes `context_flags` and `related_findings` arrays.
-
-## 버전 관리
-
-아래는 원본 프로젝트의 역사 기록이다. `_workspace/`와 과거 `references/` 경로는
-현재 배포에 포함되지 않으며 런타임 로딩 대상이 아니다. 현재 참조 목록은
-[Humanizer의 References](../SKILL.md#references)를 따른다.
-
-- **v1.6** (2026-09-01): **본진 신규 2건** — `A-16` 개조식 불완전 종결 [S2] · `A-17` 필수 성분 생략 + 관형격 "~의" 과다 [S2]. 출처는 [`snflkd/fluent-korean`](https://github.com/snflkd/fluent-korean)(MIT)의 한국어 명확성 지침이며, 원문의 "무조건 완결" 규범은 이 분류 체계의 밀도 기반 S2로 조정했다. 함께 반영: 보호 대상에 코드·식별자·명령어·경로·API 필드·로그·오류 메시지·커밋 메시지 추가, 시제 주입 금지 가드 명시.
-- **v1.3.1** (2026-04-25): **본진 신규 2건 + 본진 보강 3건** — 사용자 제공 Gemini API 키로 직접 호출한 회차 3 데이터(Gemini Pro 2.5 4편 약 10,058자) 분석 결과:
-  - **본진 신규**: `C-10` 콜론 부제 헤딩 공식 [S2] · `D-7` 변환 공식 'X에서 Y로' [S2] (둘 다 Gemini-우세 시그니처)
-  - **본진 보강**: `D-4` Gemini hype 어휘 셋 추가 (압도적·막강한·폭발적·파격적·대대적·강력한) · `J-2` 빈도 임계 명시(한 문서 5회 초과 S2 강화) · `I-4` 권고형 결말 변종 추가 (~해야 한다·~해야 합니다, 정책 보고서 5회 초과 임계)
-  - **회차 2 hold 후보 검증**: GPT 9회+ 등장한 "결국" 문두 단언이 Gemini 4파일에서 1회만 재현. "A가 아니라 B" 결산 대구도 GPT 7회+ vs Gemini 2회. 5+ 콤마 나열은 Gemini 0회. **회차 2 hold 후보 3건 모두 GPT-우세 시그니처로 추정** — 풀에 hold 유지하면서 status_reason 갱신, 회차 4 국내 모델 검증 시 'GPT-특유' 메타 분류 검토
-  - **새 hold 후보 1건**: `cand-C-2026-011` 굵은 번호 부제 (Gemini 1파일 4회, Gate 1.2 분산 미달)
-  - **분류 체계의 새 차원 신호**: 회차 1·2·3을 거치며 분류 체계에 "모델 우세 분포" 메타데이터 도입 필요성 부상 (v1.4 검토 사항)
-- **v1.3** (2026-04-25): **본진 신규 1건(C-9) + 본진 보강 3건(I-2 회차 1·I-3·H-3 회차 2)**, 그리고 **서브 패턴 발굴 운영 체계 도입**. 본진 신규/보강과 운영 인프라 확장이 함께:
-- **v1.1** (2026-04-24): 실전 1호(AI 전략 칼럼 윤문) 자기 재감사 결과, **재현 2회+ 패턴 7건 승격**:
-  - `A-15` 추상 주어 + 만능 동사 (`X가 Y를 보여준다/제공한다`)
-  - `C-7` 문단 문두 "먼저·반면·결국" 3단 공식
-  - `C-8` 대칭 대구 공식 "A인가, B인가" 반복
-  - `D-5` 의인화된 추상 주어 ("두 지능의 충돌", "AI 대전")
-  - `D-6` 완결 공식형 결말 "~할 때입니다 / 시점입니다"
-  - `F-5` "~적 N" 복합 추상어 체인 (에이전트적 자율성·기술적 토대)
-  - `H-4` 재정의 접속사 "즉" 남발
-- **v1.3** (2026-04-25): **본진 신규 1건 (C-9 숫자 괄호 인덱싱) + 본진 보강 1건 (I-2 결합형 변종)**, 그리고 **서브 패턴 발굴 운영 체계 도입**. v1.2 이후 멈춰 있던 패턴 발굴이 새 인프라로 깨진 회차:
-  - **본진 신규**: `C-9` 숫자 괄호 인덱싱 "1) 2) 3)" [S2] — `_workspace/taxonomy_changelog.md` 회차 1에서 풀 후보 `cand-C-2026-001`이 6게이트 통과 후 승격
-  - **본진 보강**: `I-2` 시그니처 예문에 "X은 ~라는 점에 있다" 결합형 변종 4건 추가 — 풀 후보 `cand-I-2026-003`이 Gate 2.2(본진 변종)에서 `merged` 처리되며 흡수
-  - **운영 인프라 5종 신설**:
-  - **candidate 풀 신설** (`references/pattern-candidates.md`) — detector·rewriter·naturalness-reviewer가 미분류 의심 패턴을 단일 그릇에 누적. 임시 ID(`cand-{대분류}-{YYYY}-{NNN}`)·4상태(pending/promoted/rejected/merged)·기각 사유 5종 라벨·90일 미재현 자동 만료 정책
-  - **3개 에이전트 적재 채널 명문화** — detector(미분류 span)·rewriter(윤문 저항·반복 잔존)·naturalness-reviewer(외부 시각, voice profile 미주입)에 풀 적재 트리거·절차 추가. 적재 실패는 메인 파이프라인 막지 않음
-  - **taxonomist 풀 운영자 역할 추가** — 4가지 trigger(사용자 명시 / pending 10건 / 단일 후보 occurrences ≥ 3 / 외부 PR) 기반 점검. 점검 6단계 절차와 changelog 표준 형식 명문화
-  - **외부 샘플 수집 파이프라인** (`references/sample-collection.md`) — 4축 다양성 매트릭스(모델·장르·길이·작가), 4종 채널(사용자 자발·합성 샘플·공개 데이터·외부 contributor), 익명화·저작권 5대 정책
-  - **승격 자동 검증 체크리스트** (`references/promotion-checklist.md`) — 6개 게이트(사전 점검·재현·본진 중복·분류 적합성·처방 적합성·본진 위계). 일부 게이트(0.2·0.3·1.1·1.2·5.2)는 향후 스크립트 자동화 가능
-  - **v1.3 발행 전 파일럿 회차 결과**:
-    - **회차 1 (인프라 검증, 합성 샘플 2건)**: 미분류 후보 3건 발견 → promoted 1건(C-9 숫자 괄호 인덱싱) · hold 1건(메타 진입 '~을 살펴보면', Gate 1.3 분산 미달) · merged 1건(I-2 결합형). 인프라 작동 확인.
-    - **회차 2 (외부 진짜 데이터, 뉴스핌 [AI로 읽는 경제] 시리즈 ① ② — ChatGPT 작성 명시 GPT 출력)**: 미분류 후보 5건 발견 → merged 2건(I-3 보강 '~다는 뜻이다' 결말 변종, H-3 보강 '이 점에서·이 관점에서·이 말은' 메타 진입 변종) · hold 3건(H-N 후보 '결국' 문두 단언 9회+, D-N 후보 'A가 아니라 B' 부정-긍정 대구 7회+, C-N 후보 5~8개 콤마 빠른 나열 4회). hold 3건은 Gate 1.3 분산 보호장치가 진짜 외부 데이터에서 정확히 작동한 결과 — 같은 GPT·같은 기자 시리즈의 노이즈가 본진을 오염시키지 않으면서 다음 회차에 다른 모델·다른 작가 데이터에서 재현되면 즉시 promoted 가능한 강력 후보로 풀에 누적
-- **v1.2** (2026-04-25): Issue #1(simonsez9510) 후속 — 패턴 신설 0건, **권한 위계와 운영 체계 추가**:
-  - **권한 위계 §1~§6 신설** — 객관 분류 vs 작가 voice profile의 권한 경계 명문화. opt-in 명시 주입, 패턴 ID 단위 무력화만 허용, 자유 텍스트 mandate 금지, A-8·C-5·D-1~D-6 무력화 불가, naturalness-reviewer 분리 검증층 보존, 회귀 게이트 정책
-  - **임계 완화 multiplier 캡표** — 일반 ≤ 2.0, D-1~D-6 ≤ 1.5, A-8·C-5 = 1.0 고정 (임계 우회를 통한 사실상 무력화 방지)
-  - **`author-context.yaml` 스키마** 신설 (`references/author-context-schema.md`) — opt-in voice profile 주입 양식, Schema validator 책임(무력화 불가 disable 거부, multiplier 캡 위반 거부, prompt injection escape character 검증), Telemetry 정책(`voice_profile_log.json`)
-  - **에이전트 정의 갱신** — detector·rewriter·auditor에 voice profile 주입, naturalness-reviewer 의도적 미주입 명문화
-  - **경로 토큰화** — SKILL.md 절대 경로 제거, `_workspace/`는 cwd 기준
-  - **다운스트림 caller reference** — `references/proposals/`(PR #3, simonsez9510 어댑터 reference, 메인테이너 SSOT 외부 격리)
-- 확장 원칙: 실전 입력에서 재현 2회 이상 + 인간 필자가 거의 안 쓰는 패턴만 서브 항목 추가.
