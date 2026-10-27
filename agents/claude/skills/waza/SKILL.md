@@ -61,9 +61,10 @@ regression). Unknown flags, flags without a value, and invalid numbers exit 2.
 - The report shows Engine, Model, Trials, and Skill invocations (runs with a recorded skill invocation / all runs). Invocations are recorded only when the agent calls the `skill` tool; with the default `inject_skill_body: true` the SKILL.md body is already in the system prompt, so `0 / M` is expected and is not a failure.
 - With `--baseline-json`:
   - Engine, model, trials, or task-set differences print `⚠️ incomparable`, give no verdict, and exit 1. Differences knowable from eval.yaml, `--trials`, and `COPILOT_MODEL` skip the run entirely.
-  - `⚠️ **regression**` appears only when the rounded weighted-score delta is below `-epsilon`; recommend rollback or inspection of both JSON files. Smaller drops are run-to-run noise at the default: an unchanged suite measured 1.000 → 0.944 across two 3-trial runs.
+  - `⚠️ **regression**` appears only when the rounded weighted-score delta is below `-epsilon`; recommend rollback or inspection of both JSON files. Smaller drops are run-to-run noise at the default.
   - `### Per-task drops` lists tasks whose weighted score fell by more than epsilon or whose pass rate fell. It is informational; waza fails a task when any single trial fails.
 - Mock-engine results are **reference-only**: the mock executor never loads SKILL.md, so they never produce a regression verdict.
+- Waza scores the injected SKILL.md text on the local model. Whether a real agent reads the skill or its references is a skill-diet eval question (`generate-skills` Diet mode).
 - The script never modifies an existing eval suite. Refine placeholder tasks by editing `~/.claude/evals/<skill>/tasks/*.yaml` yourself before trusting scores.
 
 ## Environment

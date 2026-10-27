@@ -69,6 +69,9 @@ rules without editing this user-level skill.
 - **Subject ≤ 50 characters** (including `<type>(<scope>):` prefix).
 - **Body wrapped at 72 characters**, blank line separating subject and body.
 - **Verb declarative `-다` ending** on the subject — any verb stem, no trailing period.
+- **Skill size**: when a `SKILL.md` is staged, add a body line
+  `SKILL.md <skill>: <HEAD bytes> → <staged bytes> bytes`. A commit that ships a
+  skill-diet ends with the trailer `Skill-Diet: <skill-name>`.
 - Full rule set, type table, footer syntax, breaking-change notation, and
   anti-patterns live in [the fallback message guide](references/gitmessage.md). Consult it for any case
   not covered by the one-line summary above.
@@ -179,7 +182,6 @@ The summary block is shown to the user, so the labels stay in Korean.
 - Do NOT stage files when the intended set is ambiguous — ask first instead of guessing.
 - Do NOT modify docs inside a submodule.
 - Do NOT create new doc files (incremental edits to existing docs only).
-- Do NOT push unless explicitly requested.
 - Do NOT pack multiple changes into one subject with `·`, `및`, `그리고` — split into separate commits instead.
 - Do NOT commit submodule pointer updates with a body-less catch-all subject (`서브모듈을 업데이트하다` alone). Always include a one-line body describing *what the submodule changed and why*.
 - Do NOT default to `chore` when `feat` / `fix` / `refactor` / `perf` actually fits.
