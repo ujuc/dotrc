@@ -1,104 +1,56 @@
 ---
 name: commit
-description: "한국어 Conventional Commits 규칙에 따라 git 커밋을 생성하고, 요청 시 push까지 수행한다. /commit, 커밋해줘, 변경사항 커밋, 커밋하고 푸시해줘, commit, commit and push 요청 시 사용한다. 프로젝트에 자체 commit 스킬이 있으면 그쪽에 위임한다."
+description: "한국어 Conventional Commits 규칙에 따라 git 커밋을 생성하고, 요청 시 push까지 수행한다. /commit, 커밋해줘, 변경사항 커밋, 커밋하고 푸시해줘, commit, commit and push 요청 시 사용한다."
 group: docs
 allowed-tools: Bash(git rev-parse:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git -C:*), Bash(git submodule:*), Bash(printf:*), Bash(wc:*), Read, Edit, Glob, Agent
 ---
 
 # Git Commit
 
-Generate commits per the project's Korean Conventional Commits convention.
-
 ## Model guidance
 
-The message draft is delegated by diff size, per [dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing):
-after staging, read `git diff --cached --shortstat`. ≤2 files and ≤40 changed
-lines → Lightweight (`haiku`/`medium`); otherwise Standard (`sonnet`/`medium`).
-Mixed or unclear scope is a staging question (Step 4), not a model question.
-Tell the user the chosen profile in one line. The commit itself, the 50/72
-checks, and doc updates stay in this skill.
+Route the message draft by staged size ([dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing)): `git diff --cached --shortstat` ≤2 files and ≤40 changed lines → Lightweight (`haiku`/`medium`); otherwise Standard (`sonnet`/`medium`). Mixed scope is a staging question, not a model question. Tell the user the profile in one line. Committing, checks and doc updates stay with you.
 
 ## Project skill override
 
-Before running `Format` / `Procedure` below, check whether the current
-repo ships its own commit skill and defer to it if so. This lets a project
-override the global Korean Conventional Commits convention with its own
-rules without editing this user-level skill.
-
-1. **Find the repo root.** Run `git rev-parse --show-toplevel`. If the
-   command fails (not inside a git repo), skip this section entirely and
-   continue with the user-level workflow.
-2. **Probe for a project commit skill.** Check whether
-   `<repo-root>/.claude/skills/commit/SKILL.md` exists (use Glob).
-3. **If it exists:**
-   - Read the file with the Read tool.
-   - Announce once to the user (Korean):
-     `프로젝트 레벨 commit 스킬을 사용합니다 (<absolute-path>).`
-   - Follow that SKILL.md's body for the rest of this invocation. Treat its
-     procedure as authoritative within the tools already granted to the
-     current session; reading frontmatter does not expand tool permissions.
-     Do **not** also run the user-level
-     `Format`, `Procedure`, `Doc updates`, `Push`, `Summary`, `Maintenance`,
-     or `Humanizer pass` sections; the project skill
-     is intentionally taking over the entire workflow.
-   - The user's original arguments (file paths, push hint, humanizer
-     hint, ...) remain in conversation context, so the project skill
-     can read them as it would normally.
-4. **If it does not exist** (or only the directory exists without a
-   `SKILL.md` file): silently continue with the rest of this
-   user-level skill. Do not announce anything.
-
-**Edge cases:**
-
-- The probe path is always relative to `git rev-parse --show-toplevel`,
-  not `pwd`. This makes the override work correctly when the user runs
-  `/commit` from a subdirectory.
-- Submodules: when the user-level Step 0 dispatches into a submodule,
-  the override check is **not re-run** for the submodule. The override
-  is per-invocation, not per-repo within an invocation. This avoids
-  surprising mid-flow handoffs and keeps the parent invocation's
-  authority consistent.
-- Worktrees: `git rev-parse --show-toplevel` returns the worktree's
-  own root, so each worktree can have its own `.claude/skills/commit/`.
+1. Run `git rev-parse --show-toplevel`; outside a repo, skip this section.
+2. Check whether `<repo-root>/.claude/skills/commit/SKILL.md` exists.
+3. If it exists: read it, **announce once** to the user
+   `프로젝트 레벨 commit 스킬을 사용합니다 (<absolute-path>).`, and follow its body
+   instead of every section below for this invocation, within the tools already
+   granted.
+4. Otherwise continue silently. Do not re-check inside submodules.
 
 ## Format
 
 `<type>(<scope>): <한국어 제목 -다>`
 
-- **scope**: follow the scopes defined in the project's AGENTS.md or imported project instructions.
-- **Subject ≤ 50 characters** (including `<type>(<scope>):` prefix).
-- **Body wrapped at 72 characters**, blank line separating subject and body.
-- **Verb declarative `-다` ending** on the subject — any verb stem, no trailing period.
+- Project instructions, a repository `gitmessage`, and its commit hook override these rules.
+- **scope**: from the project's AGENTS.md or imported instructions.
+- **Subject ≤ 50 characters** including the prefix; Korean declarative `-다` ending (any verb stem); no trailing period.
+- **Body**: blank line after the subject, wrapped at 72 characters.
+- One change per commit; the subject says what, the body why: never stack clauses with `·`, `및`, `그리고` or `~해`. Split the commit, or move the list into a Why body.
+- Pick the most specific type; do not fall back to `chore` when `feat`/`fix`/`refactor`/`perf` fits.
 - **Skill size**: when a `SKILL.md` is staged, add a body line
   `SKILL.md <skill>: <HEAD bytes> → <staged bytes> bytes`. A commit that ships a
   skill-diet ends with the trailer `Skill-Diet: <skill-name>`.
-- Full rule set, type table, footer syntax, breaking-change notation, and
-  anti-patterns live in [the fallback message guide](references/gitmessage.md). Consult it for any case
-  not covered by the one-line summary above.
+- **Attribution**: add `Co-Authored-By` only when the harness supplies the text (Claude Code: `attribution.commit`), verbatim. No `Signed-off-by`.
 
 ## Procedure
 
-### Step 0. Detect submodule changes
+### Step 0. Submodules first
 
-1. Run `git status` and check whether any submodule is reported as modified (modified content, new commits).
-2. If a submodule has changes, **process the submodule first**:
-   - Inspect with `git -C <submodule> status` and `git -C <submodule> diff`.
-   - Stage and commit inside the submodule using Steps 1–5, 7, and 8 below; skip parent documentation updates.
-   - If the user asked for a push, push the submodule first.
-3. Once the submodule is done, return to the parent repo and proceed including the updated submodule pointer.
+If `git status` shows a modified submodule, commit inside it first (`git -C <submodule>`, Steps 1–5 and 7–8, no doc updates), push it first if a push was requested, then commit the parent with the new pointer.
 
-### Steps 1–8. Parent repo commit
+### Steps 1–8
 
 1. Read the user's arguments for file paths or instructions.
-2. Inspect changes with `git status`, then `git diff --stat` to see file-level scope. Run full `git diff` only for files whose body you actually need to understand — this keeps token usage bounded on large change sets.
-3. Run `git log --oneline -10` to learn the recent commit style and scope vocabulary. Increase to `-20` only when the last 10 commits look atypical.
-4. **Staging scope**: if the user passed file paths, stage those. If no hints were given and `git status` shows a coherent set (all changes belong to the same logical unit), proceed. If unrelated changes are mixed in — or the intended subset is ambiguous — ask before staging.
-5. Stage only the intended files with `git add`.
-6. If structural changes are detected, run an incremental doc update (see "Doc updates" below).
-7. **Draft the message, then self-check before committing.**
-
-   Dispatch the drafter: `Agent` with `subagent_type: "Explore"`, `model`/`effort`
-   from the routing above, and this prompt:
+2. `git status`, then `git diff --stat`; read full `git diff` only for files you need to understand.
+3. `git log --oneline -10` for style and scope vocabulary.
+4. **Staging scope**: stage the paths the user gave. With no hints, proceed only if every change is one logical unit; if unrelated changes are mixed or the subset is ambiguous, ask before staging.
+5. `git add` only the intended files.
+6. Structural change → [Doc updates](#doc-updates).
+7. **Draft, then check.** Dispatch `Agent` with `subagent_type: "Explore"`, `model`/`effort` from the routing above, and this prompt:
 
    ```
    Draft a git commit message for the staged diff. Run `git diff --cached` and
@@ -111,61 +63,51 @@ rules without editing this user-level skill.
    <lines or empty>
    ```
 
-   Treat the returned draft as the candidate for the checks below; if it is empty or fails any
-   check, write the draft yourself.
+   If the draft is empty or fails a check, write it yourself. Rewrite until all three pass:
 
-   Apply all three checks in order — failing any one means rewrite the draft:
+   1. **Length**: `printf '%s' '<subject>' | wc -m` ≤ 50 (characters, not bytes; not `echo -n`). Body: `printf '%s\n' "<body>" | while IFS= read -r l; do [ "${#l}" -gt 72 ] && echo "$l"; done` prints nothing (`awk length` counts bytes on macOS).
+   2. **Body policy**:
+      - `feat`, `fix`: always, at least one Why line.
+      - `refactor`, `perf`: when the motivation is not obvious from the diff.
+      - Submodule pointer: one line on what changed in the submodule and why; never `서브모듈을 업데이트하다` alone.
+      - Others: optional; consider dropping a body on a trivial change.
 
-   1. **Subject length ≤ 50 characters** (including `<type>(<scope>):` prefix). Verify with `printf '%s' '<subject>' | wc -m` — Unicode character count, not bytes. `echo -n` is unreliable across shells; always use `printf '%s'`. For the body, `printf '%s\n' "<body>" | while IFS= read -r l; do [ "${#l}" -gt 72 ] && echo "$l"; done` must print nothing (`awk length` counts bytes on macOS, so Korean text would false-fail).
-   2. **Body required?** Follow the policy below. If the change requires a body and the draft has none, add a Why / How block. If the change is trivial and the draft has a body, consider removing it.
-   3. **Completion test**: read `이 커밋이 적용되면 [제목]` aloud. If it does not describe the resulting change naturally, rewrite the subject.
+      Non-trivial bodies use `Why:` / `How:` blocks of `-` bullets; How names only the key approach.
+   3. **Completion test**: `이 커밋이 적용되면 [제목]` must read naturally.
 
-   **Body requirement policy:**
+   If the user said `humanize` / `휴머나이저` / `AI 흔적` / `다듬어서`, run the [Humanizer pass](#humanizer-pass-optional) now.
+8. Commit with a quoted heredoc so the text is kept as written:
 
-   | Type                                   | Body                                                                        |
-   |----------------------------------------|-----------------------------------------------------------------------------|
-   | `feat`, `fix`                          | **Always** — at minimum a single "Why" line                                 |
-   | `refactor`, `perf`                     | When the motivation (structure, perf target) is not obvious from the diff  |
-   | `docs`, `style`, `test`, `build`, `ci` | Optional                                                                    |
-   | `chore(agents)` (submodule pointer)    | **One-line summary** of what changed in the submodule and why — no "업데이트하다"만 |
-   | Other `chore`                          | Optional                                                                    |
+   ```bash
+   git commit -m "$(cat <<'EOF'
+   <subject>
 
-   **After the three-check pass, if the user hinted `humanize` / `휴머나이저` / `AI 흔적` / `다듬어서`, run the "Humanizer pass (optional)" section before Step 8.**
-
-8. Commit using a heredoc:
-
-```bash
-git commit -m "$(cat <<'EOF'
-<type>(<scope>): <한국어 제목>
-
-<body — follow the Body requirement policy above>
-EOF
-)"
-```
+   <body>
+   EOF
+   )"
+   ```
 
 ## Doc updates
 
-After staging, inspect documentation only for structural changes or new external dependencies. Skip content-only edits, submodule pointer updates, and internal `style` or `refactor` changes.
+Only for structural changes or new external dependencies; skip content-only edits, submodule pointers, and internal `style` or `refactor` changes.
 
-- Update `AGENTS.md` only when an undiscoverable workflow, scope policy, deployment target, or cross-repository relationship changed. Do not add directory trees or file tables that the repository exposes directly.
-- Update `README.md` when installation steps, symlink targets, or external dependencies changed.
-- Keep `CLAUDE.md` as an import plus harness-specific rules; do not duplicate `AGENTS.md` content there.
-- Show any proposed documentation edit to the user, apply only the approved change, and stage it with the intended commit.
+- `AGENTS.md`: only when an undiscoverable workflow, scope policy, deployment target or cross-repository relationship changed; no directory trees or file tables.
+- `README.md`: installation steps, symlink targets or external dependencies changed.
+- `CLAUDE.md`: an import plus harness-specific rules; never copy `AGENTS.md` into it.
+- Edit existing docs only: no new doc files, nothing inside a submodule.
+- Show each proposed edit, apply only what the user approves, and stage it with this commit.
 
 ## Push (optional)
 
-If the user explicitly asks to push as part of the request (`커밋하고 푸시해줘`, `commit and push`, ...):
+Only when the user asked for it (`커밋하고 푸시해줘`, `commit and push`, ...).
 
-1. **Run in the foreground** (so the SSH passphrase prompt actually reaches the user).
-2. If submodules exist, push the submodule first, then the parent repo.
-3. On push failure:
-   - SSH-related error → suggest the user run `ssh-add`.
-   - Other errors → relay the error message verbatim.
-4. Do NOT push when push wasn't explicitly requested.
+1. Run in the foreground so an SSH passphrase prompt reaches the user.
+2. Push submodules before the parent.
+3. On failure: SSH error → suggest `ssh-add`; otherwise relay the error verbatim.
 
 ## Summary
 
-After commit (and push, if any), output a concise summary:
+After committing (and pushing), print:
 
 ```
 커밋 완료:
@@ -174,42 +116,21 @@ After commit (and push, if any), output a concise summary:
 파일 N개 변경, +X/-Y줄
 ```
 
-The summary block is shown to the user, so the labels stay in Korean.
-
-## Prohibitions
-
-- Do NOT invent `Co-Authored-By` trailers. Add one only when the harness supplies attribution text (Claude Code: the `attribution.commit` setting), and use it verbatim.
-- Do NOT stage files when the intended set is ambiguous — ask first instead of guessing.
-- Do NOT modify docs inside a submodule.
-- Do NOT create new doc files (incremental edits to existing docs only).
-- Do NOT pack multiple changes into one subject with `·`, `및`, `그리고` — split into separate commits instead.
-- Do NOT commit submodule pointer updates with a body-less catch-all subject (`서브모듈을 업데이트하다` alone). Always include a one-line body describing *what the submodule changed and why*.
-- Do NOT default to `chore` when `feat` / `fix` / `refactor` / `perf` actually fits.
-- Do NOT run humanizer on the commit subject — the `-다` verb-declarative ending is a format rule, not prose, and any edit risks the 50-char budget.
-
-## Maintenance — rule source sync
-
-Project instructions, a repository `gitmessage`, and its commit hook override
-this skill. `references/gitmessage.md` is the user-level fallback. In the dotrc
-repository, keep that fallback aligned with the root `gitmessage` and
-`.githooks/commit-msg`, which are authoritative for local commits. Items that
-must stay aligned:
-
-- Type list (`feat · fix · refactor · perf · style · docs · test · build · ci · chore`)
-- 50 / 72 character limits
-- `-다` verb declarative ending rule
-- Body "Why / How" hint structure
-- Footer token syntax (`Closes #`, `Refs #`, `Acked-by:`)
-- Breaking change notation (`<type>!:` or `BREAKING CHANGE:` footer)
-
-Stage both files together in the same commit so the two views never diverge.
-
 ## Humanizer pass (optional)
 
-Run only when the user asks to humanize the commit text. Skip empty bodies, structured bodies whose lines are mostly bullets or code, `revert`, and `chore(agents)` pointer summaries.
+Only on request. Skip empty bodies, mostly-bullet or code bodies, `revert`, and submodule pointer summaries. Never touch the subject: its `-다` ending and 50-character limit are format rules.
 
-1. Rewrite the body inline with the smallest wording changes that remove AI-like prose; never include the subject.
-2. Show the rewritten body and ask whether to apply it, keep the original, or cancel.
-3. Recheck factual fidelity, the 72-character wrap, and the body requirement before committing.
+1. Rewrite the body inline with the smallest changes that remove AI-like prose.
+2. Show it and ask: apply, keep the original, or cancel.
+3. Recheck facts, the 72-character wrap and the body policy before committing.
 
-The subject is never humanized because its `-다` ending and 50-character limit are format constraints.
+## Maintenance
+
+When editing these commit rules, keep [references/gitmessage.md](references/gitmessage.md#maintenance)
+aligned with the repository `gitmessage` and `.githooks/commit-msg`, and stage
+them together.
+
+## Look up the rest
+
+- Footer tokens, breaking-change notation, type list, example → [references/gitmessage.md](references/gitmessage.md)
+- Editing this skill's rules, dotrc `gitmessage` or `.githooks/commit-msg` → [references/gitmessage.md#maintenance](references/gitmessage.md#maintenance)
