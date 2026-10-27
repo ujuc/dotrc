@@ -6,6 +6,7 @@
 # CLAUDE.md; built-in Claude Code skills stay. The skill under test is copied to
 # <work-dir>/.claude/skills/<name>/ and every recorded path is rewritten back to <skill-dir>.
 # Model: $EVAL_MODEL (eval.mjs --model). Tools: Bash, Read, Glob, Grep, Skill, Write, Edit; no MCP.
+# Read/Edit/Write of the live skills (~/.claude, ~/.config/dotrc) are denied so no version sees another copy.
 
 set -uo pipefail
 
@@ -25,6 +26,8 @@ if [ -n "${skill_dir}" ]; then
   name="$(basename "${skill_dir}")"
   mkdir -p .claude/skills
   cp -R "${skill_dir}" ".claude/skills/${name}"
+  # A user-only skill cannot be loaded by the model; let calibration load it. Tasks invoke it as /<name>.
+  sed -i '' '/^disable-model-invocation: true$/d' ".claude/skills/${name}/SKILL.md"
 fi
 
 # Claude Code keeps per-project state under ~/.claude/projects/<cwd, non-alphanumerics as ->; remove ours on exit.
@@ -37,6 +40,7 @@ claude -p "${prompt}" \
   --strict-mcp-config \
   --no-session-persistence \
   --allowedTools "Bash,Read,Glob,Grep,Skill,Write,Edit" \
+  --disallowedTools "Read(~/.claude/**)" "Read(~/.config/dotrc/**)" "Edit(~/.claude/**)" "Edit(~/.config/dotrc/**)" "Write(~/.claude/**)" "Write(~/.config/dotrc/**)" \
   --output-format stream-json --verbose \
   ${EVAL_MODEL:+--model "${EVAL_MODEL}"} \
   >"${out}/stream.jsonl" 2>"${out}/stderr.log"
@@ -45,8 +49,12 @@ echo "claude exit $?" >>"${out}/stderr.log"
 jq -s \
   --arg skill_dir "${skill_dir}" --arg name "${name}" \
   --arg w1 "${work}/.claude/skills/${name}" --arg w2 "${work_real}/.claude/skills/${name}" '
-  def back: if $name == "" then . else gsub($w2; $skill_dir) | gsub($w1; $skill_dir) end;
+  # Absolute work paths first, then paths the agent wrote relative to <work-dir>.
+  def back: if $name == "" then . else gsub($w2; $skill_dir) | gsub($w1; $skill_dir)
+    | gsub("(?<p>^|[\\s\"\u0027=(])\\.claude/skills/\($name)"; "\(.p)\($skill_dir)") end;
   (map(select(.type == "result")) | last) as $r
+  # Calls that errored (e.g. a denied read) touched nothing, so they keep only their name.
+  | ([.[] | select(.type == "user") | .message.content[]? | select(.type == "tool_result" and .is_error == true) | .tool_use_id]) as $failed
   | ($r.modelUsage // {} | [.[]]) as $m
   | {
       answer: ($r.result // ""),
@@ -63,10 +71,13 @@ jq -s \
         } end),
       turns: ([.[] | select(.type == "assistant") | .message.id] | unique | length),
       calls: [.[] | select(.type == "assistant") | .message.content[]? | select(.type == "tool_use")
+        | if (.id | IN($failed[])) then {name} else . end
         | {name}
           + (if .name == "Skill" then
-               {path: (if (.input.skill // "") == $name and $name != "" then "\($skill_dir)/SKILL.md"
-                       else "/\(.input.skill // "unknown")/SKILL.md" end)}
+               # With no skill installed, a Skill call by name loads nothing.
+               (if $name == "" then {}
+                elif (.input.skill // "") == $name then {path: "\($skill_dir)/SKILL.md"}
+                else {path: "/\(.input.skill // "unknown")/SKILL.md"} end)
              elif (.input.file_path // .input.path // null) != null then {path: ((.input.file_path // .input.path) | back)}
              else {} end)
           + (if .input.command then {command: (.input.command | back)} else {} end)]
