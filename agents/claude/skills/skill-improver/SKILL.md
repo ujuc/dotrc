@@ -50,7 +50,7 @@ Role files under `references/roles/` keep the language of the skill that owns th
    ```
 2. **Repository resolution**: resolve `repo_root` as `${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents`; verify its `AGENTS.md` and `claude/skills/`. Invocation CWD may be any project.
 3. **Validator path**: confirm `<repo_root>/claude/skills/generate-skills/scripts/validate-skill` exists. Use `repo_root` for every scan and command; do not require or mutate the caller's CWD.
-4. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking.
+4. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking. Also relay the one line from `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-upstream check`.
 5. **Waza availability** (non-blocking): resolve the launcher once and record whether measurement is possible for this run:
    ```bash
    waza_run="<repo_root>/claude/skills/waza/scripts/waza-run.sh"
@@ -92,7 +92,7 @@ Generate tests using a **test category matrix**: three skill dimensions and dime
 
 ### Dimension A — Structural
 
-Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single execution covers all structural checks (frontmatter format, naming, size limits, **`group` field presence and slug validity**). Do not duplicate in Dimension B.
+Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single execution covers all structural checks (frontmatter format, naming, size limits, **`group` field presence and slug validity**). Then run `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-eval check <path>` (Markdown links and anchors in every file) and `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-growth <path>`; `diet-recommended` is a Manual finding, not a FAIL. Do not duplicate in Dimension B.
 
 ### Dimension B — Semantic (skill-improver's core value)
 
@@ -179,9 +179,7 @@ eval_yaml="<repo_root>/claude/evals/<skill>/eval.yaml"
 [ -f "$eval_yaml" ] && bash "$waza_run" eval "$eval_yaml" --label improver-baseline --trials 3
 ```
 
-Three trials are required because a single run is noisy: an unchanged
-copilot-sdk suite measured weighted 1.000 then 0.944. One 3-trial copilot-sdk
-run took 13–20 minutes against the local model, so budget the guard per target.
+Use three trials; a single run is noise. Budget each guard run at about 20 minutes.
 
 Record the result JSON path the report ends with (`- Result JSON: ...`) as
 `waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: the bare
@@ -208,6 +206,7 @@ skill's write boundary. No suite → Waza guard SKIP for that target. A launcher
   user's choice; never infer a group from the name or description.
 - E.1 proposals: evidence supports a draft, never an unattended procedure rewrite.
 - E.2 coverage gaps: route suggestions to `skill-engineer`, which owns triggers.
+- `diet-recommended`: hand off to `/generate-skills <name> 다이어트`; this skill never runs a diet eval.
 
 When fixability is ambiguous, use an available advisor or independent equivalent.
 If none exists, report the unresolved classification and leave the proposed

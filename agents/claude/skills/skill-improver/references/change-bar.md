@@ -58,7 +58,7 @@ When nothing clears the bar, propose nothing and explain why for each finding.
 | Instruction gap in a skill outside this run's targets | that skill | Record as a suggestion; do not edit an untargeted file |
 | Skill never fires where it should | trigger description | `skill-engineer`; never auto-edit a WHEN clause |
 | Missing global rule | `agents/rules/AGENTS.md` | Report only — a global rule change is the user's call |
-| Tooling, environment, or contract change | out of scope | Report only |
+| Mechanical mistake a tool could catch, or an environment/contract change | the tool | Report the below-skill fix (clearer error, check, test), not prose |
 
 ## Draft and apply
 
