@@ -8,250 +8,141 @@ argument-hint: "[skill-name ...]"
 
 # Skill Improver
 
-Audit skills and their worker role files, fix safe structural issues, and propose
-behavioral changes supported by recent sessions. Dimensions A–C check structure
-and semantics; Dimension E scores observed behavior. Repairs stop after three
-iterations per target.
+Audit skills and their role files: fix safe mechanical defects, and propose behavioral changes only where recent sessions support them.
 
-## Scope and available capabilities
+## Scope
 
-- Read [`references/quality-checks.md`](references/quality-checks.md) for authority,
-  evidence, portability, and completion rules. Reuse selected targets and existing
-  approval; a post-edit check is one targeted batch. Do not recursively invoke
-  this skill or the authoring controller during self-maintenance.
-- Use Lightweight for structural checks, Standard for bounded mechanical fixes,
-  and Advanced for semantic/evidence judgments. Recommend Frontier only for
-  unresolved, consequential cross-skill conflicts. Apply the
-  [shared model guide](../generate-skills/references/model-selection.md), including
-  its user-facing recommendation and actual-switching distinction.
-- Map tool names below to available host capabilities. Independent review needs
-  a separate reviewer context; a different model alone does not establish it.
-  Disclose unavailable roles. A missing question tool still permits ordinary
-  interactive text; it never permits assumed answers.
-- Preserve explicit user/repository policy. Do not execute the target workflow
-  to fill a behavior-evidence gap; this skill reviews definitions, scripts, and
-  existing evidence.
+- **Model guidance:** Lightweight for structural checks, Standard for bounded mechanical fixes, Advanced for semantic and evidence judgments; recommend Frontier only for an unresolved, consequential cross-skill conflict. Follow the [shared model guide](../generate-skills/references/model-selection.md); recommending a model to the user is not switching to it, and inheriting the parent's model is an execution fallback, not proof of fit.
+- **One batch:** reuse the selected targets and any approval already given; a post-edit check is one targeted batch, not a full sweep. During self-maintenance, never invoke this skill or the authoring controller recursively.
+- **Policy first:** explicit user and repository policy wins over optimization defaults.
+- **Review, don't run:** read definitions, scripts and existing evidence. Never execute a target's workflow to fill an evidence gap; report the gap and route an authorized isolated run to the owning authoring or evaluation workflow. The Waza guard (Phases 4–5) is the only measurement.
+- **Independent review:** an advisor or a separate reviewer context, handed the inputs, instructions and evidence explicitly; a different model alone is not independent, and neither is your own reasoning. Use it for a complex skill's cross-skill test coverage (Phase 2), an ambiguous mechanical-vs-manual call or a contested E.1 finding (Phase 4), and at most once after three iterations (Phase 5). When none is available, say so and leave unresolved behavioral proposals unapplied.
+- **Questions:** without a question tool, ask in ordinary text; never assume an answer. An unanswered material choice blocks only the writes that depend on it.
+- **Write scope:** target files, the skills README catalog, `REPORT_DIR`, Waza result JSON under the gitignored `~/.claude/data/waza/results/`, and a commit the user asked for. Never scaffold or edit `claude/evals/`; suite authoring belongs to `generate-skills` through the `waza` skill.
 
-## Language Policy
+## Phase 0 — Pre-flight
 
-When auto-editing skill metadata in Phase 4, preserve the user's language conventions:
+If step 1 or 2 fails, report an actionable fix and stop before Phase 1.
 
-- **Skills:** `description` / `when_to_use` are Korean and SKILL.md bodies are English, except functional examples and user-visible strings.
-- **Trigger keywords are functional identifiers.** Never paraphrase or translate them.
-
-Role files under `references/roles/` keep the language of the skill that owns them. Record a policy mismatch as **B.7 — language policy drift** and ask before translating.
-
-## Phase 0 — Pre-flight Checks
-
-1. **Toolchain**: check `cargo` and `jq` are installed (`validate-skill` is a Rust binary and `scripts/collect-sessions` needs jq):
-   ```bash
-   command -v cargo &>/dev/null || { echo "cargo required: https://rustup.rs"; exit 1; }
-   command -v jq &>/dev/null || { echo "jq is required by scripts/collect-sessions"; exit 1; }
-   ```
-2. **Repository resolution**: resolve `repo_root` as `${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents`; verify its `AGENTS.md` and `claude/skills/`. Invocation CWD may be any project.
-3. **Validator path**: confirm `<repo_root>/claude/skills/generate-skills/scripts/validate-skill` exists. Use `repo_root` for every scan and command; do not require or mutate the caller's CWD.
-4. **Spec freshness**: under `repo_root`, find sibling `generate-skills` and read `frontmatter-spec.md` from its reference directory. Compute `today - last_upstream_check`. If beyond `check_interval_days` (default 14), warn without blocking. Also relay the one line from `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-upstream check`.
-5. **Waza availability** (non-blocking): resolve the launcher once and record whether measurement is possible for this run:
+1. **Toolchain:** `cargo` (`validate-skill` is a Rust launcher with no `.sh` suffix, and its first call may compile; fix: https://rustup.rs) and `jq` (needed by `scripts/collect-sessions`).
+2. **Repository:** `repo_root=${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents` must hold `AGENTS.md`, `claude/skills/`, and `claude/skills/generate-skills/scripts/validate-skill`. Run every scan and command against `repo_root`; the caller's CWD may be any project and stays untouched.
+3. **Spec freshness** (warn only): read `last_upstream_check` and `check_interval_days` (default 14) from the frontmatter of the sibling `generate-skills` skill's `frontmatter-spec.md` reference; warn when today is past the interval. Relay the one line from `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-upstream check`.
+4. **Waza** (non-blocking):
    ```bash
    waza_run="<repo_root>/claude/skills/waza/scripts/waza-run.sh"
    bash "$waza_run" status
    ```
-   Waza is usable only when the output contains the line `- Usable: yes`. Otherwise (missing binary, workspace, jq, or served Ollama model) only the Phase 4/5 Waza regression guard is disabled; report it as SKIP with the `- Usable: no (<reason>)` reason, never as a Phase 0 failure. Never call the `waza` binary directly — the [`waza` skill](../waza/SKILL.md) owns every subcommand.
+   Waza is usable only when the output has the line `- Usable: yes`. Otherwise the Waza guard is SKIP with the `- Usable: no (<reason>)` reason, never a Phase 0 failure. Call only this launcher, never the `waza` binary; the [`waza` skill](../waza/SKILL.md) owns every subcommand.
 
-If any toolchain/path/repo check fails, report the issue with an actionable fix and stop — do not proceed to Phase 1.
+## Phase 1 — Inventory
 
-## Phase 1 — Inventory & Intent Extraction
-
-1. **Argument parsing**: if arguments specify skill names, target those; otherwise sweep all skills in `claude/skills/` and `.claude/skills/`.
-2. **Catalog map**: collect `name` and `group` from user-scope `claude/skills/` for B.6. Validate project-scope `.claude/skills/` structurally but never add them to the user catalog. Trigger overlap remains exclusive to `skill-engineer`.
-3. **Per-target read**: for each target, parse:
-   - Frontmatter: `name`, `description`, `model`, `allowed-tools`, plus optional fields per `frontmatter-spec.md`.
-   - Body: core procedure steps, constraints, prohibited actions.
-   - Referenced file paths in the body (`references/`, `scripts/`, role files).
-   - Trigger keywords from the description.
-4. Summarize each target's intent in 1 line for Phase 2.
-5. **Evidence collection** (run-level, once per sweep): create the run's scratch directory and condense recent sessions into it.
-
+1. **Targets:** the named skills, or with no arguments every skill in `claude/skills/` and `.claude/skills/`.
+2. **Catalog map:** `name` and `group` of each user-scope `claude/skills/` skill, for B.6. Project-scope `.claude/skills/` skills are validated structurally but never join the user catalog.
+3. **Per target:** parse the frontmatter (`name`, `description`, `model`, `allowed-tools`, optional fields), the procedure, constraints and prohibitions, referenced paths (`references/`, `scripts/`, role files), and the description's trigger keywords. Summarize its intent in one line.
+4. **Session evidence** (once per run):
    ```bash
    REPORT_DIR=$(mktemp -d "${TMPDIR:-/tmp}/skill-improver-XXXXXXXX")
    bash "<repo_root>/claude/skills/skill-improver/scripts/collect-sessions" --out "$REPORT_DIR"
    ```
+   Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded; narrow a manual run with `--since YYYY-MM-DD` or `--project PATH`. Start from `$REPORT_DIR/inventory.json`; Dimension E reads the digests in `$REPORT_DIR/transcripts/`. **Never read raw `.jsonl` history.** If collection fails (missing history can fail instead of giving an empty inventory) or samples no sessions, Dimension E is SKIP, never PASS or a structural FAIL, and A–C continue. Audit artifacts stay under `REPORT_DIR`, never in a user project. After touching `condense.jq` or `inventory.jq`, run `bash scripts/test-collect-sessions`.
 
-   Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded. A manual run can narrow with `--since YYYY-MM-DD` or `--project PATH`.
+## Phase 2 — Tests
 
-   `bash scripts/test-collect-sessions` self-checks the collector against a synthetic history; run it after touching `condense.jq` or `inventory.jq`.
-
-   Start with `$REPORT_DIR/inventory.json`; Phase 2 reads the condensed digests.
-   **Never read raw `.jsonl` history directly.** If collection fails or samples
-   no sessions, record Dimension E as SKIP and continue A–C. Audit artifacts stay
-   under `REPORT_DIR`, never in a user project.
-
-## Phase 2 — Test Scenario Generation
-
-Generate tests using a **test category matrix**: three skill dimensions and dimension E for observed behavior.
+Each test is a concrete check with a PASS criterion.
 
 ### Dimension A — Structural
 
-Run `validate-skill <path>` (Rust binary, not the legacy `.sh`). This single execution covers all structural checks (frontmatter format, naming, size limits, **`group` field presence and slug validity**). Then run `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-eval check <path>` (Markdown links and anchors in every file) and `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-growth <path>`; `diet-recommended` is a Manual finding, not a FAIL. Do not duplicate in Dimension B.
+Run `validate-skill <path>` (frontmatter, naming, size limits, `group` presence and slug), then `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-eval check <path>` (links and anchors in every file) and `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-growth <path>`. `diet-recommended` is a Manual finding, not a FAIL. Dimension B does not repeat these.
 
-### Dimension B — Semantic (skill-improver's core value)
+### Dimension B — Semantic
 
-| Test | What it checks | How |
-|------|----------------|-----|
-| **B.1 Description-body alignment** | Description's WHAT clause matches actual procedure steps | Read procedure, compare with description. Flag if description claims capabilities not present in the body, or misses major capabilities |
-| **B.5 Reference integrity** | All file paths in the body point to existing files | Glob/Read each referenced path. Flag broken references. Role files under `references/roles/` are checked like any reference. |
-| **B.6 catalog sync** | A structurally valid **user-scope** `claude/skills/` skill is listed under its group in `<repo_root>/claude/skills/README.md` | Dimension A owns group validity. Project-scope `.claude/skills/` targets are SKIP. |
-| **B.7 Language policy** | Skill metadata/body follows the skill policy; triggers stay intact | Apply the target-type rules above and compare edits with the original trigger tokens |
-| **B.9 Authority/scope** | Approval reuse, explicit policy, side-effect ownership | Apply references/quality-checks.md |
-| **B.10 Evidence contract** | Verifier inputs, evidence levels, final status | Apply references/quality-checks.md; inspect available suites without running the target |
-| **B.11 Host/source integrity** | Capability fallbacks and scoped source claims | Apply references/quality-checks.md; check section/role references too |
+- **B.1 Description-body alignment:** the description's WHAT clause claims nothing the procedure lacks and misses no major capability.
+- **B.5 Reference integrity:** every path the body references exists; role files under `references/roles/` are checked like any reference.
+- **B.6 Catalog sync:** a valid user-scope skill is listed under its `group` in `<repo_root>/claude/skills/README.md`. `group` owns placement; no parallel trigger or model catalog in `claude/CLAUDE.md`. Project-scope targets: SKIP.
+- **B.7 Language policy:** `description` and `when_to_use` are Korean; SKILL.md bodies are English except functional examples and user-visible strings; role files keep their owning skill's language. Trigger keywords are functional identifiers: never paraphrase or translate them. Report drift and ask before translating.
+- **B.9 Authority and write scope:** the target reuses existing approval, puts explicit user and repository requirements over optimization defaults, resolves targets and dependencies before writing, names who owns each side effect, and keeps body and references consistent on cache/date writes and approval scope without new per-file approval gates. FAIL examples: asking again for the same exact patch; editing unrelated sibling or global caches; pruning a named team test gate as generic cleanup; an upstream recommendation shown as an unlabeled local hard limit. New scope and destructive actions still need their approval; when one is needed, quote the requirement and why existing authorization falls short.
+- **B.10 Evidence contract** (inspect evaluator prompts and checked-in suites; never run the target): each claim names its evidence level (structure/schema, fixed-input decision replay, actual artifact application, live integration) and has the inputs for it. Verifiers of preservation or confirmation get the original contents or diff, facts, decisions, scope and effective guidance, so a blind reviewer neither guesses hidden facts nor drops policy whose approval it cannot see. Baseline and candidate share inputs and channels; a changed suite supports no raw-score regression claim. SKIP and UNVERIFIED stay evidence statuses, never PASS. FAIL examples: mock keyword success shown as behavior; simulated tool calls shown as live runs; preservation PASS without a baseline; unchecked final repairs; skipped evidence or failed criteria hidden by a score. A source contradiction may be repaired without claiming baseline behavior failed.
+  - **WARN low-signal suite** (report only; never PASS evidence, never blocks Phase 5): `eval.yaml` has `config.executor: mock` or the launcher's `| Engine |` row shows `mock` (the mock never loads SKILL.md); or every grader in `eval.yaml` and `tasks/*.yaml` is a `type: text` `contains`/`not_contains` check or a `type: behavior` token budget, with no `skill_invocation` grader. `| Skill invocations | 0 / M |` alone is no WARN: with the default `inject_skill_body: true` the body is already in the system prompt.
+- **B.11 Host and source integrity:** tool and model names are supported or mapped to the host's capabilities, with unavailable roles disclosed; upstream requirements, recommendations, local policy and model or study findings keep their own scope; reference paths, section names and writer roles are current. FAIL examples: a missing AskUserQuestion treated as headless operation; claiming an unavailable advisor ran; a model-specific default required globally; shared instructions moved into one host's rule files only.
 
-> **Scope boundary**: trigger completeness, trigger uniqueness, and model fitness checks belong to the skill-engineer role. Do not duplicate them here. To run those checks, dispatch `Agent` with `subagent_type: "Explore"`, Advanced routing, and the prompt "Read `<abs>/references/roles/skill-engineer.md` first and follow it. Target: <target> [--check trigger|overlap|model|all]"; print the returned report.
+Trigger completeness, trigger overlap and model fitness belong to the skill-engineer role; do not check them here. To run them, dispatch `Agent` with `subagent_type: "Explore"`, Advanced routing, and the prompt "Read `<abs>/references/roles/skill-engineer.md` first and follow it. Target: <target> [--check trigger|overlap|model|all]"; print the returned report.
 
-### Dimension C — Type-specific (skills)
+### Dimension C — Type-specific
 
-- **Skills with scripts** (`scripts/` directory exists): for each *executable* under `scripts/`, run it directly (`./script --help`) so its shebang applies — forcing `bash` misreads a `uv run` PEP 723 script as shell and fails — and expect exit 0; when arguments are required, also run with no args and expect a clear usage error rather than a crash. Data files such as `*.jq` are not entry points — they are exercised by their launcher's self-check.
-- **Pipeline skills** (skills that reference other skill names): verify referenced skill names exist as actual skill directories.
+- **Scripts:** run each executable in `scripts/` directly (`./script --help`) so its shebang applies (forcing `bash` breaks a `uv run` PEP 723 script) and expect exit 0; when it needs arguments, also run it bare and expect a clear usage error, not a crash. Data files such as `*.jq` are covered by their launcher's self-check.
+- **Pipelines:** every skill name the target references exists as a skill directory.
 
-### Dimension E — Evidence (run-level)
+### Dimension E — Evidence
 
-Scored **once per sweep**, not once per target: read every digest in
-`$REPORT_DIR/transcripts/` against [`references/evidence-rubric.md`](references/evidence-rubric.md), then attribute each
-finding to a target using that file's attribution rules. Each target's Dimension E
-row reports only the findings attributed to it — SKIP when there are none, which
-is the common case and not a defect.
+Score once per run, not per target: rate each digest per [`references/evidence-rubric.md`](references/evidence-rubric.md) and attribute findings by its rules. A target's row shows only findings attributed to it; SKIP when there are none, which is common and not a defect.
 
-| Test | What it checks | How |
-|------|----------------|-----|
-| **E.1 Observed failure** | A session scored below 0.5 did work this target owns | Score each digest, attribute, cite session id + one-line paraphrase |
-| **E.2 Coverage** | The target actually fires where its domain appears | `skills_used` / `commands_used` vs the Phase 1 catalog; a never-firing skill is a trigger finding for `skill-engineer`, never a WHEN-clause auto-fix |
+- **E.1 Observed failure:** a session scored below 0.5 did work this target owns. Cite the session id and a one-line paraphrase; never quote digest lines or name the projects, files, or people in them.
+- **E.2 Coverage:** the target fires where its domain appears. A never-firing skill is a trigger finding for skill-engineer.
 
-E.1 findings do **not** become edits by themselves — Phase 4 puts them through
-the change bar first. Record the run-level score summary
-(`sessions_sampled`, failed sessions, `skill_coverage`) for the Phase 6 report.
+Record `sessions_sampled`, failed sessions and `skill_coverage` for the report.
 
-For complex skills, use the independent consultation rules below to review
-whether tests cover cross-skill interactions and intent.
+## Phase 3 — Run
 
-Each test is a concrete check with expected outcome (PASS criteria).
+Run A → B → C per target, then report its share of E. Classify each result PASS, FAIL, WARN (non-critical, such as a missing optional field), SKIP (not applicable, or no evidence attributed to the target), or **UNVERIFIED** (an applicable claim lacks required evidence; never count it as PASS).
 
-## Phase 3 — Test Execution & Capture
+Three or more Dimension A errors skip the rest for that target. Show a results table after each target.
 
-Execute tests in order: Dimension A → B → C → E. Dimension E is scored once for the whole sweep (Phase 2) and then reported per target.
+## Phase 4 — Fix
 
-For each test:
+- **Mechanical:** fix directly only A/B/C failures in the table below.
+- **Behavioral (E-track):** follow [`references/change-bar.md`](references/change-bar.md). Never edit a target file directly from an evidence finding; no proposal is a valid outcome.
 
-1. Run the check (Bash command, file read, or comparison).
-2. Capture output and result.
-3. Classify:
-   - **PASS**: result matches expectations.
-   - **FAIL**: result does not match expectations.
-   - **WARN**: non-critical issue detected (e.g., optional field missing).
-   - **SKIP**: test not applicable to this target type, or no evidence was attributed to it.
-   - **UNVERIFIED**: applicable claim lacks required evidence; never count as PASS.
+| Category | When | Fix |
+| --- | --- | --- |
+| Frontmatter | Missing field, typo, invalid format other than `group` | Add or correct the field |
+| Description WHAT | B.1 fails | Rewrite the WHAT clause from the procedure; never change the WHEN clause (trigger phrases) without user approval |
+| Catalog sync | B.6 fails for a valid user-scope skill | Align the README group map; never register a project-scope skill |
+| Reference path | B.5 fails | Fix the path when a similarly named file exists nearby; otherwise Manual |
 
-**Early exit**: if Dimension A produces 3+ errors, skip remaining dimensions for that target — structural problems must be fixed first.
+Manual (report, do not attempt):
 
-Display results as a table after each target completes.
+- Cross-skill dependencies, core logic, workflow changes, structural design, and authority, scope or evidence decisions.
+- WHEN-clause changes and translations, unless explicitly approved.
+- Missing or invalid `group`: present the eight allowed slugs and take the user's choice; never infer a group from the name or description.
+- E.1 proposals: a draft at most, never an unattended procedure rewrite.
+- E.2 coverage gaps: suggestions for skill-engineer, which owns triggers.
+- `diet-recommended`: hand off to `/generate-skills <name> 다이어트`; this skill never runs a diet eval.
 
-## Phase 4 — Failure Analysis & Auto-Fix
+When fixability is ambiguous, ask for independent review; without one, report the classification and leave the change unapplied.
 
-Classify each failure before editing:
+### Waza baseline
 
-- **Mechanical:** only A/B/C failures matching the safe-fix table may be fixed
-  directly. Authority, scope, evidence, and workflow decisions remain manual.
-- **Behavioral:** apply [`references/change-bar.md`](references/change-bar.md).
-  Write qualifying proposals under `$REPORT_DIR/proposed/<target>/`, retain a
-  `diff -u`, and apply only accepted scope. If the bar is not met, explain why and
-  propose nothing.
-
-### Waza baseline (before the first model-visible edit to a target)
-
-When Phase 0 found Waza usable and the target skill has a checked-in suite at
-`<repo_root>/claude/evals/<skill>/eval.yaml`, persist a baseline **before** the
-first fix that changes model-visible content — frontmatter, description, body,
-or a reference path. Catalog-only fixes (the skills README) leave the guard SKIP
-(catalog-only). If a later iteration introduces the first model-visible fix, run
-the baseline before that edit:
+When Waza is usable and `<repo_root>/claude/evals/<skill>/eval.yaml` exists, run a baseline before the target's first model-visible fix (frontmatter, description, body, or a reference path), even when that fix comes in a later iteration:
 
 ```bash
 eval_yaml="<repo_root>/claude/evals/<skill>/eval.yaml"
 [ -f "$eval_yaml" ] && bash "$waza_run" eval "$eval_yaml" --label improver-baseline --trials 3
 ```
 
-Use three trials; a single run is noise. Budget each guard run at about 20 minutes.
+Use three trials; one run is noise. Budget about 20 minutes per guard run. Record the `- Result JSON: ...` path the report ends with as `waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: a bare skill name scaffolds a new suite, outside this skill's write scope. No suite → guard SKIP; catalog-only fixes → guard SKIP (catalog-only). Launcher exit 1 or no `- Result JSON:` line → no baseline, guard UNVERIFIED.
 
-Record the result JSON path the report ends with (`- Result JSON: ...`) as
-`waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: the bare
-skill-name form auto-scaffolds a new suite, which is authoring work outside this
-skill's write boundary. No suite → Waza guard SKIP for that target. A launcher exit 1 or a missing
-`- Result JSON:` line leaves no baseline, and the guard is UNVERIFIED.
+## Phase 5 — Re-verify (max 3 iterations)
 
-### Auto-fixable (apply with Edit tool)
+1. Rerun the target's full test matrix on the final bytes, including checks that passed before.
+2. **Regression guard:** a fix that causes a new failure is reverted and reclassified as Manual; an unapplied E-track draft is discarded from `$REPORT_DIR/proposed/`.
+3. **Waza guard:** when `waza_baseline[<skill>]` exists and this iteration applied model-visible fixes:
+   ```bash
+   bash "$waza_run" eval "$eval_yaml" --label improver-after --trials 3 \
+     --baseline-json "${waza_baseline[<skill>]}"
+   ```
+   Classify in this order:
+   - Launcher exit 1, no `- Result JSON:` line, or `⚠️ incomparable`, on the rerun or its confirmation: `UNVERIFIED`, never SKIP or PASS, and no revert on that alone. This wins over a reference-only note.
+   - `⚠️ **regression**` (rounded weighted Δ below −0.1): run one confirmation with `--label improver-confirm` against the same baseline. If it appears again, revert **all** of this iteration's model-visible fixes for the target and reclassify them as Manual (`regression-reverted`); do not bisect, since each run costs 13–20 minutes. If not, record `preserved` with an "unconfirmed drop" note and both JSON paths.
+   - `reference-only` (mock engine): record it and never revert.
+   - Otherwise `preserved`. That is a fixed-input replay, reported under B.10, never as live behavior.
 
-| Category | Trigger | Fix |
-|----------|---------|-----|
-| Frontmatter corrections | Missing fields, typos, invalid format other than `group` | Add/correct fields; group presence/slug remains manual |
-| Description WHAT enrichment | B.1 fails | Generate accurate WHAT clause from procedure steps. **Never modify the WHEN clause (trigger phrases) without user approval** |
-| Catalog sync | B.6 fails for a user-scope skill with valid frontmatter | Align the user README group map; never register project-scope skills |
-| Reference path repair | B.5 fails | Fix the path if a similarly-named file exists nearby; otherwise report as manual |
+   Keep every JSON path for the report and any later `/autoresearch` run.
+4. All required checks PASS, with inapplicable or missing optional evidence shown as SKIP/UNVERIFIED → Phase 6. Never call an audit end-to-end behavior verification.
+5. Failures remain and fewer than three iterations → back to Phase 4. After the third, stop, report what remains, and disclose whether review was available.
 
-### Manual (report to user, do not attempt)
+## Phase 6 — Report and commit
 
-- Cross-skill dependencies, core logic, workflow changes, and structural design
-  decisions.
-- WHEN-clause changes and body translations (B.7); preserve triggers and language
-  unless their modification is explicitly approved.
-- Missing or invalid `group`: present the eight allowed slugs and obtain the
-  user's choice; never infer a group from the name or description.
-- E.1 proposals: evidence supports a draft, never an unattended procedure rewrite.
-- E.2 coverage gaps: route suggestions to `skill-engineer`, which owns triggers.
-- `diet-recommended`: hand off to `/generate-skills <name> 다이어트`; this skill never runs a diet eval.
-
-When fixability is ambiguous, use an available advisor or independent equivalent.
-If none exists, report the unresolved classification and leave the proposed
-behavior change unapplied; local reasoning is not an independent review.
-
-## Phase 5 — Re-verification (max 3 iterations)
-
-1. After applying fixes, rerun the target's full original test matrix, including previously passing checks.
-2. **Regression guard**: if a fix introduces a new failure, revert that fix and
-   reclassify it as manual. For an unapplied E-track proposal, discard the draft
-   under `$REPORT_DIR/proposed/`.
-   - **Waza guard**: when `waza_baseline[<skill>]` exists and this iteration
-     applied model-visible fixes, rerun the same suite against it:
-     ```bash
-     bash "$waza_run" eval "$eval_yaml" --label improver-after --trials 3 \
-       --baseline-json "${waza_baseline[<skill>]}"
-     ```
-     Classify the launcher output in this order:
-     - Launcher exit 1, no `- Result JSON:` line, or `⚠️ incomparable` — on the
-       rerun or on its confirmation run: record `UNVERIFIED`, never SKIP or PASS,
-       and do not revert on it alone. This wins over a reference-only note.
-     - `⚠️ **regression**` (rounded weighted Δ below −0.1): run one confirmation
-       with `--label improver-confirm` against the same baseline. If the line
-       appears again, revert **all** model-visible fixes of this iteration for
-       the target and reclassify them as manual (`regression-reverted`). Do not
-       bisect per fix; each extra run costs another 13–20 minutes. If it does not
-       reappear, record `preserved` with an "unconfirmed drop" note and both JSON
-       paths.
-     - `reference-only` (mock engine): record `reference-only` and never revert;
-       the mock executor never loads SKILL.md.
-     - Otherwise `preserved`. A preserved score is a fixed-input replay, not
-       behavior proof; report it under B.10, never as live behavior.
-
-     Retain every JSON path for the Phase 6 report and any later `/autoresearch`
-     run.
-3. If all required audit checks PASS, with optional/inapplicable evidence clearly
-   SKIP/UNVERIFIED → proceed to Phase 6. Do not claim behavior beyond its evidence.
-4. If failures remain and iteration count < 3 → return to Phase 4.
-5. At iteration 3, stop repairs and report remaining failures. Consult an available
-   advisor once if useful; absence is disclosed. Do not start another loop.
-
-## Phase 6 — Summary & Commit
-
-Report each target's checks, iterations, status, and changes, with an evidence
-summary and the location of `REPORT_DIR`:
+Report each target's checks, iterations, status and changes, the evidence summary, and the `REPORT_DIR` location:
 
 ```
 ## skill-improver Results
@@ -268,69 +159,15 @@ Suite signal:
   - <skill>: WARN low-signal suite (<mock engine|text/token-budget graders only>) → author through generate-skills with the waza skill
 ```
 
-Include empty evidence and no-proposal outcomes. List every target with a
-Waza baseline, including unchanged ones, so the JSON pairs stay discoverable. Leave the scratch directory for
-inspection. Session history stays local and read-only: never upload, commit, or
-quote raw history or digest lines. Cite session IDs with one-line paraphrases.
+Include empty evidence and no-proposal outcomes, and every target with a Waza baseline, changed or not. Leave the scratch directory in place. Session history stays local and read-only: never upload, commit, or quote raw history or digest lines; cite session IDs with one-line paraphrases.
 
-If any fixes were applied:
+If fixes were applied, show the full diff. Commit only when the user asked (a still-applicable earlier request counts), following the repository's Korean Conventional Commit rules; otherwise leave the changes uncommitted.
 
-1. Show the full diff to the user.
-2. Commit only if explicitly requested; reuse a still-applicable request rather
-   than asking again. Otherwise leave the changes uncommitted.
-3. Follow the repository's Korean Conventional Commit rules.
+For deeper eval-based optimization, finish this run, then recommend a separate `/autoresearch <target>`; never launch it inside this run's commit.
 
-## Independent consultation
+## Look up the rest
 
-Use an available advisor or separate reviewer context at these decision points:
-
-| Phase | Question |
-| --- | --- |
-| 2 | Do tests for a complex skill cover cross-skill interactions and intent? |
-| 4 | Is a failure safely mechanical or a manual design decision? |
-| 4 | Does a contested E.1 finding clear the change bar? |
-| 5 | After three iterations, would one optional review clarify remaining failures? Stop repairs regardless. |
-
-Supply the relevant inputs, instructions, and evidence through the host's actual
-review interface; do not assume automatic context forwarding. Choose the review
-profile for the actual judgment; use inheritance only as an execution fallback.
-If consultation is unavailable,
-disclose it and leave unresolved behavioral proposals unapplied.
-
-## Deep Optimization Handoff
-
-If deeper eval-based optimization is warranted, finish this run first and recommend a separate `/autoresearch <target>` invocation. Do not launch autoresearch inside skill-improver's commit transaction; it has its own confirmation, artifacts, validation, and commit cycle.
-
-## Gotchas
-
-1. `validate-skill` is a Rust launcher without a `.sh` suffix. Its first call may
-   compile the workspace; a Bash-only environment is insufficient.
-2. `group:` owns catalog placement in `claude/skills/README.md`; do not create a
-   parallel triggers/model catalog in `claude/CLAUDE.md`.
-3. `commands_used` includes built-in CLI commands. Filter against the Phase 1
-   catalog before calculating coverage; see the evidence rubric.
-4. Missing history can make the collector fail rather than emit an empty
-   inventory. Both cases make Dimension E SKIP, never PASS or a structural FAIL.
-5. Beyond target files and the catalog, writes are limited to `REPORT_DIR`, an
-   explicitly requested commit, and Waza result JSON
-   (baseline, after, and confirmation runs) under the gitignored `~/.claude/data/waza/results/`, subject to user and host write
-   boundaries. Never scaffold or edit `claude/evals/` from this skill; suite
-   authoring belongs to `generate-skills` through the `waza` skill.
-
-## Eval Criteria
-
-Binary checks for autoresearch reuse. A criterion fails when its expected outcome
-is violated; missing applicable evidence is UNVERIFIED, never PASS.
-
-| ID | Scenario | Expected outcome |
-| --- | --- | --- |
-| 1 | `cargo` or validator launcher missing | Stop in Phase 0 with an actionable fix; no Phase 1+ work. |
-| 2 | Description auto-fix | Diff preserves every original Korean trigger; only WHAT changes. |
-| 3 | Fix introduces a regression | Revert the fix or discard its unapplied draft, reclassify as manual, and restore the prior result. |
-| 4 | Three repair iterations exhausted | Stop, report unresolved failures and actual consultation availability. |
-| 5 | Missing or invalid `group` | Report as manual and present the eight allowed slugs; never guess. |
-| 6 | E-track proposal or a sample without attributable failures | Every proposal cites a session ID and rubric label; no failures means no E-track edit. Keep explicit user-directed authoring separate. |
-| 7 | Session evidence collection and reporting | Use the collector, keep audit artifacts under mktemp `REPORT_DIR`, cite IDs plus paraphrases; no direct raw-history reads or digest quotes. |
-| 8 | Waza invocation in skill definitions | Only `claude/skills/waza/scripts/waza-run.sh` contains direct Waza subcommands; skills call that launcher. Exclude `waza-install.md` when scanning documentation. |
-| 9 | Model recommendation and execution | Recommend a workload profile with supported candidates and escalation conditions; respect user choices and distinguish advice from actual switching. Inheritance is a fallback, not proof of fit. |
-| 10 | Waza regression guard | With `- Usable: yes` and a checked-in suite, a target about to receive a model-visible edit has a `--trials 3` baseline JSON before that edit and a `--trials 3 --baseline-json` rerun after it; only a `⚠️ **regression**` line that reproduces on one confirmation rerun reverts all of that iteration's model-visible fixes for the target and reclassifies them as manual. Launcher exit 1, a missing Result JSON, or `⚠️ incomparable` is UNVERIFIED; mock results are reference-only and never revert. Without Waza, a suite, or a model-visible edit, the guard is SKIP and no suite is scaffolded or edited. |
+- Scoring digests, attribution, coverage, privacy → [references/evidence-rubric.md](references/evidence-rubric.md)
+- E-track proposal → [references/change-bar.md](references/change-bar.md)
+- Trigger, overlap and model checks → [references/roles/skill-engineer.md](references/roles/skill-engineer.md), through `Explore`
+- Eval criteria for `/autoresearch` → [evals.md](evals.md)
