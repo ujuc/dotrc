@@ -13,3 +13,4 @@ graders:
     config:
       regex_match:
         - "(?i)\\b(seven|7)\\b"
+        - "(?is)\\bno\\s*[.,:;—–-]|\\b(never|not|doesn.t|won.t|cannot)\\b.{0,80}\\b(fill|infer|guess|auto\\S*)|\\bmanual\\b"

@@ -1,5 +1,5 @@
 name: generate-skills-eval
-description: Trigger/decision probes; see behavior-cases.md for scoped evidence and limitations.
+description: Decision probes with the skill body injected, so triggering is unmeasured; see behavior-cases.md for scoped evidence and limitations.
 skill: generate-skills
 version: "1.0"
 config:

@@ -1,5 +1,5 @@
 name: skill-improver-eval
-description: Trigger/decision probes; see behavior-cases.md for scoped evidence and limitations.
+description: Decision probes only; triggering is not measured. See behavior-cases.md for scoped evidence and limitations.
 skill: skill-improver
 version: "1.0"
 config:
