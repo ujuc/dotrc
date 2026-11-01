@@ -22,19 +22,20 @@ cannot switch, recommend one without claiming a switch.
 
 ## Mode detection
 
-Inspect `$ARGUMENTS`, or the user's request when this skill loaded on its own, to choose a mode:
+Read `$ARGUMENTS`, or the user's request when it is empty, and take the first
+mode it asks for. Judge what is asked, not a word inside a skill name.
 
-- **Update mode**: `$ARGUMENTS` contains any of `업데이트`, `수정`, `갱신`, `최신화`, `update`, `refresh`
-  → Run Step 0 → Steps U1–U3 → Step 5 (validation)
-- **Diet mode**: `$ARGUMENTS` contains `다이어트` or `diet`
+- **Diet mode**: a diet of a skill (`다이어트`, `diet`)
   → Run Step 0 → [full diet](../skill-diet/references/diet.md) → Step 5. Eval via
   `scripts/skill-diet-eval` in `~/.claude/data/skill-diet/<skill>-<YYYYMMDD>/` with
   `scripts/diet-adapter-claude` symlinked as `adapter`, `--parallel 2`, a pinned
   `--model`. The shipping commit carries `Skill-Diet: <skill-name>`.
-- **Create mode**: anything else
+- **Update mode**: a change to an existing skill (`업데이트`, `수정`, `갱신`, `최신화`, `update`, `refresh`)
+  → Run Step 0 → Steps U1–U3 → Step 5 (validation)
+- **Create mode**: a new skill
   → Run Step 0 → Step 1 below → Steps 2–4 in [create mode](references/create-mode.md) → Step 5
 
-If neither names a mode and a target skill, ask.
+When it names only a skill, or asks for none of these, ask which mode and which skill.
 
 ## Scripts
 

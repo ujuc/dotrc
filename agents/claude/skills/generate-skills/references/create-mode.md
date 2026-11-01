@@ -25,7 +25,7 @@ converge on one goal.
 
 Confirm the pattern, the reason, and the group with the user before scaffolding.
 While the user answers, the [Explore-1 survey](subagent-guidelines.md#explore-1-existing-skill-survey)
-may run; skip it when `$ARGUMENTS` already names the skill, purpose and pattern.
+may run; skip it when the request already names the skill, purpose and pattern.
 
 ## Step 2: Scaffold the structure
 

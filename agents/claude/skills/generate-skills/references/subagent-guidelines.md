@@ -10,7 +10,7 @@ Never pass a tier label as a model ID.
 ## Explore-1: Existing skill survey
 
 Step 1, in the background while the user answers; read the summary before Step 2.
-Skip it when `$ARGUMENTS` already gives the name, purpose and pattern.
+Skip it when the request already gives the name, purpose and pattern.
 Lightweight; Standard when similarities need interpretation across workflows.
 
 ```
