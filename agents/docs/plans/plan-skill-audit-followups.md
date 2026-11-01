@@ -11,46 +11,6 @@ Waza run against the current baseline; a suite edit needs a new baseline.
 | Humanizer role files are in Korean while the SKILL.md body is English | Treat them as linguistic rulebooks, or translate them |
 | Humanizer `강도: 보수\|기본\|적극` has no consumer | Remove it, or define what each value does |
 
-## Borrowing from `writing-skills`: awaiting approval
-
-Both plans below are unapplied. `superpowers-upstream check` reports later upstream changes.
-
-### Force without emphasis
-
-The persuasion reference cites a study of compliance with objectionable requests, so its
-33% to 72% figure says nothing about adherence to a skill. `generate-agent-docs`
-already fails IMPORTANT, ALL CAPS and MUST in project docs. Use the first level that holds:
-
-1. **Enforce it**: a hook, deny rule, validator or test, for a rule with no exceptions.
-2. **Force it in plain words**, only when a baseline shows the agent knows the rule and
-   skips it: an observable trigger with its action ("after X, before Y, run Z"), a required
-   choice or status line, a rationalization table of verbatim excuses, and "no exceptions"
-   only for a rule that has none.
-3. **Emphasis**: capitals or MUST ship only when a micro-test beats the plain wording.
-
-Never use false urgency, guilt, or a claim such as "every time" that nobody measured.
-Apply per skill type: discipline gets levels 1 to 3, technique and pattern get plain
-imperatives, and reference gets none.
-
-Changes: a short section in `guidance-testing.md`; replace "ALWAYS use this exact format" in
-`design-principles.md`; one micro-test of a real rule, plain against emphasized, 5+ reps
-against a control.
-
-Decide: whether level 3 is allowed or emphasis is banned; whether the micro-test runs now.
-
-### Checklists and flowcharts
-
-Upstream has no schedule table. It has a creation checklist and flowchart guidance with a
-renderer. No local skill uses a flowchart, and `dot` and `mmdc` are not installed.
-
-- **Checklist**: keep Step 5 and `Eval Criteria` as the only list. Create one todo per Step 5
-  gate, only if a session shows a skipped gate; the behavior baseline is the first candidate.
-- **Flowchart**: allow one only for a non-obvious decision or a loop that stops early,
-  written inline as Mermaid so it needs no install and renders on GitHub.
-- **Human view**: use `artifact-diagramming` rather than porting `render-graphs.js`.
-
-Decide: Mermaid or Graphviz; whether to add the todo rule before session evidence exists.
-
 ## generate-skills
 
 - Update and Create routes never name the Behavior baseline section; `create-mode.md:3` places it differently.
