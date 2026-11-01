@@ -40,7 +40,8 @@ If `$ARGUMENTS` is empty, ask which mode and which target skill.
 ## Scripts
 
 Launch them by absolute path: this skill is global, so CWD-relative paths break
-outside the dotrc repo. The Rust launchers need `cargo`; the first run compiles.
+outside the dotrc repo. The Rust launchers need `cargo`; the first run compiles. `skill-diet-eval` needs
+Node.js 18+.
 
 ```bash
 DOTRCDIR="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}"  # zshrc exports it only in interactive shells
@@ -150,7 +151,7 @@ frontmatter, note `references/` and `scripts/`, and run
 
 ## Step U2: Compare against the latest spec (update mode)
 
-1. **Required fields**: add non-empty `name` and `description`; the update cannot complete without them.
+1. **Required fields**: add non-empty `name`, `description` and `group`; the update cannot complete without them. Ask the user for `group`; never infer it.
 2. **Field compatibility**: separate standard, host-specific and local fields.
    `license` and `metadata` stay standard even when one host table omits them.
 3. **New fields**: suggest `context`, `agent`, `allowed-tools` and the like where
@@ -162,6 +163,9 @@ frontmatter, note `references/` and `scripts/`, and run
 6. **Redundancy**: run the audit below.
 7. **Model guidance**: keep a default profile and escalation trigger in the
    body; inheritance alone is not a recommendation.
+8. **Cached references**: a request or drift report naming a reference with
+   `source_url(s)` selects cache maintenance: follow its freshness note, fetch
+   the sources, apply verified drift, then update its check date.
 
 Summarize the comparison, reuse any approved scope, and ask only about material open choices.
 
@@ -203,7 +207,7 @@ N/A with structural evidence.
 **Waza**: when usable, run the candidate beside the baseline. All Waza operations
 go through the [`waza` skill](../waza/SKILL.md) launcher `../waza/scripts/waza-run.sh`;
 never call the `waza` CLI directly. Follow [Waza suites](references/eval-guide.md#waza-suites)
-and keep the baseline/candidate JSON paths for `skill-improver`. Without Waza,
+and keep the baseline/candidate JSON paths. Without Waza,
 use fresh-context subagent scenarios and report that Waza did not persist the evidence.
 
 **Independent review**: when the skill ships `references/` or `scripts/` and the
