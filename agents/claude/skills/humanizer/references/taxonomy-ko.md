@@ -2,7 +2,7 @@
 
 # AI 한글 티 분류 체계 v1.6 (Korean AI-Tell Taxonomy)
 
-LLM(ChatGPT·Claude·Gemini 등)이 생성한 한글 글에서 반복적으로 관찰되는 "AI 티" 패턴을 10개 대분류 × 서브 패턴으로 정리한다. 탐지기·윤문가·리뷰어가 공유하는 단일 진실 원천(SSOT). 각 패턴마다 (1) 정의, (2) 시그니처 예문, (3) 심각도(S1 결정적 / S2 강함 / S3 약함), (4) 윤문 처방을 제공한다.
+LLM(ChatGPT·Claude·Gemini 등)이 생성한 한글 글에서 반복적으로 관찰되는 "AI 티" 패턴을 10개 대분류 × 서브 패턴으로 정리한다. 스캐너·윤문가가 공유하는 단일 진실 원천(SSOT). 각 패턴마다 (1) 정의, (2) 시그니처 예문, (3) 심각도(S1 결정적 / S2 강함 / S3 약함), (4) 윤문 처방을 제공한다.
 
 > **Fidelity precedence:** 아래 처방은 의미·주장·태도·확실성·수치·행위자를 보존할 때만 적용한다. 원문에 없는 근거·수치·감정·주체를 만들거나 가능성·의무의 강도를 바꾸는 처방 예시는 적용하지 않는다.
 
@@ -371,9 +371,9 @@ LLM(ChatGPT·Claude·Gemini 등)이 생성한 한글 글에서 반복적으로 �
 
 ---
 
-## 탐지 출력 스키마 (Detector → Rewriter 공유 계약)
+## 탐지 출력 스키마 (Scanner → Rewriter 공유 계약)
 
-탐지기는 다음 JSON을 생산한다:
+스캐너 baseline은 다음 JSON을 생산한다:
 
 ```json
 {
@@ -408,6 +408,6 @@ LLM(ChatGPT·Claude·Gemini 등)이 생성한 한글 글에서 반복적으로 �
 }
 ```
 
-- `severity_weighted_score`: included finding의 raw weighted sum (S1=5, S2=2, S3=0.5). 정규화하지 않으며 reviewer는 같은 options로 이 값을 다시 계산한다.
+- `severity_weighted_score`: included finding의 raw weighted sum (S1=5, S2=2, S3=0.5). 정규화하지 않으며 스캐너 review는 같은 options로 이 값을 다시 계산한다.
 - `ai_tell_density`: 탐지 span 총 글자 수 / 전체 글자 수.
 - Span offsets are zero-based Unicode code points with exclusive `end`. Document-level findings use `scope: "document"` and set `text_span`, `start`, and `end` to `null`; every finding includes `context_flags` and `related_findings` arrays.

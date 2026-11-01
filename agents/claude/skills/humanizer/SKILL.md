@@ -1,6 +1,6 @@
 ---
 name: humanizer
-argument-hint: "[--strict | redo] [텍스트 또는 파일 경로] [장르: ...] [강도: ...]"
+argument-hint: "[--strict | redo] [텍스트 또는 파일 경로] [장르: ...]"
 description: |
   AI가 쓴 글의 흔적을 자연스러운 사람의 글로 바꾸는 윤문 오케스트레이터(한국어 주력, 영어는 fast만).
   AI 글 자연스럽게, AI 티 제거, ChatGPT 문체 고쳐, 번역투 고쳐, 사람이 쓴 것처럼 윤문, 휴머나이저, humanize, remove AI tone, 2차 윤문, /humanizer 요청 시 사용한다. 요청이 없어도 이슈·PR 본문, README, 사용자용 문서처럼 사람이 읽을 한국어 글을 새로 쓰거나 고쳤고 그 부분의 문장이 100자 이상이면, 내보내거나 승인받기 직전에 그 부분만 fast 모드로 사용한다(커밋 메시지, 대화 답변, 에이전트 지침·프롬프트, 불릿·표·코드 위주 글은 제외). redo·--strict는 모드 인자다.
@@ -52,8 +52,7 @@ humanizer v2.0 — {fast|strict|redo} 모드 / run_id: {YYYY-MM-DD-NNN} / 언어
 
 **Options** (natural language):
 
-- `장르: 칼럼|리포트|블로그|공적` — otherwise estimated from the first 300 chars
-- `강도: 보수|기본|적극` — default `기본`
+- `장르: 칼럼|리포트|블로그|공적` — otherwise `genre_hint: null`; the inline track and proactive runs use the content-type matrix
 - `최소심각도: S1|S2|S3` (strict) or `P1|P2|P3` (fast English) — default S2/P2; each level includes all more severe ones
 
 ## Run setup
@@ -71,7 +70,7 @@ humanizer v2.0 — {fast|strict|redo} 모드 / run_id: {YYYY-MM-DD-NNN} / 언어
 input_path: <run dir>/01_input.txt
 quick_rules_path: <abs skill dir>/references/quick-rules.md
 output_dir: <run dir>
-genre_hint: 칼럼 | 리포트 | 블로그 | 공적 | null
+genre_hint: 칼럼 | 리포트 | 블로그 | 공적 | 기술 문서 | null
 ```
 
 It writes `final.md` and `summary.md` and returns only metadata.
@@ -104,8 +103,8 @@ Strict and redo rewrite at most 3 rounds; unresolved after round 3 → `hold_and
 | "특정 카테고리만 다시" / "번역투만" / "관용구만" | targeted rerun for that category |
 | "이 문단만" / "두 번째 문단만" | targeted rerun for that range |
 | "2차 윤문" / no instruction | the language track over all residual findings |
-| "강도 낮춰" / "보수적으로" | `min_severity = S1` |
-| "강도 높여" | `min_severity = S3` |
+| "강도 낮춰" / "보수적으로" | `min_severity = S1` (English or mixed: also P1) |
+| "강도 높여" | `min_severity = S3` (English or mixed: also P3) |
 | "장르 바꿔서 X" | new run_id with the new genre_hint, restart from Phase A |
 | "이 변경 되돌려줘" | apply the matching fidelity-auditor rollback directive |
 
@@ -137,7 +136,7 @@ Applies inline and to strict verdicts. Workers keep their own copies; after chan
 
 On a violation, roll back that edit and retry once. If a meaning or protected-token violation or the 50% ceiling remains, output the last safe version (or the original). Only unresolved style checks may ship, as "자가검증 미통과 N건" in summary.md.
 
-**Grade:**
+**Grade** (strict takes the final `quality_level` instead):
 
 - **A**: S1/P1 residual 0, S2/P2 residual ≤ 2, change rate 10–25%, self-check 6/6.
 - **B**: S1/P1 residual 0, S2/P2 residual ≤ 4, self-check 5+/6.

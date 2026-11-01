@@ -32,7 +32,7 @@ Two `Agent` calls in parallel with this round's paths:
 ## Phase D — Final output
 
 1. Copy the latest `03_rewrite*.md` to `final.md`.
-2. Write `summary.md` in the fast format, adding any `unclassified_candidates` from the final naturalness JSON.
+2. Write `summary.md` in the fast format, with the grade from the final `quality_level` and the 6-item self-check scored from the final fidelity, naturalness and diff JSONs, adding any `unclassified_candidates` from the final naturalness JSON and any `over_polish_aborted` from the latest diff JSON.
 3. Return the four-part response.
 
 ## Redo
@@ -44,4 +44,4 @@ Use the most recent run directory (also when the user says "이전 거 다시");
 
 Parse the instruction with the [redo table](../SKILL.md#strict-and-redo).
 
-For Korean, then run Phase C on the new version (`03_rewrite_v2.md` or `_v3`).
+For Korean, then run Phase C on the new version.

@@ -30,7 +30,7 @@ review에서 호출자가 `rewrite_path`로 넘기면 그 값을 `input_path`로
 
 ## baseline 출력
 
-`output_path`에 taxonomy의 Detector → Rewriter 계약과 같은 형태로 쓴다. `category_summary`는 최상위 필드다.
+`output_path`에 taxonomy의 Scanner → Rewriter 계약과 같은 형태로 쓴다. `category_summary`는 최상위 필드다.
 
 ```json
 {

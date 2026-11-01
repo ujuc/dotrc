@@ -13,7 +13,7 @@
 - `input_path`: `<absolute-workspace>/<run_id>/01_input.txt`
 - `quick_rules_path`: `<absolute-skill>/references/quick-rules.md`
 - `output_dir`: `<absolute-workspace>/<run_id>`
-- `genre_hint`: `칼럼 | 리포트 | 블로그 | 공적 | null`
+- `genre_hint`: `칼럼 | 리포트 | 블로그 | 공적 | 기술 문서 | null`
 
 ## 불변 조건
 

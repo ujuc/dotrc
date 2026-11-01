@@ -49,7 +49,8 @@
     "change_rate": 0.18,
     "findings_resolved": 34,
     "findings_unresolved": 3,
-    "over_polish_warning": false
+    "over_polish_warning": false,
+    "over_polish_aborted": false
   },
   "edits": [
     {
@@ -69,7 +70,7 @@
 - span 불일치: 건너뛰고 unresolved에 기록한다.
 - suggested fix가 의미를 바꿈: 적용하지 않고 unresolved에 기록한다.
 - 수치·고유명사·인용·보호 문자열(코드·경로·식별자·오류 메시지) 변화 또는 시제 주입 감지: 해당 edit 즉시 롤백한다.
-- 50% 초과: 마지막 안전본을 전달받은 rewrite path에 쓰고 경고를 기록한다.
+- 50% 초과: 마지막 안전본을 전달받은 rewrite path에 쓰고 diff의 `over_polish_aborted`를 `true`로 기록한다.
 
 ## 반환
 
