@@ -71,3 +71,20 @@ at stake. Combine three or more of these in one scenario that forces a choice:
 
 Record the agent's excuses verbatim. Each excuse that recurs becomes a row in the
 skill's red flags, in plain words.
+
+## Discovery tests
+
+Use these when an instruction must send an agent to a skill: a rules file, a
+bootstrap block, or a skill newly allowed to load on its own. Adapted from
+`CLAUDE_MD_TESTING.md`, whose expected results are predictions, so measure your own.
+
+1. Write scenarios where skipping the skill looks reasonable: a choice between
+   checking it and acting now, with the pressures above.
+2. Run a no-mention baseline, then each variant on the same scenarios: a soft
+   suggestion, a directive, and a step placed inside the workflow.
+3. PASS: the agent opens the skill unprompted, reads it before acting, and follows
+   it under pressure. FAIL: it skips the check, works from the description or from
+   memory, or treats the skill as optional.
+4. After a failure, ask what wording would have made the step hard to miss. Ask for
+   a wording change, not an account of its reasoning: Fable 5.1 subagents refused
+   that request with `reasoning_extraction` (local finding).
