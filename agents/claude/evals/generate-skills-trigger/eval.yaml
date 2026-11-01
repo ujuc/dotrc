@@ -1,0 +1,19 @@
+name: generate-skills-trigger
+description: Trigger probes with the skill body withheld; a skill_invocation grader checks the skill tool call, and the control task shows the executor and model invoke skills at all. Haiku here sends full diets to skill-diet; Sonnet, Opus and Haiku in Claude Code did not (2026-11-01), so treat the diet task as a known failure.
+skill: generate-skills
+version: "1.0"
+config:
+  trials_per_task: 1
+  timeout_seconds: 120
+  parallel: false
+  executor: copilot-sdk
+  inject_skill_body: false
+  skill_directories:
+    - "../../skills"
+metrics:
+  - name: task_completion
+    weight: 1.0
+    threshold: 0.8
+    description: Skill tool calls only; not proof of workflow execution.
+tasks:
+  - "tasks/*.yaml"

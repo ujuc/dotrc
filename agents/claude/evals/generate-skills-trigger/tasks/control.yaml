@@ -1,0 +1,11 @@
+id: control
+name: Control
+inputs:
+  prompt: "commit 스킬을 호출해서 커밋 제목 규칙을 알려줘. 파일은 쓰거나 고치지 말고, 알맞은 스킬이 있으면 호출한 뒤 첫 단계만 말해줘."
+graders:
+  - type: skill_invocation
+    name: invokes-commit
+    config:
+      required_skills: [commit]
+      mode: any_order
+      allow_extra: true

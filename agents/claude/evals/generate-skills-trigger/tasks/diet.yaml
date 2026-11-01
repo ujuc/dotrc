@@ -1,0 +1,11 @@
+id: diet
+name: Full diet route
+inputs:
+  prompt: "pr-notes 스킬 다이어트해줘. 파일은 쓰거나 고치지 말고, 알맞은 스킬이 있으면 호출한 뒤 첫 단계만 말해줘."
+graders:
+  - type: skill_invocation
+    name: invokes-generate-skills
+    config:
+      required_skills: [generate-skills]
+      mode: any_order
+      allow_extra: true

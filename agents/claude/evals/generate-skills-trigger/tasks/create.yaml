@@ -1,0 +1,11 @@
+id: create
+name: Create route
+inputs:
+  prompt: "PR 설명 초안을 써 주는 새 스킬 하나 만들어줘. 파일은 쓰거나 고치지 말고, 알맞은 스킬이 있으면 호출한 뒤 첫 단계만 말해줘."
+graders:
+  - type: skill_invocation
+    name: invokes-generate-skills
+    config:
+      required_skills: [generate-skills]
+      mode: any_order
+      allow_extra: true

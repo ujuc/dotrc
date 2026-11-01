@@ -1,0 +1,9 @@
+id: unrelated
+name: Unrelated request
+inputs:
+  prompt: "zsh에서 ls 별칭을 확인하는 방법을 알려줘. 파일은 쓰거나 고치지 말고, 알맞은 스킬이 있으면 호출한 뒤 첫 단계만 말해줘."
+graders:
+  - type: skill_invocation
+    name: skips-generate-skills
+    config:
+      forbidden_skills: [generate-skills]

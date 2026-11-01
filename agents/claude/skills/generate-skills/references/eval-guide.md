@@ -48,7 +48,8 @@ cannot: their `contains` graders check words that already appear in the prompt.
   grader measures whether the agent calls the `skill` tool. Trust a
   positive-trigger grader only after a control task shows the same executor and
   model invoking some skill: a local model may never invoke one, so a 0 there
-  reflects the eval model, not the skill.
+  reflects the eval model, not the skill. `claude/evals/generate-skills-trigger`
+  is the local example.
 - **Budget.** A 3-trial copilot-sdk run takes 13–20 minutes on the local model;
   keep suites to 3–6 tasks. A diet eval follows
   [skill-diet's eval](../../skill-diet/references/eval.md) instead.
