@@ -35,7 +35,8 @@ project_state="${HOME}/.claude/projects/$(printf '%s' "${work_real}" | sed 's/[^
 trap 'rm -rf "${project_state}"' EXIT
 trap 'kill 0; exit 143' TERM
 
-claude -p "${prompt}" \
+# zsh profiles can alias ls to a git-aware tool that stalls the Bash tool; keep eval shells plain.
+SHELL=/bin/bash claude -p "${prompt}" \
   --setting-sources project \
   --strict-mcp-config \
   --no-session-persistence \
