@@ -192,14 +192,13 @@ fn print_summary(skill_dir: &Path, name: &str, group: &str, optional_dirs: &[&st
         println!("      {d}/  (empty)");
     }
     println!();
-    println!("Next steps:");
+    println!("Next steps (GS and DOTRCDIR as in generate-skills Scripts):");
     println!("  1. Edit SKILL.md — fill in TODO placeholders");
     println!("  2. Validate:");
-    println!(
-        "     bash agents/claude/skills/generate-skills/scripts/validate-skill {}",
-        skill_dir.display()
-    );
+    println!("     bash \"$GS/validate-skill\" {}", skill_dir.display());
     println!("  3. Register in the catalog group map:");
-    println!("     bash agents/claude/skills/generate-skills/scripts/register-skill \\");
-    println!("       agents/claude/skills/README.md --name {name} --group {group}");
+    println!("     bash \"$GS/register-skill\" \\");
+    println!(
+        "       \"${{DOTRCDIR}}/agents/claude/skills/README.md\" --name {name} --group {group}"
+    );
 }

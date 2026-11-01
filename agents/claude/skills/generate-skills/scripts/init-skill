@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # init-skill — Thin launcher that defers to the Rust workspace under tools/.
-# Usage: init-skill <skill-name> [--path <dir>] [--with-references] [--with-scripts] [--with-assets]
+# Usage: init-skill <skill-name> --group <slug> [--path <dir>] [--with-references] [--with-scripts] [--with-assets]
 
 set -euo pipefail
 
