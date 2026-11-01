@@ -194,9 +194,10 @@ path. Prefer delete-and-link over rephrasing.
 ## Step 5: Validate
 
 Fail the workflow if `name`, `description` or `group` is missing or empty;
-validator warnings do not override this. If `cargo` is missing, stop and report
-the draft as unvalidated: no registration, no completion claim. Otherwise, before the final report, run this on the changed skill, however small
-the edit or urgent the request, then fix and rerun until it passes:
+validator warnings do not override this. If `cargo` or `node` is missing, stop and report
+the draft as unvalidated: no registration, no completion claim. Otherwise, after the last edit and before the final report, run this on the
+changed skill with `GS` from [Scripts](#scripts), however small the edit or urgent
+the request, then fix and rerun until it passes:
 
 ```bash
 bash "$GS/validate-skill" <skill-dir> && bash "$GS/skill-diet-eval" check <skill-dir> && bash "$GS/skill-diet-growth" <skill-dir>
