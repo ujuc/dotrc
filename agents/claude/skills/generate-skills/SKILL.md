@@ -51,6 +51,7 @@ bash "$GS/validate-skill" <skill-dir>
 bash "$GS/skill-diet-eval" check <skill-dir>   # SKILL.md bytes for the commit message; fails on a broken link or anchor
 bash "$GS/skill-diet-growth" <skill-dir>       # one line: within budget | diet-recommended | no diet baseline
 bash "$GS/skill-diet-upstream" check           # one advisory line; `pull <tag>` only when the user asks
+bash "$GS/superpowers-upstream" check           # one advisory line for guidance-testing.md
 bash "$GS/register-skill" "${DOTRCDIR}/agents/claude/skills/README.md" --name <skill-name> --group <slug>
 ```
 
@@ -105,7 +106,8 @@ bash "$GS/register-skill" "${DOTRCDIR}/agents/claude/skills/README.md" --name <s
 ## Step 0: Spec freshness
 
 This skill stays the authoring controller (Rust validator, group catalog, Waza
-integration). Borrow Superpowers pressure-testing ideas, but never hand control
+integration). Ideas from Superpowers live in
+[guidance testing](references/guidance-testing.md); never hand control
 to another skill-generation workflow.
 
 1. Lines 1–6 of [frontmatter-spec.md](references/frontmatter-spec.md) hold
@@ -120,7 +122,8 @@ to another skill-generation workflow.
    upstream content alone does not authorize a date write. When fetching fails
    or is not permitted, leave both untouched and continue with a one-line notice
    that the spec is cached as of `last_upstream_check`. Report fetched or cached either way.
-4. Relay the one line from `skill-diet-upstream check`; pull a tag only when the user asks.
+4. Relay the one line from `skill-diet-upstream check` and from
+   `superpowers-upstream check`; pull a tag only when the user asks.
 
 ## Step 1: Capture the use case (create mode)
 
@@ -137,7 +140,8 @@ Before editing or drafting, classify the target as discipline, technique,
 pattern or reference, and run the smallest scenario that exposes the gap
 without the new guidance: three pressure scenarios for a discipline skill,
 otherwise one application or retrieval scenario. For an update the unchanged
-skill is the baseline. Keep the prompts and observed result for Step 5. With
+skill is the baseline. Keep the prompts and observed result for Step 5, and pick the guidance
+form from that failure ([guidance testing](references/guidance-testing.md)). With
 Waza usable on an existing skill, freeze the suite's tasks, then persist this
 baseline with `--trials 3` ([Waza suites](references/eval-guide.md#waza-suites)).
 If the baseline passes, do not invent a failure; a reproduced contradiction
@@ -260,4 +264,5 @@ Use these binary checks with the evidence statuses above.
 - Workload profile, worker `model`/`effort` → [model-selection.md](references/model-selection.md)
 - Explore or reviewer subagents → [subagent-guidelines.md](references/subagent-guidelines.md)
 - Eval criteria and Waza suites → [eval-guide.md](references/eval-guide.md)
+- Choosing a guidance form, wording micro-tests, pressure scenarios → [guidance-testing.md](references/guidance-testing.md)
 - Editing an existing skill, sizing it, or teaching a tool → [skill-diet](../skill-diet/SKILL.md), [tool skills](../skill-diet/references/tool-skills.md)
