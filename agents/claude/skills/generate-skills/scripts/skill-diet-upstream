@@ -10,7 +10,6 @@
 set -uo pipefail
 
 URL="https://github.com/nicobailon/skill-diet.git"
-RAW="https://raw.githubusercontent.com/nicobailon/skill-diet"
 PREFIX="agents/claude/skills/skill-diet"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(git -C "${SCRIPT_DIR}" rev-parse --show-toplevel)" || exit 1
@@ -42,10 +41,7 @@ case "${1:-}" in
     if [ "${latest_sha}" = "${cur}" ]; then
       echo "- skill-diet: up to date (${latest})"
     else
-      echo "- skill-diet: update available ${cur_tag:-${cur:0:7}} -> ${latest}; run: skill-diet-upstream pull ${latest}"
-      ver="${latest#v}"
-      curl -fsSL "${RAW}/${latest}/CHANGELOG.md" 2>/dev/null |
-        awk -v v="${ver}" 'index($0, "## [" v "]") == 1 { p = 1; print; next } p && /^## \[/ { exit } p'
+      echo "- skill-diet: update available ${cur_tag:-${cur:0:7}} -> ${latest}; notes: ${URL%.git}/blob/${latest}/CHANGELOG.md; run: skill-diet-upstream pull ${latest}"
     fi
     ;;
   pull)

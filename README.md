@@ -416,7 +416,7 @@ cd ~ && npx claude-code-templates@latest --mod productivity/ultra-config
 현재 버전은 squash 커밋의 `git-subtree-split:` 트레일러에 남는다. `generate-skills` Step 0과 `skill-improver` Phase 0이 새 릴리스 태그가 있으면 경고만 한다.
 
 ```sh
-agents/claude/skills/generate-skills/scripts/skill-diet-upstream check        # 새 태그와 CHANGELOG 절 확인
+agents/claude/skills/generate-skills/scripts/skill-diet-upstream check        # 새 태그와 CHANGELOG 링크 확인
 agents/claude/skills/generate-skills/scripts/skill-diet-upstream pull v0.2.0  # subtree pull --squash 후 링크·검증
 ```
 
