@@ -119,6 +119,8 @@ Applies inline and to strict verdicts. Workers keep their own copies; after chan
 - Completing a sentence adds no tense: `일부 요청 지연 가능성` → `일부 요청의 지연 가능성이 있습니다`, never `지연될 가능성` or `지연되었을 가능성`.
 - Brevity prescriptions (`줄임`, `삭제`, `종결만 직결`) never truncate a complete sentence into a `명사형 종결`: `검토했습니다` → `검토.` makes the A-16 tell and turns a fact into a label. Shorten inside a completed sentence.
 - Decision-strength words (`검토`, `예정`, `가능성`, `방향`, `판단`) stay unchanged.
+- Evaluative claims are claims: cut the filler around them, never their strength, and keep each one. `has truly transformed logistics` → `has transformed logistics`, never `has had an impact on logistics`.
+- Add nothing absent from the source: no new fact, detail, benefit, qualifier or conclusion, even one that seems implied.
 
 **Protected** (never detected or edited): proper nouns and product/model/org names; numbers, dates, units, percentages; direct quotes in double quotes; legal text; math/chemistry/statistics notation; standard acronyms (LLM, GPU, MCP, API, SDK); code, identifiers, commands, paths, API fields, logs, error messages and commit messages (`retry_count`, `/etc/app.yaml`), byte-identical.
 
@@ -131,7 +133,7 @@ Applies inline and to strict verdicts. Workers keep their own copies; after chan
 3. No genre drift (a column does not become an essay).
 4. Register kept (formal stays formal).
 5. Zero residual S1 (Korean) or P1 (English) patterns.
-6. No metaphor, rhetoric or claim absent from the source.
+6. Every source claim kept at its strength; no fact, claim, metaphor or rhetoric absent from the source.
 
 On a violation, roll back that edit and retry once. If a meaning or protected-token violation or the 50% ceiling remains, output the last safe version (or the original). Only unresolved style checks may ship, as "자가검증 미통과 N건" in summary.md.
 
@@ -150,7 +152,7 @@ Decide the type in this order: the user's word; the path (`README.md` → 기술
 |------|-----|-------|
 | **블로그/에세이** | All patterns | Match the source; add no stance or 1st person |
 | **기술 문서** | Clarity first; remove modifiers and filler | None; precise and dry |
-| **마케팅/카피** | Cut unsupported hype; keep only evidence in the source | Match the source brand voice |
+| **마케팅/카피** | Cut filler around claims; keep every claim and its strength | Match the source brand voice |
 | **학술/리포트** | Accuracy and sourcing; remove weasel words | None; objective |
 | **코드 주석** | Brevity; remove needless explanation | None |
 | **SNS/캐주얼** | Remove excess formality when the source is casual | Match the source |
