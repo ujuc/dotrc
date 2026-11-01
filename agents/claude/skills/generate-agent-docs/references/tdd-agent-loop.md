@@ -1,6 +1,6 @@
 ---
 source_url: https://martinfowler.com/articles/exploring-gen-ai/tdd-in-the-agent-loop.html
-last_upstream_check: 2026-10-09
+last_upstream_check: 2026-11-01
 check_interval_days: 90  # a published article, not a living doc page — same long gate as context-engineering-claude5.md
 ---
 
@@ -40,7 +40,7 @@ On any fetch failure use this snapshot and say so in one line:
 
 ---
 
-## Cached snapshot (last verified 2026-10-09)
+## Cached snapshot (last verified 2026-11-01)
 
 ### T1 — Agent-directed TDD process mandates: reject by default, rewrite as outcome verification
 

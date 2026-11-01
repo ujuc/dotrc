@@ -1,7 +1,7 @@
 ---
 source_url: https://code.claude.com/docs/en/best-practices.md
 secondary_source_url: https://code.claude.com/docs/en/memory.md
-last_upstream_check: 2026-10-09
+last_upstream_check: 2026-11-01
 check_interval_days: 0  # 0 = fetch on every run (user preference: always live; the doc changes often). WebFetch caches per-URL for ~15 min, so this is cheap.
 ---
 
@@ -41,48 +41,52 @@ the orchestrator:
    back to the cached snapshot below and tell the user in one line — *"best-practices
    라이브 로드 실패, 캐시 사용 (last check: <date>)."*
 
-The split across two pages is deliberate: the include/exclude table, prune-test,
-and failure patterns live on `best-practices`; the 200-line budget, `/init`
+The split across two pages is deliberate: the include/exclude basis, prune-test
+basis, and ignored-line note live on `best-practices`; the 200-line budget, `/init`
 behavior, the AGENTS.md import pattern, and the `.claude/rules/` format live on
 `memory`.
 
 ---
 
-## Cached snapshot (last verified 2026-10-09)
+## Cached snapshot (last verified 2026-11-01)
 
-### ✅ Include / ❌ Exclude (source: best-practices)
+### ✅ Include / ❌ Exclude (source: best-practices + memory)
 
-| ✅ Include                                            | ❌ Exclude                                          |
-| ---------------------------------------------------- | -------------------------------------------------- |
-| Bash commands Claude can't guess                     | Anything Claude can figure out by reading code     |
-| Code style rules that differ from defaults           | Standard language conventions Claude already knows |
-| Testing instructions and preferred test runners      | Detailed API documentation (link to docs instead)  |
-| Repository etiquette (branch naming, PR conventions) | Information that changes frequently                |
-| Architectural decisions specific to your project     | Long explanations or tutorials                     |
-| Developer environment quirks (required env vars)     | File-by-file descriptions of the codebase          |
-| Common gotchas or behaviors that aren't self-evident | Self-evident practices like "write clean code"     |
+| ✅ Include | ❌ Exclude |
+| --- | --- |
+| How to confirm work in this repo: the exact test, typecheck, and lint commands, and how to run a single test file | Anything Claude can work out from the code itself |
+| Places where the code is misleading: an old pattern that's everywhere but that new code must not copy, or a directory that looks unused but isn't | Directory layouts, dependency lists, and architecture overviews (`/doctor` cuts these) |
+| Decisions that aren't in the repo: which error helper the team settled on, how deploys work, what needs a migration review (local: also branch and PR conventions) | Multi-step procedures and rules for one part of the codebase (skill or path-scoped rule) |
+| The environment variable your integration tests need | Personal preferences (`CLAUDE.local.md`) |
+| Anything you've had to correct twice already | |
+| Pitfalls, rationale, and conventions that differ from tool defaults (`/doctor` keeps these) | |
 
 ### Prune test — the real gate (source: best-practices)
 
-> Keep it concise. For each line, ask: *"Would removing this cause Claude to make
-> mistakes?"* If not, cut it. Bloated CLAUDE.md files cause Claude to ignore your
-> actual instructions!
+> A good test before you write anything down for Claude:
+>
+> 1. Could it find this by reading the code?
+> 2. Would it actually go and look?
+>
+> If both are yes, leave it out.
 
 This is the single most important verification criterion. Every produced line of
 CLAUDE.md (and every retained line in update mode) must pass it.
 
 Adjacent guidance: CLAUDE.md is loaded every session, so it holds only what
-applies broadly. *"For domain knowledge or workflows that are only relevant
-sometimes, use skills instead"* — recommend a skill, not a CLAUDE.md section,
+applies broadly. *"A long release procedure sitting in a skill doesn't weigh on
+your unrelated bug fix the way it would in `CLAUDE.md`."* — recommend a skill,
+not a CLAUDE.md section,
 for sometimes-relevant workflows.
 
 Upstream's add/move triggers: *"Add to it when: Claude makes the same mistake
 a second time"*; *"If an entry is a multi-step procedure or only matters for
 one part of the codebase, move it to a skill or a path-scoped rule instead."*
 Two lines that contradict each other are a defect, not a nuance: *"if two
-instructions contradict each other, Claude may pick one arbitrarily."* Emphasis
-(`IMPORTANT`) works only on a single line: *"If you emphasize many lines, none
-of them stands out."*
+instructions contradict each other, Claude may pick one arbitrarily."* Skip
+emphasis (`IMPORTANT`, ALL CAPS): *"Older models sometimes needed the emphasis.
+Current ones follow a plainly worded line, and piling on emphasis mostly makes
+Claude over-apply the rule."*
 
 ### Size budget: upstream recommendation and local defaults
 
@@ -91,7 +95,11 @@ file. This is guidance, not a parser limit or a mandatory combined ceiling.
 Claude Code warns at startup and in `/status` when one instruction file exceeds
 the recommended length, and again when files each within it add up past a
 combined limit; *"Each CLAUDE.md, rules file, and `@path` import counts as a
-separate file."* A file over 4 MiB is skipped entirely.
+separate file."* A file over 4 MiB is skipped entirely. Over a per-file limit, an
+on-demand file (subdirectory CLAUDE.md or CLAUDE.local.md and their imports,
+rules in a subdirectory's `.claude/rules/`, path-scoped rules) reaches Claude
+only from its start: 40,000 characters on a 200K window; 200,000 on 1M with
+Opus 4.6 or Sonnet 4.6, 150,000 on later models (applied since v2.1.309).
 
 Local defaults for this skill:
 - Aim for about 100 combined lines in root CLAUDE.md plus imported AGENTS.md.
@@ -103,11 +111,11 @@ Local defaults for this skill:
   Shared requirements must remain available through AGENTS.md/shared references;
   moving them exclusively into Claude rules does not satisfy this policy.
 
-### Imports (source: best-practices + memory)
+### Imports (source: memory)
 
 > CLAUDE.md files can import additional files using `@path/to/import` syntax.
 
-- Imported files are **expanded and loaded in full at launch** — `@import` aids
+- Imported files are **expanded and loaded alongside the importing file** — `@import` aids
   organization but does **not** reduce context. Use it only for content that
   genuinely belongs in every session.
 - Relative paths resolve relative to the importing file, not the working
@@ -116,7 +124,11 @@ Local defaults for this skill:
   backticks (`` `@README` ``) to mention it without importing it. A quoted
   path is not imported either; escape spaces with a backslash instead.
 - An import outside the working directory in a project file triggers a
-  one-time approval dialog; user-scope files load it without the dialog.
+  one-time approval dialog; user-scope files load it without the dialog, except
+  in desktop Cowork sessions, which skip such an import.
+- An external import in an `AGENTS.md` read directly, not through a `CLAUDE.md`,
+  gets no prompt: it loads only if external imports were already approved for
+  the project.
 - Project-root CLAUDE.md survives compaction; nested CLAUDE.md files and
   `paths`-scoped rules load again on demand.
 
@@ -182,7 +194,7 @@ Use plan mode for changes under `src/billing/`.
   (`.cursor/rules/`, `.cursorrules`) and Copilot
   (`.github/copilot-instructions.md`) by default; `AGENTS.md`,
   `.devin/rules/`, `.windsurf/rules/`/`.windsurfrules` and `.clinerules` only
-  with `CLAUDE_CODE_NEW_INIT=1`. `/import` (v2.1.213+) appends a one-time copy
+  with `CLAUDE_CODE_NEW_INIT=1`. `/import` appends a one-time copy
   of `AGENTS.md` into CLAUDE.md, which duplicates shared text, so this skill
   does not use it.
 
@@ -200,7 +212,12 @@ Use plan mode for changes under `src/billing/`.
   `paths`"* — a broken legacy frontmatter silently becomes an always-on rule.
 - A path-scoped rule loads when Claude uses Read, Write, or Edit on a matching
   file, or views one with a Bash read such as `cat`/`head` on a single file.
-  Brace expansion is supported (`src/**/*.{ts,tsx}`). User-level rules load
+  Each pattern is relative to the rule's base directory: for a project rule, the
+  directory containing its `.claude` folder; for a user-level rule, the session's
+  primary working directory.
+  Brace expansion is supported (`src/**/*.{ts,tsx}`). Escape a literal `[`
+  (`photos \[2024/**`): `[` starts a bracket expression, and an invalid one
+  matches nothing. User-level rules load
   before project rules; neither overrides the other.
 - `.md` files are discovered recursively; symlinks are supported. A symlink
   whose target is outside the working directory is treated like an external
@@ -220,11 +237,14 @@ Use plan mode for changes under `src/billing/`.
 
 ### Advisory vs. deterministic — recommend hooks where useful
 
-> Unlike CLAUDE.md instructions which are advisory, hooks are deterministic and
-> guarantee the action happens.
+> If something has to happen every time, make it a hook, a deny rule, or a
+> managed setting. `CLAUDE.md` is for guidelines, and Claude is allowed to decide
+> a guideline doesn't apply.
 
-Failure-pattern fix: *"If Claude already does something correctly without the
-instruction, delete it or convert it to a hook."* When a candidate CLAUDE.md line
+Hook test: *"If you keep adding emphasis to a `CLAUDE.md` line and Claude still
+misses it, that's a sign the line belongs in a hook. The reverse holds too: if you
+have hooks for things that are only preferences, delete them and let Claude
+decide."* When a candidate CLAUDE.md line
 is a must-run gate, recommend automation where useful. Preserve the documented
 team requirement until equivalent automation exists and its replacement is
 authorized; a concrete test command is not generic self-check scaffolding.
@@ -256,12 +276,14 @@ authorized; a concrete test command is not generic self-check scaffolding.
   it is user-invoked, so this skill consumes its report, never runs it.
 - `/context` confirms which instruction files actually loaded.
 
-### Over-specified CLAUDE.md — the failure to avoid (source: best-practices)
+### Over-specified CLAUDE.md — the failure to avoid (source: best-practices + memory)
 
-> **The over-specified CLAUDE.md.** If your CLAUDE.md is too long, Claude ignores
-> half of it because important rules get lost in the noise. **Fix**: Ruthlessly
-> prune. If Claude already does something correctly without the instruction,
-> delete it or convert it to a hook.
+> If Claude keeps ignoring a line that *is* in `CLAUDE.md`, adding IMPORTANT
+> probably won't fix it. Either the file has grown long enough that the line gets
+> lost, or the line is a rule that can't have exceptions, in which case it belongs
+> in a hook.
+
+The memory page adds: *"Longer files consume more context and reduce adherence."*
 
 This is the verifier's primary anti-pattern: long, noisy CLAUDE.md → reduced
 adherence. Pruning is not cosmetic; it is correctness.

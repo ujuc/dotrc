@@ -8,8 +8,9 @@ source_urls:
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5.md
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5.md  # base guide inherited by 5.5
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-haiku-5-5.md
+  - https://platform.claude.com/docs/en/models/opus-5-5/migration-guide.md  # source of the S1 quote
 secondary_source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md
-last_upstream_check: 2026-10-08
+last_upstream_check: 2026-11-01
 check_interval_days: 14
 ---
 
@@ -86,14 +87,19 @@ See D1 for the model-specific counterpoint.
 ### W2 — Never command reasoning visibility or thinking amount
 
 Fable 5: instructions that *"tell the model to echo, transcribe, or explain
-its internal reasoning as response text can trigger the
-`reasoning_extraction` refusal category ... causing elevated fallbacks."*
-Opus 5.5 has the same category, *"new if you're coming from Claude Opus 5"*,
+its internal reasoning as response text might trigger the
+`reasoning_extraction` refusal category"*.
+Fable 5.1: *"Prompts, skills, and tool descriptions that ask the model to write
+its thinking or reasoning might be declined with the `reasoning_extraction`
+category."*
+Opus 5 and Opus 5.5 have the same category,
 and Sonnet 5.5 lists it too: *"If your prompts ask the model to include its
 reasoning in the response, remove those instructions"*.
 Opus 5: *"If your system prompt contains a rule instructing the model not to
 think or not to reason, remove it; that kind of instruction increases tag
 leakage."* Opus 5.5: *"remove the no-thinking rule either way."*
+Sonnet 5.5, with `between_tools`: *"remove any instruction that tells the model
+not to think."*
 Opus 5.5: *"Lowering effort reduces thinking ... more reliably than prompt
 instructions do."* Sonnet 5.5: *"Asking it in the system prompt to think less
 doesn't reliably reduce its thinking."* Haiku 5.5: *"telling the model in the
@@ -119,8 +125,8 @@ appropriate); only Claude-specific rules prefer `.claude/rules/` with `paths`.
 
 ### W4 — Carry the reason when the rule is not self-evident
 
-Fable 5: the model *"tends to perform better when it understands the intent
-behind a request."* One clause of *why*, only where the why is non-obvious —
+Fable 5: the model *"tends to perform better when the prompt states the intent
+behind a request"*. One clause of *why*, only where the why is non-obvious —
 not license for prose.
 
 ### W5 — Never write confidence or severity filter bars
@@ -128,25 +134,35 @@ not license for prose.
 Opus 5, Sonnet 5 and Opus 4.8 converge: *"only report high-severity issues,"
 "be conservative"* (Sonnet 5 and Opus 4.8 add *"don't nitpick"*) are followed
 literally and suppress real findings. Opus 5: *"ask it to report everything and
-filter in a separate pass instead."* Applies whenever generated docs carry
-review or triage instructions.
+filter in a separate pass instead."* Sonnet 5 and Opus 4.8, for a single pass that must
+self-filter: *"be concrete about what the reporting threshold is rather than
+using qualitative terms"*. Applies whenever generated docs carry review or
+triage instructions.
 
 ### W6 — Delegation guidance needs a bar, not a ban
 
 Opus 5 *"delegates to subagents more readily than prior models ... it
 multiplies cost and time when applied to small tasks"*; Fable 5 *"dispatches
-parallel subagents more readily ... Use subagents frequently."* Both want an
+parallel subagents more readily ... Use subagents frequently"*. Both want an
 explicit bar for when delegation is warranted. Emit it through the existing
 conditional orchestration guidance (stage3-generator.md Section A) —
 never as a second, competing policy.
 
 ### W7 — Agent-memory notes: one lesson per file
 
-Fable 5: *"Store one lesson per file with a one-line summary at the top ...
+Fable 5: *"Store one lesson per file with a one-line summary at the top.
+Record corrections and confirmed approaches alike, including why they mattered.
 Don't save what the repo or chat history already records; update an existing
 note rather than creating a duplicate; delete notes that turn out to be
 wrong."* Emit only when the project actually has an agent-memory directory;
 otherwise it fails the prune test.
+
+### W8 — Steer with a brief instruction, not an enumeration
+
+Fable 5: *"you can steer most behaviors with a brief instruction rather than
+enumerating each behavior by name"*. Write the one line that names the
+behavior; W3 still applies, so that line states its scope. Keep lists a team
+policy requires.
 
 ---
 
@@ -160,7 +176,7 @@ older instructions if default performance is better."* This is the upstream
 justification for pruning this skill's own files. On every update pass, ask
 of each instruction: **does the current model already do this by default?**
 Both current guides reaffirm this. Opus 5.5 migration: *"Instructions tuned
-for Claude Opus 5's behavior may no longer be needed"*. Fable 5.1, on
+for Claude Opus 5's behavior might no longer be needed"*. Fable 5.1, on
 narration suppressors: *"Remove lines like that before adding anything."*
 Sonnet 5.5 names two more to drop: tool-discouraging lines such as *"only use
 tools when strictly necessary"* or *"minimize tool calls"*, and *"hold all
@@ -210,7 +226,8 @@ The reconciliation that holds for both turns on **whose work is verified**:
 
 Fable 5.1 and Opus 5.5: adaptive thinking always on (cannot be disabled);
 default effort `high` on Fable 5.1, `medium` on Opus 5.5. Sonnet 5: adaptive,
-default `high`. Sonnet 5.5: adaptive, default `high`; levels are
+default `high`. Sonnet 5.5: adaptive, default `high` on the Claude API but
+`medium` in Claude Code; levels are
 *"recalibrated"* against Sonnet 5, and `between_tools` (accepted at `high` or
 below) is its lowest thinking setting. Haiku 5.5: adaptive, on by default,
 default `medium`; the first Haiku with effort levels, and `disabled` is accepted
@@ -235,5 +252,9 @@ reminders, Sonnet 5.5's `between_tools`/`display: "updates"` wiring, Haiku 5.5's
 current-date search nudge and chatbot system-prompt adherence block, JSON-output
 parsing, mid-turn message placement and tolerant tool-call handling, and
 system-prompt blocks for change/test scope, targeted edits or
-compaction summaries (context-engineering-claude5.md C4). These tune an
+compaction summaries (context-engineering-claude5.md C4), append-only history,
+writing density and deliverable length, source-quoting, search-triggering,
+open-ended-request and overplanning blocks, progress-claim and context-budget
+lines, tool-choice wording, running-subagent wiring, and prompts written for
+thinking disabled. These tune an
 application's runtime or system prompt, not a repository's documentation.

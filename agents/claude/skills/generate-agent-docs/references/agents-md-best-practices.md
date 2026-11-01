@@ -1,6 +1,6 @@
 ---
 source_url: https://agents.md/
-last_upstream_check: 2026-10-09
+last_upstream_check: 2026-11-01
 check_interval_days: 30  # the standard site changes rarely; re-fetch only when stale
 ---
 
@@ -18,7 +18,7 @@ below.
 
 ---
 
-## Cached snapshot (last verified 2026-10-09)
+## Cached snapshot (last verified 2026-11-01)
 
 ### Format: plain markdown, no required fields
 

@@ -1,7 +1,7 @@
 ---
 source_url: https://code.claude.com/docs/en/skills
 spec_url: https://agentskills.io/specification
-last_upstream_check: 2026-09-23
+last_upstream_check: 2026-11-01
 check_interval_days: 14
 ---
 
@@ -44,11 +44,13 @@ repository's `group`, breaks uploads ([Portability](#portability-outside-claude-
 | Format | **[SPEC]** | `^[a-z0-9]+(-[a-z0-9]+)*$`, max 64 characters |
 | Folder match | **[SPEC]** | Must match the parent directory name |
 | Reserved prefixes | **[LOCAL]** | No name starting with `claude` or `anthropic` (no hyphen required); `RESERVED_NAME_PREFIXES` only |
+| Reserved names | **[CC]** | Outside plugins, `anthropic-skills` and names inside it (`anthropic-skills:*`) do not load, and a folder named `synced` (any case) is skipped |
 
-**[CC]** For personal and project skills `name` is only the display label; the
-`/command` comes from the directory. Under a plugin's `skills/` subdirectory
+**[CC]** For personal and project skills `name` sets the `/command` unless another
+command uses that name, and the directory name also invokes the skill. Under a
+plugin's `skills/` subdirectory
 `name` replaces the directory name in the command's last segment (`name: fancy`
-→ `/my-plugin:fancy`); for a plugin-root `SKILL.md` it supplies the whole final
+→ `/my-plugin:fancy`, and bare `/fancy` unless another command uses it); for a plugin-root `SKILL.md` it supplies the whole final
 segment, falling back to the plugin directory name.
 
 ### `description`
@@ -59,7 +61,7 @@ What the skill does and when to use it; the primary trigger-matching field.
 |------|--------|-------------|
 | Spec max length | **[SPEC]** | **1,024 characters** for `description` alone |
 | Listing cap | **[CC]** | **1,536 characters** for `description` + `when_to_use`, truncated in the listing (`skillListingMaxDescChars`); `DESCRIPTION_COMBINED_MAX` enforces this one, not the 1,024 |
-| XML tags | **[LOCAL]** | Tag-shaped tokens (`<name ...>`) fail; upstream only escapes them for skills synced from claude.ai (v2.1.228+) |
+| XML tags | **[LOCAL]** | Tag-shaped tokens (`<name ...>`) fail; upstream displays `<`/`>` in `description` and `when_to_use` as `&lt;`/`&gt;`, and escapes them in text that reaches Claude for skills synced from claude.ai (v2.1.228+) |
 
 Two truncations apply:
 
@@ -91,12 +93,13 @@ or YAML list mapped to positions in order: `arguments: [issue, branch]` makes
 
 `true` stops Claude from loading the skill on its own; users run it with `/name`.
 Default `false`. Recommended for destructive or high-cost workflows. It also
-keeps the skill out of subagent preloads and (v2.1.196+) stops it running when
-a scheduled task fires with it as the prompt.
+keeps the skill out of subagent preloads and stops it running when
+a session-scoped scheduled task fires with it as the prompt.
 
 ### `user-invocable`
 
-`false` hides the skill from the `/` menu (default `true`): for background
+`false` hides the skill from the `/` menu and refuses a typed `/name` (default
+`true`): for background
 knowledge Claude should load but users have no reason to call.
 
 ### `allowed-tools`
@@ -114,7 +117,10 @@ allowed-tools: Read Grep Glob            # or "Read, Grep, Bash(git status:*)", 
   session-wide grant.
 - It does not restrict which tools are callable; baseline permissions still
   apply to unlisted tools, and deny and ask rules override it.
-- `${CLAUDE_PROJECT_DIR}` (v2.1.196+), `${CLAUDE_SKILL_DIR}`, and in plugins
+- Workspace trust does not gate it: a project skill's grant applies even in a
+  `-p` run in an untrusted folder. `allowManagedPermissionRulesOnly` (v2.1.282+)
+  makes Claude Code ignore it in project and personal skills.
+- `${CLAUDE_PROJECT_DIR}`, `${CLAUDE_SKILL_DIR}`, and in plugins
   `${CLAUDE_PLUGIN_ROOT}`/`${CLAUDE_PLUGIN_DATA}` substitute in Bash rules, so
   `Bash(${CLAUDE_SKILL_DIR}/scripts/lint.sh *)` matches the body's call and lets
   a bundled script run without a prompt.
@@ -159,8 +165,9 @@ effort: high
 - `low`, `medium`, `high`, `xhigh`, `max`, as the model supports.
 - Default: inherits the session; with no level set anywhere each model uses its
   own default, and defaults differ by model ([model-config](https://code.claude.com/docs/en/model-config)).
-- Overrides the session level but not `CLAUDE_CODE_EFFORT_LEVEL`; `maxEffortLevel`
-  or an organization cap still limits it.
+- Applies for the rest of the current turn. Overrides the session level but not
+  `CLAUDE_CODE_EFFORT_LEVEL`; `maxEffortLevel` or an organization cap still limits
+  it. With `context: fork` it sets the forked subagent's effort level instead.
 - **[LOCAL]** Pin a level only with measured evidence; see
   [model-selection.md](model-selection.md#selection-and-escalation) step 4 on
   effort names across models.
@@ -183,9 +190,11 @@ With `context: fork`, `false` makes the invoking turn wait for the fork's result
 (default `true`, v2.1.218+; earlier versions always waited). Claude Code also
 waits at `true` in non-interactive runs (`-p`, Agent SDK), with
 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`, while a previous invocation of the
-same skill runs, and when a scheduled task fires it. A backgrounded fork gets
+same skill runs, when a session-scoped scheduled task fires it, and when a
+dynamic-workflow agent invokes it (v2.1.295+). A backgrounded fork gets
 the narrower background-subagent tool set and its edits fall outside session
-checkpoints (`/rewind` cannot undo them); set `false` when the skill needs the
+checkpoints (`/rewind` restores only files Claude had already edited in the
+conversation; use git for the rest); set `false` when the skill needs the
 full tool set.
 
 ### `hooks`
@@ -193,6 +202,9 @@ full tool set.
 Hooks in the settings format. They register when the skill is invoked and keep
 running for the rest of the session; `once: true` removes a hook after its first
 successful run ([hooks in skills](https://code.claude.com/docs/en/hooks#hooks-in-skills-and-agents)).
+When managed `strictPluginOnlyCustomization` lists `hooks`, a personal or project
+skill's hooks do not run and it loses its `allowed-tools` pre-approval, apart from
+the skills that keep it.
 
 ```yaml
 hooks:
@@ -207,7 +219,8 @@ hooks:
 
 Globs (comma-separated string or YAML list, same format as path-specific memory
 rules) that limit **automatic** activation to matching files, e.g.
-`paths: "src/**/*.ts, tests/**/*.spec.ts"`. No effect on `/skill-name`.
+`paths: "src/**/*.ts, tests/**/*.spec.ts"`. Patterns are relative to Claude's
+current working directory; files outside it do not match. No effect on `/skill-name`.
 
 ### `shell`
 
@@ -276,7 +289,10 @@ Allowed properties are: allowed-tools, compatibility, description, license, meta
 No skill here is upload-destined, so do not strip `when_to_use`,
 `argument-hint`, `model` or `group` from existing skills. A skill newly meant
 for one of those paths uses only the six fields and no Claude Code-only body
-features (`` !`command` `` injection, `@` file references); six-field
+features (`` !`command` `` injection, `@` file references,
+`${CLAUDE_PROJECT_DIR}`, `${CLAUDE_SESSION_ID}`): in a skill synced from
+claude.ai, `!` never runs on your machine and the others work only in Cowork or
+cloud sessions (v2.1.228+); six-field
 frontmatter still loads unchanged in Claude Code.
 
 ## Invocation Control Matrix
@@ -284,7 +300,7 @@ frontmatter still loads unchanged in Claude Code.
 | Frontmatter | User can invoke | Claude can invoke | Context loading |
 |-------------|----------------|-------------------|-----------------|
 | (default) | Yes | Yes | Description always in context; full skill loads when invoked |
-| `disable-model-invocation: true` | Yes | No | Description NOT in context; full skill loads when user invokes |
+| `disable-model-invocation: true` | Yes | Not on its own | Description NOT in context; full skill loads when invoked |
 | `user-invocable: false` | No | Yes | Description always in context; full skill loads when invoked |
 
 ## Content Lifecycle
@@ -305,15 +321,16 @@ frontmatter still loads unchanged in Claude Code.
 | `$ARGUMENTS[N]` / `$N` | Argument by 0-based index (`$0` is the first) |
 | `$name` | Named argument from the `arguments` field |
 | `${CLAUDE_SESSION_ID}` | Current session ID |
-| `${CLAUDE_EFFORT}` | Current effort level (`low`–`max`; ultracode reports as `xhigh`) |
+| `${CLAUDE_EFFORT}` | Current effort level (`low`–`max`) |
 | `${CLAUDE_SKILL_DIR}` | Directory of this SKILL.md (for plugin skills, the skill's subdirectory, not the plugin root); also in `allowed-tools` Bash rules |
-| `${CLAUDE_PROJECT_DIR}` | Project root (v2.1.196+), the path hooks receive; also in `allowed-tools` Bash rules |
+| `${CLAUDE_PROJECT_DIR}` | Project root, the path hooks receive; also in `allowed-tools` Bash rules |
 | `${CLAUDE_PLUGIN_ROOT}` | Plugin skills only: plugin install directory, for files bundled anywhere in the plugin |
 | `${CLAUDE_PLUGIN_DATA}` | Plugin skills only: persistent data directory that survives plugin updates |
 
 Indexed arguments use shell-style quoting (`/my-skill "hello world" second` →
 `$0` = `hello world`). Escape a literal `$` before a digit, `ARGUMENTS` or a
-declared name with one backslash: `\$1.00`.
+declared name with one backslash: `\$1.00`. The escape does not stop a
+`${CLAUDE_*}` variable from substituting.
 
 ## Manual checks
 

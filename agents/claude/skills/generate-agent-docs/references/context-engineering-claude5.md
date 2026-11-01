@@ -1,6 +1,6 @@
 ---
 source_url: https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/  # claude.com redirects here; the .md variant exists only on claude.dev
-last_upstream_check: 2026-10-09
+last_upstream_check: 2026-11-01
 check_interval_days: 90  # a published post, not a living doc page — long gate, unlike best-practices (0) and model-prompting (14)
 ---
 
@@ -34,7 +34,7 @@ and say so in one line: *"context-engineering 가이드 라이브 로드 실패,
 
 ---
 
-## Cached snapshot (last verified 2026-10-09)
+## Cached snapshot (last verified 2026-11-01)
 
 ### C1 — Anchor instructions to context, not to absolute prohibitions
 
@@ -71,9 +71,10 @@ Emitting it as a CLAUDE.md / AGENTS.md section spends every-session budget on
 something needed occasionally. Recommend a skill and emit at most one reference
 line pointing at it.
 
-This promotes the adjacent line already in claude-code-best-practices.md — *"for
-domain knowledge or workflows that are only relevant sometimes, use skills
-instead"* — from an aside into the default architecture.
+This promotes the adjacent line already in claude-code-best-practices.md — *"A
+long release procedure sitting in a skill doesn't weigh on your unrelated bug
+fix the way it would in `CLAUDE.md`."* — from an aside into the default
+architecture.
 
 ### C3 — Never emit memory-management instructions
 
