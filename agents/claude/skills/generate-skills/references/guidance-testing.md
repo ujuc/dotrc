@@ -8,8 +8,8 @@ check_interval_days: 14
 # Testing guidance before it ships
 
 Adapted from `writing-skills` in obra/superpowers (MIT, Copyright (c) 2025 Jesse
-Vincent). Findings marked upstream are that project's; local measurements are labeled local. When `superpowers-upstream check` reports an
-update, read the compare link, adapt what changed, then update `source_commit`
+Vincent). Findings marked upstream are that project's; local measurements are labeled local. When cache maintenance is the selected task and
+`superpowers-upstream check` reports an update, read the compare link, adapt what changed, then update `source_commit`
 and `last_upstream_check` here.
 
 Left out on purpose: the TDD mandate and "delete it and start over", because

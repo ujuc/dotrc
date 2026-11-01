@@ -11,11 +11,13 @@ Local defaults. What to cut and where each fact lives follow
 | Medium | "Follow this structure, adapt as needed" | Patterns with context variance |
 | High | "Use your best judgment" | Creative or highly variable work |
 
-Default up, not down: current models handle ambiguity, and a step-by-step recipe
-tends to hinder them. Start at the highest freedom the task tolerates and lower
+Default up, not down: start at the highest freedom the task tolerates and lower
 it only for a fragility you can name. State the goal and constraints; leave the
-route to the model. (Model-specific finding: OpenAI, "Rethinking skills and
-prompts for GPT-6 Astra"; Claude Code model-config, Fable guidance.)
+route to the model. A recipe for an output's shape is a separate form, picked from
+a [baseline failure](guidance-testing.md#match-the-form-to-the-failure). (Local
+default. Model-specific finding for GPT-6 Astra and Fable: prescribing the route
+step by step tends to hinder them. OpenAI, "Rethinking skills and prompts for
+GPT-6 Astra"; Claude Code model-config, Fable guidance.)
 
 A multi-workflow skill keeps `SKILL.md` a router: enough to pick the workflow
 and find its reference or script, with each reference linked under its case

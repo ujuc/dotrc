@@ -1,6 +1,6 @@
 ---
 name: generate-skills
-description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, 스킬 다이어트, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza, 한두 줄 편집은 skill-diet가 맡는다."
+description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, 스킬 다이어트, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza, 한두 줄 편집만 skill-diet가 맡는다."
 group: meta
 argument-hint: "[skill-name]"
 ---
@@ -31,9 +31,9 @@ mode it asks for. Judge what is asked, not a word inside a skill name.
   `scripts/diet-adapter-claude` symlinked as `adapter`, `--parallel 2`, a pinned
   `--model`. The shipping commit carries `Skill-Diet: <skill-name>`.
 - **Update mode**: a change to an existing skill (`업데이트`, `수정`, `갱신`, `최신화`, `update`, `refresh`)
-  → Run Step 0 → Steps U1–U3 → Step 5 (validation)
+  → Run Step 0 → Steps U1–U2 → [Behavior baseline](#behavior-baseline) → Step U3 → Step 5 (validation)
 - **Create mode**: a new skill
-  → Run Step 0 → Step 1 below → Steps 2–4 in [create mode](references/create-mode.md) → Step 5
+  → Run Step 0 → Step 1 below → [Behavior baseline](#behavior-baseline) → Steps 2–4 in [create mode](references/create-mode.md) → Step 5
 
 When it names only a skill, or asks for none of these, ask which mode and which skill.
 
@@ -90,7 +90,8 @@ bash "$GS/register-skill" "${DOTRCDIR}/agents/claude/skills/README.md" --name <s
 - Keep exact baseline inputs, fixture bytes and outputs, and rerun the same cases
   on the candidate. If an explicit instruction already makes the baseline pass,
   report the removed contradiction, not an invented FAIL→PASS.
-- Give a verifier originals or diffs, scope, facts and user decisions. A blind
+- Give a verifier originals or diffs, scope, facts, user decisions and binding
+  repository rules. A blind
   reviewer judges only what its inputs show; missing approval evidence is no
   ground for deleting a team rule. Recheck only the criteria a final repair touched.
 
@@ -112,7 +113,7 @@ to another skill-generation workflow.
 
 1. Lines 1–6 of [frontmatter-spec.md](references/frontmatter-spec.md) hold
    `source_url`, `spec_url`, `last_upstream_check` and `check_interval_days`
-   (default 14). Within the interval, go to the mode's first step without fetching.
+   (default 14). Within the interval, skip the fetch and go to step 4.
 2. Otherwise WebFetch both URLs (**[SPEC]** rules exist only at `spec_url`; try
    the HTML page when a Markdown response fails). Diff fields, string
    substitutions and the invocation-control matrix against the spec's
@@ -142,7 +143,7 @@ without the new guidance: three pressure scenarios for a discipline skill,
 otherwise one application or retrieval scenario. For an update the unchanged
 skill is the baseline. Keep the prompts and observed result for Step 5, and pick the guidance
 form from that failure ([guidance testing](references/guidance-testing.md)). With
-Waza usable on an existing skill, freeze the suite's tasks, then persist this
+Waza usable on an existing skill, freeze the suite, then persist this
 baseline with `--trials 3` ([Waza suites](references/eval-guide.md#waza-suites)).
 If the baseline passes, do not invent a failure; a reproduced contradiction
 justifies only its scoped correction.
@@ -167,9 +168,9 @@ frontmatter, note `references/` and `scripts/`, and run
 6. **Redundancy**: run the audit below.
 7. **Model guidance**: keep a default profile and escalation trigger in the
    body; inheritance alone is not a recommendation.
-8. **Cached references**: a request or drift report naming a reference with
-   `source_url(s)` selects cache maintenance: follow its freshness note, fetch
-   the sources, apply verified drift, then update its check date.
+8. **Cached references**: a user request naming a reference with `source_url(s)`,
+   or asking to act on its drift report, selects cache maintenance: follow its
+   freshness note, fetch the sources, apply verified drift, then update its check date.
 
 Summarize the comparison, reuse any approved scope, and ask only about material open choices.
 
@@ -256,9 +257,8 @@ Use these binary checks with the evidence statuses above.
 | 1 | `name`, `description`, and `group` are non-empty. |
 | 2 | Every concrete reference path in the body and loaded references resolves. |
 | 3 | `description` plus optional `when_to_use` covers WHAT and concrete WHEN triggers. |
-| 4 | Body is at most 500 lines; a validator size warning still fails this criterion. |
-| 5 | The Step 5 validator exits 0 with no error-severity findings. |
-| 6 | Matching-input evidence supports the claimed level and preserves the workflow contract; mechanical corrections use structural evidence, and source-conflict repairs do not invent behavioral failures. |
+| 4 | The Step 5 validator exits 0 with no error-severity findings. |
+| 5 | Matching-input evidence supports the claimed level and preserves the workflow contract; mechanical corrections use structural evidence, and source-conflict repairs do not invent behavioral failures. |
 
 ## Look up the rest
 

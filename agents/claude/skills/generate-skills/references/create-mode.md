@@ -1,6 +1,6 @@
 # Create mode: Steps 1–4
 
-Run after Step 0 and the behavior baseline in [SKILL.md](../SKILL.md); Step 5 there finishes the skill.
+Run in the order [Mode detection](../SKILL.md#mode-detection) sets; Step 5 there finishes the skill.
 
 ## Step 1: Capture the use case
 
@@ -31,7 +31,7 @@ may run; skip it when the request already names the skill, purpose and pattern.
 
 Run `init-skill` ([Scripts](../SKILL.md#scripts)). `--group` is required and is
 a deliberate choice, never a guess. It writes `SKILL.md` with the required
-fields and commented placeholders for every optional field; add
+fields and commented placeholders for common optional fields; add
 `--with-references`, `--with-scripts` or `--with-assets` only for resources the
 skill needs.
 
@@ -41,7 +41,7 @@ stay blocked until Step 5 validates it.
 
 Structure rules the validator does not cover:
 
-- `SKILL.md` is the only entry point; no `README.md`, `main.md` or `index.md`.
+- `SKILL.md` is the only entry point; no `main.md` or `index.md`.
 - `references/` holds what only some tasks need, each linked from `SKILL.md`
   with a load condition. Resolve a Markdown link from the file that contains it:
   `references/api-guide.md` in `SKILL.md`, `api-guide.md` from a sibling reference.
@@ -55,8 +55,8 @@ Structure rules the validator does not cover:
 
 Use [frontmatter-spec.md](frontmatter-spec.md) and [description-examples.md](description-examples.md).
 
-1. Set non-empty `name` (matching the folder), `description` and `group`; ask
-   only if placement remains unclear.
+1. Set non-empty `name` (matching the folder) and `description`, and use the
+   `group` confirmed in Step 1.
 2. Write a concise WHAT + WHEN `description` from the selected trigger phrases;
    workflow detail belongs in the body.
 3. Pick optional fields for the intended host and distribution path. Use manual

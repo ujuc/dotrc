@@ -40,9 +40,10 @@ cannot: their `contains` graders check words that already appear in the prompt.
   the answer, graded with `text` `not_contains` or a `skill_invocation` grader
   that lists the skill under `forbidden_skills`.
 - **Trials and IDs.** Set `trials_per_task: 3` (or run with `--trials 3`) and
-  freeze task IDs before the baseline run; the launcher marks a later run
-  `⚠️ incomparable` when engine, model, trials, or the task set differ, and
-  skips the run entirely when eval.yaml already shows the mismatch.
+  freeze the suite (`eval.yaml`, `tasks/`, `fixtures/`) before the baseline run;
+  the launcher marks a later run `⚠️ incomparable` when engine, model, trials,
+  task set, or `suite_hash` differ, and skips the run entirely when that is
+  already known.
 - **Trigger precision.** `inject_skill_body: false` with a `skill_invocation`
   grader measures whether the agent calls the `skill` tool. Trust a
   positive-trigger grader only after a control task shows the same executor and
@@ -58,8 +59,8 @@ The [`waza` skill](../../waza/SKILL.md) owns scaffolding, commands, existing-sui
 preservation and result paths. Its launcher refuses baselines it cannot compare:
 
 1. Scaffold, then refine the placeholder tasks against real triggers and outputs
-   **before** the baseline. Changing task IDs, the executor or
-   `trials_per_task` afterwards makes the candidate `⚠️ incomparable`; rerun the
+   **before** the baseline. Editing `eval.yaml`, a task or a fixture
+   afterwards makes the candidate `⚠️ incomparable`; rerun the
    baseline on the unchanged skill instead of comparing across suites.
 2. Run baseline and candidate with the same `--trials 3` and distinct labels,
    passing the baseline JSON to the candidate run with `--baseline-json`.
