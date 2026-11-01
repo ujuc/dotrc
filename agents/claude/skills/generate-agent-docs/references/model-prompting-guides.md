@@ -204,8 +204,7 @@ default `high`. *"Effort level names don't correspond to the same amount of
 thinking across models"* (Opus 5.5; Fable 5.1 says the same).
 
 These are API/harness configuration, not project knowledge: never write effort
-or thinking settings into a project doc; they go stale per model and fail the
-staleness check.
+or thinking settings into a project doc; they go stale per model.
 
 ## Out of scope — do not import
 
@@ -215,6 +214,6 @@ design defaults, effort and thinking configuration, token sizing, tool
 (computer-use, vision, send-to-user), subagent and API wiring, tool-choice and
 batching lines, output parsing, message placement and history handling, run
 control and time or context budgets, and system-prompt blocks (change/test scope,
-targeted edits, compaction summaries per context-engineering-claude5.md C4,
+targeted edits, compaction summaries,
 search, multi-app exploration, quoting, planning, open-ended requests, chatbot
 adherence, pasted content).

@@ -16,7 +16,7 @@ no repeated interview is required. Missing evidence in a blind review never
 licenses removing a team policy. Project-doc runs do not modify this cache or
 its date; use native fetch equivalents under SKILL.md's Host capabilities.
 
-Consumers: stage3-generator.md (writing) and stage4-verifier.md (rejecting).
+Consumers: roles/writer.md (writing) and roles/verifier.md (rejecting).
 C1–C4 behave like model-prompting-guides.md's `[W]` rules: they govern generated
 project docs, never this skill's own prose. claude-code-best-practices.md owns
 gotcha weighting, the prune test, size discipline, advisory-to-hook escalation

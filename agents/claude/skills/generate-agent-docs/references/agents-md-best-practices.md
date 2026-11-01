@@ -27,8 +27,8 @@ failure follow SKILL.md's load guidance.
   test invocation survives the filter even though a standard one does not.
 - **Monorepos**: "Place another AGENTS.md inside each package. Agents
   automatically read the nearest file in the directory tree, so the closest one
-  takes precedence." The main OpenAI repo carries 88 of them. A package with its
-  own AGENTS.md gets a nested CLAUDE.md that imports it (Section D). At runtime,
+  takes precedence." The main OpenAI repo carries 88 of them. A selected
+  Claude companion of a package's AGENTS.md imports it (stage3-generator.md Section D). At runtime,
   "explicit user chat prompts override everything."
 - **Lifecycle**: "Treat AGENTS.md as living documentation" — review obsolete
   entries as the code improves, preserving explicit project policy and
@@ -47,11 +47,11 @@ The standard permits broader content than this skill emits. The skill's
 discoverability/prune filter applies only where no explicit project requirement
 takes precedence:
 
-- Style rules a linter enforces and commands readable from
-  package.json/Makefile stay excluded: they fail the prune test and burn the
-  every-session size budget.
-- What survives is what code cannot reveal: Operational Gotchas, Non-Obvious
-  Conventions, Build & Test **Gotchas** (not standard commands), Boundaries.
+- Style rules a linter enforces stay excluded: they fail the prune test and burn
+  the every-session size budget. The exact test, typecheck and lint commands stay
+  (claude-code-best-practices.md).
+- What survives is what code cannot reveal: operational gotchas, non-obvious
+  conventions, build and test gotchas, boundaries.
 
 ## Cross-vendor finding — GPT-6 Astra guidance (2026)
 
@@ -68,8 +68,8 @@ frontier models. Explicit repository and user requirements still win.
 
 ### A2 — Drop test encouragement; keep non-obvious invocations
 
-Omit "always run the tests" lines (see W1 in model-prompting-guides.md); keep a
-test command only when it is non-obvious or gated by a team decision.
+Omit "always run the tests" lines (see W1 in model-prompting-guides.md); keep the
+test commands themselves.
 
 ### A3 — Grant safe automation explicitly; calibrate restrictions to risk
 

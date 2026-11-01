@@ -12,10 +12,10 @@ files follow update-mode.md U3.
   defaults and model-specific research never silently override them.
 - Prefer necessary, non-obvious instructions. Do not summarize the source tree
   or repeat linter-enforced defaults. Cut a line Claude could find by reading
-  the code and would go and look for; keep a discoverable command when the user
-  requires it or its selection/conditions prevent a known mistake.
+  the code and would go and look for; keep the exact test, typecheck and lint
+  commands, including how to run one test file, and any command the user requires.
 - Leave out emphasis, context-window management, delegation for a better
-  answer, thinking phrases, persistence lines and repository descriptions
+  answer, thinking phrases, persistence lines and repository summaries Claude can read
   unless the user requires them.
 - Use source references for detail. Link only skills and files that exist;
   recommend a missing skill without a link.

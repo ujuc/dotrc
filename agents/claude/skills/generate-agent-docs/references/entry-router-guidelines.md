@@ -1,7 +1,7 @@
 # Entry Router Guidelines
 
 A user-provided governance pattern: behavioral guardrails, particularly the
-AGENTS.md (`agents.md/v1`) Boundaries section or CLAUDE.md behavioral guidelines,
+AGENTS.md Boundaries section or CLAUDE.md behavioral guidelines,
 in projects where agents operate with significant autonomy.
 
 ## When to apply
@@ -38,7 +38,7 @@ pre-response checklist (model-prompting-guides.md W1).
 Emit this pipeline or its steps into a generated doc only when the project
 needs structured execution: agent-triggered CI/CD, production or infrastructure
 access, or multiple agents on one codebase. Elsewhere it fails the prune test, because current models
-already plan, scope, and verify by default (model-prompting-guides.md S1).
+already plan, scope, and verify by default (model-prompting-guides.md W1).
 
 - **Classify** by risk: production, contract, database, security, destructive.
   Higher risk → stricter approval.

@@ -20,6 +20,9 @@ Run a quick glob before spawning agents.
 - `.gitmodules` present
 - 3+ top-level directories with their own package file
 
+**Neither list fits**: read directly, and dispatch the explorers only if that
+leaves gaps.
+
 **Simple (no agents)** if all hold: 2 or fewer distinct config file types, no
 monorepo indicators, no `.gitmodules`, a single top-level package or flat
 configuration directory. Read files directly and go to the Merge Protocol.
@@ -49,9 +52,10 @@ Target: {target_path}.
 ## Optional: Explore-Deep (Stage 2 overlap)
 
 Spawn in the background while the Stage 2 question is pending, for a large
-monorepo (5+ packages) or when Stage 1 leaves structural questions unresolved.
-Skip when Stage 1 suffices, the project is small or medium, or the user responds
-quickly. Same role, Advanced routing:
+monorepo (5+ packages) with structural questions Stage 1 left unresolved. Skip
+when Stage 1 suffices, the project is small or medium, or the user responds
+quickly. A late result merges into the analysis before Stage 3, and its confirmed facts
+reach the writer with the rest. Same role, Advanced routing:
 
 ```
 Read <abs>/references/roles/explorer.md first and follow it.
@@ -63,17 +67,16 @@ Gaps:
 
 ## Merge Protocol
 
-After all launched agents complete, before Stage 2:
+After the Stage 1 dispatches complete, before Stage 2:
 
-1. **Collect** each launched agent's final message, Explore-Deep's too if
-   spawned, from its Agent tool result or completion notification. If one was
+1. **Collect** each dispatch's final message from its Agent tool result or completion notification. If one was
    skipped, died or returned nothing, record the gap explicitly and continue with
    what exists.
 2. **Classify** every detected fact:
 
    | Class | Definition | Action |
    |-------|-----------|--------|
-   | **Discoverable** | Readable from code/config | Usually omit; retain explicit team requirements or necessary non-obvious command selection |
+   | **Discoverable** | Readable from code/config | Usually omit; retain explicit team requirements and the exact test, typecheck and lint commands |
    | **Undiscoverable** | Requires project context beyond code | Shared candidates go to AGENTS.md; only Claude-specific additions go to CLAUDE.md |
 
 3. **Separate** facts (directly observed; cite the source file) from

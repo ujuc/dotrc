@@ -78,20 +78,23 @@ set. Restricted-target starts empty and likewise expects no writes until scope i
 
 | Exact task path (relative to this suite) | Cases |
 | --- | --- |
-| tasks/target-scope.yaml | pair-empty, pair-migrate, import-only, mixed-target, restricted-target, selected-only |
+| tasks/target-scope.yaml | pair-empty, restricted-target |
+| tasks/positive-trigger-1.yaml | import-only |
+| tasks/positive-trigger-2.yaml | pair-migrate |
 | tasks/cache-ownership.yaml | cache-drift |
 | tasks/authorization.yaml | authorized-update |
 | tasks/tool-fallback.yaml | tools, no-interview |
-| tasks/verification-evidence.yaml | evidence, review-states, final-reference |
+| tasks/verification-evidence.yaml | evidence, review-states |
 | tasks/policy-preservation.yaml | policy |
 | tasks/negative-trigger-1.yaml | anti-trigger |
+| tasks/stop-list.yaml | stop-context, stop-emphasis, stop-subagent-quality, stop-thinking, stop-persistence, stop-repo, stop-tools |
+| tasks/enforcement-fit.yaml | enforce-rule, enforce-preference |
 
-Runner inspection: installed v0.38.6+dirty executed the existing mock suite.
-The official main task schema supports inputs.prompt and type:text graders with
-contains/not_contains, plus file/diff/program graders; installed-version artifact
-schema compatibility is unverified. Use the existing text schema for YAML
-decision probes and active-harness temporary fixtures for artifact checks.
-Sources: https://raw.githubusercontent.com/microsoft/waza/main/schemas/task.schema.json
+Artifact only, with no probe: mixed-target, selected-only, final-reference, stop-preserved, rare-language, colleague.
+
+The suite runs on the launcher's eval model through `copilot-sdk`. Decision probes
+use `regex_match` and `regex_not_match` text graders; read them by trial pass
+rate. Artifact cases run in the skill-diet eval fixtures, not here.
 and https://raw.githubusercontent.com/microsoft/waza/main/internal/execution/mock.go.
 
 Prune test, stop-list and enforcement cases. Each row is a line in an existing CLAUDE.md with no user decision on it, unless stated.

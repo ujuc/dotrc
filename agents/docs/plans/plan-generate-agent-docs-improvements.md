@@ -191,11 +191,12 @@ SOUL, workflow contract and production project documents were not changed.
 
 ## Next Updates (2026-11-01)
 
-Status: N1-N7 applied on 2026-11-01. N7 diet result on `claude-sonnet-5-5`: 39/39
-tasks before and after, 31/39 without the skill, 118,273 to 111,344 tokens per
-run, SKILL.md 22,728 to 12,838 bytes. `score` exited 1 only on 13 false WARNs for
-relative reads of the skill copy, since fixed in `diet-adapter-claude`; there was
-no MISS or WORSE. The eval folder is `~/.claude/data/skill-diet/generate-agent-docs-20261101`.
+Status: N1-N7 applied on 2026-11-01. Final result on `claude-sonnet-5-5`: 39/39
+tasks before, 37/39 after, 31/39 without the skill, 116,791 to 112,070 tokens per
+run, `score` exit 0. The eval folder is
+`~/.claude/data/skill-diet/generate-agent-docs-20261101`. Timeouts in earlier
+rounds came from the `ls` alias (`eza --git`) stalling the Bash tool, so the adapter
+now runs Claude with `SHELL=/bin/bash`.
 Findings come from the 2026-11-01 skill-improver audit and reference refresh. The sections above record the finished 2026-10 work and
 still name removed pieces (`claude/agents/waza-runner.md`, annotate-plan,
 implement-plan, workflow hooks); use the `waza` skill launcher instead.
@@ -229,8 +230,6 @@ Open findings from the grader work, for N7 or a later step:
   split between keeping the mandate and rewording it as an outcome.
 - The body hands review and README requests to "their owning workflow" without
   naming one.
-- `stop-list` line 9, a single-file test command, is sometimes cut, although the
-  best-practices page keeps exactly that command.
 
 ### N5 checklist
 

@@ -40,8 +40,9 @@ Standard routing, in a fresh context: "Read
 names and final document contents — no Stage 1/2 notes, user decisions,
 checklist results or the writer's transcript.
 
-An advisor, if available, receives the same blind inputs only; never claim one
-ran when unavailable. External-evidence questions do not fail a valid team
+Only a fresh-context role given these documents alone counts as blind review.
+The Claude `advisor` tool forwards the whole transcript, so it never does. Never
+claim a review ran when unavailable. External-evidence questions do not fail a valid team
 policy; the checklist resolves them.
 
 ## Final artifact check

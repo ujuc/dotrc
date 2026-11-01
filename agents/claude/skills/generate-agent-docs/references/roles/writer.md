@@ -38,9 +38,8 @@ approval from a rule's wording.
 - Write only the selected, authorized files, in dependency order: shared
   supporting docs → AGENTS.md → the CLAUDE.md that imports it →
   `.claude/rules/`.
-- Existing files receive surgical edits that preserve every unrelated byte;
-  never regenerate them. Create only authorized missing files. Deletion
-  requires explicit authorization.
+- Never edit or regenerate an existing file. Create only authorized missing
+  files.
 - Never edit this skill's files, caches or check dates, or anything outside
   the target project.
 - Do not invent tool calls, interviews, source checks or reviewer passes.
@@ -48,5 +47,5 @@ approval from a rule's wording.
 ## Output
 
 Return as your final text: the ordered list of writes, each file's final
-contents with its line count, and a diff for every existing file. A successful
+contents with its line count. A successful
 write is not a verified result; Stage 4 verifies it.

@@ -54,8 +54,7 @@ the agent's own loop, such as "develop with TDD", "write a failing test first",
 "follow red-green-refactor". Reject by default and rewrite toward the outcome
 the team wants verified (the article's own recommendations):
 
-- the concrete test command whose passing is the done criterion (Build & Test
-  Gotchas material);
+- the concrete test command whose passing is the done criterion;
 - a mutation-score bar for regression quality, not a workflow;
 - agent access to static code analysis;
 - trend metrics (files touched and tokens per change) and regular reviews of
