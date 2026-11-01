@@ -3,7 +3,7 @@ name: waza
 description: "Microsoft waza CLI로 스킬 평가 스위트를 스캐폴드·실행하고 baseline과 비교한다. /waza, waza, 스킬 평가해줘, 스킬 테스트해줘, test skills, eval 실행, eval 만들어줘, eval 스캐폴드, 스킬 점수 비교, baseline 비교, 회귀 확인, waza 상태 확인 요청 시 사용한다. 정의 개선은 skill-improver가 맡는다."
 group: meta
 allowed-tools: Bash(bash:*), Read
-argument-hint: "status | scaffold SKILL | eval SKILL-or-eval.yaml [--label X] [--baseline-json FILE] [--trials N] [--epsilon X]"
+argument-hint: "status | scaffold SKILL | eval SKILL-or-/abs/eval.yaml [--label X] [--baseline-json FILE] [--trials N] [--epsilon X]"
 ---
 
 # waza (skill evaluation)
@@ -22,7 +22,7 @@ evidence. These levels are the calling agent's only
 the evaluation target stays the launcher's configured model and is never
 swapped silently.
 
-For an isolated context in Claude Code, dispatch `Agent` with `subagent_type: "general-purpose"`, Lightweight routing from [dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing), and the prompt "Run `bash <abs>/scripts/waza-run.sh <dispatch>` and return stdout verbatim, keeping any `⚠️` line first."
+For an isolated context in Claude Code, dispatch `Agent` with `subagent_type: "general-purpose"`, Lightweight routing from [dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing), and the prompt "Run `bash <abs>/scripts/waza-run.sh <dispatch>` and return stdout verbatim plus the exit code and any stderr."
 
 ## How to invoke
 
@@ -43,12 +43,13 @@ bash "$WAZA_SKILL/scripts/waza-run.sh" eval /abs/path/evals/commit/eval.yaml --l
 ## Contract
 
 - A bare name resolves to `~/.claude/evals/<name>/eval.yaml` and scaffolds it there (the dotrc repo) when missing; an absolute path must exist.
-- A successful `eval` writes `~/.claude/data/waza/results/<prefix>-<label>-<timestamp>.json` and prints a Markdown report ending with that path. Relay the report as-is; never paraphrase grader feedback or invent metric rows.
+- A successful `eval` writes `~/.claude/data/waza/results/<prefix>-<label>-<timestamp>.json` and prints a Markdown report with a `- Result JSON:` line. Relay the report as-is; never paraphrase grader feedback or invent metric rows.
 - Exit 0: success, a reported `⚠️ **regression**`, or an advisory skip (no binary, no workspace, suite already exists). Exit 1: no result JSON, failed scaffold/baseline validation, or `⚠️ incomparable`. Exit 2: usage error. Read the report body, not just the exit code, before claiming a score.
 - Waza exit 1 can still produce valid task-failure JSON; the report uses it and warns with the exit code.
 - `Skill invocations` `0 / M` is expected: with the default `inject_skill_body: true` the SKILL.md body is already in the system prompt. It is not a failure.
 - With `--baseline-json`:
   - An engine, model, trials, or task-set difference prints `⚠️ incomparable` with no verdict; when eval.yaml, `--trials`, or `COPILOT_MODEL` already shows it, the run is skipped.
+  - A changed task or grader keeps its `test_id`, so the launcher cannot see it: record a new baseline after any suite edit.
   - A run that errored before the model answered also prints `⚠️ incomparable`: its score measures the failure. Without a baseline the report warns the same way.
   - `⚠️ **regression**` appears only when the rounded weighted-score delta is below `-epsilon`; smaller drops are run-to-run noise.
   - `### Per-task drops` lists tasks whose weighted score fell by more than epsilon or whose pass rate fell. It is informational; waza fails a task when any single trial fails.
@@ -63,7 +64,9 @@ With `WAZA_ANTHROPIC_API_KEY` in the environment or mise, the launcher runs
 (`https://api.anthropic.com/v1`). Keep that name: a plain `ANTHROPIC_API_KEY` can
 move Claude Code off the subscription. Without a key it falls back to local
 Ollama (`gemma4:e4b-mlx`), which must serve the model first. Values already set
-win, and a different model makes earlier baselines incomparable. Override
+win: `COPILOT_PROVIDER_BASE_URL`, `COPILOT_PROVIDER_TYPE` (default `openai`),
+`COPILOT_PROVIDER_API_KEY`, `COPILOT_MODEL`, `COPILOT_OFFLINE` (default `true`). A
+different model makes earlier baselines incomparable. Override
 locations with `WAZA_WORKSPACE`, `WAZA_EVALS_DIR`, `WAZA_RESULTS_DIR`. The
 workspace `.waza.yaml` uses relative `skills/` and `evals/` symlinks into the
 dotrc tree; never write absolute paths there.
@@ -83,8 +86,8 @@ grade: it reads the answer on stdin, asks TypeSafe (Jev) one Noul per `--ask`
 
 ## Procedure
 
-1. Unsure waza is usable → `status`. On a skip report (missing binary or workspace), relay it and continue the caller's work without a score.
-2. Changing a skill → `eval <skill> --label baseline` **before** editing, then `eval <skill> --label after --baseline-json <baseline>`, with the same `--trials`. Keep both JSON paths for `skill-improver`.
+1. Unsure waza is usable → `status`. `Usable: no` means no score: relay the reason and continue the caller's work. `scaffold` and `eval` print a skip report for a missing binary or workspace.
+2. Changing a skill → `eval <skill> --label baseline` **before** editing, then `eval <skill> --label after --baseline-json <baseline>`, with the same `--trials`.
 3. Changed `scripts/waza-run.sh` → `bash scripts/test-waza-run` (synthetic; no install or Ollama).
 4. New subcommand or flag → read the current upstream README, add it to `scripts/waza-run.sh`, and document it here. Keep no CLI snapshot here.
 5. Install, update, version floor, workspace setup, `command not found`, uninstall → [references/waza-install.md](references/waza-install.md)

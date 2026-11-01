@@ -4,7 +4,7 @@ When waza is missing, only the evaluation is skipped; the caller's work continue
 
 ## Install or update
 
-`scripts/install.sh --agents` runs this when `waza` is not on PATH:
+`$DOTRCDIR/scripts/install.sh --agents` runs this when `waza` is not on PATH:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | bash
@@ -20,8 +20,8 @@ then `make install` in it (Go 1.21+, npm), and put `$(go env GOPATH)/bin` on PAT
 ## Launcher prerequisites
 
 Installing the binary does not create `~/.claude/data/waza-workspace/`.
-`waza-run.sh` evaluates only when its `.waza.yaml` has relative `skills/` and
-`evals/` paths with matching symlinks; otherwise it exits without a score.
+waza needs a `.waza.yaml` with relative `skills/` and `evals/` paths and matching
+symlinks. The launcher only checks that the file exists.
 Create it from the schema in the current
 [upstream README](https://github.com/microsoft/waza/blob/main/README.md). The
 format changes quickly, so dotrc does not generate it.
@@ -40,4 +40,4 @@ rm -f "$(command -v waza)"
 rm -rf "$HOME/.claude/data/waza-workspace" "$HOME/.claude/data/waza"
 ```
 
-Both directories live under `~/.claude/data/`, outside git tracking, so removing them is safe.
+Both directories are gitignored, so this cannot be undone: it deletes every baseline JSON, the judge log and the hand-written `.waza.yaml`.

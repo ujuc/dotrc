@@ -71,7 +71,7 @@ find_waza() {
 
 skip_missing_binary() {
   echo "## ⚠️ waza not installed"
-  echo "- Install: \`curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | bash\` (or \`scripts/install.sh --agents\`)"
+  echo "- Install: \`curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | bash\` (or \`\$DOTRCDIR/scripts/install.sh --agents\`)"
   echo "- Guide: \`$INSTALL_GUIDE\`"
   echo
   echo "**Evaluation skipped.**"
