@@ -85,7 +85,14 @@ while drafting and fold in its result.
 - **Freedom**: match specificity to a named fragility ([degrees of freedom](design-principles.md#degrees-of-freedom)).
 - **Output shape**: a strict template when the format must be exact, a flexible
   one when only structure matters, input/output examples to convey style.
-- **Size**: place each fact by [level](../../skill-diet/SKILL.md#levels).
+- **Size**: place each fact by [level](../../skill-diet/SKILL.md#levels). A new
+  skill has no diet baseline, so draft `SKILL.md` toward 500 words (Superpowers
+  recommendation, not a limit); `skill-diet-growth` prints the count. The first
+  diet replaces this target with its growth budget.
+- **Shape**: state when not to use the skill as a negative trigger in
+  `description`, since the body loads too late to decide that. A technique or
+  pattern skill gets one before/after example of its core pattern. Common
+  mistakes go under Gotchas, and `SKILL.md` ends with `Look up the rest`.
 
 ### Dynamic context
 

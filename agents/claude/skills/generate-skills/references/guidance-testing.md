@@ -16,7 +16,8 @@ and `last_upstream_check` here.
 Left out on purpose: the TDD mandate and "delete it and start over", because
 Behavior baseline already covers it with a stop when the baseline passes; the
 `Use when` description format, because this repository writes Korean WHAT and
-WHEN; word-count targets, because skill-diet owns size.
+WHEN; word-count targets for existing skills, because skill-diet's budget owns
+their size.
 
 ## Match the form to the failure
 

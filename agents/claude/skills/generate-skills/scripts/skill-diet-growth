@@ -4,7 +4,7 @@
 # Advisory: always exits 0 (2 on usage error) and prints one line:
 #   - <name>: diet-recommended (+N% since <sha>, A -> B bytes)
 #   - <name>: within budget (+N% since <sha>, A -> B bytes)
-#   - <name>: no diet baseline (B bytes)
+#   - <name>: no diet baseline (B bytes, W words)
 
 set -uo pipefail
 
@@ -20,14 +20,15 @@ root="$(git -C "${dir}" rev-parse --show-toplevel)" || exit 2
 rel="$(cd "${dir}" && pwd -P)"
 rel="${rel#"${root}"/}"
 now="$(wc -c <"${dir}/SKILL.md" | tr -d ' ')"
+words="$(wc -w <"${dir}/SKILL.md" | tr -d ' ')"
 
 base="$(git -C "${root}" log -1 --format=%h --grep="^Skill-Diet: ${name}$")"
 if [ -z "${base}" ]; then
-  echo "- ${name}: no diet baseline (${now} bytes)"
+  echo "- ${name}: no diet baseline (${now} bytes, ${words} words)"
   exit 0
 fi
 old="$(git -C "${root}" show "${base}:${rel}/SKILL.md" 2>/dev/null | wc -c | tr -d ' ')"
-[ "${old}" -gt 0 ] || { echo "- ${name}: no diet baseline (${now} bytes)"; exit 0; }
+[ "${old}" -gt 0 ] || { echo "- ${name}: no diet baseline (${now} bytes, ${words} words)"; exit 0; }
 
 pct=$(( (now - old) * 100 / old ))
 verdict="within budget"

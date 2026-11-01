@@ -64,6 +64,14 @@ TODO: Describe how to verify the output.
 ```bash
 # TODO: validation command
 ```
+
+## Gotchas
+
+TODO: List known failure points with the correct approach, or delete this section.
+
+## Look up the rest
+
+- TODO: <case> → <where to look>, or delete this section.
 ";
 
 #[derive(Parser)]
