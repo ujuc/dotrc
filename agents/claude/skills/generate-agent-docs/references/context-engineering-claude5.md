@@ -14,75 +14,62 @@ user/repository requirements. Preserve confirmed team TDD, nondefault convention
 concrete test commands and safety boundaries. Prior explicit decisions suffice;
 no repeated interview is required. Missing evidence in a blind review never
 licenses removing a team policy. Project-doc runs do not modify this cache or
-its date; use native fetch equivalents under SKILL.md's capability mapping.
-
-Anthropic's *"The new rules of context engineering for Claude 5 generation
-models"* states how agent-configuration files should be shaped for the current
-model generation. Most of it already governs this skill (see "Already owned
-elsewhere"); this file carries **only the four rules that change what the skill
-emits** and are stated nowhere else in it.
+its date; use native fetch equivalents under SKILL.md's Host capabilities.
 
 Consumers: stage3-generator.md (writing) and stage4-verifier.md (rejecting).
-Rules are tagged **C1–C4** and behave like model-prompting-guides.md's `[W]`
-rules — they govern generated project docs, never this skill's own prose.
+C1–C4 behave like model-prompting-guides.md's `[W]` rules: they govern generated
+project docs, never this skill's own prose. claude-code-best-practices.md owns
+gotcha weighting, the prune test, size discipline, advisory-to-hook escalation
+and `/doctor`. Teaching tools through interface design is out of scope.
+Applying the article to this skill's own files (progressive disclosure across
+`references/`, judgment over prohibition in Red Flags) is a future skill-improver
+pass, not a generator rule.
 
-**Freshness**: a published post, not a living doc page, so re-fetch `source_url`
-only when `today - last_upstream_check > check_interval_days` (`ToolSearch`
-`select:WebFetch` first — deferred tool). On any fetch failure use this snapshot
-and say so in one line: *"context-engineering 가이드 라이브 로드 실패, 캐시 사용
-(last check: <date>)."*
-
----
+**Freshness**: re-fetch `source_url` only when `today - last_upstream_check >
+check_interval_days` (`ToolSearch` `select:WebFetch` first — deferred tool).
+On any fetch failure use this snapshot and say so in one line:
+*"context-engineering 가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."*
 
 ## Cached snapshot (last verified 2026-11-01)
 
 ### C1 — Anchor instructions to context, not to absolute prohibitions
 
-The article's headline example is a system-prompt line Anthropic deleted:
-
-> "In code: default to writing no comments. Never write multi-paragraph
-> docstrings or multi-line comment blocks — one short line max. Don't create
-> planning, decision, or analysis documents unless the user asks for them —
-> work from conversation context, not intermediate files."
-
-replaced by:
+Anthropic deleted a system-prompt line that defaulted to no comments and banned
+multi-paragraph docstrings, multi-line comment blocks and unrequested planning
+documents, and replaced it with:
 
 > "Write code that reads like the surrounding code: match its comment density,
 > naming, and idiom."
 
 Anthropic reports removing over 80% of Claude Code's system prompt for the newer
-models with no performance loss — the constraint was doing less work than the
-judgment cue.
+models with no measurable loss on its coding evaluations.
 
 **Applies to**: any candidate line that forbids a behavior outright ("never write
-X", "always use Y") where the right answer actually depends on the surrounding
-code. Rewrite it to name the observable signal the agent should match, or cut it
-when a linter already owns it. Which prohibitions survive: see Reconciliation.
+X", "always use Y") where the right answer depends on the surrounding code.
+Rewrite it to name the observable signal the agent should match, or cut it when a
+linter already owns it.
+
+Test: *can you name what the agent should do instead?* If yes, C1 requires the
+positive form. If the honest answer is "nothing — just don't", it is a guard and
+it stays.
+
+- A prohibition **survives** only when it is a regression guard for a violation
+  that actually happened, a safety boundary (destructive or irreversible
+  actions), or has no nameable alternative behavior.
+- A prohibition **fails C1** when it constrains a stylistic or structural choice
+  the surrounding code already answers, or forbids something the model would not
+  do anyway.
 
 ### C2 — A sometimes-relevant procedure becomes a skill, not a section
 
-> "Use progressive disclosure heavily, for example if you have several unique
-> instructions on how to verify your work, create a verification skill and
-> reference it from your CLAUDE.md."
-
 **Applies to**: Stage 1/2 findings that cluster into a coherent multi-step
 procedure bound to one recurring task (release, verification, migration, review).
-Emitting it as a CLAUDE.md / AGENTS.md section spends every-session budget on
-something needed occasionally. Recommend a skill and emit at most one reference
-line pointing at it.
-
-This promotes the adjacent line already in claude-code-best-practices.md — *"A
-long release procedure sitting in a skill doesn't weigh on your unrelated bug
-fix the way it would in `CLAUDE.md`."* — from an aside into the default
-architecture.
+Recommend a skill and emit at most one reference line pointing at it.
 
 ### C3 — Never emit memory-management instructions
 
-> "We used to encourage users to save things to Claude's memory, by using the #
-> hotkey to write to their CLAUDE.md automatically."
-
-> "Instead, Claude now automatically saves memories that are relevant to the work
-> and to you."
+Anthropic no longer encourages saving memories with the `#` hotkey, which wrote
+to CLAUDE.md: Claude now saves relevant memories automatically.
 
 **Applies to**: reject any generated line telling a reader to record notes,
 decisions, session logs, or learnings into CLAUDE.md / AGENTS.md, and any line
@@ -94,71 +81,16 @@ session logs into instruction documents unless explicitly requested.
 
 ### C4 — Four context layers, not two
 
-The skill's placement test currently splits two ways (AGENTS.md vs CLAUDE.md).
-The article describes four layers with distinct jobs; use the full set when
-deciding where a Stage 1/2 finding goes:
+Use all four when deciding where a Stage 1/2 finding goes:
 
 | Layer | Holds | This skill's stance |
 | --- | --- | --- |
 | System prompt / harness | What product the agent operates inside | **Out of scope** — never emitted into a project file |
-| CLAUDE.md / AGENTS.md | Brief repo purpose + gotchas | The skill's primary output; keep lightweight |
+| CLAUDE.md / AGENTS.md | Brief repo purpose, then mostly gotchas; nothing obvious from the file system or repo | The skill's primary output; keep lightweight |
 | Skills | Sometimes-relevant procedures, team opinions — *"lightweight guides to let Claude find information when needed. Avoid making them overconstrained, except in highly important areas."* | Recommend one instead of a section (C2) |
-| Linked references | In-depth material read on demand — *"consider having a tree of files that can be loaded at the right time"* | contributing-docs/; prefer an existing executable spec. CLAUDE.md @imports load in full, not on demand. |
+| Linked references | In-depth material read on demand | contributing-docs/; CLAUDE.md @imports load in full, not on demand. |
 
-The CLAUDE.md row is the skill's existing core rule, stated upstream as:
-
-> "Keep your CLAUDE.md lightweight and briefly describe what your repo is for,
-> but spend most of the tokens on gotchas inside of the codebase."
-
-> "Avoid stating 'the obvious' things Claude should know by looking at your file
-> system or your repo."
-
-Reference-layer detail worth carrying: the article prefers specs the agent can
-execute or read as code — a test suite, a function implementation, an HTML
-mockup, a rubric — over prose describing the same thing: *"prefer files that
-are in code as it provides clear, high-fidelity instructions to Claude in a
-language it knows very well."* When Stage 2 surfaces a
-spec that already exists in executable form, reference that file instead of
-paraphrasing it into a document.
-
----
-
-## Already owned elsewhere — do not duplicate
-
-These article points are already operative in the skill; restating them here
-would only cost context:
-
-| Article point | Owner in this skill |
-| --- | --- |
-| Gotcha-weighted, prune-tested CLAUDE.md | claude-code-best-practices.md (include/exclude table, prune test) |
-| Size discipline / over-specified CLAUDE.md | claude-code-best-practices.md (upstream recommendation and local budgets) |
-| Advisory rule → deterministic hook | claude-code-best-practices.md |
-| `/doctor` rightsizing an existing CLAUDE.md | claude-code-best-practices.md (`/init` behavior section) — the article points at it too; that entry stays authoritative for the exact command surface |
-| Teach tools through interface design, not examples | **Out of scope** — this skill writes docs, not tool definitions |
-
----
-
-## Reconciliation — which prohibitions survive C1
-
-C1 does not delete every prohibition. A bare "don't" is kept in three cases,
-and the exception is narrow:
-
-- A prohibition **survives** when it is a regression guard for a violation that
-  actually happened, a safety boundary (destructive or irreversible actions), or
-  has no nameable alternative behavior.
-- A prohibition **fails C1** when it constrains a stylistic or structural choice
-  the surrounding code already answers, or forbids something the model would not
-  do anyway.
-
-Test to apply: *can you name what the agent should do instead?* If yes, C1
-requires the positive form. If the honest answer is "nothing — just don't", it is
-a guard and it stays.
-
----
-
-## Note for skill upkeep (not generated output)
-
-The article's advice also applies to this skill's own files — progressive
-disclosure across `references/`, judgment over prohibition in its Red Flags
-table. That is a **future upkeep pass** for skill-improver, not a rule the
-generator applies; no `[S]`-class rules are defined here.
+Prefer specs the agent can execute or read as code (a test suite, a function
+implementation, an HTML mockup, a rubric) over prose describing the same thing:
+when Stage 2 surfaces a spec that already exists in executable form, reference
+that file instead of paraphrasing it into a document.

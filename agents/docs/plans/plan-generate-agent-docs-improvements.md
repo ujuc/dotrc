@@ -191,9 +191,12 @@ SOUL, workflow contract and production project documents were not changed.
 
 ## Next Updates (2026-11-01)
 
-Status: planned, not started. Findings come from the 2026-11-01 skill-improver
-audit and reference refresh. Each step is one commit, so the skill can move in
-small verified steps. The sections above record the finished 2026-10 work and
+Status: N1-N7 applied on 2026-11-01. N7 diet result on `claude-sonnet-5-5`: 39/39
+tasks before and after, 31/39 without the skill, 118,273 to 111,344 tokens per
+run, SKILL.md 22,728 to 12,838 bytes. `score` exited 1 only on 13 false WARNs for
+relative reads of the skill copy, since fixed in `diet-adapter-claude`; there was
+no MISS or WORSE. The eval folder is `~/.claude/data/skill-diet/generate-agent-docs-20261101`.
+Findings come from the 2026-11-01 skill-improver audit and reference refresh. The sections above record the finished 2026-10 work and
 still name removed pieces (`claude/agents/waza-runner.md`, annotate-plan,
 implement-plan, workflow hooks); use the `waza` skill launcher instead.
 
@@ -211,6 +214,23 @@ Verification per step: run `validate-skill` and `skill-diet-eval check` on the
 skill, rerun the N1 suite with the same `--trials` against the baseline, then
 run a targeted `skill-improver generate-agent-docs`. Put SKILL.md's size before
 and after in the commit message.
+
+Read this suite by trial pass rate, not weighted score. Text graders score the
+share of matching patterns, so the skill and no-skill runs differ by only 0.04
+in weighted score, under the launcher's 0.1 regression threshold. The N1 baseline
+on `claude-haiku-5-5` is 28/33 trials with the skill and 13/33 without it
+(`generate-agent-docs-haiku-baseline-*.json`, `generate-agent-docs-haiku-control-*.json`
+under `~/.claude/data/waza/results/`). The control is a scratch copy of the suite
+with `inject_skill_body: false`.
+
+Open findings from the grader work, for N7 or a later step:
+
+- `SKILL.md:320` does not say what form a surviving team TDD decision takes; runs
+  split between keeping the mandate and rewording it as an outcome.
+- The body hands review and README requests to "their owning workflow" without
+  naming one.
+- `stop-list` line 9, a single-file test command, is sometimes cut, although the
+  best-practices page keeps exactly that command.
 
 ### N5 checklist
 

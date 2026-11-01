@@ -24,9 +24,12 @@ fast or unavailable blind review yields PARTIAL, not fully verified completion.
    Pass: facts and decisions support retained rules; explicit team conventions,
    TDD and test gates survive generic defaults. Upstream per-file sizing,
    local combined budgets and model-specific findings are distinguished.
+   Lines pass the prune test and stop-list; no-exception rules carry an
+   enforcement recommendation.
    Fail: unsupported facts or policy deletion, or local defaults presented as
    universal official requirements. Budget excess is reported with rationale,
-   not hidden by moving common requirements into Claude-only files.
+   not hidden by moving common requirements into Claude-only files. A stop-list
+   line survives without a user decision.
 
 4. **Reference and execution integrity**
    Pass: final imports/shared links resolve; intended future globs are evaluated

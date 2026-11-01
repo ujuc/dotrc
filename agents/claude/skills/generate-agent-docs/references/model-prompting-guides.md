@@ -18,53 +18,41 @@ check_interval_days: 14
 
 ## Scope and precedence
 
-The cached findings below are model- or study-specific evidence, not universal
-rules for every harness. Apply them as local authoring defaults after explicit
-user/repository requirements. Preserve confirmed team TDD, nondefault conventions,
-concrete test commands and safety boundaries. Prior explicit decisions suffice;
-no repeated interview is required. Missing evidence in a blind review never
-licenses removing a team policy. Project-doc runs do not modify this cache or
-its date; use native fetch equivalents under SKILL.md's capability mapping.
+These cached findings are model- or study-specific evidence, not universal
+rules. Apply them as local authoring defaults after explicit user/repository
+requirements. Preserve confirmed team TDD, nondefault conventions, concrete test
+commands and safety boundaries. Prior explicit decisions suffice; no repeated
+interview is required. Missing evidence in a blind review never licenses
+removing a team policy. Project-doc runs do not modify this cache or its date;
+use native fetch equivalents under SKILL.md's Host capabilities.
 
-CLAUDE.md, AGENTS.md, and `.claude/rules/` are long-lived instruction
-documents loaded in full every session — they *are* system-prompt content.
-So the subset of Anthropic's per-model prompting guides that governs **how
-instructions should be written** is authoritative for Stage 3 (writing) and
-Stage 4 (verifying). Everything else in those guides is out of scope; see
-"Out of scope" at the bottom.
+CLAUDE.md, AGENTS.md and `.claude/rules/` load in full every session, so they
+are system-prompt content: the parts of Anthropic's per-model guides on how
+instructions are written are authoritative for Stage 3 (writing) and Stage 4
+(verifying). The rest is out of scope (see the end of this file).
 
-**Inheritance**: Opus 5.5 — *"Existing Claude Opus 5 prompts should perform
-well without changes"*; Fable 5.1 — *"Your existing Claude Fable 5 prompts
-should perform well on Claude Fable 5.1 without changes"*; Sonnet 5.5 —
-*"Existing Claude Sonnet 5 prompts should perform well without changes"*;
-Haiku 5.5 — *"Existing Claude Haiku 4.5 prompts should perform well without
-changes"*. Rules below that quote Opus 5, Fable 5 or Sonnet 5 therefore still
-apply to their successors unless a rule says otherwise; Haiku 5.5 inherits from
-Haiku 4.5, which this cache does not quote, so only rules naming Haiku 5.5 apply
-to it. Mythos 5.1 and Mythos 5 are mapped upstream onto the Fable 5.1 and
-Fable 5 guides; they are not separate sources. Where a newer guide does not restate a finding, never attribute it to
-Opus 5.5, Fable 5.1, Sonnet 5.5 or Haiku 5.5
-(upstream: *"treat it as measured on that model and re-check it"*).
+**Inheritance**: each newer guide says its predecessor's prompts should perform
+well without changes. Opus 5.5, Fable 5.1 and Sonnet 5.5 inherit their base guides
+(Opus 5, Fable 5, Sonnet 5), so rules quoting those apply to the successor
+unless a rule says otherwise. Haiku 5.5 inherits Haiku 4.5, which is not cached,
+so only rules naming Haiku 5.5 apply to it. Mythos 5.1 and Mythos 5 map onto the
+Fable 5.1 and Fable 5 guides; they are not separate sources. Never attribute a
+finding to a newer model whose guide does not restate it (upstream: *"treat it
+as measured on that model and re-check it"*).
 
 **Freshness**: re-fetch `source_urls` only when `today - last_upstream_check >
 check_interval_days` (`ToolSearch` `select:WebFetch` first — deferred tool).
 When that gate fires, also fetch `secondary_source_url` and compare the guide
 links in its "Model-specific guidance" table with `source_urls`. A guide listed
 there but missing here is drift: report it in one line and route cache
-maintenance to `skill-improver generate-agent-docs` (a project-doc run never
-edits this file). Otherwise fetch `secondary_source_url` only when a question
-is cross-model rather than model-specific. On any fetch failure, use this file
-and say so in one line:
+maintenance to `/generate-skills generate-agent-docs 업데이트`. Otherwise fetch
+`secondary_source_url` only for a cross-model question. On any fetch failure,
+use this file and say so in one line:
 *"model-prompting 가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."*
 
-Every rule below is tagged by consumer. Do not mix them:
-
-- **[W]** — writing guardrail: governs what this skill **emits into generated
-  project docs**. Feeds stage3-generator.md and stage4-verifier.md.
-- **[S]** — skill maintenance: governs how **this skill itself** is written.
-  Never emit into a project doc.
-
----
+Rules are tagged by consumer; do not mix them. **[W]** governs what this skill
+emits into generated project docs (Stage 3 and 4). **[S]** governs how this
+skill itself is written; never emit it into a project doc.
 
 ## [W] Guardrails for generated docs
 
@@ -79,39 +67,27 @@ adds separate verification steps."* Also: *"Avoid instructing re-checks it
 already performs ("double-check your answer," "re-verify before
 responding")."*
 
-Omit generic candidate lines of that shape by default. Preserve named test
-commands, explicit team gates and mandated verification. Recommend hooks when
-appropriate without deleting the requirement before an authorized replacement.
-See D1 for the model-specific counterpoint.
+Omit generic lines of that shape by default. Preserve named test commands,
+explicit team gates and mandated verification. Recommend hooks when appropriate
+without deleting the requirement before an authorized replacement. See D1.
 
 ### W2 — Never command reasoning visibility or thinking amount
 
-Fable 5: instructions that *"tell the model to echo, transcribe, or explain
-its internal reasoning as response text might trigger the
-`reasoning_extraction` refusal category"*.
 Fable 5.1: *"Prompts, skills, and tool descriptions that ask the model to write
 its thinking or reasoning might be declined with the `reasoning_extraction`
-category."*
-Opus 5 and Opus 5.5 have the same category,
-and Sonnet 5.5 lists it too: *"If your prompts ask the model to include its
-reasoning in the response, remove those instructions"*.
+category."* Fable 5, Opus 5, Opus 5.5 and Sonnet 5.5 have the same category.
 Opus 5: *"If your system prompt contains a rule instructing the model not to
 think or not to reason, remove it; that kind of instruction increases tag
-leakage."* Opus 5.5: *"remove the no-thinking rule either way."*
-Sonnet 5.5, with `between_tools`: *"remove any instruction that tells the model
-not to think."*
+leakage."* Opus 5.5 and Sonnet 5.5 (with `between_tools`) also say remove it.
 Opus 5.5: *"Lowering effort reduces thinking ... more reliably than prompt
-instructions do."* Sonnet 5.5: *"Asking it in the system prompt to think less
-doesn't reliably reduce its thinking."* Haiku 5.5: *"telling the model in the
-prompt to answer directly didn't stop it from thinking."*
+instructions do."* Sonnet 5.5 (think less) and Haiku 5.5 (answer directly) report
+the same.
 
-Show-your-reasoning and don't-think lines cause harm; think-harder lines steer
-thinking less reliably than effort does. Reasoning visibility is an application
-concern (structured thinking blocks) and thinking amount is effort
-configuration (D2) — never a repository doc line. Asking for the **rationale
-behind a decision** ("propose alternatives with reasoning") is a different
-thing — that is output content, not internal-reasoning transcription, and
-stays allowed.
+Reasoning visibility is an application concern (structured thinking blocks) and
+thinking amount, including think-harder/less lines, is effort configuration (D2):
+neither is a repository doc line. Asking for the **rationale behind a
+decision** ("propose alternatives with reasoning") is output content, not
+internal-reasoning transcription, and stays allowed.
 
 ### W3 — State every rule's scope explicitly
 
@@ -119,19 +95,18 @@ Sonnet 5 and Opus 4.8: *"It does not silently generalize an instruction from
 one item to another, and it does not infer requests you didn't make ... If
 you need Claude to apply an instruction broadly, state the scope explicitly."*
 
-A rule with an implied scope silently narrows. Name the paths, directories,
-or file types it covers. Shared path-bound rules stay in AGENTS.md (nested when
-appropriate); only Claude-specific rules prefer `.claude/rules/` with `paths`.
+Name the paths, directories or file types a rule covers. Shared path-bound rules
+stay in AGENTS.md (nested when appropriate); only Claude-specific rules prefer
+`.claude/rules/` with `paths`.
 
 ### W4 — Carry the reason when the rule is not self-evident
 
 Fable 5: the model *"tends to perform better when the prompt states the intent
-behind a request"*. One clause of *why*, only where the why is non-obvious —
-not license for prose.
+behind a request"*. One clause of *why*, only where the why is non-obvious.
 
 ### W5 — Never write confidence or severity filter bars
 
-Opus 5, Sonnet 5 and Opus 4.8 converge: *"only report high-severity issues,"
+Opus 5, Sonnet 5 and Opus 4.8: *"only report high-severity issues,"
 "be conservative"* (Sonnet 5 and Opus 4.8 add *"don't nitpick"*) are followed
 literally and suppress real findings. Opus 5: *"ask it to report everything and
 filter in a separate pass instead."* Sonnet 5 and Opus 4.8, for a single pass that must
@@ -143,10 +118,10 @@ triage instructions.
 
 Opus 5 *"delegates to subagents more readily than prior models ... it
 multiplies cost and time when applied to small tasks"*; Fable 5 *"dispatches
-parallel subagents more readily ... Use subagents frequently"*. Both want an
-explicit bar for when delegation is warranted. Emit it through the existing
-conditional orchestration guidance (stage3-generator.md Section A) —
-never as a second, competing policy.
+parallel subagents more readily ... Use subagents frequently"*. Emit an explicit
+bar for when delegation is warranted through the existing conditional
+orchestration guidance (stage3-generator.md Section A), never as a second,
+competing policy.
 
 ### W7 — Agent-memory notes: one lesson per file
 
@@ -154,17 +129,20 @@ Fable 5: *"Store one lesson per file with a one-line summary at the top.
 Record corrections and confirmed approaches alike, including why they mattered.
 Don't save what the repo or chat history already records; update an existing
 note rather than creating a duplicate; delete notes that turn out to be
-wrong."* Emit only when the project actually has an agent-memory directory;
-otherwise it fails the prune test.
+wrong."* Emit only when the project has an agent-memory directory; otherwise it
+fails the prune test.
 
 ### W8 — Steer with a brief instruction, not an enumeration
 
 Fable 5: *"you can steer most behaviors with a brief instruction rather than
-enumerating each behavior by name"*. Write the one line that names the
-behavior; W3 still applies, so that line states its scope. Keep lists a team
-policy requires.
+enumerating each behavior by name"*. Write the one line that names the behavior,
+with its scope (W3). Keep lists a team policy requires.
 
----
+### W9 — Do not discourage tool use
+
+Sonnet 5.5: *"check your prompt for language that discourages tool use"*, such as
+*"only use tools when strictly necessary"* or *"minimize tool calls"*. Generated
+docs carry neither. An explicit team limit on a named tool stays.
 
 ## [S] How this skill is maintained
 
@@ -172,15 +150,12 @@ policy requires.
 
 Fable 5: *"Skills developed for prior models are often too prescriptive for
 Claude Fable 5 and can degrade output quality. Review and consider removing
-older instructions if default performance is better."* This is the upstream
-justification for pruning this skill's own files. On every update pass, ask
+older instructions if default performance is better."* On every update pass, ask
 of each instruction: **does the current model already do this by default?**
-Both current guides reaffirm this. Opus 5.5 migration: *"Instructions tuned
-for Claude Opus 5's behavior might no longer be needed"*. Fable 5.1, on
-narration suppressors: *"Remove lines like that before adding anything."*
-Sonnet 5.5 names two more to drop: tool-discouraging lines such as *"only use
-tools when strictly necessary"* or *"minimize tool calls"*, and *"hold all
-findings for the final response"*.
+Opus 5.5 migration: *"Instructions tuned for Claude Opus 5's behavior might no
+longer be needed"*. Fable 5.1, on narration suppressors: *"Remove lines like that
+before adding anything."* Sonnet 5.5 names one more to drop: *"hold all findings
+for the final response"*.
 
 ### S2 — No runtime model branching
 
@@ -188,8 +163,6 @@ Do not infer the executing model from this document. Use the host's reported
 capabilities and [SKILL.md's model guidance](../SKILL.md#model-guidance).
 Divergences land as maintainer-facing notes plus **one default that is safe
 across models** — never as `if <model> then <behavior>`.
-
----
 
 ## Divergences — recorded, not resolved
 
@@ -201,20 +174,16 @@ across models** — never as `if <model> then <behavior>`.
   fresh-context verifier subagents tend to outperform self-critique."*
 - Claude Code on Fable (code.claude.com/docs/en/model-config): *"Skip the
   verification reminders"*.
-
-- Sonnet 5.5 pulls both ways by effort: at `low` it *"sometimes reports a
-  change as done without running a check that exercises it"*, and the guide
-  offers a run-a-real-check paragraph; at `xhigh`/`max` it *"can start its own
-  rounds of review and verification, sometimes with subagents"*, and the guide
-  offers a stop-and-report paragraph instead.
-- Haiku 5.5 matches Sonnet 5.5's low end: at `low` and `medium` it *"sometimes
-  reports a code change as done without running a check"*, and the guide offers
-  a run-a-real-check paragraph.
+- Sonnet 5.5: at `low` it *"sometimes reports a change as done without running a
+  check that exercises it"* (the guide offers a run-a-real-check paragraph); at
+  `xhigh`/`max` it *"can start its own rounds of review and verification,
+  sometimes with subagents"* (the guide offers a stop-and-report paragraph).
+- Haiku 5.5: at `low` and `medium` it *"sometimes reports a code change as done
+  without running a check"* (the guide offers a run-a-real-check paragraph).
 
 Generic verification lines in project docs are expendable on all four families
-(W1). Independent verifier roles remain a skill/harness design choice.
-
-The reconciliation that holds for both turns on **whose work is verified**:
+(W1). Independent verifier roles remain a skill/harness design choice. The
+reconciliation turns on **whose work is verified**:
 
 | Shape | Verdict |
 |-------|---------|
@@ -227,34 +196,25 @@ The reconciliation that holds for both turns on **whose work is verified**:
 Fable 5.1 and Opus 5.5: adaptive thinking always on (cannot be disabled);
 default effort `high` on Fable 5.1, `medium` on Opus 5.5. Sonnet 5: adaptive,
 default `high`. Sonnet 5.5: adaptive, default `high` on the Claude API but
-`medium` in Claude Code; levels are
-*"recalibrated"* against Sonnet 5, and `between_tools` (accepted at `high` or
-below) is its lowest thinking setting. Haiku 5.5: adaptive, on by default,
-default `medium`; the first Haiku with effort levels, and `disabled` is accepted
-only at `high` or below. Legacy Opus 5: default `high`. *"Effort level names don't
-correspond to the same amount of thinking across models"* (Opus 5.5; Fable 5.1
-says the same), and the default changed within the Opus family.
-These are API/harness configuration, not project knowledge: never write
-effort or thinking settings, or "think harder/less" lines (W2), into a project
-doc — they go stale per model and fail the staleness check.
+`medium` in Claude Code; levels are *"recalibrated"* against Sonnet 5, and
+`between_tools` (accepted at `high` or below) is its lowest thinking setting.
+Haiku 5.5: adaptive, on by default, default `medium`; the first Haiku with effort
+levels, and `disabled` is accepted only at `high` or below. Legacy Opus 5:
+default `high`. *"Effort level names don't correspond to the same amount of
+thinking across models"* (Opus 5.5; Fable 5.1 says the same).
 
----
+These are API/harness configuration, not project knowledge: never write effort
+or thinking settings into a project doc; they go stale per model and fail the
+staleness check.
 
 ## Out of scope — do not import
 
-Verbosity and narration tuning, effort sweeps, design/frontend defaults,
-computer-use and vision tooling, tokenizer and `max_tokens` sizing, the
-send-to-user tool, refusal fallback wiring, `thinking.display` and
-progress-update reminders, unattended-run continuation loops and early-stop
-system-prompt blocks, elapsed-time budgets, pasted-content tagging, chat-only
-thinking lines, the multi-app "explore broadly" line, tool-call batching
-reminders, Sonnet 5.5's `between_tools`/`display: "updates"` wiring, Haiku 5.5's
-current-date search nudge and chatbot system-prompt adherence block, JSON-output
-parsing, mid-turn message placement and tolerant tool-call handling, and
-system-prompt blocks for change/test scope, targeted edits or
-compaction summaries (context-engineering-claude5.md C4), append-only history,
-writing density and deliverable length, source-quoting, search-triggering,
-open-ended-request and overplanning blocks, progress-claim and context-budget
-lines, tool-choice wording, running-subagent wiring, and prompts written for
-thinking disabled. These tune an
-application's runtime or system prompt, not a repository's documentation.
+Whatever tunes an application's runtime or system prompt rather than a
+repository's documentation: output style, length and narration, progress lines,
+design defaults, effort and thinking configuration, token sizing, tool
+(computer-use, vision, send-to-user), subagent and API wiring, tool-choice and
+batching lines, output parsing, message placement and history handling, run
+control and time or context budgets, and system-prompt blocks (change/test scope,
+targeted edits, compaction summaries per context-engineering-claude5.md C4,
+search, multi-app exploration, quoting, planning, open-ended requests, chatbot
+adherence, pasted content).

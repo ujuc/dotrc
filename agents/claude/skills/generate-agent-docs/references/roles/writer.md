@@ -29,9 +29,9 @@ approval from a rule's wording.
   [tdd-agent-loop.md](../tdd-agent-loop.md) (T1).
 - [agents-md-best-practices.md](../agents-md-best-practices.md) when AGENTS.md
   is a target; [entry-router-guidelines.md](../entry-router-guidelines.md) only
-  for requested governance; [SOUL.md](../SOUL.md) only when identity content is
+  for relevant governance; [SOUL.md](../SOUL.md) only when identity content is
   requested — an optional seed, never copied automatically.
-- [update-mode.md](../update-mode.md) U3 for every existing file.
+- Existing files belong to the orchestrator ([update-mode.md](../update-mode.md) U3); write only new files.
 
 ## Boundaries
 

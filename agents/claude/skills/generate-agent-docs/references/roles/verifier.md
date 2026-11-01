@@ -56,6 +56,29 @@ dependent check, never assumed PASS.
 8. **Execution integrity**: effective live/cache guidance is the one actually
    used; no global skill/cache/date edits.
    Report unavailable roles and source fallbacks accurately.
+9. **Prune test and stop-list**: every added or retained line passes the prune
+   test in [claude-code-best-practices.md](../claude-code-best-practices.md): if
+   Claude could find it by reading the code and would actually go and look, it
+   is cut. FAIL a line that matches a stop-list row. A line preserved by a user
+   decision or team requirement is PASS with a note, never removed.
+
+   | Stop-list row | Fails | Still allowed |
+   | --- | --- | --- |
+   | Context anxiety | Telling Claude to conserve or manage the context window | `/clear` between unrelated tasks as user guidance |
+   | Emphasis | IMPORTANT, ALL CAPS or MUST used to make a line stick | The same rule in plain words |
+   | Subagents for context | Delegating to protect the context window | Parallel work, noisy output, independent review |
+   | Subagents for quality | Delegating to get a better answer | A fresh reviewer that has not seen the reasoning |
+   | Thinking phrases | "think hard", "think harder", "be thorough" | Effort settings outside the document |
+   | Persistence lines | "keep going", "loop until done", "don't be lazy" | A concrete check that must pass |
+   | Repo description | Architecture, file layout or dependency summaries Claude can read | Decisions, misleading code, what the repo cannot show |
+
+10. **Enforcement fit**: a line stating a rule with no exceptions (a path never
+    edited, a file never read, a step that must always run) gets a recommendation
+    for a hook, deny rule or managed setting, naming which. Keep the line until an
+    authorized replacement exists. A preference with exceptions stays in the
+    document. This check reports a recommendation; it fails only when a required
+    no-exception rule was dropped without a replacement. SKIP when no such line
+    exists.
 
 ## Report
 

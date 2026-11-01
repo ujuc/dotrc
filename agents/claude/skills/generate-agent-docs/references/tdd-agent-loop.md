@@ -14,107 +14,75 @@ user/repository requirements. Preserve confirmed team TDD, nondefault convention
 concrete test commands and safety boundaries. Prior explicit decisions suffice;
 no repeated interview is required. Missing evidence in a blind review never
 licenses removing a team policy. Project-doc runs do not modify this cache or
-its date; use native fetch equivalents under SKILL.md's capability mapping.
+its date; use native fetch equivalents under SKILL.md's Host capabilities.
 
-Birgitta Böckeler's evaluation (martinfowler.com, *exploring-gen-ai* series)
-found that mandating TDD inside an agent's autonomous loop produced no
-measurable quality gain — Opus-judged rankings favored non-TDD runs, mutation
-scores showed no meaningful difference — at *"at least 3x the tokens"*
-(*"Small: 8.50x, Medium: 2.96x, Large: 4.89x"*; many are cache hits, so
-*"how many times exactly is variable"*). One exception: a TDD run ranked first
-only after she *"strengthened the TDD prompt with a more explicit
-refactor-and-design-review step"*. Her conclusion: *"I personally have stopped
-telling my coding agents to write tests first, let alone do TDD ... until I
-see evals or other strong arguments that convince me otherwise."* This file
-carries the one rule that changes what the skill emits: **T1**.
-
-Consumers: stage3-generator.md (writing), stage4-verifier.md (rejecting),
-update-mode.md (flagging existing docs). T1 behaves like
-model-prompting-guides.md's `[W]` rules and context-engineering-claude5.md's
-`C` rules — it governs generated project docs, never this skill's own prose.
+T1 governs generated project docs, never this skill's own prose: Stage 3 writes
+by it, Stage 4 rejects by it, update mode flags existing docs against it.
 
 **Freshness**: re-fetch `source_url` only when `today - last_upstream_check >
 check_interval_days` (`ToolSearch` `select:WebFetch` first — deferred tool).
 On any fetch failure use this snapshot and say so in one line:
 *"tdd-agent-loop 가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."*
 
----
-
 ## Cached snapshot (last verified 2026-11-01)
+
+Birgitta Böckeler's evaluation (martinfowler.com, *exploring-gen-ai* series)
+found that mandating TDD inside an agent's autonomous loop produced no
+measurable quality gain — Opus-judged rankings favored non-TDD runs, mutation
+scores showed no meaningful difference — at *"at least 3x the tokens"* (small
+8.50x, medium 2.96x, large 4.89x; many are cache hits, so *"how many times
+exactly is variable"*). A TDD run ranked first only after she *"strengthened the
+TDD prompt with a more explicit refactor-and-design-review step"*. She stopped
+telling agents to write tests first until evals or other strong arguments
+convince her otherwise.
 
 ### T1 — Agent-directed TDD process mandates: reject by default, rewrite as outcome verification
 
-Why the TDD goals do not transfer into a fully-agentic loop:
+TDD's goals do not transfer into a fully-agentic loop:
 
-- **Test-first does not prevent tautology**: even writing tests first, agent
-  *"tests checked the implementation's output against itself, re-running the
-  same code to produce the 'expected' answer."*
+- **Test-first does not prevent tautology**: agent *"tests checked the
+  implementation's output against itself, re-running the same code to produce
+  the 'expected' answer."*
 - **Red proves nothing unattended**: *"Watching a test go red is only proof
-  of anything if someone is checking why it went red."* And without that:
-  *"Without a human checkpoint between the two, is there really any purpose
-  left to writing the test first?"*
-- **Design quality favored non-TDD**: *"the non-TDD and test-first runs
-  always created the full design (architecture, data types, edge cases,
-  contracts) before writing any code"* — TDD runs let design emerge
-  test-by-test and rarely revisited it.
+  of anything if someone is checking why it went red."*
+- **Design quality favored non-TDD**: TDD runs let design emerge test-by-test
+  and rarely revisited it; non-TDD and test-first runs always designed fully
+  before any code.
 
 **Applies to**: any candidate line that prescribes a development *process* to
-the agent's own loop — "develop with TDD", "write a failing test first",
-"follow red-green-refactor", "always test-first". Reject by default and
-rewrite toward the outcome the team actually wants verified.
+the agent's own loop, such as "develop with TDD", "write a failing test first",
+"follow red-green-refactor". Reject by default and rewrite toward the outcome
+the team wants verified (the article's own recommendations):
 
-**Rewrite targets** (the article's own recommendations):
+- the concrete test command whose passing is the done criterion (Build & Test
+  Gotchas material);
+- a mutation-score bar for regression quality, not a workflow;
+- agent access to static code analysis;
+- trend metrics (files touched and tokens per change) and regular reviews of
+  structure and modularity;
+- the Approved Scenarios approach, semi-manual testing with a bespoke test
+  runner per application, for confidence building.
 
-- Name the concrete test command whose passing is the done criterion
-  (Build & Test Gotchas material)
-- *"monitor and improve regression quality with the help of mutation
-  testing"* — a mutation-score bar, not a workflow
-- *"Give the agent access to static code analysis"*
-- Trend metrics: *"keep an eye on the trend of number of files touched per
-  change"* and of tokens per change; *"run regular reviews of structure and
-  modularity"*
-- The Approved Scenarios approach, *"a form of semi-manual testing that is
-  supported by a bespoke test runner for each application"*, for confidence
-  building
-
-The rewrite must not itself violate W1: never rewrite a TDD mandate into
-self-verification scaffolding ("add a final verification step", "use a
-subagent to verify"). A concrete required test gate stays documented; a hook
-may be recommended without removing the team requirement.
-
----
+The rewrite must not violate W1: never rewrite a TDD mandate into
+self-verification scaffolding. A concrete required test gate stays documented;
+a hook may be recommended without removing the team requirement.
 
 ## Reconciliation — testing lines that survive T1
 
-The evidence above targets the **fully-agentic** loop. Four line shapes fall
-outside it and survive:
+T1 targets the **fully-agentic** loop. Test: does the line prescribe *how the
+agent must sequence its work* (process — reject) or *what must be true of the
+result* (outcome — keep)?
 
 | Line shape | Verdict |
 | --- | --- |
-| **Human-writes-tests split**: "implement against the existing failing tests in `tests/`; never modify test files" | Survives — the human checkpoint the article finds missing is present here; the failure evidence does not reach this mode. |
-| **Outcome requirement**: "every change lands with passing tests", "the CI gate is `make test`" | Survives — states what must be true of the result, not how the agent sequences its work. |
+| **Human-writes-tests split**: "implement against the existing failing tests in `tests/`; never modify test files" | Survives — the human checkpoint the article finds missing is present. |
+| **Outcome requirement**: "every change lands with passing tests", "the CI gate is `make test`" | Survives. |
 | **Explicit team decision confirmed in the Stage 2 interview** | Survives — record it as a human-written team rule (explicit user policy takes precedence over the study default). An explicit current or prior user decision is sufficient; never infer approval from code or force a repeated interview. If the team's TDD procedure is multi-step, C2 still applies — recommend a skill plus one reference line, not an inline runbook. |
-| **Test-quality monitoring bar**: mutation-score threshold, files-per-change trend | Survives — this is the article's own recommendation. |
-
-Test to apply: does the line prescribe *how the agent must sequence its work*
-(process — reject) or *what must be true of the result* (outcome — keep)?
-
----
+| **Test-quality monitoring bar**: mutation-score threshold, files-per-change trend | Survives. |
 
 ## Update mode
 
 U2 in update-mode.md preserves existing team TDD and prior explicit decisions.
 When intent is materially unresolved, ask about the proposed change rather than
 automatically removing the rule. Rewrite only when the user's authorization
-covers it. Missing interview evidence in a blind review is not a rejection of
-the team's policy.
-
----
-
-## Already owned elsewhere — do not duplicate
-
-| Article point | Owner in this skill |
-| --- | --- |
-| Preserve team gates; recommend automation | claude-code-best-practices.md / stage3-generator.md Common Writing Rules |
-| No self-verification scaffolding in docs | model-prompting-guides.md W1 |
-| Multi-step procedure becomes a skill + one reference line | context-engineering-claude5.md C2 |
+covers it.

@@ -1,60 +1,54 @@
 # Stage 3 — Shared Instructions First
 
-## Execution and evidence
-
-Use the capability mapping in SKILL.md. One writer handles selected files:
-dispatch the writer role (`references/roles/writer.md`) as `general-purpose`
-at Advanced routing with the prompt "Read `<abs>/references/roles/writer.md`
-first and follow it." followed by the inputs that file lists. On hosts without
-delegation, the orchestrator reads the same role file, writes directly and
-reports the missing independent role.
-
-The role file names the rulebooks the writer reads; this file holds the
-per-file rules. The static identity seed is optional inspiration, not a
-requirement to copy persona claims into project documentation.
-
-Create only authorized missing files. Use update-mode.md for existing ones.
-Shared supporting documents precede AGENTS.md; AGENTS.md precedes any CLAUDE.md
-that imports it. Report ordered writes, final contents, line counts and diffs.
+Per-file rules for the writer. Create only authorized missing files; existing
+files follow update-mode.md U3.
 
 ## Common writing rules
 
 - AGENTS.md owns shared Claude/Codex project instructions and shared links.
-  CLAUDE.md imports it and contains only Claude-specific additions.
+  CLAUDE.md imports it and holds only Claude-specific additions.
 - Preserve explicit user and repository requirements, including nondefault
   conventions, testing gates, team TDD, and safety boundaries. General pruning
   defaults and model-specific research never silently override them.
 - Prefer necessary, non-obvious instructions. Do not summarize the source tree
-  or repeat linter-enforced defaults. Retain a discoverable command when the
-  user requires it or its selection/conditions prevent a known mistake.
-- Use source references for detailed explanations. Only link a skill or file
-  that actually exists; recommend a missing skill without a fictitious link.
-- Document clear outcomes. Generic "double-check" scaffolding is expendable;
-  a concrete required test command is a project rule and may remain.
+  or repeat linter-enforced defaults. Cut a line Claude could find by reading
+  the code and would go and look for; keep a discoverable command when the user
+  requires it or its selection/conditions prevent a known mistake.
+- Leave out emphasis, context-window management, delegation for a better
+  answer, thinking phrases, persistence lines and repository descriptions
+  unless the user requires them.
+- Use source references for detail. Link only skills and files that exist;
+  recommend a missing skill without a link.
+- Document clear outcomes. Generic "double-check" scaffolding is expendable; a
+  concrete required test command is a project rule and may remain.
 - Apply W/C/T reference rules within their documented scope and exceptions.
   Decision rationale is allowed; internal reasoning transcripts are not needed.
-- Use the local budgets in claude-code-best-practices.md. Preserve shared
-  accessibility when shortening: moving shared content exclusively into
-  .claude/rules/ is not a valid size fix.
+- Use the local budgets in claude-code-best-practices.md. Moving shared content
+  exclusively into `.claude/rules/` is not a valid size fix.
 - Preserve unrelated content. Report optional improvements outside authorized
   changes separately, even when auditing every line.
+- Keep a rule with no exceptions as a line and recommend a hook, deny rule or
+  managed setting for it.
+- When a repository uses a lesser-known language, say what it is and link its
+  documentation.
+- Colleague test: someone with minimal context could follow each instruction.
+  Add 3-5 examples only where behavior is hard to describe, and use XML tags
+  only where one document mixes instructions, context and examples.
 
 ## Section A — AGENTS.md
 
-Create/update this shared source before the Claude-specific file.
-Keep it harness-neutral: project constraints, non-obvious build/test conditions,
-team conventions, workflow, boundaries, and links to shared supporting docs.
-Use plain Markdown; no required template or mandatory section list.
-Frontmatter removal from an existing file is a proposed structural change,
-not an automatic consequence of the standard allowing Markdown.
+Harness-neutral: project constraints, non-obvious build/test conditions, team
+conventions, workflow, boundaries, links to shared supporting docs. Plain
+Markdown; no required template or mandatory section list. Removing existing
+frontmatter is a proposed structural change, not automatic.
 
 A portable skill or workflow is not Claude-only merely because Claude can use
 it. Describe shared requirements in host-neutral terms and name available
-alternatives when useful. Claude-only commands, hook events and settings go
-in CLAUDE.md or the selected Claude rules.
+alternatives when useful. Claude-only commands, hook events and settings go in
+CLAUDE.md or the selected Claude rules.
 
-When Stage 1/2 establishes large parallel or adversarial workflows, include a
-short project-specific condition for delegation and cost control. Otherwise
+Only when Stage 1/2 establishes large parallel or adversarial workflows, add a
+short project-specific condition for delegation and cost control; otherwise
 omit an orchestration section. Do not manufacture model budgets or new rules.
 
 ## Section B — CLAUDE.md
@@ -65,47 +59,45 @@ After AGENTS.md exists, begin the root file with:
 @AGENTS.md
 ```
 
-Only append Claude-specific instructions not already managed in AGENTS.md:
-Claude Code commands, specific hook behavior, permissions or path-rule details
-that are relevant and confirmed. No heading or filler is needed when none exist;
-the import alone is the full file. Do not duplicate shared text below the import.
+Then append only relevant, confirmed Claude-specific content: Claude Code
+commands, specific hook behavior, permissions, path-rule details. With none,
+the import alone is the full file, with no heading or filler. Never repeat
+shared text below the import.
 
-For an existing combined file, transfer shared clauses into AGENTS.md first,
-preserving meaning and exceptions, then replace those clauses with the import.
-Preserve unrelated Claude-specific content. A later explicit CLAUDE-only
-restriction with no shared prerequisite requires scope resolution, not a
-standalone document or an unapproved companion write.
+For an existing combined file, move shared clauses into AGENTS.md first with
+their meaning and exceptions intact, then replace them with the import. Keep
+unrelated Claude-specific content. A later explicit CLAUDE-only restriction
+with no shared prerequisite requires scope resolution, not a standalone
+document or an unapproved companion write.
 
 ## Section C — Shared supporting documents
 
 Selected contributing-docs/ files hold necessary detail shared by humans and
 agents: non-obvious architecture decisions, build/test setup, migrations or
-conventions. Link them from AGENTS.md after they exist. Prefer existing docs
-over creating a parallel source. Do not move universally needed instructions
-out of AGENTS.md merely to reach a default size target.
-
-A sometimes-relevant procedure may warrant a skill recommendation, but that
-recommendation does not authorize creating a skill or removing a team runbook.
+conventions. Link them from AGENTS.md after they exist; prefer existing docs to
+a parallel source. Do not move universally needed instructions out of AGENTS.md
+merely to reach a default size target. Recommending a skill for a
+sometimes-relevant procedure does not authorize creating it or removing a team
+runbook.
 
 ## Section D — Nested instructions
 
-For an authorized package-specific shared rule, use a nested AGENTS.md before
-a nested CLAUDE.md. Do not generate nested files just because a package exists.
-If shared rules differ, retain those differences in the selected nested shared
-file. Its Claude companion imports the local AGENTS.md and adds only
-Claude-specific differences.
+For an authorized package-specific shared rule, use a nested AGENTS.md before a
+nested CLAUDE.md, never just because a package exists. Differing shared rules
+stay in the selected nested shared file; its Claude companion imports the local
+AGENTS.md and adds only Claude-specific differences.
 
 If only Claude-specific differences exist and shared ancestor instructions
-already load, a nested CLAUDE.md may contain only those differences; do not
-import a nonexistent local AGENTS.md. Explain this case in the verifier input.
+already load, a nested CLAUDE.md may contain only those differences and imports
+no nonexistent local AGENTS.md; explain this case in the verifier input.
 Compute every relative link from its containing file. Do not assume a submodule
 can resolve parent-repository paths when checked out independently.
 Never duplicate shared package commands in a Claude-only nested template.
 
 ## Section E — Claude path rules
 
-Create selected .claude/rules/ files for confirmed Claude-specific scoped
-behavior. Shared rules belong in shared instructions, even when path-scoped.
+Selected `.claude/rules/` files hold confirmed Claude-specific scoped behavior.
+Shared rules belong in shared instructions, even when path-scoped.
 
 ```markdown
 ---
@@ -116,14 +108,8 @@ paths:
 (Confirmed Claude-specific rule)
 ```
 
-Use documented paths globs; omit frontmatter for intentionally unconditional
-rules. Unconditional files still load at startup and do not reduce total
-context. Migrate legacy globs/alwaysApply syntax only within authorized scope,
-preserving intended conditions. A pattern with no current matches warrants
-checking intent, not automatic removal of a future-path rule.
-
-## Delivery to verification
-
-Supply final paths, original contents, diffs, facts, user decisions, source
-status and ordered writes to Stage 4. A successful write is not a verified
-result. Do not invent tool calls, interviews, source checks or reviewer passes.
+Use documented `paths` globs; omit frontmatter for intentionally unconditional
+rules, which still load at startup. Migrate legacy `globs`/`alwaysApply` only
+within authorized scope, preserving intended conditions. A pattern with no
+current matches warrants checking intent, not automatic removal of a
+future-path rule.
