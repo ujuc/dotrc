@@ -19,7 +19,7 @@ Lightweight forwards a command and relays the report; Standard picks labels and
 baselines and interprets failed tasks; Advanced weighs conflicting evaluation
 evidence. These levels are the calling agent's only
 ([shared selection guide](../generate-skills/references/model-selection.md));
-the evaluation target stays the configured local Ollama model and is never
+the evaluation target stays the launcher's configured model and is never
 swapped silently.
 
 For an isolated context in Claude Code, dispatch `Agent` with `subagent_type: "general-purpose"`, Lightweight routing from [dispatch routing](../generate-skills/references/model-selection.md#dispatch-routing), and the prompt "Run `bash <abs>/scripts/waza-run.sh <dispatch>` and return stdout verbatim, keeping any `⚠️` line first."
@@ -49,17 +49,21 @@ bash "$WAZA_SKILL/scripts/waza-run.sh" eval /abs/path/evals/commit/eval.yaml --l
 - `Skill invocations` `0 / M` is expected: with the default `inject_skill_body: true` the SKILL.md body is already in the system prompt. It is not a failure.
 - With `--baseline-json`:
   - An engine, model, trials, or task-set difference prints `⚠️ incomparable` with no verdict; when eval.yaml, `--trials`, or `COPILOT_MODEL` already shows it, the run is skipped.
+  - A run that errored before the model answered also prints `⚠️ incomparable`: its score measures the failure. Without a baseline the report warns the same way.
   - `⚠️ **regression**` appears only when the rounded weighted-score delta is below `-epsilon`; smaller drops are run-to-run noise.
   - `### Per-task drops` lists tasks whose weighted score fell by more than epsilon or whose pass rate fell. It is informational; waza fails a task when any single trial fails.
-- Waza scores the injected SKILL.md text on the local model. Whether a real agent reads the skill or its references is a skill-diet eval question (`generate-skills` Diet mode).
+- Waza scores the injected SKILL.md text on the eval model. Whether a real agent reads the skill or its references is a skill-diet eval question (`generate-skills` Diet mode).
 - Mock-engine results are **reference-only**: the mock executor never loads SKILL.md, so they never produce a regression verdict.
 - The launcher never modifies an existing suite. Refine placeholder tasks in `~/.claude/evals/<skill>/tasks/*.yaml` before trusting scores.
 
 ## Environment
 
-The launcher defaults to local Ollama (`COPILOT_PROVIDER_BASE_URL=http://localhost:11434/v1`,
-`COPILOT_PROVIDER_TYPE=openai`, `COPILOT_MODEL=gemma4:e4b-mlx`, `COPILOT_OFFLINE=true`); values already set win.
-Ollama must serve the target model before a real (non-mock) run. Override
+With `WAZA_ANTHROPIC_API_KEY` in the environment or mise, the launcher runs
+`claude-haiku-5-5` through Anthropic's OpenAI-compatible endpoint
+(`https://api.anthropic.com/v1`). Keep that name: a plain `ANTHROPIC_API_KEY` can
+move Claude Code off the subscription. Without a key it falls back to local
+Ollama (`gemma4:e4b-mlx`), which must serve the model first. Values already set
+win, and a different model makes earlier baselines incomparable. Override
 locations with `WAZA_WORKSPACE`, `WAZA_EVALS_DIR`, `WAZA_RESULTS_DIR`. The
 workspace `.waza.yaml` uses relative `skills/` and `evals/` symlinks into the
 dotrc tree; never write absolute paths there.

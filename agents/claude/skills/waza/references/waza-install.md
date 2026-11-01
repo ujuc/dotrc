@@ -11,8 +11,8 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | ba
 ```
 
 It installs to `/usr/local/bin` when writable, otherwise `$HOME/bin`; both are
-on the dotrc `zshrc` path. Use 0.38.6 or later (`waza --version`); the local
-Ollama BYOK path needs at least 0.35.
+on the dotrc `zshrc` path. Use 0.38.6 or later (`waza --version`); the BYOK
+provider path needs at least 0.35.
 
 With no release binary for the platform: `git clone https://github.com/microsoft/waza.git`,
 then `make install` in it (Go 1.21+, npm), and put `$(go env GOPATH)/bin` on PATH.

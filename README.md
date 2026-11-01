@@ -469,8 +469,9 @@ ln -sfn ${DOTRC_AGENTS_DIR}/amp ${XDG_CONFIG_HOME}/amp
 curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | bash
 ```
 
-바이너리만 설치되며 `~/.claude/data/waza-workspace/`는 만들지 않는다. 워크스페이스 준비와
-로컬 Ollama 모델 설정은 `agents/claude/skills/waza/references/waza-install.md`를 따른다.
+바이너리만 설치되며 `~/.claude/data/waza-workspace/`는 만들지 않는다. 워크스페이스 준비는
+`agents/claude/skills/waza/references/waza-install.md`를 따른다. 평가 모델은 mise나 환경변수에
+`WAZA_ANTHROPIC_API_KEY`가 있으면 Claude Haiku 5.5, 없으면 로컬 Ollama를 쓴다.
 실행은 항상 `waza` 스킬의 `scripts/waza-run.sh`를 거치며(Amp·Codex·Pi 공용), Claude Code에서는 격리 컨텍스트가 필요할 때 경량 워커가 같은 런처를 호출한다.
 
 ### [CodeGraph](https://github.com/colbymchenry/codegraph)

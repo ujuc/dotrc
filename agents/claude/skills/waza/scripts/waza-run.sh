@@ -12,7 +12,7 @@
 # Exit codes:
 #   0  success (including a reported ⚠️ regression), or an advisory skip
 #   1  no result JSON, scaffold/baseline failed, or ⚠️ incomparable baseline
-#      (engine, model, trials, or task set differ)
+#      (engine, model, trials, or task set differ, or a run errored)
 #   2  usage error
 #
 # Every harness (Claude Code, Amp, Codex, Pi) runs waza through this script.
@@ -29,6 +29,23 @@ RESULTS_DIR="${WAZA_RESULTS_DIR:-$HOME/.claude/data/waza/results}"
 EVALS_DIR="${WAZA_EVALS_DIR:-$HOME/.claude/evals}"
 
 export WAZA_NO_UPDATE_CHECK=1
+
+# Hosted Haiku when a key exists, local Ollama otherwise. Non-interactive shells
+# skip the mise hook that normally exports the key.
+if [ -z "${COPILOT_PROVIDER_BASE_URL:-}" ]; then
+  anthropic_key="${WAZA_ANTHROPIC_API_KEY:-}"
+  if [ -z "$anthropic_key" ] && command -v mise >/dev/null 2>&1; then
+    anthropic_key="$(mise exec -- printenv WAZA_ANTHROPIC_API_KEY 2>/dev/null || true)"
+  fi
+  if [ -n "$anthropic_key" ]; then
+    # The bundled CLI sends `thinking.type: enabled` to the native Anthropic
+    # endpoint, which Haiku 5.5 rejects; the OpenAI-compatible endpoint omits it.
+    export COPILOT_PROVIDER_BASE_URL="https://api.anthropic.com/v1"
+    export COPILOT_PROVIDER_API_KEY="$anthropic_key"
+    export COPILOT_MODEL="${COPILOT_MODEL:-claude-haiku-5-5}"
+  fi
+  unset anthropic_key
+fi
 export COPILOT_PROVIDER_BASE_URL="${COPILOT_PROVIDER_BASE_URL:-http://localhost:11434/v1}"
 export COPILOT_PROVIDER_TYPE="${COPILOT_PROVIDER_TYPE:-openai}"
 export COPILOT_MODEL="${COPILOT_MODEL:-gemma4:e4b-mlx}"
@@ -117,7 +134,17 @@ cmd_status() {
   local tags_url="${COPILOT_PROVIDER_BASE_URL%/v1}/api/tags" tags
   [ -f "$WORKSPACE/.waza.yaml" ] || reason="workspace missing"
   [ -n "${WAZA_BIN:-}" ] || reason="waza binary missing"
-  if [ -z "$reason" ]; then
+  if [ -z "$reason" ] && [ -n "${COPILOT_PROVIDER_API_KEY:-}" ]; then
+    # curl -K -: the key stays out of the process list.
+    if ! tags="$(curl -fsS --max-time 10 -K - "${COPILOT_PROVIDER_BASE_URL%/}/models" 2>/dev/null \
+                 <<<"header = \"Authorization: Bearer $COPILOT_PROVIDER_API_KEY\"
+header = \"anthropic-version: 2023-06-01\"")"; then
+      reason="provider unreachable or key rejected at $COPILOT_PROVIDER_BASE_URL"
+    elif ! jq -e --arg m "$COPILOT_MODEL" '.data[]? | select(.id == $m)' <<<"$tags" >/dev/null; then
+      reason="model $COPILOT_MODEL not listed by the provider"
+    fi
+    echo "- Provider: ${reason:-✅ $COPILOT_MODEL listed}"
+  elif [ -z "$reason" ]; then
     if ! tags="$(curl -fsS --max-time 3 "$tags_url" 2>/dev/null)"; then
       reason="Ollama unreachable at $tags_url"
     elif ! jq -e --arg m "$COPILOT_MODEL" '.models[]? | select(.name == $m or .model == $m)' <<<"$tags" >/dev/null; then
@@ -253,6 +280,12 @@ render_report() {
     echo
     echo "> ℹ️ reference-only (mock engine: SKILL.md not exercised)"
   fi
+  local errored
+  errored="$(jq -r '[.tasks[]?.runs[]? | select(.status == "error")] | length' "$result_json")"
+  if [ "$errored" != "0" ]; then
+    echo
+    echo "> ⚠️ $errored run(s) errored before the model answered: this score measures the failure, not the skill. Fix the provider and rerun."
+  fi
 
   if [ "$(jq -r '.metrics // {} | length' "$result_json")" != "0" ]; then
     echo
@@ -304,7 +337,10 @@ incomparable_fields() {
     ( select($c.tasks != null)
       | ([$b.tasks[]?.test_id] | sort) as $bt | ([$c.tasks[]?.test_id] | sort) as $ct
       | select($bt != $ct)
-      | "- tasks: baseline \($bt | join(",")) → current \($ct | join(","))" )
+      | "- tasks: baseline \($bt | join(",")) → current \($ct | join(","))" ),
+    ( ([$b, $c][] | [.tasks[]?.runs[]? | select(.status == "error")] | length)
+      | select(. > 0)
+      | "- errored_runs: \(.) run(s) failed before the model answered" )
   ' "$1"
 }
 

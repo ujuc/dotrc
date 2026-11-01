@@ -94,7 +94,8 @@ cat >"$root/curlbin/curl" <<'SH'
 #!/usr/bin/env bash
 printf '%s' "$FAKE_TAGS"
 SH
-chmod +x "$root/bin/waza" "$root/curlbin/curl"
+printf '#!/usr/bin/env bash\nprintf "%%s" "${FAKE_MISE_KEY:-}"\n' >"$root/bin/mise"
+chmod +x "$root/bin/waza" "$root/bin/mise" "$root/curlbin/curl"
 touch "$root/ws/.waza.yaml"
 printf 'config:\n  trials_per_task: 1\n  executor: copilot-sdk\n' >"$root/evals/live/eval.yaml"
 printf 'config:\n  trials_per_task: 1\n  executor: mock\n' >"$root/evals/mock/eval.yaml"
@@ -113,6 +114,7 @@ fixture copilot-sdk 3 '{"a":[1,1],"b":[0.7,1],"d":[0.7,1]}' >"$root/fx/tasks-cha
 fixture copilot-sdk 3 '{"a":[1,1],"b":[0.7,1],"c":[0.7,1]}' | jq 'del(.config.engine_type)' >"$root/fx/no-engine.json"
 fixture mock 3 '{"a":[1,1],"b":[1,1],"c":[1,1]}' >"$root/fx/base-mock.json"
 fixture mock 3 '{"a":[1,1],"b":[0.7,1],"c":[0.7,1]}' >"$root/fx/mock-drop.json"
+fixture copilot-sdk 3 '{"a":[1,1],"b":[0.7,1],"c":[0.7,1]}' | jq '.tasks[1].runs[0].status = "error"' >"$root/fx/errored.json"
 
 echo "report rows and passthrough"
 export FAKE_FIXTURE="$root/fx/base-live.json"
@@ -162,6 +164,12 @@ check "trials_per_task mismatch skips the run" absent test -f "$FAKE_ARGV"
 export FAKE_FIXTURE="$root/fx/no-engine.json"
 check "missing engine_type in a result exits 1" launch 1 eval "$live" --label o --trials 3 --baseline-json "$root/fx/base-live.json"
 check "missing engine_type has no verdict" absent out_has "**regression**"
+export FAKE_FIXTURE="$root/fx/errored.json"
+check "errored run alone exits 0" launch 0 eval "$live" --label p --trials 3
+check "errored run is flagged" out_has "errored before the model answered"
+check "errored run against a baseline exits 1" launch 1 eval "$live" --label q --trials 3 --baseline-json "$root/fx/base-live.json"
+check "errored run is incomparable" out_has "errored_runs"
+check "errored run has no verdict" absent out_has "**regression**"
 
 echo "failures and usage"
 export FAKE_FIXTURE=""
@@ -183,6 +191,17 @@ check "status exits 0 when Ollama is unreachable" launch 0 status
 check "unreachable Ollama is not usable" bash -c 'tail -1 "$0" | grep -q "^- Usable: no (Ollama unreachable"' "$root/out"
 check "served model is usable" env PATH="$root/curlbin:$PATH" bash -c '"$0" status | tail -1 | grep -qx -- "- Usable: yes"' "$launcher"
 check "unserved model is not usable" env PATH="$root/curlbin:$PATH" COPILOT_MODEL=other:tag bash -c '"$0" status | tail -1 | grep -qxF -- "- Usable: no (model other:tag not served by Ollama)"' "$launcher"
+
+echo "provider selection"
+hosted_tags='{"data":[{"id":"claude-haiku-5-5"}]}'
+no_provider=(env -u COPILOT_PROVIDER_BASE_URL -u COPILOT_MODEL)
+check "a key selects hosted Haiku" "${no_provider[@]}" WAZA_ANTHROPIC_API_KEY=k PATH="$root/curlbin:$PATH" FAKE_TAGS="$hosted_tags" bash -c '"$0" status | grep -qF -- "Eval model: \`claude-haiku-5-5\` via \`https://api.anthropic.com/v1\`"' "$launcher"
+check "listed hosted model is usable" "${no_provider[@]}" WAZA_ANTHROPIC_API_KEY=k PATH="$root/curlbin:$PATH" FAKE_TAGS="$hosted_tags" bash -c '"$0" status | tail -1 | grep -qx -- "- Usable: yes"' "$launcher"
+check "unlisted hosted model is not usable" "${no_provider[@]}" WAZA_ANTHROPIC_API_KEY=k COPILOT_MODEL=other PATH="$root/curlbin:$PATH" FAKE_TAGS="$hosted_tags" bash -c '"$0" status | tail -1 | grep -qxF -- "- Usable: no (model other not listed by the provider)"' "$launcher"
+check "mise supplies the key" "${no_provider[@]}" FAKE_MISE_KEY=k PATH="$root/curlbin:$PATH" FAKE_TAGS="$hosted_tags" bash -c '"$0" status | tail -1 | grep -qx -- "- Usable: yes"' "$launcher"
+check "no key keeps local Ollama" "${no_provider[@]}" bash -c '"$0" status | grep -qF -- "Eval model: \`gemma4:e4b-mlx\` via \`http://localhost:11434/v1\`"' "$launcher"
+check "an explicit provider wins over a key" env WAZA_ANTHROPIC_API_KEY=k bash -c '"$0" status | grep -qF -- "via \`http://127.0.0.1:1/v1\`"' "$launcher"
+check "the key never reaches the status report" absent env -u COPILOT_PROVIDER_BASE_URL -u COPILOT_MODEL WAZA_ANTHROPIC_API_KEY=sekret PATH="$root/curlbin:$PATH" FAKE_TAGS="$hosted_tags" bash -c '"$0" status | grep -q sekret' "$launcher"
 
 if [ "$fail" -ne 0 ]; then
   echo "test-waza-run: FAILED"

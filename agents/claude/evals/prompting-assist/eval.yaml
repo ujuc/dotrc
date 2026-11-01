@@ -20,7 +20,7 @@ graders:
   - type: behavior
     name: token-budget
     config:
-      # A ~12 KB SKILL.md plus the skill listing measured up to ~18.9k tokens on the live tree (2026-09-23); tool-using runs reach 46k+.
-      max_tokens: 30000
+      # The harness prompt plus SKILL.md costs 28-33k on Haiku 5.5; tool-using runs go well past 40k.
+      max_tokens: 40000
 tasks:
   - "tasks/*.yaml"
