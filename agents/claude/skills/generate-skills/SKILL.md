@@ -194,8 +194,12 @@ path. Prefer delete-and-link over rephrasing.
 
 Fail the workflow if `name`, `description` or `group` is missing or empty;
 validator warnings do not override this. If `cargo` is missing, stop and report
-the draft as unvalidated: no registration, no completion claim. Otherwise run
-`validate-skill` and `skill-diet-eval check` on the skill; fix and rerun until both pass.
+the draft as unvalidated: no registration, no completion claim. Otherwise, before the final report, run this on the changed skill, however small
+the edit or urgent the request, then fix and rerun until it passes:
+
+```bash
+bash "$GS/validate-skill" <skill-dir> && bash "$GS/skill-diet-eval" check <skill-dir> && bash "$GS/skill-diet-growth" <skill-dir>
+```
 
 **Size limits**: place each fact by [level](../skill-diet/SKILL.md#levels);
 skill-diet's budget decides when to slim, and the validator's 500-line warning
@@ -259,7 +263,7 @@ Use these binary checks with the evidence statuses above.
 - Create mode Steps 1–4, scaffolding, structure, output and dynamic context → [create-mode.md](references/create-mode.md)
 - Field rules, portability, invocation control, substitutions → [frontmatter-spec.md](references/frontmatter-spec.md)
 - Writing or tuning `description` → [description-examples.md](references/description-examples.md)
-- Degrees of freedom, gotchas, config, hooks, completion criteria → [design-principles.md](references/design-principles.md)
+- Degrees of freedom, flowcharts, gotchas, config, hooks, completion criteria → [design-principles.md](references/design-principles.md)
 - Workload profile, worker `model`/`effort` → [model-selection.md](references/model-selection.md)
 - Explore or reviewer subagents → [subagent-guidelines.md](references/subagent-guidelines.md)
 - Eval criteria and Waza suites → [eval-guide.md](references/eval-guide.md)
