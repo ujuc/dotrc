@@ -38,7 +38,7 @@
    3. 장르 유지
    4. register 유지
    5. S1 잔존 0
-   6. 새 비유·수사·주장 없음
+   6. 원문 주장의 강도 유지, 원문에 없는 사실·주장·비유·수사 없음
 5. `output_dir/final.md`에는 본문만, `output_dir/summary.md`에는 메트릭·카테고리 before/after·6항 결과·등급·주요 edit·잔존 finding을 쓴다.
 
 등급은 quick-rules의 A–D 기준을 그대로 쓴다.

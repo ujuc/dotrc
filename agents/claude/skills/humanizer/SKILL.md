@@ -151,9 +151,9 @@ Decide the type in this order: the user's word; the path (`README.md` → 기술
 | Type | Bar | Voice |
 |------|-----|-------|
 | **블로그/에세이** | All patterns | Match the source; add no stance or 1st person |
-| **기술 문서** | Clarity first; remove modifiers and filler | None; precise and dry |
+| **기술 문서** | Clarity first; cut filler, keep modifiers that carry a claim | None; precise and dry |
 | **마케팅/카피** | Cut filler around claims; keep every claim and its strength | Match the source brand voice |
-| **학술/리포트** | Accuracy and sourcing; remove weasel words | None; objective |
+| **학술/리포트** | Accuracy and sourcing; leave a vague attribution unresolved, never invent one | None; objective |
 | **코드 주석** | Brevity; remove needless explanation | None |
 | **SNS/캐주얼** | Remove excess formality when the source is casual | Match the source |
 

@@ -112,6 +112,11 @@ for p in (SKILL, QUICK, MONOLITH, REWRITER, SCANNER, FIDELITY):
 for p in (SKILL, QUICK, MONOLITH, REWRITER, SCANNER):
     check("noun-ending-reverse-guard", p, has(FILES[p], r"명사형 종결"))
 
+# 10. Self-check item 6 keeps the claim-strength rule in every inline copy.
+check("self-check-claim-strength", SKILL, has(FILES[SKILL], r"kept at its strength"))
+for p in (QUICK, MONOLITH):
+    check("self-check-claim-strength", p, has(FILES[p], r"주장.{0,3}강도"))
+
 failed = [r for r in results if not r[1]]
 for name, ok, detail in results:
     mark = "✓" if ok else "✗"
