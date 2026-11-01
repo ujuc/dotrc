@@ -2,11 +2,18 @@ id: verification-evidence
 name: verification-evidence decision probe
 description: Decision probe; mock output is not behavioral evidence.
 inputs:
-  prompt: "Checklist gets only final file paths and update flag, with no baseline or confirmed user decisions. State the preservation status. Also state final status for fast multi-file output and for a third checklist run still failing."
+  prompt: "Checklist gets only final file paths and update flag, with no baseline or confirmed user decisions. State the preservation status. Also state final status for fast multi-file output and for a third checklist run still failing. Do not run tools, write files, or ask questions."
 graders:
   - type: text
-    name: decision-terms
+    name: status-per-case
     config:
-      contains:
-        - "UNVERIFIED"
-        - "PARTIAL"
+      regex_match:
+        - "(?i)preserv(?:[^.\\n]|\\.md){0,80}\\bunverified\\b|\\bunverified\\b(?:[^.\\n]|\\.md){0,80}preserv"
+        - "(?i)\\bfast\\b(?:[^.\\n]|\\.md){0,80}\\bpartial\\b|\\bpartial\\b(?:[^.\\n]|\\.md){0,80}\\bfast\\b"
+        - "(?i)(third|3rd|still[ -]fail)(?:[^.\\n]|\\.md){0,80}(\\bincomplete\\b|\\bnot\\s+complete\\b)|(\\bincomplete\\b|\\bnot\\s+complete\\b)(?:[^.\\n]|\\.md){0,80}(third|3rd|still[ -]fail)"
+      regex_not_match:
+        - "(?i)preserv\\w*[\\w -]{0,20}(:|\\bis\\b)[*\\s]*(pass|passed|verified|complete|partial)\\b"
+        - "(?i)\\bfast\\b[\\w -]{0,30}(:|\\bis\\b)[*\\s]*(pass|passed|verified|complete|unverified)\\b"
+        - "(?im)(third|3rd|still[ -]fail)[\\w -]{0,40}(:|\\bis\\b)[*\\s]*(pass|passed|verified|complete|partial)\\b\\s*([.,;(*]|$)"
+        - "(?i)preserv\\w*(\\s+status)?(\\W{1,6}partial\\b|\\s+pass(es|ed)\\b)"
+        - "(?i)\\bfast\\b[\\w -]{0,20}\\s+unverified\\b|\\bfast(\\s+[\\w-]+){0,3}\\s+pass(es|ed)\\b"

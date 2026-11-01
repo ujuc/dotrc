@@ -3,11 +3,18 @@ name: target-scope decision probe
 description: Decision-only probe; mock output is not behavior evidence.
 tags: [decision-probe]
 inputs:
-  prompt: "A user uses Claude and Codex together and requests shared instructions first. AGENTS.md and CLAUDE.md are both absent. State the ordered write targets. Then consider an explicit CLAUDE.md-only restriction with absent AGENTS.md and state whether writing can proceed. Do not create actual files."
+  prompt: "A user uses Claude and Codex together and requests shared instructions first. AGENTS.md and CLAUDE.md are both absent. State the ordered write targets. Then consider an explicit CLAUDE.md-only restriction with absent AGENTS.md and state whether writing can proceed. Do not create actual files. Do not run tools, write files, or ask questions."
 graders:
   - type: text
-    name: decision-terms
+    name: order-and-prerequisite-block
     config:
-      contains:
-        - "AGENTS.md"
-        - "CLAUDE.md"
+      regex_match:
+        - "(?i)(1[.)]\\W{0,6}AGENTS\\.md|AGENTS\\.md\\W{0,6}(comes\\s+|is\\s+written\\s+|goes\\s+)?first|\\b(first[:,]|start\\s+with|begin\\s+with)\\W{0,6}AGENTS\\.md|AGENTS\\.md[^\\n]{0,80}\\b(then|before|followed\\s+by)\\b[^\\n]{0,40}CLAUDE\\.md)"
+        - "(?im)((cannot|can't|can\\s+not|must\\s+not|may\\s+not|should\\s+not|shouldn't|unable\\s+to|not\\s+able\\s+to|do\\s+not|don't|won't|will\\s+not)\\s+(yet\\s+)?(proceed|write|be\\s+written|go\\s+ahead|start|begin|continue)|proceed\\s+only\\s+(after|once|when|if)|\\b(writing|write|writes)\\b[^\\n.]{0,30}\\b(blocked|on\\s+hold|must\\s+wait|has\\s+to\\s+wait|stops|halts|pending)\\b|^\\W*no\\b[.,:;]|:\\W*no\\b[.,:;])"
+      regex_not_match:
+        - "(?im)(^\\W*(1[.)]|first)\\W{0,6}CLAUDE\\.md|CLAUDE\\.md\\W{0,6}first\\b)"
+        - "(?i)\\b(writing|write|CLAUDE\\.md)\\W{0,3}\\s+(can|may)\\s+(still\\s+)?proceed\\s*([.;:]|,\\s*but\\s+only\\s+(to|for|in)\\b|(with|to|for|by|on)\\b)"
+        - "(?i)\\b(possible|allowed|permitted|acceptable|fine|ok|proceed|go\\s+ahead|(can|may)\\s+write)\\b[^\\n]{0,50}\\b(if|when|as\\s+long\\s+as|so\\s+long\\s+as|provided)\\b[^\\n]{0,40}claude[- ](specific|only)"
+        - "(?i)\\b(create|write|add)\\s+(the\\s+|a\\s+)?\\W?AGENTS\\.md\\W?\\s+(anyway|automatically|regardless|too|as\\s+well|alongside)"
+        - "(?i)\\b(create|write)\\s+(only\\s+)?(a\\s+)?standalone\\s+\\W?CLAUDE\\.md"
+        - "(?im)(^|[.:;!*]\\s*|\\b(and|then|so)\\s+)(create|write)\\s+(only\\s+\\W?CLAUDE\\.md|(the\\s+)?\\W?CLAUDE\\.md\\W?\\s+(now|anyway|alone|regardless))"

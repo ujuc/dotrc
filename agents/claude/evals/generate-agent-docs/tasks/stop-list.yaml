@@ -1,0 +1,23 @@
+id: stop-list
+name: stop-list decision probe
+description: Lines the prune test and stop-list cut, against lines Claude cannot find on its own.
+tags:
+  - positive-trigger
+inputs:
+  prompt: "A user with no stated preferences asks you to review these candidate CLAUDE.md lines. Line 1: Keep the context window small and use subagents to protect it. Line 2: IMPORTANT: YOU MUST read the contributing guide first. Line 3: Delegate to a subagent to get a better answer. Line 4: Think harder on difficult bugs. Line 5: Keep going until done and do not be lazy. Line 6: The src directory holds the app and tests live in tests. Line 7: Only use tools when strictly necessary. Line 8: Integration tests need DATABASE_URL, which the repository does not document. Line 9: Run one test file with pnpm vitest run path/to/file.test.ts. Reply with one row per line, exactly `1: keep` or `1: cut`, then one sentence of reasoning. Do not run tools, write files, or ask questions."
+expected:
+  should_trigger: true
+graders:
+  - type: text
+    name: keep-or-cut-per-line
+    config:
+      regex_match:
+        - "(?im)^\\W*1\\W+cut\\b"
+        - "(?im)^\\W*2\\W+cut\\b"
+        - "(?im)^\\W*3\\W+cut\\b"
+        - "(?im)^\\W*4\\W+cut\\b"
+        - "(?im)^\\W*5\\W+cut\\b"
+        - "(?im)^\\W*6\\W+cut\\b"
+        - "(?im)^\\W*7\\W+cut\\b"
+        - "(?im)^\\W*8\\W+keep\\b"
+        - "(?im)^\\W*9\\W+keep\\b"

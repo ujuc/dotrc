@@ -3,11 +3,17 @@ name: cache-ownership decision probe
 description: Decision-only probe; mock output is not behavior evidence.
 tags: [decision-probe]
 inputs:
-  prompt: "During a project documentation update a live upstream response differs from the bundled cache. State which guidance is used and whether the skill cache and timestamp change. Do not perform writes."
+  prompt: "During a project documentation update a live upstream response differs from the bundled cache. State which guidance is used and whether the skill cache and timestamp change. Do not perform writes. Do not run tools, write files, or ask questions."
 graders:
   - type: text
-    name: decision-terms
+    name: live-text-separate-cache-maintenance
     config:
-      contains:
-        - "session"
-        - "cache"
+      regex_match:
+        - "(?i)\\bgenerate-skills\\b"
+        - "(?i)(\\b(guidance|use|uses|used|using|follow|follows|apply|applies|prefer|prefers|rely\\s+on|relies\\s+on|go\\s+with|trust|adopt)\\b\\W+((is|the|this|freshly|newly|successfully|current)\\s+)*(live|upstream|fetched)\\b|\\b(live|upstream|fetched)\\b\\s+(\\w+\\s+){0,2}(is\\s+used|wins|governs|applies|overrides|takes\\s+precedence|is\\s+authoritative))"
+        - "(?i)(\\b(unchanged|untouched|neither|stays?|remains?)\\b|(\\bnot|n't|\\bnever)\\s+(be\\s+)?(change|edit|updat|modif|touch|refresh|rewrit|bump)\\w*|\\bnothing\\b[^.\\n]{0,30}\\bchange)"
+      regex_not_match:
+        - "(?i)\\b(cache|snapshot|timestamp|date)\\b(\\*{0,2}:\\*{0,2}\\s*|\\s+(is|are|gets?|will\\s+be|should\\s+be)\\s+)(updated|refreshed|rewritten|overwritten|bumped|changed)\\s*(\\.|,|;|$|\\bto\\b|\\bwith\\b|\\bnow\\b|\\bimmediately\\b)"
+        - "(?i)(\\bnot|n't|\\bnever)\\s+(use|using|follow|apply)\\W+(the\\s+)?(live|upstream|fetched)\\b"
+        - "(?i)\\b(skip|no|without|bypass)\\b[^.\\n]{0,20}\\bgenerate-skills\\b"
+        - "(?im)(^|[.:;!*,]\\s*|\\b(and|then|should|must|will)\\s+)(refresh|update|rewrite|overwrite|bump|edit)\\w*\\s+(the\\s+)?(\\S+\\s+){0,2}(cache|snapshot|timestamp)\\b[^.\\n]{0,60}\\b(this\\s+run|same\\s+run|in\\s+place|directly|now|immediately)\\b"

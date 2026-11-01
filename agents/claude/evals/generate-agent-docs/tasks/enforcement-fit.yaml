@@ -1,0 +1,16 @@
+id: enforcement-fit
+name: enforcement-fit decision probe
+description: A no-exception rule gets an enforcement recommendation; a preference stays a document line.
+tags:
+  - positive-trigger
+inputs:
+  prompt: "A project wants two rules in AGENTS.md. Rule A: never edit the generated client in src/gen/. Rule B: prefer named exports, with exceptions where a framework needs a default export. Reply with one row per rule, exactly `A: document only` or `A: document plus hook or deny rule`, then one sentence of reasoning. Do not run tools, write files, or ask questions."
+expected:
+  should_trigger: true
+graders:
+  - type: text
+    name: enforcement-per-rule
+    config:
+      regex_match:
+        - "(?im)^\\W*A\\W+document plus hook or deny rule\\b"
+        - "(?im)^\\W*B\\W+document only\\b"

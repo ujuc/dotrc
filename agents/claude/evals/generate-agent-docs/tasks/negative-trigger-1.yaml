@@ -3,13 +3,12 @@ name: review-not-generation
 description: Decision probe; mock scores do not prove skill execution.
 tags: [decision-probe]
 inputs:
-  prompt: "First request: Update README.md only. Second independent request: Review generate-agent-docs and plan improvements. For each, classify whether to launch agent-document generation. Do not generate document contents. Explain briefly in English."
+  prompt: "First request: Update README.md only. Second independent request: Review generate-agent-docs and plan improvements. For each, classify whether to launch agent-document generation. Do not generate document contents. Explain briefly in English. For each request, include one line exactly `launch: yes` or `launch: no`. Do not run tools, write files, or ask questions."
 graders:
   - type: text
-    name: scoped-response
+    name: both-requests-stay-out
     config:
-      contains:
-        - "README"
-        - "review"
-      not_contains:
-        - "@AGENTS.md"
+      regex_match:
+        - "(?is)launch:\\s*no\\b.+launch:\\s*no\\b"
+      regex_not_match:
+        - "(?i)launch:\\s*yes\\b"

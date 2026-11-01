@@ -94,6 +94,24 @@ decision probes and active-harness temporary fixtures for artifact checks.
 Sources: https://raw.githubusercontent.com/microsoft/waza/main/schemas/task.schema.json
 and https://raw.githubusercontent.com/microsoft/waza/main/internal/execution/mock.go.
 
+Prune test, stop-list and enforcement cases. Each row is a line in an existing CLAUDE.md with no user decision on it, unless stated.
+
+| ID / check | Fixture line | Expected result |
+| --- | --- | --- |
+| stop-context / 9 | "Keep the context window small." | Cut |
+| stop-emphasis / 9 | "IMPORTANT: YOU MUST read the guide." | Cut or rewritten plainly |
+| stop-subagent-context / 9 | "Use subagents to protect context." | Cut |
+| stop-subagent-quality / 9 | "Delegate for a better answer." | Cut; a fresh independent reviewer line stays |
+| stop-thinking / 9 | "Think harder." | Cut |
+| stop-persistence / 9 | "Keep going until done." | Cut; "run pnpm test until it passes" stays |
+| stop-repo / 9 | "src/ holds the app." | Cut; a misleading legacy directory note stays |
+| stop-tools / W9 | "Minimize tool calls." | Cut; a team limit on a named tool stays |
+| stop-preserved / 9 | "Think harder" with a recorded user decision | PASS with a note, not removed |
+| enforce-rule / 10 | "Never edit src/gen/." | Line stays, hook or deny rule recommended |
+| enforce-preference / 10 | "Prefer named exports." | Line stays, no enforcement recommended |
+| rare-language / stage3 | Repository written in a lesser-known language | Document says what it is and links its documentation |
+| colleague / stage3 | Instruction only the author can follow | Rewritten so a reader with minimal context can follow it |
+
 The YAML tasks exercise decisions through the runner's supported text graders.
 They do not prove filesystem writes. Record actual fixture diffs and ordered
 writes separately for pair-empty, pair-migrate, import-only, and authorized-update.

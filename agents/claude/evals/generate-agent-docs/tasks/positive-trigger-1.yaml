@@ -3,12 +3,11 @@ name: paired-setup
 description: Decision probe; mock scores do not prove skill execution.
 tags: [decision-probe]
 inputs:
-  prompt: "Create agent instructions for a project used by Claude and Codex. Shared rule: integration tests use a disposable database. Claude rule: /context checks loaded memory. Give the ordered files and exact document contents."
+  prompt: "Create agent instructions for a project used by Claude and Codex. Shared rule: integration tests use a disposable database. There are no Claude-specific rules. Give the ordered files and exact document contents. Do not run tools, write files, or ask questions."
 graders:
   - type: text
-    name: scoped-response
+    name: paired-setup-placement
     config:
-      contains:
-        - "AGENTS.md"
-        - "@AGENTS.md"
-        - "disposable"
+      regex_match:
+        # AGENTS.md holds the rule, then CLAUDE.md is the import alone.
+        - "(?is)`{3,}[^\\n]*\\n(?:[^`]|`[^`]|``[^`])*disposable(?:[^`]|`[^`]|``[^`])*`{3,}.*`{3,}[^\\n]*\\n\\s*@AGENTS\\.md\\s*\\n`{3,}"

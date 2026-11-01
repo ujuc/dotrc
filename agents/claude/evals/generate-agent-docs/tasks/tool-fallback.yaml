@@ -2,11 +2,13 @@ id: tool-fallback
 name: tool-fallback decision probe
 description: Decision probe; mock output is not behavioral evidence.
 inputs:
-  prompt: "A host has native web and interactive text questions but no ToolSearch, WebFetch or advisor. A .md source fails on MIME; HTML works. State the fetch and unresolved-question handling without claiming missing tools ran."
+  prompt: "A host has native web and interactive text questions but no ToolSearch, WebFetch or advisor. A .md source fails on MIME; HTML works. State the fetch and unresolved-question handling without claiming missing tools ran. Do not run tools, write files, or ask questions."
 graders:
   - type: text
-    name: decision-terms
+    name: fallback-decisions
     config:
-      contains:
-        - "HTML"
-        - "question"
+      regex_match:
+        - "(?i)\\b(ask|posed?|raised?)\\b[^.\\n]{0,40}\\b(text|chat|message|prose|reply|conversation|directly|the user|interactive\\w*)\\b|\\b(ordinary|normal|plain|regular)\\b[^.\\n]{0,20}\\bquestion"
+        - "(?i)\\b(retry|retries|try|tries|switch\\w*|fall\\w*|fetch\\w*|use|using|request\\w*|load\\w*)\\b[^.;\\n]{0,40}\\bHTML\\b"
+      regex_not_match:
+        - "(?i)\\b(don['’]?t|do not|won['’]?t|will not|can['’]?t|cannot|never|unable to|not able to|no way to|impossible to)\\s+(ask|posed?|raised?)\\b[^.\\n]{0,40}\\b(text|chat|message|prose|reply|conversation|directly|the user|interactive\\w*)\\b"
