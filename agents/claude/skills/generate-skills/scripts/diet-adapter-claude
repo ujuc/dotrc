@@ -51,7 +51,7 @@ jq -s \
   --arg w1 "${work}/.claude/skills/${name}" --arg w2 "${work_real}/.claude/skills/${name}" '
   # Absolute work paths first, then paths the agent wrote relative to <work-dir>.
   def back: if $name == "" then . else gsub($w2; $skill_dir) | gsub($w1; $skill_dir)
-    | gsub("(?<p>^|[\\s\"\u0027=(])\\.claude/skills/\($name)"; "\(.p)\($skill_dir)") end;
+    | gsub("(?<p>^|[\\s\"\u0027=(])(\\.\\./)*\\.claude/skills/\($name)"; "\(.p)\($skill_dir)") end;
   (map(select(.type == "result")) | last) as $r
   # Calls that errored (e.g. a denied read) touched nothing, so they keep only their name.
   | ([.[] | select(.type == "user") | .message.content[]? | select(.type == "tool_result" and .is_error == true) | .tool_use_id]) as $failed

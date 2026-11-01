@@ -126,7 +126,7 @@ while IFS= read -r file; do
 
   sampled=$((sampled + 1))
   [ "$sampled" -lt "$max" ] || break
-done < <(find "$projects_dir" -type f -name '*.jsonl' -newermt "$since" -exec stat "${stat_fmt[@]}" {} + \
+done < <(find "$projects_dir" -type f -name '*.jsonl' -not -path '*/subagents/*' -newermt "$since" -exec stat "${stat_fmt[@]}" {} + \
          | sort -rn | cut -d' ' -f2-)
 
 jq -s --arg generated "$(date -u +%FT%TZ)" --arg since "$since" \

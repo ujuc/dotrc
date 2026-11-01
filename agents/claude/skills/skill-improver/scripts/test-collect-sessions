@@ -148,6 +148,14 @@ check "sample limit respected" json_matches '.sessions_sampled == 1' "$root/limi
 collect --out "$root/scanned" --since 2020-01-01 --scan 1 >/dev/null
 check "scan limit respected" json_matches '.sessions_scanned == 1' "$root/scanned/inventory.json"
 
+# Subagent transcripts outnumber sessions and must not spend the scan budget.
+mkdir -p "$root/home/projects/-test-proj/$sid/subagents"
+for n in 1 2 3 4; do
+  cp "$session" "$root/home/projects/-test-proj/$sid/subagents/agent-$n.jsonl"
+done
+collect --out "$root/subagents" --since 2020-01-01 >/dev/null
+check "subagent files are not scanned" json_matches '.sessions_scanned == 3' "$root/subagents/inventory.json"
+
 # Invalid CLI inputs must fail with usage errors before collecting history.
 check "help succeeds" expect_status 0 collect --help
 check "output directory required" expect_status 2 collect
