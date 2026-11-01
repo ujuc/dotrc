@@ -19,6 +19,13 @@ Waza run against the current baseline; a suite edit needs a new baseline.
 - `skill-diet-upstream` can print release notes where the skill says one line.
 - `create-mode.md:34` overstates the placeholders, and `:42` lists a rule the validator does enforce.
 - `init-skill` usage omits `--group`, and its next steps print CWD-relative commands.
+- `SKILL.md` U2 step 8 lets a drift report select cache maintenance, which contradicts the Authority section and Step 0; `guidance-testing.md` updates its date with no scope condition.
+- Eval Criteria 4 turns the 500-line recommendation into a hard limit, while Step 5 calls the warning a backstop.
+- Step 0 "go to the mode's first step" skips the upstream relay inside the check interval.
+- `create-mode.md` Step 3 "ask only if placement remains unclear" conflicts with the rule that `group` is never guessed.
+- `design-principles.md` applies a model-specific finding as a global default, and its "recipe hinders" line needs reconciling with the recipe form in `guidance-testing.md`.
+- Both `quality-evidence` tasks echo `UNVERIFIED` from the prompt into the grader, and no grader measures triggering. Natural-language create, update, diet and small-edit routes are not in the suite.
+- A full diet request can reach `skill-diet` directly and skip Step 0 and Step 5. `skill-diet/` is a verbatim subtree, so the boundary must live here or be accepted.
 
 ## waza
 
@@ -46,6 +53,9 @@ Waza run against the current baseline; a suite edit needs a new baseline.
 - `allowed-tools` does not cover the direct `./script --help` runs.
 - B.7 flags `skill-diet`'s English description, which must stay verbatim.
 - `SKILL.md:65` and `eval-guide.md` disagree on whether `regex_match` graders count as low signal.
+- Phase 5 step 4 applies UNVERIFIED to optional evidence, though the term means required evidence is missing.
+- "Review, don't run" and "the only measurement" conflict with Dimension C running each script.
+- The Explore dispatch has no fallback for a host without `Agent`.
 
 ## generate-agent-docs
 
