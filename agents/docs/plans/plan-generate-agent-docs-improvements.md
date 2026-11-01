@@ -188,3 +188,62 @@ Final independent review found and then confirmed repairs to three stale
 references; W3 now explicitly keeps shared path-scoped rules in AGENTS.md.
 No applicable FAIL remains in the implementation verification. Source settings,
 SOUL, workflow contract and production project documents were not changed.
+
+## Next Updates (2026-11-01)
+
+Status: planned, not started. Findings come from the 2026-11-01 skill-improver
+audit and reference refresh. Each step is one commit, so the skill can move in
+small verified steps. The sections above record the finished 2026-10 work and
+still name removed pieces (`claude/agents/waza-runner.md`, annotate-plan,
+implement-plan, workflow hooks); use the `waza` skill launcher instead.
+
+| Step | Change | Why first / depends on |
+| --- | --- | --- |
+| N1 | Replace the mock suite in `claude/evals/generate-agent-docs/eval.yaml` with a real executor and record a 3-trial baseline through `claude/skills/waza/scripts/waza-run.sh`. Suite authoring goes through `generate-skills`. | Every later step needs a regression guard; the mock engine never loads SKILL.md, so its scores prove nothing. |
+| N2 | Fix `SKILL.md:19-20`: Pi has no workflow hooks. Say Pi reads only its untracked `~/.pi/agent/AGENTS.md`. | N1 |
+| N3 | Point cache maintenance at `/generate-skills <skill> 업데이트`: `SKILL.md:107-108`, `references/model-prompting-guides.md:53`, and `generate-skills/references/openai-models.md` Freshness. `skill-improver` has no cache step. | N1 |
+| N4 | Correct the `/init` statements in `SKILL.md:85-89` and `references/claude-code-best-practices.md:257-260`. `/init` is reachable through the Skill tool (skills docs: *"A few built-in commands are also available through the Skill tool, including `/init`"*), so "user-only" is wrong; decide whether the skill should run it or keep consuming its output. The quoted *"then refine over time"* is gone upstream; the closest wording is *"Run `/init` to generate a starter `CLAUDE.md`, then `/memory` to refine it."* | N1 |
+| N5 | Apply the N5 checklist below: add checks 9 and 10 to `references/roles/verifier.md`, change "eight-item checklist" in `references/stage4-verifier.md`, mirror both checks in `references/stage3-generator.md` Common Writing Rules so the writer meets them first, map them in `references/eval-criteria.md`, and add a Red Flags row in `SKILL.md`. The prune test and include/exclude table in `references/claude-code-best-practices.md` were already updated on 2026-11-01. | N1; add one fixture per row of the stop-list to the N1 suite. |
+| N6 | Add three user-selected authoring rules. (a) Promote the tool-discouraging lines from S1 to a [W] rule: generated docs must not carry "only use tools when strictly necessary" or "minimize tool calls" (Sonnet 5.5 guide, "check your prompt for language that discourages tool use"). (b) In `references/stage3-generator.md`, ask for language context when a repository uses a lesser-known language (Fable 5.1 guide: *"Give the model context about what the language is and how it works"*). (c) In `references/stage3-generator.md`, add the general techniques from the prompting best-practices page: the colleague test, 3-5 examples, and XML tags for mixed content. | N1; each rule needs an eval case in the N1 suite. |
+| N7 | Run the first full diet (`/generate-skills generate-agent-docs 다이어트`). The skill is 22 KB with no diet baseline; the `diet-baseline` waza JSONs from 2026-10-28 predate N1, so do not reuse them. | Last, so the diet cuts settled text and N1 guards it. |
+
+Verification per step: run `validate-skill` and `skill-diet-eval check` on the
+skill, rerun the N1 suite with the same `--trials` against the baseline, then
+run a targeted `skill-improver generate-agent-docs`. Put SKILL.md's size before
+and after in the commit message.
+
+### N5 checklist
+
+User decisions from 2026-11-01: the gate is upstream's two questions with no
+local rewording, because a simple test stays stable; the stop-list becomes
+verifier criteria; rules that cannot have exceptions get an enforcement
+proposal. Add this text to `references/roles/verifier.md` after check 8.
+
+```text
+9. **Prune test and stop-list**: every added or retained line passes the prune
+   test in claude-code-best-practices.md: if Claude could find it by reading the
+   code and would actually go and look, it is cut. FAIL a line that matches a
+   stop-list row. A line preserved by a user decision or team requirement is
+   PASS with a note, never removed.
+
+   | Stop-list row | Fails | Still allowed |
+   | --- | --- | --- |
+   | Context anxiety | Telling Claude to conserve or manage the context window | `/clear` between unrelated tasks as user guidance |
+   | Emphasis | IMPORTANT, ALL CAPS or MUST used to make a line stick | The same rule in plain words |
+   | Subagents for context | Delegating to protect the context window | Parallel work, noisy output, independent review |
+   | Subagents for quality | Delegating to get a better answer | A fresh reviewer that has not seen the reasoning |
+   | Thinking phrases | "think hard", "think harder", "be thorough" | Effort settings outside the document |
+   | Persistence lines | "keep going", "loop until done", "don't be lazy" | A concrete check that must pass |
+   | Repo description | Architecture, file layout or dependency summaries Claude can read | Decisions, misleading code, what the repo cannot show |
+
+10. **Enforcement fit**: a line stating a rule with no exceptions (a path never
+    edited, a file never read, a step that must always run) gets a recommendation
+    for a hook, deny rule or managed setting, naming which. Keep the line until an
+    authorized replacement exists. A preference with exceptions stays in the
+    document. This check reports a recommendation; it fails only when a required
+    no-exception rule was dropped without a replacement. SKIP when no such line
+    exists.
+```
+
+Each row comes from upstream's "What you can stop doing" table, so when that
+table changes, update this check with it.
