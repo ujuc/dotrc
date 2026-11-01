@@ -8,8 +8,7 @@ check_interval_days: 14
 # Testing guidance before it ships
 
 Adapted from `writing-skills` in obra/superpowers (MIT, Copyright (c) 2025 Jesse
-Vincent). The wording-test results below are that project's findings, not
-measurements from this repository. When `superpowers-upstream check` reports an
+Vincent). Findings marked upstream are that project's; local measurements are labeled local. When `superpowers-upstream check` reports an
 update, read the compare link, adapt what changed, then update `source_commit`
 and `last_upstream_check` here.
 
@@ -31,8 +30,8 @@ failure type backfires on another.
 | Omits a required element from something it already produces | A required field or slot in the template | A prose reminder near the template |
 | Behavior should depend on a condition | A conditional on an observable predicate | An unconditional rule plus exemptions |
 
-Upstream finding: in head-to-head wording tests, a prohibition produced more of the
-unwanted content than a recipe, because agents negotiate with "don't X".
+Upstream finding: in head-to-head tests on dispatch-prompt guidance under a competing
+incentive, a prohibition produced more of the unwanted content than a recipe.
 
 - **No nuance clauses.** "Don't X unless it matters" reopens the negotiation. Write a
   real exception as its own conditional on an observable predicate.
@@ -58,12 +57,12 @@ Leave out false urgency, guilt, and any "every time" nobody measured. Upstream's
 persuasion figures come from a study of compliance with objectionable requests, so
 they do not measure adherence to a skill.
 
-Local measurements (2026-11-01, `generate-skills`, one scenario each, small samples):
+Local measurements (2026-11-01, `generate-skills`, fixed-input replay and live tool runs):
 
 | Test | Result |
 | --- | --- |
-| Not reporting unfinished registration as done, under a deadline | Control 1/12, plain 9/12, emphasis 12/12. Haiku 5.5: 1/6, 3/6, 6/6. Sonnet 5.5: 0/6, 6/6, 6/6 |
-| Running Step 5 gates on an urgent one-line edit (Sonnet 5.5) | Unchanged skill 5/5 ran two of three. Required status rows 1/5, because a row can say "skipped". A command to run before the final report 5/5 ran all three |
+| Plain against emphasis, 12 reps per cell, blind double scoring | Emphasis beat plain in one cell of nine: not reporting unfinished work as done on Haiku 5.5, 5/12 to 10/12 (p = 0.09). The other cells tied or had too few answers to compare |
+| Three Step 5 gates on a one-line edit, 12 reps per cell | Sonnet 5.5 ran all three 0/24 unchanged and 24/24 with a command before the final report. Required status rows gave 11/12 calm, 0/12 urgent. Opus 5.5 ran all three in every completed run of each variant |
 
 ## Micro-test the wording
 
