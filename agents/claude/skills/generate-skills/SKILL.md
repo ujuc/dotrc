@@ -1,6 +1,6 @@
 ---
 name: generate-skills
-description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, 스킬 다이어트, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza, 한두 줄 편집만 skill-diet가 맡는다."
+description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, 스킬 다이어트, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza, 한두 줄 편집만 skill-diet가 맡고, 스킬 다이어트 요청은 이 스킬로 시작해 skill-diet 절차를 적용한다."
 group: meta
 argument-hint: "[skill-name]"
 ---
