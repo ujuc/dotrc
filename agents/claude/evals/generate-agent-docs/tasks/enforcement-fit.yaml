@@ -12,5 +12,5 @@ graders:
     name: enforcement-per-rule
     config:
       regex_match:
-        - "(?im)^\\W*A\\W+document plus hook or deny rule\\b"
-        - "(?im)^\\W*B\\W+document only\\b"
+        - "(?im)^\\W*(A\\W+)+document plus hook or deny rule\\b"
+        - "(?im)^\\W*(B\\W+)+document only\\b"
