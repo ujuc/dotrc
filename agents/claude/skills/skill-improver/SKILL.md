@@ -44,7 +44,7 @@ If step 1 or 2 fails, report an actionable fix and stop before Phase 1.
    REPORT_DIR=$(mktemp -d "${TMPDIR:-/tmp}/skill-improver-XXXXXXXX")
    bash "<repo_root>/claude/skills/skill-improver/scripts/collect-sessions" --out "$REPORT_DIR"
    ```
-   Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded; narrow a manual run with `--since YYYY-MM-DD` or `--project PATH`. Start from `$REPORT_DIR/inventory.json`; Dimension E reads the digests in `$REPORT_DIR/transcripts/`. **Never read raw `.jsonl` history.** If collection fails (missing history can fail instead of giving an empty inventory) or samples no sessions, Dimension E is SKIP, never PASS or a structural FAIL, and A–C continue. Audit artifacts stay under `REPORT_DIR`, never in a user project. After touching `condense.jq` or `inventory.jq`, run `bash scripts/test-collect-sessions`.
+   Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded; narrow a manual run with `--since YYYY-MM-DD` or `--project PATH`. Start from `$REPORT_DIR/inventory.json`; Dimension E reads the digests in `$REPORT_DIR/transcripts/`. **Never read raw `.jsonl` history.** If collection fails (missing history can fail instead of giving an empty inventory) or samples no sessions, Dimension E is SKIP, never PASS or a structural FAIL, and A–C continue. Audit artifacts stay under `REPORT_DIR`, never in a user project. After touching `condense.jq` or `inventory.jq`, run `bash "<repo_root>/claude/skills/skill-improver/scripts/test-collect-sessions"`.
 
 ## Phase 2 — Tests
 
@@ -119,7 +119,7 @@ eval_yaml="<repo_root>/claude/evals/<skill>/eval.yaml"
 [ -f "$eval_yaml" ] && bash "$waza_run" eval "$eval_yaml" --label improver-baseline --trials 3
 ```
 
-Use three trials; one run is noise. Budget about 20 minutes per guard run. Record the `- Result JSON: ...` path the report ends with as `waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: a bare skill name scaffolds a new suite, outside this skill's write scope. No suite → guard SKIP; catalog-only fixes → guard SKIP (catalog-only). Launcher exit 1 or no `- Result JSON:` line → no baseline, guard UNVERIFIED.
+Use three trials; one run is noise. Budget about a minute per guard run on hosted Haiku, about 20 on local Ollama. Record the `- Result JSON: ...` path the report ends with as `waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: a bare skill name scaffolds a new suite, outside this skill's write scope. No suite → guard SKIP; catalog-only fixes → guard SKIP (catalog-only). Launcher exit 1 or no `- Result JSON:` line → no baseline, guard UNVERIFIED.
 
 ## Phase 5 — Re-verify (max 3 iterations)
 
@@ -132,7 +132,7 @@ Use three trials; one run is noise. Budget about 20 minutes per guard run. Recor
    ```
    Classify in this order:
    - Launcher exit 1, no `- Result JSON:` line, or `⚠️ incomparable`, on the rerun or its confirmation: `UNVERIFIED`, never SKIP or PASS, and no revert on that alone. This wins over a reference-only note.
-   - `⚠️ **regression**` (rounded weighted Δ below −0.1): run one confirmation with `--label improver-confirm` against the same baseline. If it appears again, revert **all** of this iteration's model-visible fixes for the target and reclassify them as Manual (`regression-reverted`); do not bisect, since each run costs 13–20 minutes. If not, record `preserved` with an "unconfirmed drop" note and both JSON paths.
+   - `⚠️ **regression**` (rounded weighted Δ below −0.1): run one confirmation with `--label improver-confirm` against the same baseline. If it appears again, revert **all** of this iteration's model-visible fixes for the target and reclassify them as Manual (`regression-reverted`); do not bisect. If not, record `preserved` with an "unconfirmed drop" note and both JSON paths.
    - `reference-only` (mock engine): record it and never revert.
    - Otherwise `preserved`. That is a fixed-input replay, reported under B.10, never as live behavior.
 
@@ -156,7 +156,7 @@ Evidence: <sampled> sessions since <date>, <failed> failed, coverage <ratio>
 Waza: <usable|SKIP reason>
   - <skill>: engine <engine>, trials <n>, weighted <before> → <after> (<Δ>), skill invocations <N/M>, verdict <preserved|regression-reverted|reference-only|UNVERIFIED|SKIP> — baseline <json>, after <json>[, confirm <json>]
 Suite signal:
-  - <skill>: WARN low-signal suite (<mock engine|text/token-budget graders only>) → author through generate-skills with the waza skill
+  - <skill>: WARN low-signal suite (<mock engine|contains/token-budget graders only>) → author through generate-skills with the waza skill
 ```
 
 Include empty evidence and no-proposal outcomes, and every target with a Waza baseline, changed or not. Leave the scratch directory in place. Session history stays local and read-only: never upload, commit, or quote raw history or digest lines; cite session IDs with one-line paraphrases.

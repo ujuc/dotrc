@@ -33,7 +33,7 @@ When nothing clears the bar, propose nothing and say why for each finding. **No 
 
 | Finding | Owner | Handling |
 |---------|-------|----------|
-| Instruction gap in a target under review | that skill / agent | Draft a diff under the change bar |
+| Instruction gap in a target under review | that skill or role file | Draft a diff under the change bar |
 | Instruction gap in a skill outside this run's targets | that skill | Record as a suggestion; do not edit an untargeted file |
 | Skill never fires where it should | trigger description | `skill-engineer`; never auto-edit a WHEN clause |
 | Missing global rule | `agents/rules/AGENTS.md` | Report only — a global rule change is the user's call |
