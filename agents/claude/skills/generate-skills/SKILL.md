@@ -1,8 +1,7 @@
 ---
 name: generate-skills
-description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza가 맡는다."
+description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, 스킬 다이어트, create a skill, update skill, generate-skills, /generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza, 한두 줄 편집은 skill-diet가 맡는다."
 group: meta
-disable-model-invocation: true
 argument-hint: "[skill-name]"
 ---
 
@@ -23,7 +22,7 @@ cannot switch, recommend one without claiming a switch.
 
 ## Mode detection
 
-Inspect `$ARGUMENTS` to choose a mode:
+Inspect `$ARGUMENTS`, or the user's request when this skill loaded on its own, to choose a mode:
 
 - **Update mode**: `$ARGUMENTS` contains any of `업데이트`, `수정`, `갱신`, `최신화`, `update`, `refresh`
   → Run Step 0 → Steps U1–U3 → Step 5 (validation)
@@ -35,7 +34,7 @@ Inspect `$ARGUMENTS` to choose a mode:
 - **Create mode**: anything else
   → Run Step 0 → Step 1 below → Steps 2–4 in [create mode](references/create-mode.md) → Step 5
 
-If `$ARGUMENTS` is empty, ask which mode and which target skill.
+If neither names a mode and a target skill, ask.
 
 ## Scripts
 
@@ -149,7 +148,7 @@ justifies only its scoped correction.
 
 ## Step U1: Inspect the target skill (update mode)
 
-Resolve the target from `$ARGUMENTS` (ask if unclear), read its SKILL.md and
+Resolve the target from the request (ask if unclear), read its SKILL.md and
 frontmatter, note `references/` and `scripts/`, and run
 `skill-diet-eval check <skill-dir>` for size and links.
 
