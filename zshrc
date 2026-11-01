@@ -151,8 +151,8 @@ function alias_if_command_exists() {
 }
 
 alias_if_command_exists eza \
-    "ls=eza --icons=auto --group-directories-first --git" \
-    "ll=eza -l --git --icons=auto" \
+    "ls=eza --icons=auto --group-directories-first" \
+    "ll=eza -l --icons=auto" \
     "lt=eza -l --tree --icons=auto"
 alias_if_command_exists bat "cat=bat"
 alias_if_command_exists vim "vi=vim"
