@@ -39,6 +39,32 @@ unwanted content than a recipe, because agents negotiate with "don't X".
 - **Exemptions don't scope.** "This limit doesn't apply to code blocks" still
   suppresses code blocks. Restructure so the rule can't reach what must be exempt.
 
+## Force without emphasis
+
+Use the first level that holds. A discipline skill may use all three, a technique
+or pattern skill gets plain imperatives, and a reference skill gets none.
+
+1. **Enforce it.** A rule with no exceptions belongs in a hook, deny rule, validator
+   or test.
+2. **Force it in plain words**, once a baseline shows the agent knows the rule and
+   skips it. Name an observable trigger and the action ("before the final report,
+   run X"), and give a command to run rather than a status to fill in. Add the
+   recorded excuses as a rationalization table. Write "no exceptions" only for a
+   rule that has none.
+3. **Emphasis.** Capitals or MUST ship only when a micro-test beats the plain
+   wording on the model the skill runs on.
+
+Leave out false urgency, guilt, and any "every time" nobody measured. Upstream's
+persuasion figures come from a study of compliance with objectionable requests, so
+they do not measure adherence to a skill.
+
+Local measurements (2026-11-01, `generate-skills`, one scenario each, small samples):
+
+| Test | Result |
+| --- | --- |
+| Not reporting unfinished registration as done, under a deadline | Control 1/12, plain 9/12, emphasis 12/12. Haiku 5.5: 1/6, 3/6, 6/6. Sonnet 5.5: 0/6, 6/6, 6/6 |
+| Running Step 5 gates on an urgent one-line edit (Sonnet 5.5) | Unchanged skill 5/5 ran two of three. Required status rows 1/5, because a row can say "skipped". A command to run before the final report 5/5 ran all three |
+
 ## Micro-test the wording
 
 Run this before full scenarios, for guidance meant to change behavior.

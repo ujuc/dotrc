@@ -7,7 +7,7 @@ Local defaults. What to cut and where each fact lives follow
 
 | Freedom | Instruction style | Best for |
 | --- | --- | --- |
-| Low | "ALWAYS use this exact format" | Format-critical, high-repetition tasks |
+| Low | "Use this exact format" | Format-critical, high-repetition tasks |
 | Medium | "Follow this structure, adapt as needed" | Patterns with context variance |
 | High | "Use your best judgment" | Creative or highly variable work |
 
@@ -20,6 +20,14 @@ prompts for GPT-6 Astra"; Claude Code model-config, Fable guidance.)
 A multi-workflow skill keeps `SKILL.md` a router: enough to pick the workflow
 and find its reference or script, with each reference linked under its case
 ("`a.md` for migrations, `b.md` for rollout review"), never a blanket preload.
+
+
+## Flowcharts
+
+Add one only for a non-obvious decision or a loop an agent may leave early; use
+lists for steps and tables for reference. Write it inline as a `mermaid` block,
+which needs no install and renders on GitHub. For a picture meant for people, use
+the `artifact-diagramming` skill. (Adapted from Superpowers `writing-skills`.)
 
 ## Gotchas
 
