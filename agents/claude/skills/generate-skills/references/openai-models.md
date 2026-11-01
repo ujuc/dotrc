@@ -2,9 +2,11 @@
 source_urls:
   - https://developers.openai.com/api/docs/guides/latest-model?model=gpt-6-astra
   - https://developers.openai.com/api/docs/guides/latest-model?model=gpt-5.6
+  - https://developers.openai.com/api/docs/guides/prompt-guidance-gpt-5p6
   - https://developers.openai.com/api/docs/guides/reasoning
+  - https://developers.openai.com/codex/models  # Codex availability and version floors
 secondary_source_url: https://developers.openai.com/api/docs/models  # catalog; model pages at /models/<API model ID>
-last_upstream_check: 2026-10-02  # fetched live 2026-10-02 (rendered pages and .md exports)
+last_upstream_check: 2026-11-01  # fetched live 2026-11-01 (rendered pages and .md exports)
 check_interval_days: 14
 ---
 
@@ -58,10 +60,11 @@ quote from `curl` or browser text, not from a WebFetch answer.
 
 | Family | API model ID | OpenAI positioning | Reasoning effort |
 |--------|--------------|--------------------|------------------|
-| GPT-6 | `gpt-6-astra` | *"our highest level of capability"*; *"our most intelligent model yet"* | `low`, `medium`, `high`, `xhigh`, `max`; no `none`: *"use `low` instead"*; default not stated |
-| GPT-6 | `gpt-6.1-sol` | *"near-Astra performance at a lower cost"* | `low`, `medium`, `high`, `xhigh`, `max`; *"The `none` and `minimal` reasoning efforts are not supported"*; default `medium` |
-| GPT-6 | `gpt-6-sol` | *"strong reasoning on demanding tasks"*; superseded: *"See GPT-6.1 Sol for the newer Sol model."* | `none`, `low`, `medium`, `high`, `xhigh`, `max`; default `medium` |
-| GPT-6 | `gpt-6-luna` | *"efficient, repeatable work at scale"* | Same as GPT-6 Sol |
+| GPT-6 | `gpt-6-astra` | *"Highest intelligence"*; *"our most intelligent model yet"* | `low`, `medium`, `high`, `xhigh`, `max`; no `none`: *"use `low` instead"*; default not stated |
+| GPT-6 | `gpt-6.1-sol` | *"near-Astra performance at a lower cost"* | `low`, `medium`, `high`, `xhigh`, `max`; *"does not support `none` or `minimal`"*; default `medium` |
+| GPT-6 | `gpt-6.1-terra` | *"Fast and efficient"*; *"For visual reasoning, precise computer use, and clear, natural writing."* | `none`, `low`, `medium`, `high`, `xhigh`, `max`; default `medium` |
+| GPT-6 | `gpt-6-sol` | *"built for complex coding and agentic workflows"*; superseded: *"See GPT-6.1 Sol for the newer Sol model."* | `none`, `low`, `medium`, `high`, `xhigh`, `max`; default `medium` |
+| GPT-6 | `gpt-6-luna` | *"Strong performance for focused, high-volume tasks."* | Same as GPT-6 Sol |
 | GPT-5.6 | `gpt-5.6-sol` (alias `gpt-5.6`) | *"the model for flagship capability"* | `none`, `low`, `medium`, `high`, `xhigh`, `max`; default `medium` |
 | GPT-5.6 | `gpt-5.6-terra` | *"a balance of intelligence and cost"* | Same as GPT-5.6 Sol |
 | GPT-5.6 | `gpt-5.6-luna` | *"efficient, high-volume workloads"* | Same as GPT-5.6 Sol |
@@ -69,9 +72,10 @@ quote from `curl` or browser text, not from a WebFetch answer.
 Also stated by OpenAI:
 
 - GPT-6 Astra *"is generally better than GPT-5.6 Sol and earlier models at
-  staying coherent during long tasks."* It *"achieves stronger results while
-  using substantially fewer output tokens—delivering a lower estimated API cost
-  per task than earlier models despite its higher per-token pricing."*
+  staying coherent during long tasks."* In several evaluations,
+  *"Astra achieved stronger results using substantially fewer output tokens. Its
+  estimated API cost per task was lower than earlier models despite its higher
+  per-token pricing."*
 - GPT-6: *"If your existing request uses `minimal`, start with `low` and compare
   results on representative tasks."*
 - GPT-5.6 *"is especially token-efficient"* and *"tends to be more concise by
@@ -91,20 +95,25 @@ Standard text-token rates in USD per 1M tokens.
 
 | API model ID | Catalog tagline | Reasoning rating | Knowledge cutoff | Input / cached input / output |
 |--------------|-----------------|------------------|------------------|-------------------------------|
-| `gpt-6-astra` | *"Our most capable model, built for the hardest end-to-end work"* | Highest | Apr 30, 2026 | $10 / $1 / $50 |
+| `gpt-6-astra` | *"Our most capable model for the most demanding work."* | Highest | Apr 30, 2026 | $10 / $1 / $50 |
 | `gpt-6.1-sol` | *"Near-Astra performance for complex work at a lower cost."* | Highest | Apr 30, 2026 | $2 / $0.1 / $10 |
+| `gpt-6.1-terra` | *"A fast, efficient model for visual reasoning, precise computer use, and clear, natural writing."* | Highest | Jun 01, 2026 | $1 / $0.05 / $5 |
 | `gpt-6-sol` | *"Built to power complex coding and agentic workflows."* | Highest | Apr 20, 2026 | $2 / $0.2 / $10 |
 | `gpt-6-luna` | *"Our most efficient model for focused, high-volume tasks."* | High | May 18, 2026 | $0.1 / $0.01 / $0.5 |
-| `gpt-5.6-sol` | *"Flagship model for complex professional work"* | Highest | Feb 16, 2026 | $4 / $0.4 / $20 (promotional) |
+| `gpt-5.6-sol` | *"GPT-5.6 flagship model for complex professional work"* | Highest | Feb 16, 2026 | $4 / $0.4 / $20 (promotional) |
 | `gpt-5.6-terra` | *"GPT-5.6 model that balances intelligence and cost"* | Higher | Feb 16, 2026 | $2 / $0.2 / $12 |
 | `gpt-5.6-luna` | *"GPT-5.6 model optimized for cost-sensitive workloads"* | High | Feb 16, 2026 | $0.2 / $0.02 / $1.2 |
 
-- All seven list *"1,050,000 context window"*, *"Maximum input tokens: 922,000"*,
+- All eight list *"1,050,000 context window"*, *"Maximum input tokens: 922,000"*,
   and *"128,000 max output tokens"*, with text and image input and text output.
+  *"GPT-6.1 Sol uses a default context window of 500K tokens in Codex and ChatGPT
+  Work. Usage drawn from your subscription has no long-context surcharge."*
 - Long prompts: *"Prompts with more than 272K input tokens are priced at 2x
   input and cache rates and 1.5x output for the full request"* (GPT-6 pages;
-  the GPT-5.6 pages say *"2x input and 1.5x output"*). All seven: *"Cache writes
-  are billed at 1.25x the uncached input token rate."*
+  the GPT-5.6 pages say *"2x input and 1.5x output"*). All but GPT-6.1 Terra: *"Cache writes
+  are billed at 1.25x the uncached input token rate."* Terra prints the rate in
+  dollars: *"Standard cache writes cost $1.25 per million tokens for 30-minute
+  retention"*.
 - GPT-5.6 Sol: *"GPT-5.6 Sol’s promotional pricing is available at least
   through November 21, 2026."* Re-check its price after that date.
 - Defaults: *"GPT-6.1 Sol, GPT-6 Sol, and GPT-6 Luna also default to `medium`
@@ -112,9 +121,10 @@ Standard text-token rates in USD per 1M tokens.
   No fetched page states GPT-6 Astra's default. Sending `none` to Astra fails:
   *"Setting reasoning.effort (Responses) or reasoning_effort (Chat Completions)
   to none returns HTTP 400."*
-- Cybersecurity aliases: `gpt-5.6-cyber` and the Daybreak Blue/Red aliases
-  require *"separate approval and provisioning"*; they are not profile
-  candidates.
+- Cybersecurity aliases: `gpt-5.6-cyber` requires *"separate approval and
+  provisioning"*. The Daybreak Blue/Red aliases are deprecated: *"This alias is
+  deprecated, please use the latest cyber model available to you."* None are
+  profile candidates.
 - Aliases: *"The `gpt-5.6` alias routes requests to GPT-5.6 Sol."* The catalog
   lists no `gpt-6` alias (checked 2026-09-23): Astra's snapshot list holds only
   `gpt-6-astra`, and `/api/docs/models/gpt-6` returns 404.
@@ -130,20 +140,24 @@ Standard text-token rates in USD per 1M tokens.
 
 ## Choosing model and effort
 
-- Resolve the workload profile in `model-selection.md` first. Its OpenAI
-  candidates are GPT-6 Luna or GPT-5.6 Luna (Lightweight), GPT-6.1 Sol or
-  GPT-5.6 Terra (Standard), GPT-5.6 Sol (Advanced), and GPT-6 Astra (Frontier).
-  GPT-6.1 Sol takes GPT-6 Sol's slot by the same catalog "balance intelligence
-  and cost" line, even though its reasoning rating equals GPT-5.6 Sol's and its
-  page claims near-Astra performance (see "Catalog facts"). Advanced work may
-  resolve to GPT-6.1 Sol after a capability check on the task.
+- Resolve the workload profile in `model-selection.md` first. Local policy: use
+  the newest model for the role, and price is no criterion. Its OpenAI candidates
+  are GPT-6 Luna (Lightweight), GPT-6.1 Terra (Standard), GPT-6.1 Sol (Advanced),
+  and GPT-6 Astra (Frontier). *"GPT-6.1 Terra requires Codex CLI 0.159.0 or
+  later."* GPT-6 Sol and the GPT-5.6 models stay here as catalog facts, not
+  candidates.
 - GPT-5.6 effort, per OpenAI: *"Use `medium` as a balanced starting point and
   `low` for latency-sensitive workloads."* *"Use `high` or `xhigh` when more
   reasoning produces a measured quality gain."* *"Reserve `max` for the hardest
-  quality-first workloads."*
+  quality-first workloads."* *"Before increasing reasoning effort, check whether
+  the prompt is missing a success criterion, dependency rule, tool-routing rule,
+  or verification loop."*
 - GPT-6 Astra and GPT-6.1 Sol: never request `none` (or `minimal` on 6.1 Sol);
-  `low` is the floor. GPT-6 Sol and GPT-6 Luna accept `none`. Its default effort is
-  unstated, so set one explicitly. GPT-6 Sol and Luna default to `medium`.
+  `low` is the floor. GPT-6.1 Terra, GPT-6 Sol, and GPT-6 Luna accept `none`.
+  Astra's default effort is unstated, so set one explicitly. GPT-6.1 Sol, GPT-6.1
+  Terra, GPT-6 Sol, and Luna default to `medium`. For Terra: *"Start with `medium`
+  and increase it if the improvement in quality is worth the added time and
+  tokens."*
 - Thinking amount is an effort or mode setting, not prompt text: for pro mode,
   *"You do not need to ask the model to “use pro mode,” “think harder,” or
   generate several candidate answers."*
@@ -166,7 +180,9 @@ costly, or scope-expanding actions."*
 State the authorized scope, the safe local actions (read files, edit in-scope
 code, run tests), and the actions that need confirmation. Ask for approval only
 after a concrete result: *"The user should be approving a concrete, reviewable
-result."*
+result."* On long runs, name the current stage (GPT-5.6): *"Distinguish
+research, design, implementation, review, and external coordination so the
+model does not silently move from one layer to another."*
 
 ### P2 — Give outcomes and state each rule once
 
@@ -178,12 +194,19 @@ question."* Also: *"State each instruction once."* *"Repeating instructions such
 as “ask first,” “do not mutate,” or “wait for approval” can cause unnecessary
 approval requests for safe, expected actions."*
 
+Keep absolute wording for real invariants: *"Use ALWAYS, NEVER, must, and only for
+true invariants such as safety rules, required fields, or actions that should
+never happen. For judgment calls, such as when to search, ask, use a tool, or
+keep iterating, prefer decision rules."*
+
 ### P3 — Make instruction precedence explicit
 
 GPT-6 Astra *"can be more sensitive to instructions contained in skills and
 other files, such as `AGENTS.md`"*, and *"unclear or conflicting guidance in a
 skill file may cause the model to pause and block work early. Make the priority
-of user instructions and skills explicit."*
+of user instructions and skills explicit."* The GPT-5.6 prompting guidance
+adds: *"GPT-5-class models follow prompt contracts closely, so conflicting rules
+can create more instability than missing detail."*
 
 Say that the task instructions win over conflicting skill guidance. If a run
 pauses unexpectedly, ask it to name the SKILL.md and quote the instruction that
@@ -196,15 +219,16 @@ scannable."* GPT-5.6 is more concise than GPT-5.5, and broad brevity instruction
 *"may be unnecessary for some tasks and can sometimes make responses too
 brief."*
 
-Name the report's contents (changed files, checks run and their results, open
-issues) and what a short answer must keep: *"Keep all required facts,
+Name the report's format and contents (changed files, checks run and their
+results, open issues) and what a short answer must keep: *"Keep all required facts,
 decisions, caveats, and next steps."*
 
 ### P5 — Set the delegation bar
 
 GPT-6 Astra *"may delegate less often than desired for your workflow. Specify
 when and how much it should use subagents for parallel work."* Say whether
-parallel subagents are wanted and for which parts.
+parallel subagents are wanted and for which parts. Ask for legible handoffs too:
+*"Messages between agents may contain grammar or spacing errors."*
 
 ### P6 — Calibrate testing
 
@@ -239,5 +263,6 @@ conflicting or pause-inducing lines.
 Responses API integration settings: async tool calling, mid-turn steering,
 `configuration_update`, Programmatic Tool Calling, the multi-agent beta API,
 `prompt_cache_options`, `reasoning.context`, `text.verbosity`,
-`safety_identifier`, image detail, data residency, and fast mode. They configure
+`safety_identifier`, image detail, data residency, fast mode, Ultrafast mode,
+`phase`, reasoning summaries, and `reasoning.mode`. They configure
 an API application, not a Codex task prompt or a repository document.

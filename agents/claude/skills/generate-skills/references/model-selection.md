@@ -8,9 +8,9 @@ context or tool support. Check host availability before selecting one.
 
 | Profile | Choose for | OpenAI candidates | Claude candidates | Move up when |
 | --- | --- | --- | --- | --- |
-| **Lightweight** | Clear, repeatable extraction, classification, formatting, exact lookups, or reporting a deterministic check | GPT-6 Luna, GPT-5.6 Luna | Claude Haiku | The task needs interpretation, state-changing decisions, or coordination across files. |
-| **Standard** | Bounded tool use, routine commits with known scope, local fixes with clear acceptance criteria, focused exploration | GPT-6.1 Sol, GPT-5.6 Terra | Claude Sonnet | Requirements conflict, changes cross components, or preserving semantics needs substantial judgment. |
-| **Advanced** | Multi-file implementation, architecture decisions, difficult debugging, nuanced writing, semantic/security review, synthesis | GPT-5.6 Sol | Claude Opus | Long-horizon dependencies, costly ambiguity, or a reproduced reasoning failure exceeds this profile. |
+| **Lightweight** | Clear, repeatable extraction, classification, formatting, exact lookups, or reporting a deterministic check | GPT-6 Luna | Claude Haiku | The task needs interpretation, state-changing decisions, or coordination across files. |
+| **Standard** | Bounded tool use, routine commits with known scope, local fixes with clear acceptance criteria, focused exploration | GPT-6.1 Terra | Claude Sonnet | Requirements conflict, changes cross components, or preserving semantics needs substantial judgment. |
+| **Advanced** | Multi-file implementation, architecture decisions, difficult debugging, nuanced writing, semantic/security review, synthesis | GPT-6.1 Sol | Claude Opus | Long-horizon dependencies, costly ambiguity, or a reproduced reasoning failure exceeds this profile. |
 | **Frontier** | The hardest interconnected work, consequential unresolved tradeoffs, long autonomous reasoning, or demonstrated gaps at Advanced | GPT-6 Astra | Claude Fable | Reassess inputs, tools, scope and stopping conditions; the top profile is not an unlimited retry budget. |
 
 Start with the profile that fits the current step. A task's length, number of
@@ -28,8 +28,9 @@ execution does not need the coordinator's full reasoning capacity.
    starting point, then adjust for the actual input.
 3. Resolve the profile to an available model from the user's chosen provider.
    Use the host's accepted identifier, not a profile label in native `model`
-   fields. New models may fill the same role after capability checks; this table
-   is not a provider allowlist.
+   fields. Local policy: use each provider's newest model for the role, and never
+   hold back an OpenAI model on price. A newer model replaces the older one in the
+   table after a capability check; this table is not a provider allowlist.
 4. Choose reasoning effort separately, only where supported: lower for explicit
    procedures, moderate for bounded reasoning, higher for difficult inference.
    Effort names and defaults vary by host and model, and a level name does not
@@ -40,8 +41,8 @@ execution does not need the coordinator's full reasoning capacity.
    unavailable tools and environment errors. Then consider higher effort or the
    next profile, retaining the same acceptance criteria and the owning workflow's
    retry limit. Do not spend another model call on an unchanged missing input.
-6. Compare cost per successfully completed task, including handoff and retry
-   overhead. Neither the cheapest token price nor the highest profile guarantees
+6. For Claude candidates, compare cost per successfully completed task, including
+   handoff and retry overhead. Neither the cheapest token price nor the highest profile guarantees
    the cheapest successful run. Do not launch a worker for a trivial command
    when dispatch/context-transfer cost dominates.
 
@@ -65,13 +66,13 @@ Give a short user-facing recommendation when asked, when choosing a worker, or
 when the profile differs materially from the current setup. State it once per
 stage, not before every command. For example:
 
-> 이 작업은 변경 범위가 정해진 표준 실행 수준이므로 Terra 또는 Sonnet을
-> 권장합니다. 변경 분류나 충돌 해결에 복잡한 판단이 필요하면 GPT-5.6 Sol 또는
+> 이 작업은 변경 범위가 정해진 표준 실행 수준이므로 GPT-6.1 Terra 또는 Sonnet을
+> 권장합니다. 변경 분류나 충돌 해결에 복잡한 판단이 필요하면 GPT-6.1 Sol 또는
 > Opus 수준으로 상향을 권장합니다.
 
 When switching is unavailable:
 
-> 이 작업에는 Terra 또는 Sonnet 수준을 권장합니다. 현재 세션에서는 모델을
+> 이 작업에는 GPT-6.1 Terra 또는 Sonnet 수준을 권장합니다. 현재 세션에서는 모델을
 > 전환할 수 없어 기존 모델로 진행하며, 실제 모델이 바뀌었다고 보고하지 않습니다.
 
 ## Dispatch routing
@@ -106,7 +107,7 @@ calling skill's `references/roles/` and the dispatch prompt begins with
 ## Source basis
 
 Repository policy inferred from vendor descriptions, not vendor certifications
-of equivalence. Last checked: OpenAI 2026-10-02, Claude 2026-10-08.
+of equivalence. Last checked: OpenAI 2026-11-01, Claude 2026-11-01.
 
 - [OpenAI model catalog](https://developers.openai.com/api/docs/models) and
   [latest-model guide](https://developers.openai.com/api/docs/guides/latest-model);
@@ -114,6 +115,6 @@ of equivalence. Last checked: OpenAI 2026-10-02, Claude 2026-10-08.
 - [Claude model overview](https://platform.claude.com/docs/en/models/overview)
   and [cost and intelligence guidance](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence):
   compare cost per completed task; a stronger model may avoid retries. Claude
-  Mythos 5.1 is the invitation-only Fable 5.1, not a separate candidate.
+  Mythos 5.1 is Fable 5.1 for verified organizations, not a separate candidate.
 - [Codex subagent model and reasoning controls](https://learn.chatgpt.com/docs/agent-configuration/subagents#choosing-models-and-reasoning):
   execution settings belong to the host's agent configuration or invocation parameters.
