@@ -48,8 +48,8 @@ bash "$WAZA_SKILL/scripts/waza-run.sh" eval /abs/path/evals/commit/eval.yaml --l
 - Waza exit 1 can still produce valid task-failure JSON; the report uses it and warns with the exit code.
 - `Skill invocations` `0 / M` is expected: with the default `inject_skill_body: true` the SKILL.md body is already in the system prompt. It is not a failure.
 - With `--baseline-json`:
-  - An engine, model, trials, or task-set difference prints `⚠️ incomparable` with no verdict; when eval.yaml, `--trials`, or `COPILOT_MODEL` already shows it, the run is skipped.
-  - A changed task or grader keeps its `test_id`, so the launcher cannot see it: record a new baseline after any suite edit.
+  - An engine, model, trials, task-set, or suite difference prints `⚠️ incomparable` with no verdict; when eval.yaml, `suite_hash`, `--trials`, or `COPILOT_MODEL` already shows it, the run is skipped.
+  - `suite_hash` covers the suite and `typesafe-judge`: after an edit, or with an unhashed baseline, record a new baseline.
   - A run that errored before the model answered also prints `⚠️ incomparable`: its score measures the failure. Without a baseline the report warns the same way.
   - `⚠️ **regression**` appears only when the rounded weighted-score delta is below `-epsilon`; smaller drops are run-to-run noise.
   - `### Per-task drops` lists tasks whose weighted score fell by more than epsilon or whose pass rate fell. It is informational; waza fails a task when any single trial fails.

@@ -74,7 +74,7 @@ fixture() {
        tasks: $ts}'
 }
 
-mkdir -p "$root/bin" "$root/curlbin" "$root/ws" "$root/results" "$root/evals/live" "$root/evals/mock" "$root/fx"
+mkdir -p "$root/bin" "$root/curlbin" "$root/ws" "$root/results" "$root/evals/live/tasks" "$root/evals/mock" "$root/fx"
 cat >"$root/bin/waza" <<'SH'
 #!/usr/bin/env bash
 case "$1" in
@@ -98,6 +98,7 @@ printf '#!/usr/bin/env bash\nprintf "%%s" "${FAKE_MISE_KEY:-}"\n' >"$root/bin/mi
 chmod +x "$root/bin/waza" "$root/bin/mise" "$root/curlbin/curl"
 touch "$root/ws/.waza.yaml"
 printf 'config:\n  trials_per_task: 1\n  executor: copilot-sdk\n' >"$root/evals/live/eval.yaml"
+printf 'id: a\n' >"$root/evals/live/tasks/a.yaml"
 printf 'config:\n  trials_per_task: 1\n  executor: mock\n' >"$root/evals/mock/eval.yaml"
 
 export PATH="$root/bin:$PATH"
@@ -115,6 +116,14 @@ fixture copilot-sdk 3 '{"a":[1,1],"b":[0.7,1],"c":[0.7,1]}' | jq 'del(.config.en
 fixture mock 3 '{"a":[1,1],"b":[1,1],"c":[1,1]}' >"$root/fx/base-mock.json"
 fixture mock 3 '{"a":[1,1],"b":[0.7,1],"c":[0.7,1]}' >"$root/fx/mock-drop.json"
 fixture copilot-sdk 3 '{"a":[1,1],"b":[0.7,1],"c":[0.7,1]}' | jq '.tasks[1].runs[0].status = "error"' >"$root/fx/errored.json"
+cp "$root/fx/base-live.json" "$root/fx/no-hash.json"
+seed() {
+  FAKE_FIXTURE="$root/fx/$1.json" launch 0 eval "$2" --prefix "seed-$1" --label s
+  jq --slurpfile r "$root"/results/seed-"$1"-s-*.json '.config.suite_hash = $r[0].config.suite_hash' \
+    "$root/fx/$1.json" >"$root/fx/$1.tmp" && mv "$root/fx/$1.tmp" "$root/fx/$1.json"
+}
+seed base-live "$live"
+seed base-mock "$mock"
 
 echo "report rows and passthrough"
 export FAKE_FIXTURE="$root/fx/base-live.json"
@@ -147,6 +156,14 @@ check "engine mismatch exits 1" launch 1 eval "$mock" --label f --trials 3 --bas
 check "engine mismatch is incomparable" out_has "⚠️ incomparable"
 check "engine mismatch names engine_type" out_has "engine_type"
 check "engine mismatch skips the run" absent test -f "$FAKE_ARGV"
+cp -R "$root/evals/live" "$root/evals/edited"
+printf '# edited\n' >>"$root/evals/edited/tasks/a.yaml"
+rm -f "$FAKE_ARGV"
+check "same-id suite edit exits 1" launch 1 eval "$root/evals/edited/eval.yaml" --label sh --trials 3 --baseline-json "$root/fx/base-live.json"
+check "suite edit names suite_hash" out_has "suite_hash"
+check "suite edit skips the run" absent test -f "$FAKE_ARGV"
+check "baseline with no hash exits 1" launch 1 eval "$live" --label nh --trials 3 --baseline-json "$root/fx/no-hash.json"
+check "no-hash baseline names suite_hash" out_has "suite_hash"
 export FAKE_FIXTURE="$root/fx/base-live.json"
 check "trials mismatch exits 1" launch 1 eval "$live" --label g --trials 1 --baseline-json "$root/fx/base-live.json"
 check "trials mismatch names runs_per_test" out_has "runs_per_test"

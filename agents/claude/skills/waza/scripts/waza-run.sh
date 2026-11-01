@@ -12,7 +12,7 @@
 # Exit codes:
 #   0  success (including a reported ⚠️ regression), or an advisory skip
 #   1  no result JSON, scaffold/baseline failed, or ⚠️ incomparable baseline
-#      (engine, model, trials, or task set differ, or a run errored)
+#      (engine, model, trials, task set, or suite content differ, or a run errored)
 #   2  usage error
 #
 # Every harness (Claude Code, Amp, Codex, Pi) runs waza through this script.
@@ -324,13 +324,16 @@ render_report() {
 # ponytail: first-match `key: value` read from eval.yaml, no YAML parser; the post-run comparator backstops misreads
 yaml_config() { awk -v k="$1:" '$1 == k { gsub(/["'\'']/, "", $2); print $2; exit }' "$EVAL_YAML"; }
 
-# incomparable_fields BASELINE CURRENT: one line per differing engine/model/trials/task set.
+# suite_hash: the eval file, tasks/, waza's default fixtures/ and the judge some graders call; behavior-cases.md is not run, so it stays out.
+suite_hash() { (cd "$(dirname "$EVAL_YAML")" && { find "$(basename "$EVAL_YAML")" tasks fixtures -type f ! -name .DS_Store -exec shasum -a 256 {} + 2>/dev/null | LC_ALL=C sort -k2; shasum -a 256 <"$SCRIPT_DIR/typesafe-judge"; } | shasum -a 256 | cut -d' ' -f1); }
+
+# incomparable_fields BASELINE CURRENT: one line per differing engine/model/trials/suite/task set.
 # A CURRENT without .tasks is a pre-run expectation whose unknown (null) fields are skipped;
 # a real result compares every field, so a missing field fails closed.
 incomparable_fields() {
   jq -r --slurpfile cur "$2" '
     . as $b | $cur[0] as $c |
-    ( ("engine_type", "model_id", "runs_per_test") as $k
+    ( ("engine_type", "model_id", "runs_per_test", "suite_hash") as $k
       | select(($c.tasks == null and $c.config[$k] == null) | not)
       | select($b.config[$k] != $c.config[$k])
       | "- \($k): baseline \($b.config[$k]) → current \($c.config[$k])" ),
@@ -355,7 +358,7 @@ print_incomparable() {
   echo
   printf '%s\n' "$diffs"
   echo
-  echo "**No regression verdict.** Rerun with the baseline's engine, model, trials, and task set."
+  echo "**No regression verdict.** Rerun with the baseline's engine, model, trials, and task set; on a \`suite_hash\` difference, record a new baseline on the unchanged skill."
   echo "- Baseline JSON: \`$1\`"
   return 1
 }
@@ -483,13 +486,15 @@ cmd_eval() {
       auto_scaffold "$skill_name" || return 1
       ;;
   esac
+  local suite_sha
+  suite_sha="$(suite_hash)"
 
   # Fail before an expensive run when the baseline is already known to be incomparable.
   if [ -n "$baseline_json" ] && command -v jq >/dev/null 2>&1; then
     local t_eff expected
     t_eff="${trials:-$(yaml_config trials_per_task)}"
-    expected="$(jq -n --arg e "$(yaml_config executor)" --arg m "$COPILOT_MODEL" --arg t "$t_eff" \
-      '{config: {engine_type: (if $e == "" then null else $e end), model_id: $m,
+    expected="$(jq -n --arg e "$(yaml_config executor)" --arg m "$COPILOT_MODEL" --arg t "$t_eff" --arg s "$suite_sha" \
+      '{config: {engine_type: (if $e == "" then null else $e end), model_id: $m, suite_hash: $s,
                  runs_per_test: (if $t == "" then null else ($t | tonumber) end)}}')"
     if ! print_incomparable "$baseline_json" <(printf '%s' "$expected"); then
       echo "- Run skipped: the result would not be comparable."
@@ -521,6 +526,10 @@ cmd_eval() {
     return 1
   fi
   rm -f "$run_log"
+  if command -v jq >/dev/null 2>&1; then
+    jq --arg h "$suite_sha" '.config.suite_hash = $h' "$result_json" >|"$result_json.tmp" &&
+      mv "$result_json.tmp" "$result_json" || rm -f "$result_json.tmp"
+  fi
 
   render_report "$skill_name" "$label" "$result_json" "$waza_rc"
   if [ -n "$baseline_json" ]; then
