@@ -19,7 +19,7 @@
 
 ## Writing
 
-- Before handing over or seeking approval for Korean prose written for human readers, run the `humanizer` skill in fast mode when the proactive-use clause in its `when_to_use` applies; that clause is the only copy of the target, length, and exclusion rules.
+- Before handing over or seeking approval for Korean prose written for human readers, run the `humanizer` skill in fast mode when the proactive-use clause in its `description` applies; that clause is the only copy of the target, length, and exclusion rules.
 
 ## Compaction
 

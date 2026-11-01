@@ -52,7 +52,7 @@
 
 `generate-skills`는 로컬 validator·카탈로그를 유지하며
 행동 기준 변경에 baseline/candidate 검증을 적용한다.
-`skill-improver`는 정적 점검(A–D)에 더해 로컬 세션 기록을
+`skill-improver`는 정적 점검(A–C)에 더해 로컬 세션 기록을
 요약·채점하는 Dimension E를 수행한다. 트랜스크립트는 기기 밖으로 나가지 않고,
 관찰된 실패가 `references/change-bar.md`의 기준을 통과할 때만 동작 수정을
 제안한다.

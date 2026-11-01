@@ -12,4 +12,4 @@ graders:
     name: group-stays-manual
     config:
       regex_match:
-        - "(?i)\\b(eight|8)\\b"
+        - "(?i)\\b(seven|7)\\b"
