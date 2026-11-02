@@ -66,9 +66,8 @@ shared text below the import.
 
 For an existing combined file, move shared clauses into AGENTS.md first with
 their meaning and exceptions intact, then replace them with the import. Keep
-unrelated Claude-specific content. A later explicit CLAUDE-only restriction
-with no shared prerequisite requires scope resolution, not a standalone
-document or an unapproved companion write.
+unrelated Claude-specific content. An explicit CLAUDE.md-only restriction
+writes only that file and imports AGENTS.md only if it exists.
 
 ## Section C — Shared supporting documents
 

@@ -52,7 +52,8 @@ policy; the checklist resolves them.
 Apply grounded blind fixes once, within the original scope. Check each changed
 reference, role-placement rule, preserved clause and affected checklist
 criterion against the resulting files: a bounded check of the final patch, not
-another reviewer loop. Newly broken references or unresolved required evidence
+another reviewer loop. A file restriction is not a role-placement defect. Newly
+broken references or unresolved required evidence
 block PASS.
 
 Report actual paths, changes, source fallbacks, checklist status, blind status

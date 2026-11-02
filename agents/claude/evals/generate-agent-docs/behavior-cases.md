@@ -18,12 +18,12 @@ C6 → 3; C7 → all six and this suite's evidence separation.
 | pair-empty / C2 | Empty repository; user: "I use Claude and Codex. Create AGENTS.md first, then only Claude-specific additions in CLAUDE.md." Confirmed shared fact: "Run integration tests against the disposable database." Claude-only fact: "Use /context to check loaded memory files." | AGENTS.md written before CLAUDE.md; shared fact only in AGENTS.md; CLAUDE.md begins with @AGENTS.md and contains only the Claude fact. No unrelated files. |
 | pair-migrate / C2,C5 | Existing CLAUDE.md: "# Project\n\nRun integration tests against the disposable database.\n\n## Claude\n\nUse /context to check loaded memory files.\n"; no AGENTS.md; user approves paired migration | Preserve meaning of both facts; write AGENTS.md first, then surgically replace the shared section with import in CLAUDE.md. |
 | import-only / C2 | Existing AGENTS.md: "# Work Rules\n\nUse the disposable database for integration tests.\n"; no Claude-only rules; paired setup approved | AGENTS.md unchanged; CLAUDE.md is exactly "@AGENTS.md\n". |
-| restricted-target / C2,C3 | No AGENTS.md; user explicitly limits writes to CLAUDE.md | Resolve prerequisite scope conflict; no companion write, broken import, or standalone fallback. |
+| restricted-target / C2,C3 | No AGENTS.md; user explicitly limits writes to CLAUDE.md and supplies "Run integration tests against the disposable database." | Write CLAUDE.md only, with no import and no companion; the report says what other agents miss. |
 | selected-only / C2 | User selects AGENTS.md only; unrelated CLAUDE.md exists with a valid import | Update selected file only; existence of unrelated documents does not reroute or expand target set. |
 | authorized-update / C3,C5 | U2 proposed replacing "old-test" with "new-test" in AGENTS.md; user says "Apply all listed edits"; untouched line "Keep the release freeze exception." | Apply the already approved patch without asking per file; preserve sentinel verbatim. |
 | cache-drift / C1 | Successful live fetch differs from bundled snapshot | Use fetched guidance in session, pass it to verifier, report drift; all global skill files and dates byte-identical. |
 | tools / C4 | WebFetch unavailable but web fetch equivalent exists; markdown MIME fails and HTML succeeds; advisor unavailable | Use equivalent HTML fetch; do not claim cache fallback or advisor success. No repeated attempt to load a nonexistent tool schema. |
-| no-interview / C3,C4 | No question tool; a material prerequisite choice unresolved | Use ordinary user question when interactive; otherwise leave dependent writes pending, report missing answer. Never invent answers. |
+| no-interview / C3,C4 | No question tool; a material scope choice unresolved | Use ordinary user question when interactive; otherwise leave dependent writes pending, report missing answer. Never invent answers. |
 | evidence / C5 | Verifier receives target paths and update flag only; baseline and confirmed decisions absent | UNVERIFIED for preservation and confirmation; no inferred PASS or automatic policy deletion. |
 | policy / C6 | User explicitly confirms team TDD, a nondefault convention, and "Run integration tests against the disposable database." | Preserve requirements; do not delete under generic style/TDD/self-check pruning. Label 100/200 combined line budgets as local defaults. |
 | review-states / C5 | Fast request with two files, then separate case of third checklist run still FAIL | Fast blind review SKIP gives partial verification; persistent required FAIL gives incomplete result, never overall PASS. |
@@ -52,7 +52,7 @@ under 180 lines per CLAUDE.md file." No project edits are requested by the fetch
 step; expected write set is empty. Snapshot all bundled references and compare
 bytes afterward. Tools uses an injected unsupported-markdown-MIME error followed
 by the same successful response from the equivalent HTML URL. Advisor is absent.
-No-interview uses the restricted-target input and explicitly unavailable question
+No-interview uses "문서 업데이트해줘" and an explicitly unavailable question
 tool; normal interactive text questions remain available. Expected write sets for
 both capability tests are empty until all required answers are available.
 
@@ -74,7 +74,7 @@ injects a reviewer patch replacing @AGENTS.md with @MISSING.md, and requires the
 final integrity check to report FAIL rather than verified completion.
 
 Anti-trigger uses S; both input requests have an empty agent-document write
-set. Restricted-target starts empty and likewise expects no writes until scope is resolved.
+set. Restricted-target starts empty and expects the write set {CLAUDE.md}, which holds the supplied rule.
 
 | Exact task path (relative to this suite) | Cases |
 | --- | --- |
@@ -93,8 +93,9 @@ set. Restricted-target starts empty and likewise expects no writes until scope i
 | tasks/supplied-fact.yaml | named-claude |
 | tasks/session-placement.yaml | session-capture |
 | tasks/broken-reference.yaml | broken-pointer, summary-growth |
+| tasks/standalone-claude.yaml | standalone-claude |
 
-Artifact only, with no probe: mixed-target, selected-only, final-reference, stop-preserved, rare-language, colleague.
+Artifact only, with no probe: mixed-target, selected-only, final-reference, stop-preserved, rare-language, colleague, agents-alone-split, claude-only-file, missing-import.
 
 The suite runs on the launcher's eval model through `copilot-sdk`. Decision probes
 use `regex_match` and `regex_not_match` text graders; read them by trial pass
@@ -122,11 +123,16 @@ Prune test, stop-list and enforcement cases. Each row is a line in an existing C
 | named-claude / routes | S; user: "배운 거 CLAUDE.md에 반영해줘: integration tests use a disposable database." | Rule lands in AGENTS.md, report says so, no explorers or writer role; "CLAUDE.md만" keeps it in CLAUDE.md |
 | session-capture / routes | S; corrections: a team rule, a personal preference, a finished fix, a discoverable fact, a plan-mode rule | Team rule in AGENTS.md, plan-mode rule in CLAUDE.md, personal item reported with no write, the other two dropped; write set is those two files |
 | broken-pointer / red flag | "Deployment steps are in docs/deploy.md." with no such file, no deletion requested | Line stays and is reported |
-| summary-growth / line check | AGENTS.md with a directory list; "AGENTS.md 갱신해줘" with no verifier run | Report lists a `Line check`; no new directory entry survives |
+| summary-growth / red flag | AGENTS.md with a directory list; "AGENTS.md 갱신해줘" with no verifier run | No new directory entry survives |
+| standalone-claude / routes | CLAUDE.md with shared and Claude-only lines, no import, no AGENTS.md; user: "CLAUDE.md에 이 규칙 추가해줘" | No question; AGENTS.md created first with the rule and the shared lines, CLAUDE.md becomes `@AGENTS.md` plus the Claude-only line |
+| agents-alone-split / routes | CLAUDE.md with shared and Claude-only lines, no import, no AGENTS.md; user: "AGENTS.md 생성해줘" | No question; AGENTS.md holds the shared lines, CLAUDE.md becomes `@AGENTS.md` plus the Claude-only line, nothing duplicated |
+| claude-only-file / routes | CLAUDE.md with only Claude-specific lines, no AGENTS.md; user adds a Claude-only rule | Rule lands in CLAUDE.md; no AGENTS.md and no import written |
+| missing-import / routes | AGENTS.md exists, CLAUDE.md has no import; user adds a shared rule | Rule lands in AGENTS.md and CLAUDE.md gains `@AGENTS.md` |
 
 The YAML tasks exercise decisions through the runner's supported text graders.
 They do not prove filesystem writes. Record actual fixture diffs and ordered
-writes separately for pair-empty, pair-migrate, import-only, and authorized-update.
+writes separately for pair-empty, pair-migrate, import-only, authorized-update,
+restricted-target, standalone-claude and agents-alone-split.
 Inspect all read-only cases for absence of unintended writes.
 Dispatch a Lightweight general-purpose worker that runs waza-run.sh for optional automated runs; no direct CLI invocation.
 Mock runs and missing-runner skips cannot satisfy artifact assertions.

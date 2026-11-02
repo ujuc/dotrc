@@ -18,8 +18,7 @@ existing file is a baseline, regardless of its author or origin.
    pre-direct-read workarounds (a prose "read AGENTS.md" line or a SessionStart
    hook printing it; claude-code-best-practices.md AGENTS.md section). A
    `CLAUDE.local.md` with no CLAUDE.md or `.claude/CLAUDE.md` at or above the
-   target stops Claude reading AGENTS.md: name that cause. A `/doctor
-   prompt-audit` report the user supplies is input; confirm each finding here.
+   target stops Claude reading AGENTS.md: name that cause.
 4. Present a compact table: path, exists/missing, shared/Claude-only role,
    proposed change, evidence. Unfamiliar structure is not proof of drift.
 
@@ -51,9 +50,10 @@ an explicit repository approval requirement, and resolve it before dependent
 writes. Preserve unselected or unapproved content and report observations
 separately.
 
-A CLAUDE.md-only restriction with no AGENTS.md is a prerequisite conflict.
-Resolve it before writing; do not silently create the companion or substitute a
-standalone shared document. Already approved paired setup needs no new question.
+With no root AGENTS.md, create it for shared content and move shared clauses out
+of CLAUDE.md without asking; with no shared content, write neither it nor an
+import. A CLAUDE.md-only restriction writes only CLAUDE.md, keeps importing an
+AGENTS.md that exists, and the report says what other agents miss.
 
 Preserve existing team TDD, nondefault conventions, safety rules and test gates
 unless the user requests their change. Prior explicit decisions count as
@@ -72,7 +72,8 @@ Edit surgically. For each patch, keep before/after content and authorized scope
 in the conversation, not in a backup file. Move shared clauses into AGENTS.md
 before replacing their CLAUDE.md origin with the import; preserve all unrelated
 bytes. If a needed destination is outside explicit scope, present that
-dependency before altering either file.
+dependency before altering either file. A missing root AGENTS.md is in scope
+unless a file restriction excludes it.
 
 Create missing authorized files with Stage 3 rules; never regenerate existing
 ones. Deletion requires explicit authorization. A fix suggested during review
@@ -80,9 +81,11 @@ has the same scope and preservation requirements as the original patch.
 
 ## Short route
 
-Use it when the user supplies the facts and every owning file exists. A shared
-fact with no AGENTS.md, or a CLAUDE.md that does not import it, takes the normal
-path. Stage 0 still runs.
+Use it when the user supplies the facts and AGENTS.md or CLAUDE.md exists; with
+neither, take the normal path. Stage 0 still runs. Unless a file restriction
+forbids it, create a missing owner here: AGENTS.md takes the shared facts and the
+shared clauses moved out of CLAUDE.md. Once AGENTS.md exists, a CLAUDE.md starts
+with `@AGENTS.md`; a new one is the import plus the Claude-only facts.
 
 1. Run U1 steps 1 and 3 on the owning files only.
 2. Place each fact:
@@ -91,10 +94,10 @@ path. Stage 0 still runs.
    | --- | --- |
    | Shared by every agent | AGENTS.md |
    | Claude-only | CLAUDE.md, or an existing `.claude/rules/` file when path-scoped |
-   | Personal | No write; name `~/.claude/CLAUDE.md`, or `CLAUDE.local.md` when a CLAUDE.md exists |
+   | Personal | No write, not even a new `CLAUDE.local.md` or `.gitignore` entry; name `~/.claude/CLAUDE.md`, or `CLAUDE.local.md` when a CLAUDE.md exists |
    | From session corrections: one-off or discoverable | Drop and say why |
-   | Dictated with "add this" | Keep under policy precedence, in the owner above or a restricted file (`CLAUDE.md만`) |
+   | Dictated with "add this" | Keep under policy precedence, in the owner above or a restricted file (`CLAUDE.md만`); only a named file overrides Personal |
 
-3. Run U2 and U3 on the placed facts only; report U1 findings without patching
-   them. Then run the `Line check` and stage4-verifier.md's final artifact check.
-   Report PARTIAL.
+3. Run U2 and U3 on the placed facts only: add no other line the user did
+   not supply, and report U1 findings without patching them. Then run stage4-verifier.md's
+   final artifact check. Report PARTIAL.

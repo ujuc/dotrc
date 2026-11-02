@@ -245,7 +245,7 @@ command is not generic self-check scaffolding.
   (v2.1.283+) audits CLAUDE.md, CLAUDE.local.md, AGENTS.md, rules and skills
   for *"instructions written for older models, references to files or commands
   that don't exist, and files that contradict each other"* and proposes edits;
-  it is user-invoked, so this skill consumes its report, never runs it.
+  it is user-invoked, so this skill never runs it.
 - `/context` confirms which instruction files actually loaded.
 
 ### Over-specified CLAUDE.md — the failure to avoid (source: best-practices + memory)

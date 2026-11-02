@@ -24,12 +24,17 @@ dependent check, never assumed PASS.
 
 1. **Scope and preservation**: only selected/authorized files changed;
    untouched text is byte-preserved; migrated shared clauses retain meaning
-   and exceptions. Destructive changes require explicit authorization.
+   and exceptions. Destructive changes require explicit authorization. With no
+   file restriction, creating a missing root AGENTS.md and moving shared clauses
+   into it needs no approval record; a clause that survives there is not deleted.
 2. **Shared ownership and order**: shared supporting files and AGENTS.md exist
    before their importing CLAUDE.md. Shared rules remain accessible to both
-   Claude and Codex. No shared rule is hidden exclusively in Claude rules.
+   Claude and Codex. No shared rule is hidden exclusively in Claude rules. A
+   user restriction to CLAUDE.md exempts this check and check 3, except that an
+   existing AGENTS.md stays imported.
 3. **Claude layer**: root CLAUDE.md starts with @AGENTS.md and adds only
-   Claude-specific content; import-only is valid. Apply the documented
+   Claude-specific content; import-only is valid. A CLAUDE.md with no shared
+   content and no AGENTS.md needs no import. Apply the documented
    ancestor-only nested exception from
    [stage3-generator.md](../stage3-generator.md), not a universal local
    import mandate.
@@ -64,7 +69,8 @@ dependent check, never assumed PASS.
    could find it by reading the code and would actually go and look, it is cut.
    FAIL such a line that matches a stop-list row; report other retained lines as
    observations. A line preserved by a user decision or team requirement is PASS
-   with a note, never removed.
+   with a note, never removed. A clause moved from CLAUDE.md into AGENTS.md is not
+   an added line: report a stop-list match as an observation and keep it.
 
    | Stop-list row | Fails | Still allowed |
    | --- | --- | --- |

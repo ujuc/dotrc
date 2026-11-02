@@ -1,0 +1,13 @@
+id: standalone-claude
+name: standalone-claude
+description: Decision probe; a supplied shared fact with no AGENTS.md creates it and splits the files without asking.
+tags: [decision-probe]
+inputs:
+  prompt: "A repository has an existing CLAUDE.md with no `@AGENTS.md` import, and no AGENTS.md. The user says 'CLAUDE.md에 이 규칙 추가해줘: 통합 테스트는 일회용 DB로만 돌린다.' The rule applies to every coding agent. Include one line exactly `write: AGENTS.md and CLAUDE.md`, `write: CLAUDE.md` or `write: none`, and one line exactly `ask-first: yes` or `ask-first: no`. Explain briefly in English. Do not run tools, write files, or ask questions."
+graders:
+  - type: text
+    name: create-and-split
+    config:
+      regex_match:
+        - "(?im)^\\W*write:\\W*AGENTS\\.md and CLAUDE\\.md\\b"
+        - "(?im)^\\W*ask-first:\\W*no\\b"

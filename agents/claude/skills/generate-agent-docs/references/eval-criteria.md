@@ -12,13 +12,15 @@ on `/generate-agent-docs` only if false triggers become a problem.
    supporting files and AGENTS.md precede importing CLAUDE.md; existing files
    receive surgical edits; common rules have one shared source. Import-only
    CLAUDE.md is valid. Explicit file restrictions are respected.
-   Fail: a broken import, unapproved companion, standalone shared CLAUDE.md,
-   regenerated existing file, or duplicated/Claude-only shared rule remains.
+   Fail: a broken import, a regenerated existing file, or, without that
+   restriction, a companion other than a missing AGENTS.md, a standalone shared
+   CLAUDE.md, or a duplicated/Claude-only shared rule.
 
 2. **Authorization and preservation**
    Pass: existing explicit approval is reused; original snapshots/diffs prove
    unrelated bytes and migrated meaning are preserved. New material scope or
-   destructive changes receive required authorization.
+   destructive changes receive required authorization; creating a missing root
+   AGENTS.md is not new scope.
    Fail: repeated per-file approval after an unchanged approved patch, scope
    expansion, unapproved deletion, or lost team exception.
 
