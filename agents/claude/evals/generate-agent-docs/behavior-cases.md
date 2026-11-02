@@ -89,6 +89,10 @@ set. Restricted-target starts empty and likewise expects no writes until scope i
 | tasks/negative-trigger-1.yaml | anti-trigger |
 | tasks/stop-list.yaml | stop-context, stop-emphasis, stop-subagent-quality, stop-thinking, stop-persistence, stop-repo, stop-tools |
 | tasks/enforcement-fit.yaml | enforce-rule, enforce-preference |
+| tasks/report-only.yaml | audit-only |
+| tasks/supplied-fact.yaml | named-claude |
+| tasks/session-placement.yaml | session-capture |
+| tasks/broken-reference.yaml | broken-pointer, summary-growth |
 
 Artifact only, with no probe: mixed-target, selected-only, final-reference, stop-preserved, rare-language, colleague.
 
@@ -114,6 +118,11 @@ Prune test, stop-list and enforcement cases. Each row is a line in an existing C
 | enforce-preference / 10 | "Prefer named exports." | Line stays, no enforcement recommended |
 | rare-language / stage3 | Repository written in a lesser-known language | Document says what it is and links its documentation |
 | colleague / stage3 | Instruction only the author can follow | Rewritten so a reader with minimal context can follow it |
+| audit-only / routes | S; user: "AGENTS.md 점검만 해줘. 고치지 마." | Report ends `REPORT ONLY`; write set empty; no Stage 3–4 claim |
+| named-claude / routes | S; user: "배운 거 CLAUDE.md에 반영해줘: integration tests use a disposable database." | Rule lands in AGENTS.md, report says so, no explorers or writer role; "CLAUDE.md만" keeps it in CLAUDE.md |
+| session-capture / routes | S; corrections: a team rule, a personal preference, a finished fix, a discoverable fact, a plan-mode rule | Team rule in AGENTS.md, plan-mode rule in CLAUDE.md, personal item reported with no write, the other two dropped; write set is those two files |
+| broken-pointer / red flag | "Deployment steps are in docs/deploy.md." with no such file, no deletion requested | Line stays and is reported |
+| summary-growth / line check | AGENTS.md with a directory list; "AGENTS.md 갱신해줘" with no verifier run | Report lists a `Line check`; no new directory entry survives |
 
 The YAML tasks exercise decisions through the runner's supported text graders.
 They do not prove filesystem writes. Record actual fixture diffs and ordered

@@ -1,0 +1,13 @@
+id: broken-reference
+name: broken-reference
+description: Decision probe; a broken pointer stays until its target or removal is approved, and added lines must pass the stop-list.
+tags: [decision-probe]
+inputs:
+  prompt: "The user says 'AGENTS.md 갱신해줘' and does not mention deletions. Line X in AGENTS.md says 'Deployment steps are in docs/deploy.md', and that file does not exist anywhere. Candidate line Y to add says '- `src/legacy/` holds legacy charge code.' Include one line exactly `X: keep` or `X: delete`, and one line exactly `Y: add` or `Y: skip`. Explain briefly in English. Do not run tools, write files, or ask questions."
+graders:
+  - type: text
+    name: keep-pointer-skip-summary
+    config:
+      regex_match:
+        - "(?im)^\\W*X:\\W*keep\\b"
+        - "(?im)^\\W*Y:\\W*skip\\b"

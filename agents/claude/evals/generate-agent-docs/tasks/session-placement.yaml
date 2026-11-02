@@ -1,0 +1,16 @@
+id: session-placement
+name: session-placement
+description: Decision probe; each session correction goes to its owner, and personal notes are not written unasked.
+tags: [decision-probe]
+inputs:
+  prompt: "The user says 'capture what you learned this session in the project instructions' and lists: A) always reply in short sentences to me personally; B) yesterday's typo in src/api/index.ts is fixed; C) integration tests must only use a disposable database, a team rule; D) you did not know billing code lives in src/billing, which the directory name shows; E) use Claude Code plan mode before touching billing code. For each letter give one line exactly `A: <action>` through `E: <action>`, where action is one of agents-md, claude-md, report-only, drop. Explain briefly in English. Do not run tools, write files, or ask questions."
+graders:
+  - type: text
+    name: placement-per-item
+    config:
+      regex_match:
+        - "(?im)^\\W*A\\W+(report-only|drop)\\b"
+        - "(?im)^\\W*B\\W+drop\\b"
+        - "(?im)^\\W*C\\W+agents-md\\b"
+        - "(?im)^\\W*D\\W+drop\\b"
+        - "(?im)^\\W*E\\W+claude-md\\b"

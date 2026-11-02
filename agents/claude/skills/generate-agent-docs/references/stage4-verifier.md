@@ -1,6 +1,8 @@
 # Stage 4 — Evidence-Based Verification
 
-The checklist verifier and blind reviewer are separate read-only roles. Use
+The short route in update-mode.md runs only the final artifact check and
+reports PARTIAL. Elsewhere the checklist verifier and blind reviewer are separate
+read-only roles. Use
 SKILL.md's Host capabilities; unavailable independent execution must be
 reported. The orchestrator alone applies authorized fixes.
 

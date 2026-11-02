@@ -60,7 +60,8 @@ whether it is independent; notes on anything unusual about the layout.
 Scan documentation and CI configuration. One-line summary per file.
 
 1. Existing agent config, including the less obvious locations: CLAUDE.md
-   (root and every nested path), AGENTS.md (root, `.claude/`, nested),
+   (root, `.claude/`, `CLAUDE.local.md`, every nested path), AGENTS.md (root,
+   `.claude/`, nested),
    `.claude/rules/`, `.cursor/rules/*.mdc`, `.github/copilot-instructions.md`
 2. Contributing docs: CONTRIBUTING.md, contributing-docs/, docs/
 3. CI/CD config — extract the test, build, and deploy commands it actually runs

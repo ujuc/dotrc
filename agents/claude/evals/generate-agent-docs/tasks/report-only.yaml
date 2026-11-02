@@ -1,0 +1,13 @@
+id: report-only
+name: report-only
+description: Decision probe; an audit request stops after the report with no writes.
+tags: [decision-probe]
+inputs:
+  prompt: "The repository has AGENTS.md and CLAUDE.md. The user says: 'AGENTS.md 점검만 해줘. 고치지는 마.' This is a planning question about the skill's route, not a request to perform the audit. State where a full run of that route ends and the status it would report. Include one line exactly `last-step: <id>` using an id such as U2, U3, or Stage 4, and one line exactly `status: <value>`. Explain briefly in English. Do not run tools, write files, or ask questions."
+graders:
+  - type: text
+    name: stops-after-report
+    config:
+      regex_match:
+        - "(?im)^\\W*last-step:\\W*U2\\b"
+        - "(?im)^\\W*status:\\W*REPORT ONLY\\b"

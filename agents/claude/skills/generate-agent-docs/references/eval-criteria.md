@@ -3,7 +3,9 @@
 Evaluate six binary properties below. For a run that cannot establish a
 property, record UNVERIFIED or an allowed SKIP rather than manufacturing a
 binary answer. Overall PASS requires all applicable properties on final bytes;
-fast or unavailable blind review yields PARTIAL, not fully verified completion.
+fast, short-route or unavailable blind review yields PARTIAL, not fully verified
+completion. `disable-model-invocation` stays unset on purpose; set it and rely
+on `/generate-agent-docs` only if false triggers become a problem.
 
 1. **Target routing and shared ownership**
    Pass: targets and dependencies are resolved before routing; shared
@@ -35,7 +37,7 @@ fast or unavailable blind review yields PARTIAL, not fully verified completion.
    Pass: final imports/shared links resolve; intended future globs are evaluated
    using their confirmed scope; effective fetched/cached guidance is supplied
    downstream. Project-doc runs leave global skill files and dates unchanged.
-   Fail: broken references, fabricated fetch/role results, or incidental cache
+   Fail: new broken references, fabricated fetch/role results, or incidental cache
    maintenance. Tool equivalents and fallback notices must match real actions.
 
 5. **Verification evidence and final status**
@@ -48,7 +50,8 @@ fast or unavailable blind review yields PARTIAL, not fully verified completion.
    or fully verified completion with failed/unavailable required checks.
 
 6. **Trigger scope**
-   Pass: README/API/CHANGELOG and skill-review requests do not launch generation.
+   Pass: README/API/CHANGELOG and skill-review requests do not launch generation;
+   an audit with no change requested has an empty write set.
    Fail: unrelated document generation triggered by reviewing this skill.
 
 Artifact tests and decision probes belong to the checked-in evaluation suite.

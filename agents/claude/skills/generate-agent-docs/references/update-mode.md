@@ -1,8 +1,8 @@
 # Update Mode: U1–U3
 
 U1 follows Stage 1, U2 runs during Stage 2, U3 replaces Stage 3 for existing
-files, and stage4-verifier.md follows all writes. Any existing file is a
-baseline, regardless of its author or origin.
+files, and the Stage 4 roles follow all writes outside the short route. Any
+existing file is a baseline, regardless of its author or origin.
 
 ## U1 — Audit selected targets
 
@@ -16,7 +16,10 @@ baseline, regardless of its author or origin.
 3. Detect shared instructions in CLAUDE.md that belong in AGENTS.md, duplicate
    rules, stale facts with repository evidence, broken references, and
    pre-direct-read workarounds (a prose "read AGENTS.md" line or a SessionStart
-   hook printing it; claude-code-best-practices.md AGENTS.md section).
+   hook printing it; claude-code-best-practices.md AGENTS.md section). A
+   `CLAUDE.local.md` with no CLAUDE.md or `.claude/CLAUDE.md` at or above the
+   target stops Claude reading AGENTS.md: name that cause. A `/doctor
+   prompt-audit` report the user supplies is input; confirm each finding here.
 4. Present a compact table: path, exists/missing, shared/Claude-only role,
    proposed change, evidence. Unfamiliar structure is not proof of drift.
 
@@ -74,3 +77,24 @@ dependency before altering either file.
 Create missing authorized files with Stage 3 rules; never regenerate existing
 ones. Deletion requires explicit authorization. A fix suggested during review
 has the same scope and preservation requirements as the original patch.
+
+## Short route
+
+Use it when the user supplies the facts and every owning file exists. A shared
+fact with no AGENTS.md, or a CLAUDE.md that does not import it, takes the normal
+path. Stage 0 still runs.
+
+1. Run U1 steps 1 and 3 on the owning files only.
+2. Place each fact:
+
+   | Fact | Destination |
+   | --- | --- |
+   | Shared by every agent | AGENTS.md |
+   | Claude-only | CLAUDE.md, or an existing `.claude/rules/` file when path-scoped |
+   | Personal | No write; name `~/.claude/CLAUDE.md`, or `CLAUDE.local.md` when a CLAUDE.md exists |
+   | From session corrections: one-off or discoverable | Drop and say why |
+   | Dictated with "add this" | Keep under policy precedence, in the owner above or a restricted file (`CLAUDE.md만`) |
+
+3. Run U2 and U3 on the placed facts only; report U1 findings without patching
+   them. Then run the `Line check` and stage4-verifier.md's final artifact check.
+   Report PARTIAL.

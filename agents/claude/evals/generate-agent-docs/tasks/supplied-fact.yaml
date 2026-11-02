@@ -1,0 +1,15 @@
+id: supplied-fact
+name: supplied-fact
+description: Decision probe; a fact the user supplies takes the short route and lands in the shared file.
+tags: [decision-probe]
+inputs:
+  prompt: "CLAUDE.md is `@AGENTS.md` plus one Claude-only line, and AGENTS.md exists. The user says: '이번 세션에서 배운 거 CLAUDE.md에 반영해줘: 통합 테스트는 반드시 일회용 DB로만 돌려야 해.' The rule applies to every coding agent, and the user did not say to change only CLAUDE.md. Include one line exactly `target-file: <file>`, one line exactly `if-only-claude-md: <file>` naming the target had the user written 'CLAUDE.md에만', one line exactly `explorers: yes` or `explorers: no`, and one line exactly `writer-role: yes` or `writer-role: no`. Explain briefly in English. Do not run tools, write files, or ask questions."
+graders:
+  - type: text
+    name: short-route-shared-target
+    config:
+      regex_match:
+        - "(?im)^\\W*target-file:\\W*AGENTS\\.md\\b"
+        - "(?im)^\\W*if-only-claude-md:\\W*CLAUDE\\.md\\b"
+        - "(?im)^\\W*explorers:\\W*no\\b"
+        - "(?im)^\\W*writer-role:\\W*no\\b"

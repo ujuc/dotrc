@@ -39,7 +39,9 @@ dependent check, never assumed PASS.
    concrete test gates. Report unrelated optional pruning separately.
 5. **References**: imports resolve relative to the containing file; shared
    links and recommended existing skills resolve. Check intended path globs;
-   no current match alone does not prove a future-path rule is invalid.
+   no current match alone does not prove a future-path rule is invalid. A
+   pre-existing broken reference that the report names and the user has not
+   resolved is an observation, not a FAIL.
 6. **Budgets**: apply the local 100/200 combined targets and 50/100 nested
    targets in
    [claude-code-best-practices.md](../claude-code-best-practices.md),
