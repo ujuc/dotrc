@@ -23,21 +23,17 @@ dependent check, never assumed PASS.
 ## Checklist
 
 1. **Scope and preservation**: only selected/authorized files changed;
-   untouched text is byte-preserved; migrated shared clauses retain meaning
-   and exceptions. Destructive changes require explicit authorization. With no
-   file restriction, creating a missing root AGENTS.md and moving shared clauses
-   into it needs no approval record; a clause that survives there is not deleted.
-2. **Shared ownership and order**: shared supporting files and AGENTS.md exist
-   before their importing CLAUDE.md. Shared rules remain accessible to both
-   Claude and Codex. No shared rule is hidden exclusively in Claude rules. A
-   user restriction to CLAUDE.md exempts this check and check 3, except that an
-   existing AGENTS.md stays imported.
-3. **Claude layer**: root CLAUDE.md starts with @AGENTS.md and adds only
-   Claude-specific content; import-only is valid. A CLAUDE.md with no shared
-   content and no AGENTS.md needs no import. Apply the documented
-   ancestor-only nested exception from
-   [stage3-generator.md](../stage3-generator.md), not a universal local
-   import mandate.
+   untouched text is byte-preserved; moved clauses retain meaning and
+   exceptions. Destructive changes require explicit authorization.
+2. **CLAUDE.md-only ownership**: per
+   [stage3-generator.md](../stage3-generator.md#scope-claudemd-only), no
+   AGENTS.md was created, edited or deleted; every new rule is in CLAUDE.md, a
+   supporting doc or `.claude/rules/`; supporting files exist before the
+   CLAUDE.md that links them.
+3. **AGENTS.md handling**: an existing `@AGENTS.md` import survives; a new
+   CLAUDE.md beside a rule-bearing AGENTS.md starts with that import; no
+   AGENTS.md rule is copied into CLAUDE.md. A nested CLAUDE.md holds only its
+   differences from ancestor files.
 4. **Evidence and necessity**: facts are grounded in supplied sources and
    decisions. Prune redundant summaries and linter defaults within authorized
    scope. Preserve explicit project requirements, nondefault conventions and
@@ -69,8 +65,7 @@ dependent check, never assumed PASS.
    could find it by reading the code and would actually go and look, it is cut.
    FAIL such a line that matches a stop-list row; report other retained lines as
    observations. A line preserved by a user decision or team requirement is PASS
-   with a note, never removed. A clause moved from CLAUDE.md into AGENTS.md is not
-   an added line: report a stop-list match as an observation and keep it.
+   with a note, never removed.
 
    | Stop-list row | Fails | Still allowed |
    | --- | --- | --- |

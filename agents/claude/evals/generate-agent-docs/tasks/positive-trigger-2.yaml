@@ -1,19 +1,15 @@
-id: paired-update
-name: paired-update
-description: Decision probe; mock scores do not prove skill execution.
+id: agents-md-beside
+name: agents-md-beside
+description: Decision probe; a new CLAUDE.md beside a rule-bearing AGENTS.md imports it, adds only new rules, and leaves AGENTS.md untouched.
 tags: [decision-probe]
 inputs:
-  prompt: "Existing CLAUDE.md combines 'Use a disposable database for integration tests.' and Claude-specific '/context checks loaded memory.' AGENTS.md is absent. I approve moving shared rules to AGENTS.md first and updating CLAUDE.md. Show final contents and ordered changes without requesting the same approval again. Do not run tools, write files, or ask questions."
+  prompt: "The repository has AGENTS.md containing 'Use a disposable database for integration tests.' and no CLAUDE.md. The user says: 'CLAUDE.md 만들어줘. 추가 규칙: /context checks loaded memory.' Show the final CLAUDE.md contents and state whether AGENTS.md changes, without requesting approval. Do not run tools, write files, or ask questions."
 graders:
   - type: text
-    name: paired-update-decision
+    name: import-beside-agents
     config:
       regex_match:
-        - "(?im)^[ \\t>*-]*(?:step[ \\t]*)?(?:1[.):]|first\\b)[^\\n@]*AGENTS\\.md|AGENTS\\.md[^\\n]{0,40}\\bfirst\\b|AGENTS\\.md[^\\n]{0,60}\\bthen\\b[^\\n]{0,40}CLAUDE\\.md"
         - "(?m)^[ \\t]*@AGENTS\\.md[ \\t]*\\n(?:(?:[^`\\n][^\\n]*)?\\n|`[^`\\n][^\\n]*\\n)*?[^\\n]*/context"
-        - "(?is)AGENTS\\.md.{0,200}disposable"
       regex_not_match:
-        - "(?im)^[ \\t>*-]*(?:step[ \\t]*)?(?:1[.):]|first\\b)[ \\t:,*]*(?:(?:update|edit|change|modify|rewrite|patch|add|fix|trim|rework|the|to|in|with)[ \\t]+){0,3}[`*\"]*CLAUDE\\.md"
-        - "(?:```|~~~)[a-zA-Z]*[ \\t]*\\n(?:[^`~\\n@][^\\n]*\\n|\\n)+[ \\t]*@AGENTS\\.md[ \\t]*\\n"
         - "(?:```|~~~)[a-zA-Z]*[ \\t]*\\n[ \\t]*@AGENTS\\.md[ \\t]*\\n(?:(?:[^`\\n][^\\n]*)?\\n|`[^`\\n][^\\n]*\\n)*?[^\\n]*(?i:disposable)"
         - "(?i)(?:do you|would you|can you|could you|please)[ \\t]+(?:approve|confirm)|(?:shall|should|may|can)[ \\t]+I[ \\t]+(?:proceed|continue|apply|go ahead)|(?:once|after|when) you (?:approve|confirm)|(?:await|wait)[a-z]*[ \\t]+(?:for[ \\t]+)?(?:your[ \\t]+)?(?:approval|confirmation)|need[a-z]*[ \\t]+your[ \\t]+(?:approval|confirmation)"

@@ -3,7 +3,7 @@
 How the orchestrator dispatches the explorer role
 (`references/roles/explorer.md`) up to four times and merges the results.
 
-Use SKILL.md's Host capabilities for all tool/model examples below; do not
+Use SKILL.md's Session capabilities for all tool/model examples below; do not
 assume Claude tool names exist in another host. When independent roles are
 unavailable, analyze directly and record coverage gaps. Preserve original target
 contents, evidence paths and user decisions for the Stage 4 handoff.
@@ -77,15 +77,14 @@ After the Stage 1 dispatches complete, before Stage 2:
    | Class | Definition | Action |
    |-------|-----------|--------|
    | **Discoverable** | Readable from code/config | Usually omit; retain explicit team requirements and the exact test, typecheck and lint commands |
-   | **Undiscoverable** | Requires project context beyond code | Shared candidates go to AGENTS.md; only Claude-specific additions go to CLAUDE.md |
+   | **Undiscoverable** | Requires project context beyond code | CLAUDE.md |
 
 3. **Separate** facts (directly observed; cite the source file) from
    assumptions (inferred from patterns or absence of evidence): mark those
    `[ASSUMPTION]` and verify them in the Stage 2 interview.
 4. **List** what Stage 1 could not determine as Stage 2 interview questions.
-5. **Nested candidates**: for shared package differences, propose nested
-   AGENTS.md first; its selected Claude companion imports it. Existing shared
-   ancestor coverage can suffice when only Claude-specific differences remain.
+5. **Nested candidates**: propose a nested CLAUDE.md for package differences.
+   Existing ancestor coverage can suffice when no package difference remains.
    Do not classify general build/test commands as Claude-only content. If the
    structure findings show monorepo packages or submodules, prepare this table
    for the Stage 2 interview:
@@ -94,7 +93,7 @@ After the Stage 1 dispatches complete, before Stage 2:
    |------|------|-------------------|-------------|
    | e.g., packages/core | monorepo package | No | Yes — if package has distinct agent workflow rules |
    | e.g., tools/cli | monorepo package | Yes (12 lines) | Update — existing file is outdated |
-   | e.g., infra/ | submodule | No | Inspect independent checkout scope; shared rules belong in AGENTS.md |
+   | e.g., infra/ | submodule | No | Inspect independent checkout scope; its own CLAUDE.md owns its rules |
 
 6. **Present** the merged analysis to the user before Stage 2: detected project
    type and structure, a brief discoverable/undiscoverable list, facts vs

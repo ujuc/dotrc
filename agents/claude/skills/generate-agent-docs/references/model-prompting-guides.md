@@ -24,9 +24,9 @@ requirements. Preserve confirmed team TDD, nondefault conventions, concrete test
 commands and safety boundaries. Prior explicit decisions suffice; no repeated
 interview is required. Missing evidence in a blind review never licenses
 removing a team policy. Project-doc runs do not modify this cache or its date;
-use native fetch equivalents under SKILL.md's Host capabilities.
+use native fetch equivalents under SKILL.md's Session capabilities.
 
-CLAUDE.md, AGENTS.md and `.claude/rules/` load in full every session, so they
+CLAUDE.md, its imports and unconditional `.claude/rules/` load in full every session, so they
 are system-prompt content: the parts of Anthropic's per-model guides on how
 instructions are written are authoritative for Stage 3 (writing) and Stage 4
 (verifying). The rest is out of scope (see the end of this file).
@@ -95,8 +95,7 @@ Sonnet 5 and Opus 4.8: *"It does not silently generalize an instruction from
 one item to another, and it does not infer requests you didn't make ... If
 you need Claude to apply an instruction broadly, state the scope explicitly."*
 
-Name the paths, directories or file types a rule covers. Shared path-bound rules
-stay in AGENTS.md (nested when appropriate); only Claude-specific rules prefer
+Name the paths, directories or file types a rule covers. Path-bound rules prefer
 `.claude/rules/` with `paths`.
 
 ### W4 — Carry the reason when the rule is not self-evident

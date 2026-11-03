@@ -2,14 +2,13 @@ id: policy-preservation
 name: policy-preservation decision probe
 description: Decision probe; mock output is not behavioral evidence.
 inputs:
-  prompt: "A user explicitly requires team TDD, tabs in Makefiles and a named integration-test gate. How should shared AGENTS.md and Claude-only CLAUDE.md preserve them? Distinguish official size advice from local budgets. Do not run tools, write files, or ask questions."
+  prompt: "A user explicitly requires team TDD, tabs in Makefiles and a named integration-test gate. How should CLAUDE.md preserve them? Distinguish official size advice from local budgets. Do not run tools, write files, or ask questions."
 graders:
   - type: text
     name: team-policy-survives-local-defaults
     config:
       regex_match:
-        - "@AGENTS\\.md"
-        - "(?is)AGENTS\\.md.{0,400}(TDD|test-first|failing test)"
+        - "(?is)CLAUDE\\.md.{0,400}(TDD|test-first|failing test)"
         - "(?is)((budget|local default|local limit|local cap)s?.{0,80}(never|neither|not|n\\x27t|cannot)\\b.{0,40}(overrid|justif|outrank|trump|delet|drop|remov|cut|trim|sacrific|weaken).{0,40}(polic|rule|requirement|TDD|gate))|((never|neither|not|n\\x27t)\\b.{0,40}(overrid|delet|drop|remov|cut|trim|sacrific|weaken).{0,40}(polic|rule|requirement|TDD|gate).{0,40}(budget|fit|size|space))|(budget.{0,200}(polic|rule|requirement).{0,60}(never|not)\\b.{0,20}(cut|dropped|removed|trimmed))|(requirements?|rules?|polic\\w+)\\b[^.\\n]{0,40}\\bsurvive\\b[^.\\n]{0,20}\\b(trim\\w*|cuts?|budget)|((requirement|rule|polic|decision)\\w*[^.\\n]{0,120}(outrank|beat|override|take precedence|takes precedence)\\w*[^.\\n]{0,40}(prun|budget|default|\\bthem\\b|\\bit\\b|\\bboth\\b))|((requirement|mandate|polic|rule)s?.{0,40}(not|never)\\s+(pruned|cut|trimmed|dropped|removed))|((budget|target).{0,80}(yield|give way)s?\\s+to)|(prun\\w*.{0,30}(not|never)\\s+remove)"
       regex_not_match:
         - "(?i)(decision|policy|requirement|mandate)[a-z ]{0,20}(does not|doesn\\x27t|cannot|can\\x27t|won\\x27t|should not|must not)\\s+(survive|stay|remain)"

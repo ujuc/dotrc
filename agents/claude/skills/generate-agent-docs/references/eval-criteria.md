@@ -7,20 +7,18 @@ fast, short-route or unavailable blind review yields PARTIAL, not fully verified
 completion. `disable-model-invocation` stays unset on purpose; set it and rely
 on `/generate-agent-docs` only if false triggers become a problem.
 
-1. **Target routing and shared ownership**
-   Pass: targets and dependencies are resolved before routing; shared
-   supporting files and AGENTS.md precede importing CLAUDE.md; existing files
-   receive surgical edits; common rules have one shared source. Import-only
-   CLAUDE.md is valid. Explicit file restrictions are respected.
-   Fail: a broken import, a regenerated existing file, or, without that
-   restriction, a companion other than a missing AGENTS.md, a standalone shared
-   CLAUDE.md, or a duplicated/Claude-only shared rule.
+1. **Target routing and CLAUDE.md ownership**
+   Pass: targets and dependencies are resolved before routing; every new rule
+   lands in CLAUDE.md, a supporting doc or `.claude/rules/`; an existing
+   `@AGENTS.md` import survives; existing files receive surgical edits; each
+   rule has one source. Explicit file restrictions are respected.
+   Fail: a broken import, a regenerated existing file, any AGENTS.md write, a
+   dropped `@AGENTS.md` import, or an AGENTS.md rule copied into CLAUDE.md.
 
 2. **Authorization and preservation**
    Pass: existing explicit approval is reused; original snapshots/diffs prove
    unrelated bytes and migrated meaning are preserved. New material scope or
-   destructive changes receive required authorization; creating a missing root
-   AGENTS.md is not new scope.
+   destructive changes receive required authorization.
    Fail: repeated per-file approval after an unchanged approved patch, scope
    expansion, unapproved deletion, or lost team exception.
 

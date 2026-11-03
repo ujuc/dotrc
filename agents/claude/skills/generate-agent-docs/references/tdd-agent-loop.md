@@ -9,12 +9,12 @@ check_interval_days: 90  # a published article, not a living doc page — same l
 ## Scope and precedence
 
 The cached findings below are model- or study-specific evidence, not universal
-rules for every harness. Apply them as local authoring defaults after explicit
+rules. Apply them as local authoring defaults after explicit
 user/repository requirements. Preserve confirmed team TDD, nondefault conventions,
 concrete test commands and safety boundaries. Prior explicit decisions suffice;
 no repeated interview is required. Missing evidence in a blind review never
 licenses removing a team policy. Project-doc runs do not modify this cache or
-its date; use native fetch equivalents under SKILL.md's Host capabilities.
+its date; use native fetch equivalents under SKILL.md's Session capabilities.
 
 T1 governs generated project docs, never this skill's own prose: Stage 3 writes
 by it, Stage 4 rejects by it, update mode flags existing docs against it.

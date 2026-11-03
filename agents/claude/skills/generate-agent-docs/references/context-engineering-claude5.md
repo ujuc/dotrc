@@ -9,12 +9,12 @@ check_interval_days: 90  # a published post, not a living doc page — long gate
 ## Scope and precedence
 
 The cached findings below are model- or study-specific evidence, not universal
-rules for every harness. Apply them as local authoring defaults after explicit
+rules. Apply them as local authoring defaults after explicit
 user/repository requirements. Preserve confirmed team TDD, nondefault conventions,
 concrete test commands and safety boundaries. Prior explicit decisions suffice;
 no repeated interview is required. Missing evidence in a blind review never
 licenses removing a team policy. Project-doc runs do not modify this cache or
-its date; use native fetch equivalents under SKILL.md's Host capabilities.
+its date; use native fetch equivalents under SKILL.md's Session capabilities.
 
 Consumers: roles/writer.md (writing) and roles/verifier.md (rejecting).
 C1–C4 behave like model-prompting-guides.md's `[W]` rules: they govern generated
@@ -72,10 +72,10 @@ Anthropic no longer encourages saving memories with the `#` hotkey, which wrote
 to CLAUDE.md: Claude now saves relevant memories automatically.
 
 **Applies to**: reject any generated line telling a reader to record notes,
-decisions, session logs, or learnings into CLAUDE.md / AGENTS.md, and any line
+decisions, session logs, or learnings into CLAUDE.md, and any line
 describing the `#` hotkey workflow. In update mode, flag an existing "Memory",
 "Notes", "Session Log", or "Changelog" section in an agent-config file for
-review. Do not infer memory support for every harness, and do not delete
+review. Do not infer memory support from other tools, and do not delete
 intentional project policy because a section is called Notes. Avoid generating
 session logs into instruction documents unless explicitly requested.
 
@@ -86,7 +86,7 @@ Use all four when deciding where a Stage 1/2 finding goes:
 | Layer | Holds | This skill's stance |
 | --- | --- | --- |
 | System prompt / harness | What product the agent operates inside | **Out of scope** — never emitted into a project file |
-| CLAUDE.md / AGENTS.md | Brief repo purpose, then mostly gotchas; nothing obvious from the file system or repo | The skill's primary output; keep lightweight |
+| CLAUDE.md | Brief repo purpose, then mostly gotchas; nothing obvious from the file system or repo | The skill's primary output; keep lightweight |
 | Skills | Sometimes-relevant procedures, team opinions — *"lightweight guides to let Claude find information when needed. Avoid making them overconstrained, except in highly important areas."* | Recommend one instead of a section (C2) |
 | Linked references | In-depth material read on demand | contributing-docs/; CLAUDE.md @imports load in full, not on demand. |
 

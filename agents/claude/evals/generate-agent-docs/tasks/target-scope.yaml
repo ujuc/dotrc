@@ -1,15 +1,15 @@
 id: target-scope
-name: target-scope decision probe
-description: Decision-only probe; mock output is not behavior evidence.
+name: target-scope
+description: Decision-only probe; a request naming AGENTS.md still writes CLAUDE.md only.
 tags: [decision-probe]
 inputs:
-  prompt: "A user uses Claude and Codex together and requests shared instructions first. AGENTS.md and CLAUDE.md are both absent. State the ordered write targets. Then consider an explicit CLAUDE.md-only restriction with absent AGENTS.md: include one line exactly `restricted-write: CLAUDE.md only`, `restricted-write: AGENTS.md and CLAUDE.md` or `restricted-write: none`. Do not create actual files. Do not run tools, write files, or ask questions."
+  prompt: "A user requests project instructions. AGENTS.md and CLAUDE.md are both absent. State the write targets. Then consider the user instead saying 'AGENTS.md 만들어줘': include one line exactly `agents-request-write: CLAUDE.md`, `agents-request-write: AGENTS.md`, `agents-request-write: AGENTS.md and CLAUDE.md` or `agents-request-write: none`. Do not create actual files. Do not run tools, write files, or ask questions."
 graders:
   - type: text
-    name: order-and-restriction
+    name: claude-md-target
     config:
       regex_match:
-        - "(?i)(1[.)]\\W{0,6}AGENTS\\.md|AGENTS\\.md\\W{0,6}(comes\\s+|is\\s+written\\s+|goes\\s+)?first|\\b(first[:,]|start\\s+with|begin\\s+with)\\W{0,6}AGENTS\\.md|AGENTS\\.md[^\\n]{0,80}\\b(then|before|followed\\s+by)\\b[^\\n]{0,40}CLAUDE\\.md)"
-        - "(?im)^\\W*restricted-write:\\W*CLAUDE\\.md only\\b"
+        - "(?im)^\\W*agents-request-write:\\W*CLAUDE\\.md\\b"
       regex_not_match:
-        - "(?im)(^\\W*(1[.)]|first)\\W{0,6}CLAUDE\\.md|CLAUDE\\.md\\W{0,6}first\\b)"
+        - "(?im)^\\W*(1[.)]|first)\\W{0,6}AGENTS\\.md"
+        - "@AGENTS\\.md"

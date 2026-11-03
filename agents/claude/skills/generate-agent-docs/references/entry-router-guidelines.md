@@ -1,7 +1,7 @@
 # Entry Router Guidelines
 
-A user-provided governance pattern: behavioral guardrails, particularly the
-AGENTS.md Boundaries section or CLAUDE.md behavioral guidelines,
+A user-provided governance pattern: behavioral guardrails, particularly a
+CLAUDE.md Boundaries section or behavioral guidelines,
 in projects where agents operate with significant autonomy.
 
 ## When to apply
@@ -23,10 +23,10 @@ in projects where agents operate with significant autonomy.
 | 5 | No test bypass: fix root causes; never delete or weaken tests to make them pass | Any test suite |
 | 6 | No "done" claim without verification evidence | Always |
 
-In AGENTS.md Boundaries, map rules 1-4 to project-specific prohibitions under
-Never Do, rule 3 to risky operations under Ask First, and rules 5-6 to
-verification requirements under Always Do. In CLAUDE.md behavioral guidelines,
-include the relevant rules as non-negotiable constraints and never emit a
+In a CLAUDE.md Boundaries section, map rules 1-4 to project-specific
+prohibitions under Never Do, rule 3 to risky operations under Ask First, and
+rules 5-6 to verification requirements under Always Do. In behavioral
+guidelines, include the relevant rules as non-negotiable constraints and never emit a
 pre-response checklist (model-prompting-guides.md W1).
 
 ## WORKFLOW (conditional)

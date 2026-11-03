@@ -84,14 +84,14 @@ characters on a 200K window; 200,000 on 1M with Opus 4.6 or Sonnet 4.6, 150,000
 on later models (applied since v2.1.309).
 
 Local defaults for this skill (local targets, not upstream limits):
-- Aim for about 100 combined lines in root CLAUDE.md plus imported AGENTS.md.
+- Aim for about 100 combined lines in root CLAUDE.md plus its imports.
 - Above 200 combined lines, report the measured size and propose scoped pruning
   or shared references; preserve necessary explicit requirements with rationale.
 - Aim for 50 lines per nested instruction/rule file; above 100 nested lines,
   report the same review warning.
 - Imported content and unconditional rules still consume startup context.
-  Shared requirements must remain available through AGENTS.md/shared references;
-  moving them exclusively into Claude rules does not satisfy this policy.
+  Moving always-needed requirements into path-scoped rules does not satisfy this
+  policy.
 
 ### Imports (source: memory)
 
@@ -163,18 +163,17 @@ Use plan mode for changes under `src/billing/`.
   in words to read AGENTS.md becomes `@AGENTS.md` or is deleted; *"A
   `SessionStart` hook that prints `AGENTS.md`: remove it. Once Claude reads
   `AGENTS.md` directly, the hook adds a second copy to the context."*
-- **This skill adopts the import pattern as its default**: AGENTS.md is the
-  primary cross-harness project document (Codex and Amp load it natively),
-  CLAUDE.md is `@AGENTS.md` + Claude-only additions on top of the import
-  (stage3-generator.md Sections A–B (shared first)). The default works in
-  every session type and stays correct once any CLAUDE.md exists.
+- **This skill writes CLAUDE.md only** (stage3-generator.md Scope): it never
+  writes AGENTS.md. Because Claude Code skips AGENTS.md once a CLAUDE.md exists,
+  it keeps an existing `@AGENTS.md` import and starts a new CLAUDE.md beside a
+  rule-bearing AGENTS.md with that import.
 - `/init` incorporates other tools' instruction files: Cursor
   (`.cursor/rules/`, `.cursorrules`) and Copilot
   (`.github/copilot-instructions.md`) by default; `AGENTS.md`,
   `.devin/rules/`, `.windsurf/rules/`/`.windsurfrules` and `.clinerules` only
   with `CLAUDE_CODE_NEW_INIT=1`. `/import` appends a one-time copy of
-  `AGENTS.md` into CLAUDE.md, which duplicates shared text, so this skill does
-  not use it.
+  `AGENTS.md` into CLAUDE.md, which duplicates text, so this skill does not use
+  it.
 
 ### `.claude/rules/` format (source: memory)
 
@@ -231,14 +230,14 @@ command is not generic self-check scaffolding.
 
 - *"A few built-in commands are also available through the Skill tool, including
   `/init`"*, but this skill does not run it: `/init` writes CLAUDE.md directly,
-  ahead of the AGENTS.md-first order. **Consume its output** (an existing
+  bypassing the interview and writer. **Consume its output** (an existing
   CLAUDE.md) as the baseline and refine.
 - `CLAUDE_CODE_NEW_INIT=1` enables an interactive multi-phase flow: `/init` asks
   which artifacts to set up (CLAUDE.md, skills, hooks), explores the codebase
   with a subagent, fills gaps via follow-up questions, and presents a reviewable
   proposal before writing. A baseline from this mode already had that
   exploration and interview, so keep the refine pass **light** (discoverability
-  filter, AGENTS.md / contributing-docs/ / rules/, blind review), not a full
+  filter, contributing-docs/ / rules/, blind review), not a full
   Stage 1 re-analysis.
 - `/doctor` (v2.1.206+) proposes trims for a checked-in CLAUDE.md (see the table
   above), complementary to this skill's update mode. `/doctor prompt-audit`

@@ -4,7 +4,7 @@ description: A no-exception rule gets an enforcement recommendation; a preferenc
 tags:
   - positive-trigger
 inputs:
-  prompt: "A project wants two rules in AGENTS.md. Rule A: never edit the generated client in src/gen/. Rule B: prefer named exports, with exceptions where a framework needs a default export. Reply with exactly two lines, `A: <verdict>` then `B: <verdict>`, where <verdict> is `document only` or `document plus hook or deny rule`, then one sentence of reasoning. Do not run tools, write files, or ask questions."
+  prompt: "A project wants two rules in CLAUDE.md. Rule A: never edit the generated client in src/gen/. Rule B: prefer named exports, with exceptions where a framework needs a default export. Reply with exactly two lines, `A: <verdict>` then `B: <verdict>`, where <verdict> is `document only` or `document plus hook or deny rule`, then one sentence of reasoning. Do not run tools, write files, or ask questions."
 expected:
   should_trigger: true
 graders:
