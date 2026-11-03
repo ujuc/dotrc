@@ -6,7 +6,6 @@
 - Update `README.md` when a skill's purpose, triggers, model, group, or pipeline role changes.
 - Read `README.md` before changing a pipeline component; changes can break downstream contracts.
 - Put shared logic in one authoritative skill's `references/` and link to it instead of copying.
-- Do not track plugin-generated `learned/` content.
 - State each skill's recommended workload profile and escalation conditions using [the model selection guide](generate-skills/references/model-selection.md). Resolve Lightweight, Standard, Advanced, or Frontier to a supported model for the current task; inheritance is a fallback, not the recommendation. Keep native model IDs separate from profile labels, respect explicit user choices, and distinguish advice from actual switching.
 - Worker roles a skill dispatches live in `references/roles/<role>.md`; dispatch built-in `Explore` (read-only) or `general-purpose` with per-call `model`/`effort` from `generate-skills/references/model-selection.md#dispatch-routing`. Do not create `~/.claude/agents/` definitions.
 - `Explore` workers load no CLAUDE.md or AGENTS.md, so a role file must carry every rule its worker needs.
