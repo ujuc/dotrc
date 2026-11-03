@@ -9,9 +9,9 @@ argument-hint: "status | scaffold SKILL | eval SKILL-or-/abs/eval.yaml [--label 
 # waza (skill evaluation)
 
 Run Microsoft's [`waza`](https://github.com/microsoft/waza) on the suites under
-`~/.claude/evals/<skill>/` through `scripts/waza-run.sh`, the one launcher every
-harness uses. **Never invoke the `waza` binary directly**: the launcher owns
-preflight, model defaults, result paths, and the report.
+`~/.claude/evals/<skill>/` through `scripts/waza-run.sh`, the only launcher.
+**Never invoke the `waza` binary directly**: the launcher owns preflight, model
+defaults, result paths, and the report.
 
 ## Model guidance
 

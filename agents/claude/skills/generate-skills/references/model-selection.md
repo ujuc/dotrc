@@ -1,17 +1,16 @@
 # Workload-Based Model Selection
 
-Local recommendation policy. Profiles describe work, not API model IDs. Models
-in one row are candidates for similar roles, not equals in performance, price,
-context or tool support. Check host availability before selecting one.
+Local recommendation policy. Profiles describe work, not API model IDs. Check
+host availability before selecting a model.
 
 ## Starting profiles
 
-| Profile | Choose for | OpenAI candidates | Claude candidates | Move up when |
-| --- | --- | --- | --- | --- |
-| **Lightweight** | Clear, repeatable extraction, classification, formatting, exact lookups, or reporting a deterministic check | GPT-6 Luna | Claude Haiku | The task needs interpretation, state-changing decisions, or coordination across files. |
-| **Standard** | Bounded tool use, routine commits with known scope, local fixes with clear acceptance criteria, focused exploration | GPT-6.1 Terra | Claude Sonnet | Requirements conflict, changes cross components, or preserving semantics needs substantial judgment. |
-| **Advanced** | Multi-file implementation, architecture decisions, difficult debugging, nuanced writing, semantic/security review, synthesis | GPT-6.1 Sol | Claude Opus | Long-horizon dependencies, costly ambiguity, or a reproduced reasoning failure exceeds this profile. |
-| **Frontier** | The hardest interconnected work, consequential unresolved tradeoffs, long autonomous reasoning, or demonstrated gaps at Advanced | GPT-6 Astra | Claude Fable | Reassess inputs, tools, scope and stopping conditions; the top profile is not an unlimited retry budget. |
+| Profile | Choose for | Claude candidate | Move up when |
+| --- | --- | --- | --- |
+| **Lightweight** | Clear, repeatable extraction, classification, formatting, exact lookups, or reporting a deterministic check | Claude Haiku | The task needs interpretation, state-changing decisions, or coordination across files. |
+| **Standard** | Bounded tool use, routine commits with known scope, local fixes with clear acceptance criteria, focused exploration | Claude Sonnet | Requirements conflict, changes cross components, or preserving semantics needs substantial judgment. |
+| **Advanced** | Multi-file implementation, architecture decisions, difficult debugging, nuanced writing, semantic/security review, synthesis | Claude Opus | Long-horizon dependencies, costly ambiguity, or a reproduced reasoning failure exceeds this profile. |
+| **Frontier** | The hardest interconnected work, consequential unresolved tradeoffs, long autonomous reasoning, or demonstrated gaps at Advanced | Claude Fable | Reassess inputs, tools, scope and stopping conditions; the top profile is not an unlimited retry budget. |
 
 Start with the profile that fits the current step. A task's length, number of
 agents, or the parent's model alone does not determine its profile. A strong
@@ -26,11 +25,10 @@ execution does not need the coordinator's full reasoning capacity.
 2. Classify ambiguity, dependency breadth, consequences of a wrong decision, and
    how directly the result can be verified. Use each skill's recommendation as a
    starting point, then adjust for the actual input.
-3. Resolve the profile to an available model from the user's chosen provider.
-   Use the host's accepted identifier, not a profile label in native `model`
-   fields. Local policy: use each provider's newest model for the role, and never
-   hold back an OpenAI model on price. A newer model replaces the older one in the
-   table after a capability check; this table is not a provider allowlist.
+3. Resolve the profile to an available Claude model. Use the host's accepted
+   identifier, not a profile label in native `model` fields. Local policy: use
+   the newest Claude model for the role; a newer model replaces the older one in
+   the table after a capability check.
 4. Choose reasoning effort separately, only where supported: lower for explicit
    procedures, moderate for bounded reasoning, higher for difficult inference.
    Effort names and defaults vary by host and model, and a level name does not
@@ -41,7 +39,7 @@ execution does not need the coordinator's full reasoning capacity.
    unavailable tools and environment errors. Then consider higher effort or the
    next profile, retaining the same acceptance criteria and the owning workflow's
    retry limit. Do not spend another model call on an unchanged missing input.
-6. For Claude candidates, compare cost per successfully completed task, including
+6. Compare cost per successfully completed task, including
    handoff and retry overhead. Neither the cheapest token price nor the highest profile guarantees
    the cheapest successful run. Do not launch a worker for a trivial command
    when dispatch/context-transfer cost dominates.
@@ -66,13 +64,12 @@ Give a short user-facing recommendation when asked, when choosing a worker, or
 when the profile differs materially from the current setup. State it once per
 stage, not before every command. For example:
 
-> 이 작업은 변경 범위가 정해진 표준 실행 수준이므로 GPT-6.1 Terra 또는 Sonnet을
-> 권장합니다. 변경 분류나 충돌 해결에 복잡한 판단이 필요하면 GPT-6.1 Sol 또는
-> Opus 수준으로 상향을 권장합니다.
+> 이 작업은 변경 범위가 정해진 표준 실행 수준이므로 Sonnet을 권장합니다.
+> 변경 분류나 충돌 해결에 복잡한 판단이 필요하면 Opus로 상향을 권장합니다.
 
 When switching is unavailable:
 
-> 이 작업에는 GPT-6.1 Terra 또는 Sonnet 수준을 권장합니다. 현재 세션에서는 모델을
+> 이 작업에는 Sonnet 수준을 권장합니다. 현재 세션에서는 모델을
 > 전환할 수 없어 기존 모델로 진행하며, 실제 모델이 바뀌었다고 보고하지 않습니다.
 
 ## Dispatch routing
@@ -106,15 +103,9 @@ calling skill's `references/roles/` and the dispatch prompt begins with
 
 ## Source basis
 
-Repository policy inferred from vendor descriptions, not vendor certifications
-of equivalence. Last checked: OpenAI 2026-11-01, Claude 2026-11-01.
+Repository policy inferred from vendor descriptions. Last checked: 2026-11-01.
 
-- [OpenAI model catalog](https://developers.openai.com/api/docs/models) and
-  [latest-model guide](https://developers.openai.com/api/docs/guides/latest-model);
-  API IDs, effort support and Codex dispatch notes are in [openai-models.md](openai-models.md).
 - [Claude model overview](https://platform.claude.com/docs/en/models/overview)
   and [cost and intelligence guidance](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence):
   compare cost per completed task; a stronger model may avoid retries. Claude
   Mythos 5.1 is Fable 5.1 for verified organizations, not a separate candidate.
-- [Codex subagent model and reasoning controls](https://learn.chatgpt.com/docs/agent-configuration/subagents#choosing-models-and-reasoning):
-  execution settings belong to the host's agent configuration or invocation parameters.

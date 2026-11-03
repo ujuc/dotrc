@@ -15,9 +15,8 @@ Default up, not down: start at the highest freedom the task tolerates and lower
 it only for a fragility you can name. State the goal and constraints; leave the
 route to the model. A recipe for an output's shape is a separate form, picked from
 a [baseline failure](guidance-testing.md#match-the-form-to-the-failure). (Local
-default. Model-specific finding for GPT-6 Astra and Fable: prescribing the route
-step by step tends to hinder them. OpenAI, "Rethinking skills and prompts for
-GPT-6 Astra"; Claude Code model-config, Fable guidance.)
+default. Model-specific finding for Fable: prescribing the route step by step
+tends to hinder it. Claude Code model-config, Fable guidance.)
 
 A multi-workflow skill keeps `SKILL.md` a router: enough to pick the workflow
 and find its reference or script, with each reference linked under its case

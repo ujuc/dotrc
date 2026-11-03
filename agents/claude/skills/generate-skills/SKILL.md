@@ -131,7 +131,7 @@ to another skill-generation workflow.
 Ask (AskUserQuestion or plain text) for the problem or scenario, target tools
 (built-ins, MCP servers, external CLIs), expected output, trigger phrases users
 actually say, and the catalog group: one of `planning`, `analysis`, `build`,
-`docs`, `writing`, `llm`, `meta`. Then pick the domain type and structural
+`docs`, `writing`, `meta`. Then pick the domain type and structural
 pattern in [create mode](references/create-mode.md#step-1-capture-the-use-case)
 and confirm the pattern and group before scaffolding.
 

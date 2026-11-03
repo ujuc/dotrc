@@ -41,11 +41,11 @@ pub const ALLOWED_KEYS: &[&str] = &[
 /// in its `group` field. The catalog table in `skills/README.md` mirrors it.
 /// See `frontmatter-spec.md` "group" section.
 pub const ALLOWED_GROUPS: &[&str] = &[
-    "planning", "analysis", "build", "docs", "writing", "llm", "meta",
+    "planning", "analysis", "build", "docs", "writing", "meta",
 ];
 
 /// Local extension: skills vendored with `git subtree` keep upstream files verbatim,
-/// so their README.md is allowed (see `skills/AGENTS.md`).
+/// so their README.md is allowed (see `skills/CLAUDE.md`).
 pub const SUBTREE_SKILLS: &[&str] = &["skill-diet"];
 
 pub const ALLOWED_EFFORTS: &[&str] = &["low", "medium", "high", "xhigh", "max"];

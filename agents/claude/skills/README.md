@@ -4,14 +4,13 @@
 
 ## 그룹
 
-| slug | 한글 라벨 | 스킬 (`codex:` 접두는 플러그인) |
+| slug | 한글 라벨 | 스킬 |
 | --- | --- | --- |
 | `planning` | 🧭 기획·스펙 | — |
 | `analysis` | 📐 분석·계획 | — |
 | `build` | 🛠 구현·실행 | — |
 | `docs` | 📝 문서·커밋 | `commit`, `generate-agent-docs` |
 | `writing` | ✍️ 글쓰기 | `humanizer`, `prompting-assist` |
-| `llm` | 🤖 외부 LLM | `codex:codex-cli-runtime`, `codex:codex-result-handling`, `codex:gpt-5-4-prompting` |
 | `meta` | 🧪 메타·관리 | `generate-skills`, `skill-improver`, `autoresearch`, `waza`, `skill-diet` |
 
 `waza`는 Microsoft waza CLI의 유일한 호출 지점(`waza/scripts/waza-run.sh`)이며 `generate-skills`·`skill-improver`가 스킬 평가·회귀 확인에 사용한다.
@@ -20,20 +19,19 @@
 
 각 스킬 본문과 역할 파일에 작업별 권장 수준과 상향 조건을 둔다.
 [공통 모델 선택 가이드](generate-skills/references/model-selection.md)가 기준이며,
-아래 묶음은 비슷한 작업에 배정할 후보를 뜻한다. 회사 간 성능 동등성을 보장하지 않는다.
+아래 표는 수준별로 배정할 Claude 모델이다.
 
-| 수준 | 작업 기준 | GPT 후보 | Claude 후보 |
-| --- | --- | --- | --- |
-| 경량 | 정형 추출·분류·서식·검사 결과 보고 | Luna | Haiku |
-| 표준 | 범위가 정해진 커밋·구현·탐색 | GPT-6.1 Terra | Sonnet |
-| 고급 | 다중 파일 구현·설계·복잡한 디버깅·의미 검토 | GPT-6.1 Sol | Opus |
-| 최상위 | 장기·고난도 추론, 고급 수준에서도 해결되지 않은 복합 문제 | Astra | Fable |
+| 수준 | 작업 기준 | Claude 후보 |
+| --- | --- | --- |
+| 경량 | 정형 추출·분류·서식·검사 결과 보고 | Haiku |
+| 표준 | 범위가 정해진 커밋·구현·탐색 | Sonnet |
+| 고급 | 다중 파일 구현·설계·복잡한 디버깅·의미 검토 | Opus |
+| 최상위 | 장기·고난도 추론, 고급 수준에서도 해결되지 않은 복합 문제 | Fable |
 
-예: “이 작업은 변경 범위가 정해진 표준 실행 수준이므로 GPT-6.1 Terra 또는 Sonnet을
-권장합니다. 복잡한 변경 분류나 충돌 해결이 필요하면 GPT-6.1 Sol 또는 Opus 수준으로
-상향을 권장합니다.”
+예: “이 작업은 변경 범위가 정해진 표준 실행 수준이므로 Sonnet을 권장합니다.
+복잡한 변경 분류나 충돌 해결이 필요하면 Opus로 상향을 권장합니다.”
 
-후보는 항상 역할별 최신 모델로 두고, GPT는 가격을 기준으로 삼지 않는다.
+후보는 항상 역할별 최신 Claude 모델로 둔다.
 
 실제 모델은 사용자 선택과 호스트의 지원·허용 범위 안에서 지정한다. 전환할 수
 없으면 권장 모델과 현재 실행 상태를 구분해 알린다. `model` 생략에 따른 상속은
@@ -70,5 +68,5 @@
 
 ## References
 
-- [`AGENTS.md`](./AGENTS.md) — skill 작성 규약과 conventions (`CLAUDE.md`는 이를 import하고 Claude 전용 규칙만 더한다)
+- [`CLAUDE.md`](./CLAUDE.md) — skill 작성 규약과 conventions
 - [`../CLAUDE.md`](../CLAUDE.md) — Claude Code global configuration

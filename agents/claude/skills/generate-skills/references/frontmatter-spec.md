@@ -263,7 +263,6 @@ has such requirements.
 | `build` | 🛠 구현·실행 | Plan execution |
 | `docs` | 📝 문서·커밋 | Commits, CLAUDE.md generation |
 | `writing` | ✍️ 글쓰기 | Prose humanization, prompt crafting |
-| `llm` | 🤖 외부 LLM | Calls to non-Claude models (Codex) |
 | `meta` | 🧪 메타·관리 | Skill management, session lifecycle |
 
 - `validate-skill` fails on a missing or unlisted slug. The list lives in

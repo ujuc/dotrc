@@ -200,12 +200,12 @@ mod tests {
 
     #[test]
     fn appends_into_empty_cell() {
-        let body = "| slug | label | skills |\n| --- | --- | --- |\n| `llm` | 🤖 외부 LLM | |\n";
+        let body = "| slug | label | skills |\n| --- | --- | --- |\n| `planning` | 🧭 기획·스펙 | |\n";
         let path = tmpfile("empty", body);
-        let outcome = register(&path, "gemma", "llm").unwrap();
+        let outcome = register(&path, "demo", "planning").unwrap();
         assert!(matches!(outcome, Outcome::Added));
         let after = fs::read_to_string(&path).unwrap();
-        assert!(after.contains("| `llm` | 🤖 외부 LLM | `gemma` |"));
+        assert!(after.contains("| `planning` | 🧭 기획·스펙 | `demo` |"));
         fs::remove_file(&path).ok();
     }
 }
