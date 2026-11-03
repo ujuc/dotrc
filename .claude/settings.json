@@ -1,0 +1,3 @@
+{
+  "claudeMdExcludes": ["**/agents/claude/CLAUDE.md"]
+}
