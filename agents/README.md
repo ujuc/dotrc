@@ -9,7 +9,6 @@
 | 경로 | 역할 |
 | --- | --- |
 | `claude/` | Claude 전역 설정, 스킬 (`~/.claude`로 통짜 심링크) |
-| `rules/` | `claude/CLAUDE.md`가 import하는 전역 지침과 에이전트 정체성 |
 | `docs/` | 설계 및 구현 기록 |
 | `.gitignore` | `claude/` 아래에 생성되는 런타임 파일 제외 |
 
@@ -25,7 +24,8 @@ scripts/install.sh --agents
 
 - `claude/`에는 추적하는 설정과 무시하는 런타임 상태가 함께 존재한다.
   런타임 파일을 강제로 추가하지 않는다.
-- 공용 규칙은 `rules/`에 두고 Claude 전용 설정은 `claude/`에 둔다.
+- 전역 지침(`claude/CLAUDE.md`)과 에이전트 정체성(`claude/SOUL.md`)은 `claude/`에 둔다.
+  다른 소비자가 생기면 그때 공용 위치로 옮긴다.
 - 토큰, 자격 증명, 장비별 경로는 추적하지 않는다.
 - 스킬을 변경한 뒤 해당 스킬을 검증한다.
 

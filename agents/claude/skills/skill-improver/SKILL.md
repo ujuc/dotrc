@@ -25,7 +25,7 @@ Audit skills and their role files: fix safe mechanical defects, and propose beha
 If step 1 or 2 fails, report an actionable fix and stop before Phase 1.
 
 1. **Toolchain:** `cargo` (`validate-skill` is a Rust launcher with no `.sh` suffix, and its first call may compile; fix: https://rustup.rs) and `jq` (needed by `scripts/collect-sessions`).
-2. **Repository:** `repo_root=${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents` must hold `AGENTS.md`, `claude/skills/`, and `claude/skills/generate-skills/scripts/validate-skill`. Run every scan and command against `repo_root`; the caller's CWD may be any project and stays untouched.
+2. **Repository:** `repo_root=${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents` must hold `CLAUDE.md`, `claude/skills/`, and `claude/skills/generate-skills/scripts/validate-skill`. Run every scan and command against `repo_root`; the caller's CWD may be any project and stays untouched.
 3. **Spec freshness** (warn only): read `last_upstream_check` and `check_interval_days` (default 14) from the frontmatter of the sibling `generate-skills` skill's `frontmatter-spec.md` reference; warn when today is past the interval. Relay the one line from `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-upstream check` and from `bash <repo_root>/claude/skills/generate-skills/scripts/superpowers-upstream check`.
 4. **Waza** (non-blocking):
    ```bash

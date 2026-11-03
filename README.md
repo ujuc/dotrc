@@ -459,7 +459,7 @@ codegraph install
 ```
 
 설치 스크립트는 하네스 지침 파일에 `CODEGRAPH_START` 블록을 직접 써 넣는다.
-이 저장소는 같은 내용을 `agents/rules/AGENTS.md`의 `Code Intelligence`에서
+이 저장소는 같은 내용을 `agents/claude/CLAUDE.md`의 `Code Intelligence`에서
 관리하므로, `codegraph install`·`upgrade` 뒤에 다시 주입된 블록은 지운다.
 
 인덱스는 저장소마다 따로 만든다. `.codegraph/`는 로컬 산출물이라 커밋하지 않는다.
