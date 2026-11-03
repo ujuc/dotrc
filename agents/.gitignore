@@ -102,14 +102,3 @@ claude/ponytail-modes/
 
 ### Entire agent runtime
 .entire/
-
-### Pi runtime — ignore everything under agent/
-pi/agent/*
-
-### Codex runtime — allow only the files we track, ignore the rest
-codex/*
-!codex/AGENTS.md
-!codex/README.md
-!codex/hooks.json
-!codex/hooks
-!codex/skills

@@ -15,7 +15,7 @@
 #      (engine, model, trials, task set, or suite content differ, or a run errored)
 #   2  usage error
 #
-# Every harness (Claude Code, Amp, Codex, Pi) runs waza through this script.
+# Claude Code runs waza through this script.
 # Callers never invoke the binary directly.
 
 set -uo pipefail

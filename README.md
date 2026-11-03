@@ -217,6 +217,8 @@ curl -fsSL https://claude.ai/install.sh | bash
 ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 ```
 
+이 저장소는 Claude만 관리한다. 예전 버전으로 설치한 기기에 `~/.codex`, `~/.config/amp`, `~/.pi`가 `agents/` 하위를 가리키는 심링크로 남아 있으면 깨진 링크이므로 직접 지운다(`[ -L ~/.codex ] && rm ~/.codex`).
+
 #### Plugins
 
 ```sh
@@ -422,43 +424,6 @@ agents/claude/skills/generate-skills/scripts/skill-diet-upstream pull v0.2.0  # 
 
 - [skill-diet](https://github.com/nicobailon/skill-diet) (MIT, `v0.1.0`) — 스킬 편집 순서·크기 예산·before/after/none eval. `generate-skills` 다이어트 모드와 `skill-improver`의 `diet-recommended`가 사용한다
 
-### [Pi](https://github.com/earendil-works/pi)
-
-bun으로 전역 설치한다. `~/.bun/bin`은 `zshrc`의 `path`에 등록되어 있어 별도 별칭이
-필요 없다. (mise node로 설치하면 node 버전이 바뀔 때 경로가 깨진다.)
-
-```sh
-bun add -g --ignore-scripts @earendil-works/pi-coding-agent
-ln -sf ${DOTRC_AGENTS_DIR}/pi ${HOME}/.pi
-```
-
-`pi/AGENTS.md`는 이 디렉터리를 편집할 때 쓰는 지침이며
-Pi 전역 지침이 아니다. Pi는 전역 지침을 `~/.pi/agent/AGENTS.md`에서 읽는데, 이 경로는 추적하지 않는다.
-`agent/` 아래 Pi 런타임 상태는 `agents/.gitignore`로 제외한다.
-
-### [Codex](https://developers.openai.com/codex)
-
-`agents/codex/` 디렉터리 전체를 `~/.codex`로 통째로 심링크한다.
-
-```sh
-ln -sfn ${DOTRC_AGENTS_DIR}/codex ${HOME}/.codex
-```
-
-디렉터리 내부에서 `AGENTS.md`는 `agents/rules/AGENTS.md`에 대한 상대 심링크이고,
-`skills`는 `agents/claude/skills`에 대한 상대 심링크다 (전역 스킬 재사용, 새 스킬 추가 시
-별도 작업 불필요). `codex/` 안에서는 `AGENTS.md`, `README.md`, `hooks.json`, `hooks/`, `skills`만 추적하고,
-나머지 Codex 런타임 상태(인증, 캐시, sqlite, tmp 등)는 `agents/.gitignore`의
-화이트리스트(`codex/*` + 개별 `!허용파일`)로 제외한다.
-
-### [Amp](https://ampcode.com/)
-
-`agents/amp/` 디렉터리 전체를 `${XDG_CONFIG_HOME}/amp`로 통째로 심링크한다.
-전역 스킬은 Amp가 `~/.claude/skills/`를 자동으로 읽으므로 별도로 복제하지 않는다.
-
-```sh
-ln -sfn ${DOTRC_AGENTS_DIR}/amp ${XDG_CONFIG_HOME}/amp
-```
-
 ### [waza](https://github.com/microsoft/waza)
 
 `agents/claude/evals/<skill>/`의 스킬 평가 스위트를 실행하는 CLI다. `scripts/install.sh --agents`가
@@ -472,7 +437,7 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | ba
 바이너리만 설치되며 `~/.claude/data/waza-workspace/`는 만들지 않는다. 워크스페이스 준비는
 `agents/claude/skills/waza/references/waza-install.md`를 따른다. 평가 모델은 mise나 환경변수에
 `WAZA_ANTHROPIC_API_KEY`가 있으면 Claude Haiku 5.5, 없으면 로컬 Ollama를 쓴다.
-실행은 항상 `waza` 스킬의 `scripts/waza-run.sh`를 거치며(Amp·Codex·Pi 공용), Claude Code에서는 격리 컨텍스트가 필요할 때 경량 워커가 같은 런처를 호출한다.
+실행은 항상 `waza` 스킬의 `scripts/waza-run.sh`를 거치며, Claude Code에서는 격리 컨텍스트가 필요할 때 경량 워커가 같은 런처를 호출한다.
 
 ### [CodeGraph](https://github.com/colbymchenry/codegraph)
 
@@ -496,8 +461,6 @@ codegraph install
 설치 스크립트는 하네스 지침 파일에 `CODEGRAPH_START` 블록을 직접 써 넣는다.
 이 저장소는 같은 내용을 `agents/rules/AGENTS.md`의 `Code Intelligence`에서
 관리하므로, `codegraph install`·`upgrade` 뒤에 다시 주입된 블록은 지운다.
-`~/.codex/AGENTS.md` 심링크도 실제 파일로 덮어쓰므로 `scripts/install.sh`를
-다시 실행해 링크를 복구한다.
 
 인덱스는 저장소마다 따로 만든다. `.codegraph/`는 로컬 산출물이라 커밋하지 않는다.
 
@@ -510,7 +473,7 @@ codegraph upgrade   # CLI 갱신
 ### [graft](https://github.com/NanoNets/context-graph-engine)
 
 npm 패키지지만 mise node에 설치하면 node 버전이 바뀔 때 경로가 깨지므로
-Pi와 같이 bun 전역 설치를 쓴다.
+bun 전역 설치를 쓴다.
 
 ```sh
 bun add -g @nanonets/graft

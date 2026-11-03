@@ -248,14 +248,14 @@ implementation."*
 | Asking | Fable 5.1 may ask *"permission for work you already requested"* | Astra is *"more likely to ask the user a question"* | Same direction: authorize the scope (P1) |
 
 W1 and W6 refer to `model-prompting-guides.md`. Keep these divergences in this
-Claude-side cache; shared rules stay model-neutral.
+Claude-side cache; `rules/AGENTS.md` stays model-neutral.
 
 ## Repo implication
 
 OpenAI: *"We **strongly recommend** auditing skills and other files accessible
-to your model for instructions that could influence its behavior."* Codex loads
-the shared `rules/AGENTS.md` and this skill tree through `~/.codex/AGENTS.md` and
-`~/.codex/skills`. Before relying on GPT-6 Astra for Codex runs, audit them for
+to your model for instructions that could influence its behavior."* This repository
+no longer supplies rules or skills to Codex; before relying on GPT-6 Astra, audit
+the prompt, the target project's files and any `~/.codex` user state for
 conflicting or pause-inducing lines.
 
 ## Out of scope — do not import

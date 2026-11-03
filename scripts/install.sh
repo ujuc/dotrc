@@ -169,9 +169,6 @@ visit_static_selected_links() {
     fi
     if $SELECT_AGENTS; then
         "$callback" "$DOTRC_AGENTS_DIR/claude" "$HOME/.claude" || failed=1
-        "$callback" "$DOTRC_AGENTS_DIR/codex" "$HOME/.codex" || failed=1
-        "$callback" "$DOTRC_AGENTS_DIR/amp" "$XDG_CONFIG_HOME/amp" || failed=1
-        "$callback" "$DOTRC_AGENTS_DIR/pi" "$HOME/.pi" || failed=1
     fi
     return "$failed"
 }
@@ -332,9 +329,6 @@ install_fonts() {
 
 install_agent_links() {
     safe_link "$DOTRC_AGENTS_DIR/claude" "$HOME/.claude"
-    safe_link "$DOTRC_AGENTS_DIR/codex" "$HOME/.codex"
-    safe_link "$DOTRC_AGENTS_DIR/amp" "$XDG_CONFIG_HOME/amp"
-    safe_link "$DOTRC_AGENTS_DIR/pi" "$HOME/.pi"
 }
 
 json_has_string_field() {
@@ -351,13 +345,6 @@ install_agents() {
     if ! command -v waza >/dev/null 2>&1; then
         run_shell_step agents "Install waza" 'curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | bash'
         export PATH="$HOME/bin:$PATH"
-    fi
-    if command -v mise >/dev/null 2>&1; then
-        run_step agents "Install Pi coding agent" mise exec -- npm install -g @earendil-works/pi-coding-agent
-    elif command -v npm >/dev/null 2>&1; then
-        run_step agents "Install Pi coding agent" npm install -g @earendil-works/pi-coding-agent
-    else
-        record_failure agents "Install Pi coding agent (npm missing)" 127 "npm install -g @earendil-works/pi-coding-agent"
     fi
     if command -v claude >/dev/null 2>&1; then
         marketplace_json=$(claude plugin marketplace list --json 2>&1)
