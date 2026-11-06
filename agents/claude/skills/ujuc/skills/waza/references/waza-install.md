@@ -21,7 +21,9 @@ then `make install` in it (Go 1.21+, npm), and put `$(go env GOPATH)/bin` on PAT
 
 Installing the binary does not create `~/.claude/data/waza-workspace/`.
 waza needs a `.waza.yaml` with relative `skills/` and `evals/` paths and matching
-symlinks. The launcher only checks that the file exists.
+symlinks. The launcher only checks that the file exists, then runs waza from a
+mirror outside `$HOME` (see the Contract in `SKILL.md`), so the workspace itself
+can stay under `~/.claude/data/`.
 Create it from the schema in the current
 [upstream README](https://github.com/microsoft/waza/blob/main/README.md). The
 format changes quickly, so dotrc does not generate it.

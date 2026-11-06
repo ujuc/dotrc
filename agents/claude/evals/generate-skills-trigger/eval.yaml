@@ -1,5 +1,5 @@
 name: generate-skills-trigger
-description: Trigger probes with the skill body withheld; a skill_invocation grader checks the skill tool call, and the control task shows the executor and model invoke skills at all. Haiku here sends full diets to skill-diet; Sonnet, Opus and Haiku in Claude Code did not (2026-11-01), so treat the diet task as a known failure.
+description: Trigger probes with the skill body withheld; a skill_invocation grader checks the skill tool call, and the control task shows the executor and model invoke skills at all. No skill_directories, because the waza launcher's workspace mirror (outside $HOME, git-tracked skill entries only) already exposes the ujuc skills and skill-diet, and an eval-level "../../skills" entry would resolve against this file and pull gitignored synced/ego-browser skills back in. Diet routed to skill-diet 2/3 on 2026-11-01 and to generate-skills 3/3 on 2026-11-06; a diet miss is routing variance, not a suite defect.
 skill: generate-skills
 version: "1.0"
 config:
@@ -8,8 +8,6 @@ config:
   parallel: false
   executor: copilot-sdk
   inject_skill_body: false
-  skill_directories:
-    - "../../skills"
 metrics:
   - name: task_completion
     weight: 1.0

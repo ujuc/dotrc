@@ -85,7 +85,12 @@ skip_missing_workspace() {
   echo "**Evaluation skipped.**"
 }
 
-# Sets WAZA_BIN and cds into the workspace. Returns 1 on an advisory skip.
+# Sets WAZA_BIN and cds into a mirror of the workspace outside $HOME. Returns 1
+# on an advisory skip. Copilot CLI treats every `.claude/skills` from its cwd up
+# to $HOME as a project skill directory, so a run inside the home tree exposes
+# ~/.claude/skills wholesale, gitignored entries (synced/, ego-browser) included.
+# The mirror links .waza.yaml and evals as they are and only the skill entries
+# git does not ignore.
 preflight() {
   if ! WAZA_BIN="$(find_waza)"; then
     skip_missing_binary
@@ -96,7 +101,18 @@ preflight() {
     return 1
   fi
   mkdir -p "$RESULTS_DIR"
-  cd "$WORKSPACE" || return 1
+  RUN_DIR="${WAZA_RUN_DIR:-${TMPDIR:-/tmp}/waza-run-$(id -u)}"
+  mkdir -p "$RUN_DIR/skills" || return 1
+  find "$RUN_DIR" -maxdepth 2 -type l -delete
+  ln -s "$WORKSPACE/.waza.yaml" "$RUN_DIR/.waza.yaml"
+  [ -e "$WORKSPACE/evals" ] && ln -s "$WORKSPACE/evals" "$RUN_DIR/evals"
+  for d in "$WORKSPACE"/skills/*/; do
+    [ -e "$d" ] || continue
+    n="$(basename "$d")"
+    git -C "$WORKSPACE/skills" check-ignore -q "$n" 2>/dev/null && continue
+    ln -s "$WORKSPACE/skills/$n" "$RUN_DIR/skills/$n"
+  done
+  cd "$RUN_DIR" || return 1
   return 0
 }
 
