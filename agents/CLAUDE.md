@@ -13,7 +13,7 @@
 - Treat `claude/plugins/` as read-only.
 - Add `.gitignore` entries when tools create new runtime files under `claude/`.
 - `claude/mcp.json` is empty by default; configure MCP through the Claude Code UI, which writes to `~/.claude.json`.
-- `claude/CLAUDE.md` is the user-global instruction file for every Claude Code session. Keep it under 8 KB and sync its Agent Identity with `claude/SOUL.md`.
+- `claude/CLAUDE.md` is the user-global instruction file for every Claude Code session. Keep it under 200 lines and sync its Agent Identity with `claude/SOUL.md`.
 - Global rules start Claude-only under `claude/`; move a rule up to a shared location only when a second consumer needs it.
 - Repository-root `.claude/<type>/` is project-local; `agents/claude/<type>/` is user-global. Put reusable skills under `agents/claude/`.
 
