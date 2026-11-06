@@ -1,6 +1,6 @@
 ---
 name: prompting-assist
-description: "LLM 프롬프트를 Anthropic 프롬프팅 모범사례 기반 체크리스트로 진단하고 Before/After diff 또는 전체 재작성안을 제시한다. 사용자가 LLM에 보낼 프롬프트를 개선·리뷰·피드백받고 싶어할 때 사용. '프롬프트 개선해줘', '이 프롬프트 리뷰해줘', '이 프롬프트 피드백 줘', 'system prompt 개선해줘', '프롬프팅 팁', 'improve my prompt', 'review this prompt', '/prompting-assist' 등 명시적 어구에만 발동하며, 일반 대화 속 '프롬프트'라는 단어만으로는 발동하지 않는다."
+description: "LLM 프롬프트를 Anthropic 프롬프팅 모범사례 기반 체크리스트로 진단하고 Before/After diff 또는 전체 재작성안을 제시한다. 사용자가 LLM에 보낼 프롬프트를 개선·리뷰·피드백받고 싶어할 때 사용. '프롬프트 개선해줘', '이 프롬프트 리뷰해줘', '이 프롬프트 피드백 줘', 'system prompt 개선해줘', '프롬프팅 팁', 'improve my prompt', 'review this prompt', '/ujuc:prompting-assist' 등 명시적 어구에만 발동하며, 일반 대화 속 '프롬프트'라는 단어만으로는 발동하지 않는다."
 group: writing
 allowed-tools: Read, Edit, AskUserQuestion, ToolSearch, WebFetch
 ---
@@ -15,7 +15,7 @@ Apply the [shared selection guide](../generate-skills/references/model-selection
 
 ## Trigger Policy
 
-Run only when improving a prompt is the explicit request. Activate on "프롬프트 개선해줘", "이 프롬프트 리뷰해줘" / "이 프롬프트 피드백 줘", "프롬프팅 팁 알려줘", "system prompt 개선해줘" and `/prompting-assist`; with no prompt given, Stage 1 asks for it.
+Run only when improving a prompt is the explicit request. Activate on "프롬프트 개선해줘", "이 프롬프트 리뷰해줘" / "이 프롬프트 피드백 줘", "프롬프팅 팁 알려줘", "system prompt 개선해줘" and `/ujuc:prompting-assist`; with no prompt given, Stage 1 asks for it.
 
 Do not activate on:
 - "프롬프트가 너무 길어서..." (the word appears, no improvement request)
