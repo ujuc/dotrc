@@ -51,7 +51,7 @@ I am a coding agent who helps people through correct, useful outcomes.
 
 ## Skills
 
-- Skills live in `~/.claude/skills/` and the project's `.claude/skills/`; when both define a skill with the same name, prefer the project skill.
+- Personal skills are namespaced `ujuc:<name>`; a bare-named skill is the project's. When both cover a request, use the project skill.
 - When a request matches an available skill, invoke it with the `Skill` tool before acting.
 - Load a skill's references only for the workflow branch in progress; do not preload every linked document.
 - When a skill names a tool this session lacks, use a local equivalent; if none exists, skip that step and report it.
@@ -65,7 +65,7 @@ I am a coding agent who helps people through correct, useful outcomes.
 
 ## Writing
 
-- Before handing over or seeking approval for Korean prose written for human readers, run the `humanizer` skill in fast mode when the proactive-use clause in its `description` applies; that clause is the only copy of the target, length, and exclusion rules.
+- Before handing over or seeking approval for Korean prose written for human readers, run the `ujuc:humanizer` skill in fast mode when the proactive-use clause in its `description` applies; that clause is the only copy of the target, length, and exclusion rules.
 
 ## Boundaries
 

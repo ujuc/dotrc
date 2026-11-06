@@ -30,8 +30,8 @@ scripts/install.sh --agents
 - 스킬을 변경한 뒤 해당 스킬을 검증한다.
 
 ```sh
-bash agents/claude/skills/generate-skills/scripts/validate-skill \
-  agents/claude/skills/<name>
+bash agents/claude/skills/ujuc/skills/generate-skills/scripts/validate-skill \
+  agents/claude/skills/ujuc/skills/<name>
 ```
 
 ## 라이선스

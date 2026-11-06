@@ -13,12 +13,12 @@
 | `writing` | ✍️ 글쓰기 | `humanizer`, `prompting-assist` |
 | `meta` | 🧪 메타·관리 | `generate-skills`, `skill-improver`, `autoresearch`, `waza`, `skill-diet` |
 
-`waza`는 Microsoft waza CLI의 유일한 호출 지점(`waza/scripts/waza-run.sh`)이며 `generate-skills`·`skill-improver`가 스킬 평가·회귀 확인에 사용한다.
+`waza`는 Microsoft waza CLI의 유일한 호출 지점(`ujuc/skills/waza/scripts/waza-run.sh`)이며 `generate-skills`·`skill-improver`가 스킬 평가·회귀 확인에 사용한다.
 
 ## 모델 선택
 
 각 스킬 본문과 역할 파일에 작업별 권장 수준과 상향 조건을 둔다.
-[공통 모델 선택 가이드](generate-skills/references/model-selection.md)가 기준이며,
+[공통 모델 선택 가이드](ujuc/skills/generate-skills/references/model-selection.md)가 기준이며,
 아래 표는 수준별로 배정할 Claude 모델이다.
 
 | 수준 | 작업 기준 | Claude 후보 |
@@ -57,14 +57,14 @@
 
 ## Skill Structure Convention
 
-각 스킬은 `<skill>/SKILL.md` 패턴이며 선택적으로 `references/`, `scripts/`, `tools/` 디렉토리를 둔다. 전체 frontmatter 스펙은 [`generate-skills/references/frontmatter-spec.md`](generate-skills/references/frontmatter-spec.md).
+각 스킬은 `<skill>/SKILL.md` 패턴이며 선택적으로 `references/`, `scripts/`, `tools/` 디렉토리를 둔다. 전체 frontmatter 스펙은 [`ujuc/skills/generate-skills/references/frontmatter-spec.md`](ujuc/skills/generate-skills/references/frontmatter-spec.md).
 
 `SKILL.md`에는 실행 순서·필수 조건과 참조 문서의 로딩 시점을 두고, 상세 기준·
 템플릿·예시는 `references/`에서 관리한다. Markdown 링크는 각 문서 위치를
 기준으로 해석한다. 여러 스킬이 공유하는 지침은 소유 스킬의 reference를 직접
 연결한다. 본문뿐 아니라 reference 내부 링크도 확인한다.
 
-신규 스킬 추가 시 frontmatter에 **반드시** `group: <slug>` 필드를 둔다 — 위 7개 슬러그 중 선택. 누락하거나 목록 밖 값이면 `validate-skill`이 실패한다 (`generate-skills/tools/skill-core/src/rules.rs::ALLOWED_GROUPS`).
+신규 스킬 추가 시 frontmatter에 **반드시** `group: <slug>` 필드를 둔다 — 위 7개 슬러그 중 선택. 누락하거나 목록 밖 값이면 `validate-skill`이 실패한다 (`ujuc/skills/generate-skills/tools/skill-core/src/rules.rs::ALLOWED_GROUPS`).
 
 ## References
 

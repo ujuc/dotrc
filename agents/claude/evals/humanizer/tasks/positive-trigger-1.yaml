@@ -25,7 +25,7 @@ graders:
       command: bash
       args:
         - "-c"
-        - 'exec "$HOME/.claude/skills/waza/scripts/typesafe-judge" "$@"'
+        - 'exec "$HOME/.claude/skills/ujuc/skills/waza/scripts/typesafe-judge" "$@"'
         - judge
         - "--source"
         - "In today's fast-paced digital landscape, it is important to note that Acme Robotics, founded in 2019 by Dr. Lena Ortiz, has truly revolutionized warehouse automation. Moreover, the company's flagship robot not only reduced picking errors by 37% but also seamlessly integrated with existing systems. Ultimately, this serves as a testament to the transformative power of innovation."

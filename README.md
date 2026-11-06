@@ -400,6 +400,14 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 
 디렉터리별 덮어쓰기는 `~/.claude/claude-hud.json`(같은 구조, 값이 우선)에 직접 쓴다. 나머지 옵션은 claude-hud README 참고.
 
+#### 개인 스킬 (`ujuc` 플러그인)
+
+직접 만든 스킬은 `agents/claude/skills/ujuc/skills/<name>/`에 둔다. `ujuc/.claude-plugin/plugin.json`
+덕분에 Claude Code가 이 디렉터리를 `ujuc@skills-dir` 플러그인으로 제자리 로드하므로(별도 설치·마켓플레이스
+없음), 각 스킬은 `/ujuc:commit`처럼 `ujuc:` 접두사로 호출된다. 같은 이름의 개인 스킬이 프로젝트
+`.claude/skills/` 스킬을 가리는 일을 막기 위한 구분이다. 외부에서 받아 오는 `skill-diet`(subtree),
+`ultra-config`(mod), `ego-browser`(심링크)는 `agents/claude/skills/` 바로 아래에 둔다.
+
 #### Mods ([claude-code-templates](https://github.com/davila7/claude-code-templates))
 
 `--mod`는 현재 디렉터리의 `.claude/skills/<name>/`에 받는다. 상주시킬 mod는 홈에서 받아
@@ -418,8 +426,8 @@ cd ~ && npx claude-code-templates@latest --mod productivity/ultra-config
 현재 버전은 squash 커밋의 `git-subtree-split:` 트레일러에 남는다. `generate-skills` Step 0과 `skill-improver` Phase 0이 새 릴리스 태그가 있으면 경고만 한다.
 
 ```sh
-agents/claude/skills/generate-skills/scripts/skill-diet-upstream check        # 새 태그와 CHANGELOG 링크 확인
-agents/claude/skills/generate-skills/scripts/skill-diet-upstream pull v0.2.0  # subtree pull --squash 후 링크·검증
+agents/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-upstream check        # 새 태그와 CHANGELOG 링크 확인
+agents/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-upstream pull v0.2.0  # subtree pull --squash 후 링크·검증
 ```
 
 - [skill-diet](https://github.com/nicobailon/skill-diet) (MIT, `v0.1.0`) — 스킬 편집 순서·크기 예산·before/after/none eval. `generate-skills` 다이어트 모드와 `skill-improver`의 `diet-recommended`가 사용한다
@@ -435,7 +443,7 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | ba
 ```
 
 바이너리만 설치되며 `~/.claude/data/waza-workspace/`는 만들지 않는다. 워크스페이스 준비는
-`agents/claude/skills/waza/references/waza-install.md`를 따른다. 평가 모델은 mise나 환경변수에
+`agents/claude/skills/ujuc/skills/waza/references/waza-install.md`를 따른다. 평가 모델은 mise나 환경변수에
 `WAZA_ANTHROPIC_API_KEY`가 있으면 Claude Haiku 5.5, 없으면 로컬 Ollama를 쓴다.
 실행은 항상 `waza` 스킬의 `scripts/waza-run.sh`를 거치며, Claude Code에서는 격리 컨텍스트가 필요할 때 경량 워커가 같은 런처를 호출한다.
 

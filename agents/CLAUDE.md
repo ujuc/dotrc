@@ -1,8 +1,9 @@
 ## Work Rules
 
 - Commit scopes: `skills` for `claude/skills/` and `claude/evals/`, otherwise `agents`.
-- After changing `agents/claude/skills/<name>/`, run `bash agents/claude/skills/generate-skills/scripts/validate-skill agents/claude/skills/<name>` from the repository root, then run `skill-improver`.
-- For suites under `agents/claude/evals/<skill>/`, run `bash agents/claude/skills/waza/scripts/waza-run.sh eval <skill>` (the `waza` skill); never invoke the `waza` CLI directly.
+- Personal skills live under `claude/skills/ujuc/skills/<name>/` and load as the `ujuc@skills-dir` plugin, so each is invoked as `/ujuc:<name>`; `skill-diet` (git subtree), `ultra-config` (a mod with its own `plugin.json` and hooks) and `ego-browser` (external symlink) stay bare under `claude/skills/`.
+- After changing `agents/claude/skills/ujuc/skills/<name>/`, run `bash agents/claude/skills/ujuc/skills/generate-skills/scripts/validate-skill agents/claude/skills/ujuc/skills/<name>` from the repository root, then run `skill-improver`.
+- For suites under `agents/claude/evals/<skill>/`, run `bash agents/claude/skills/ujuc/skills/waza/scripts/waza-run.sh eval <skill>` (the `waza` skill); never invoke the `waza` CLI directly.
 
 ## Configuration Boundaries
 
