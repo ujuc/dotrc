@@ -26,7 +26,7 @@ If step 1 or 2 fails, report an actionable fix and stop before Phase 1.
 
 1. **Toolchain:** `cargo` (`validate-skill` is a Rust launcher with no `.sh` suffix, and its first call may compile; fix: https://rustup.rs) and `jq` (needed by `scripts/collect-sessions`).
 2. **Repository:** `repo_root=${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents` must hold `CLAUDE.md`, `claude/skills/ujuc/skills/`, and `claude/skills/ujuc/skills/generate-skills/scripts/validate-skill`. Run every scan and command against `repo_root`; the caller's CWD may be any project and stays untouched.
-3. **Spec freshness** (warn only): read `last_upstream_check` and `check_interval_days` (default 14) from the frontmatter of the sibling `generate-skills` skill's `frontmatter-spec.md` reference; warn when today is past the interval. Relay the one line from `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-upstream check` and from `bash <repo_root>/claude/skills/generate-skills/scripts/superpowers-upstream check`.
+3. **Spec freshness** (warn only): read `last_upstream_check` and `check_interval_days` (default 14) from the frontmatter of the sibling `generate-skills` skill's `frontmatter-spec.md` reference; warn when today is past the interval. Relay the one line from `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-upstream check` and from `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/superpowers-upstream check`.
 4. **Waza** (non-blocking):
    ```bash
    waza_run="<repo_root>/claude/skills/ujuc/skills/waza/scripts/waza-run.sh"
@@ -44,7 +44,7 @@ If step 1 or 2 fails, report an actionable fix and stop before Phase 1.
    REPORT_DIR=$(mktemp -d "${TMPDIR:-/tmp}/skill-improver-XXXXXXXX")
    bash "<repo_root>/claude/skills/ujuc/skills/skill-improver/scripts/collect-sessions" --out "$REPORT_DIR"
    ```
-   Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded; narrow a manual run with `--since YYYY-MM-DD` or `--project PATH`. Start from `$REPORT_DIR/inventory.json`; Dimension E reads the digests in `$REPORT_DIR/transcripts/`. **Never read raw `.jsonl` history.** If collection fails (missing history can fail instead of giving an empty inventory) or samples no sessions, Dimension E is SKIP, never PASS or a structural FAIL, and A–C continue. Audit artifacts stay under `REPORT_DIR`, never in a user project. After touching `condense.jq` or `inventory.jq`, run `bash "<repo_root>/claude/skills/skill-improver/scripts/test-collect-sessions"`.
+   Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded; narrow a manual run with `--since YYYY-MM-DD` or `--project PATH`. Start from `$REPORT_DIR/inventory.json`; Dimension E reads the digests in `$REPORT_DIR/transcripts/`. **Never read raw `.jsonl` history.** If collection fails (missing history can fail instead of giving an empty inventory) or samples no sessions, Dimension E is SKIP, never PASS or a structural FAIL, and A–C continue. Audit artifacts stay under `REPORT_DIR`, never in a user project. After touching `condense.jq` or `inventory.jq`, run `bash "<repo_root>/claude/skills/ujuc/skills/skill-improver/scripts/test-collect-sessions"`.
 
 ## Phase 2 — Tests
 
@@ -52,7 +52,7 @@ Each test is a concrete check with a PASS criterion.
 
 ### Dimension A — Structural
 
-Run `validate-skill <path>` (frontmatter, naming, size limits, `group` presence and slug), then `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-eval check <path>` (links and anchors in every file) and `bash <repo_root>/claude/skills/generate-skills/scripts/skill-diet-growth <path>`. `diet-recommended` is a Manual finding, not a FAIL. Dimension B does not repeat these.
+Run `validate-skill <path>` (frontmatter, naming, size limits, `group` presence and slug), then `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-eval check <path>` (links and anchors in every file) and `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-growth <path>`. `diet-recommended` is a Manual finding, not a FAIL. Dimension B does not repeat these.
 
 ### Dimension B — Semantic
 
@@ -106,7 +106,7 @@ Manual (report, do not attempt):
 - Missing or invalid `group`: present the seven allowed slugs and take the user's choice; never infer a group from the name or description.
 - E.1 proposals: a draft at most, never an unattended procedure rewrite.
 - E.2 coverage gaps: suggestions for skill-engineer, which owns triggers.
-- `diet-recommended`: hand off to `/generate-skills <name> 다이어트`; this skill never runs a diet eval.
+- `diet-recommended`: hand off to `/ujuc:generate-skills <name> 다이어트`; this skill never runs a diet eval.
 
 When fixability is ambiguous, ask for independent review; without one, report the classification and leave the change unapplied.
 
@@ -136,7 +136,7 @@ Use three trials; one run is noise. Budget about a minute per guard run on hoste
    - `reference-only` (mock engine): record it and never revert.
    - Otherwise `preserved`. That is a fixed-input replay, reported under B.10, never as live behavior.
 
-   Keep every JSON path for the report and any later `/autoresearch` run.
+   Keep every JSON path for the report and any later `/ujuc:autoresearch` run.
 4. No check FAILs; SKIP and UNVERIFIED results are reported as such → Phase 6. Never call an audit end-to-end behavior verification.
 5. Failures remain and fewer than three iterations → back to Phase 4. After the third, stop, report what remains, and disclose whether review was available.
 
@@ -163,11 +163,11 @@ Include empty evidence and no-proposal outcomes, and every target with a Waza ba
 
 If fixes were applied, show the full diff. Commit only when the user asked (a still-applicable earlier request counts), following the repository's Korean Conventional Commit rules; otherwise leave the changes uncommitted.
 
-For deeper eval-based optimization, finish this run, then recommend a separate `/autoresearch <target>`; never launch it inside this run's commit.
+For deeper eval-based optimization, finish this run, then recommend a separate `/ujuc:autoresearch <target>`; never launch it inside this run's commit.
 
 ## Look up the rest
 
 - Scoring digests, attribution, coverage, privacy → [references/evidence-rubric.md](references/evidence-rubric.md)
 - E-track proposal → [references/change-bar.md](references/change-bar.md)
 - Trigger, overlap and model checks → [references/roles/skill-engineer.md](references/roles/skill-engineer.md), through `Explore`
-- Eval criteria for `/autoresearch` → [evals.md](evals.md)
+- Eval criteria for `/ujuc:autoresearch` → [evals.md](evals.md)

@@ -11,9 +11,9 @@ Input: `<skill-path-or-name> [--check trigger|overlap|model|all]`; default is `a
 For a bare name, inspect both:
 
 - project: `<cwd>/.claude/skills/<name>/SKILL.md`
-- global: `~/.claude/skills/ujuc/skills/<name>/SKILL.md`
+- global: `~/.claude/skills/ujuc/skills/<name>/SKILL.md`, else `~/.claude/skills/<name>/SKILL.md`
 
-When both exist, the project skill wins. State which file was selected. Parse `description`, `when_to_use`, `disable-model-invocation`, `user-invocable`, `model`, and `effort` before judging triggers and model fitness.
+Skip a global directory that `git -C ~/.claude check-ignore -q skills/<name>` reports as ignored (external or synced skills): do not read, judge or compare it. When both exist, the project skill wins. State which file was selected. Parse `description`, `when_to_use`, `disable-model-invocation`, `user-invocable`, `model`, and `effort` before judging triggers and model fitness.
 
 ## Output
 
@@ -45,7 +45,7 @@ Omit excluded sections. When every requested check passes, a short no-findings r
 
 ## Trigger Completeness
 
-Check obvious Korean register variants, genuine synonyms, English aliases used by the domain, domain verbs, and `/<name>` when `user-invocable` is not false.
+Check obvious Korean register variants, genuine synonyms, English aliases used by the domain, domain verbs, and the slash form (`/ujuc:<name>` for a skill under `~/.claude/skills/ujuc/skills/`, otherwise `/<name>`) when `user-invocable` is not false.
 
 - `disable-model-invocation: true`: do not demand natural-language auto-trigger coverage; assess documentation quality and explicit invocation only.
 - `user-invocable: false`: do not demand slash-command coverage; natural auto-trigger coverage still matters.
@@ -53,7 +53,7 @@ Check obvious Korean register variants, genuine synonyms, English aliases used b
 
 ## Trigger Overlap
 
-Compare the winning installed definitions for all skills.
+Compare the winning installed definitions for all skills that resolve above; ignored directories stay out.
 
 1. Exclude a skill from natural-language collision analysis when `disable-model-invocation: true`.
 2. Exclude slash-menu collision analysis when `user-invocable: false`.

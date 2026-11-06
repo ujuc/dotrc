@@ -64,7 +64,7 @@
 기준으로 해석한다. 여러 스킬이 공유하는 지침은 소유 스킬의 reference를 직접
 연결한다. 본문뿐 아니라 reference 내부 링크도 확인한다.
 
-신규 스킬 추가 시 frontmatter에 **반드시** `group: <slug>` 필드를 둔다 — 위 7개 슬러그 중 선택. 누락하거나 목록 밖 값이면 `validate-skill`이 실패한다 (`ujuc/skills/generate-skills/tools/skill-core/src/rules.rs::ALLOWED_GROUPS`).
+신규 스킬 추가 시 frontmatter에 **반드시** `group: <slug>` 필드를 둔다 — 위 6개 슬러그 중 선택. 누락하거나 목록 밖 값이면 `validate-skill`이 실패한다 (`ujuc/skills/generate-skills/tools/skill-core/src/rules.rs::ALLOWED_GROUPS`).
 
 ## References
 

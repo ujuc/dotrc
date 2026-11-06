@@ -45,7 +45,7 @@ check_interval_days` (`ToolSearch` `select:WebFetch` first — deferred tool).
 When that gate fires, also fetch `secondary_source_url` and compare the guide
 links in its "Model-specific guidance" table with `source_urls`. A guide listed
 there but missing here is drift: report it in one line and route cache
-maintenance to `/generate-skills generate-agent-docs 업데이트`. Otherwise fetch
+maintenance to `/ujuc:generate-skills generate-agent-docs 업데이트`. Otherwise fetch
 `secondary_source_url` only for a cross-model question. On any fetch failure,
 use this file and say so in one line:
 *"model-prompting 가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."*

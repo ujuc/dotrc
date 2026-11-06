@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# diet-adapter-claude — skill-diet eval adapter for Claude Code (contract: ../../skill-diet/references/adapter.md).
+# diet-adapter-claude — skill-diet eval adapter for Claude Code (contract: ../../../../skill-diet/references/adapter.md).
 # Usage: diet-adapter-claude <skill-dir|""> <prompt> <out-dir> <work-dir>
 #
 # Isolation keeps the real login: `--setting-sources project` hides user skills, plugins, hooks and

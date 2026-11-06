@@ -5,7 +5,7 @@ property, record UNVERIFIED or an allowed SKIP rather than manufacturing a
 binary answer. Overall PASS requires all applicable properties on final bytes;
 fast, short-route or unavailable blind review yields PARTIAL, not fully verified
 completion. `disable-model-invocation` stays unset on purpose; set it and rely
-on `/generate-agent-docs` only if false triggers become a problem.
+on `/ujuc:generate-agent-docs` only if false triggers become a problem.
 
 1. **Target routing and CLAUDE.md ownership**
    Pass: targets and dependencies are resolved before routing; every new rule

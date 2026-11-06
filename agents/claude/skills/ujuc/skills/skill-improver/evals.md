@@ -1,6 +1,6 @@
 # Eval Criteria
 
-Binary checks for `/autoresearch` reuse. A criterion fails when its expected outcome is violated; missing applicable evidence is UNVERIFIED, never PASS.
+Binary checks for `/ujuc:autoresearch` reuse. A criterion fails when its expected outcome is violated; missing applicable evidence is UNVERIFIED, never PASS.
 
 | ID | Scenario | Expected outcome |
 | --- | --- | --- |

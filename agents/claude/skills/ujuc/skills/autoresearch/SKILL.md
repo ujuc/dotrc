@@ -45,7 +45,7 @@ bash -c "{cmd-using-target} < {input-file}" → capture stdout
 echo "{input}" | claude -p --model <model-id> --effort <level> "$(cat {target})" → capture stdout
 ```
 
-**Self-target:** never let `{target}` appear inside its own `{exec}`. When the target is autoresearch's own `SKILL.md`, `Skill("autoresearch")` recurses without end; use a static text rubric with new evals (`runs=1`), a synthetic transcript (`claude -p` with the SKILL.md as the prompt and sample user requests as input, scoring the plan), or a wet run of autoresearch on a small unrelated dummy target, scored against [evals.md](evals.md).
+**Self-target:** never let `{target}` appear inside its own `{exec}`. When the target is autoresearch's own `SKILL.md`, `Skill("ujuc:autoresearch")` recurses without end; use a static text rubric with new evals (`runs=1`), a synthetic transcript (`claude -p` with the SKILL.md as the prompt and sample user requests as input, scoring the plan), or a wet run of autoresearch on a small unrelated dummy target, scored against [evals.md](evals.md).
 
 If the target already has a `## Eval Criteria` section or sibling `evals.md`, present them to the user and ask whether to reuse, modify, or replace.
 
