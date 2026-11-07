@@ -56,7 +56,7 @@ bash "$WAZA_SKILL/scripts/waza-run.sh" eval /abs/path/evals/commit/eval.yaml --l
 - Waza scores the injected SKILL.md text on the eval model. Whether a real agent reads the skill or its references is a skill-diet eval question (`generate-skills` Diet mode).
 - Mock-engine results are **reference-only**: the mock executor never loads SKILL.md, so they never produce a regression verdict.
 - The launcher never modifies an existing suite. Refine placeholder tasks in `~/.claude/evals/<skill>/tasks/*.yaml` before trusting scores.
-- The launcher runs waza from `${TMPDIR:-/tmp}/waza-run-<uid>`, a mirror of the workspace outside `$HOME` that links only skill entries git does not ignore. Copilot CLI otherwise treats `~/.claude/skills` as a project skill directory (gitignored `synced/` and `ego-browser` included) for any cwd under the home tree, so the executor sees exactly the tracked skills plus `skill_directories`.
+- The launcher runs waza from `${TMPDIR:-/tmp}/waza-run-<uid>`, a mirror of the workspace outside `$HOME` that links `.waza.yaml` and `evals` and copies only the git-tracked skill files (waza's skill lookup does not follow a symlinked directory, so links would lose the body injection). Copilot CLI otherwise treats `~/.claude/skills` as a project skill directory (gitignored `synced/` and `ego-browser` included) for any cwd under the home tree, so the executor sees exactly the tracked skills plus `skill_directories`.
 
 ## Environment
 

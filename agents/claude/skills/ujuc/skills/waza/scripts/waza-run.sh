@@ -89,8 +89,9 @@ skip_missing_workspace() {
 # on an advisory skip. Copilot CLI treats every `.claude/skills` from its cwd up
 # to $HOME as a project skill directory, so a run inside the home tree exposes
 # ~/.claude/skills wholesale, gitignored entries (synced/, ego-browser) included.
-# The mirror links .waza.yaml and evals as they are and only the skill entries
-# git does not ignore.
+# The mirror links .waza.yaml and evals as they are and copies only the
+# git-tracked skill files: waza's skill lookup does not follow a symlinked
+# directory, so a linked entry would lose the SKILL.md body injection.
 preflight() {
   if ! WAZA_BIN="$(find_waza)"; then
     skip_missing_binary
@@ -103,15 +104,17 @@ preflight() {
   mkdir -p "$RESULTS_DIR"
   RUN_DIR="${WAZA_RUN_DIR:-${TMPDIR:-/tmp}/waza-run-$(id -u)}"
   mkdir -p "$RUN_DIR/skills" || return 1
-  find "$RUN_DIR" -maxdepth 2 -type l -delete
+  find "$RUN_DIR" "$RUN_DIR/skills" -maxdepth 1 -type l -delete
   ln -s "$WORKSPACE/.waza.yaml" "$RUN_DIR/.waza.yaml"
   [ -e "$WORKSPACE/evals" ] && ln -s "$WORKSPACE/evals" "$RUN_DIR/evals"
-  for d in "$WORKSPACE"/skills/*/; do
-    [ -e "$d" ] || continue
-    n="$(basename "$d")"
-    git -C "$WORKSPACE/skills" check-ignore -q "$n" 2>/dev/null && continue
-    ln -s "$WORKSPACE/skills/$n" "$RUN_DIR/skills/$n"
-  done
+  if [ -d "$WORKSPACE/skills" ]; then
+    if git -C "$WORKSPACE/skills" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      git -C "$WORKSPACE/skills" ls-files -z . |
+        rsync -a --delete --from0 --files-from=- "$WORKSPACE/skills/" "$RUN_DIR/skills/" || return 1
+    else
+      rsync -a --delete "$WORKSPACE/skills/" "$RUN_DIR/skills/" || return 1
+    fi
+  fi
   cd "$RUN_DIR" || return 1
   return 0
 }
