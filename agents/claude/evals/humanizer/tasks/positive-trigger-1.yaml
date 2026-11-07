@@ -1,15 +1,11 @@
 id: positive-trigger-001
 name: Positive Trigger 1
 description: Inline English fast track; exact facts are checked by text, claim preservation (the SKILL.md supreme rule) by the TypeSafe judge. Style is not judged; its pattern catalog lives in references/ and is never injected.
-tags:
-  - positive-trigger
 inputs:
   prompt: |
     Humanize the English paragraph below inline. Do not run tools, write files, or ask questions. Reply with the rewritten paragraph only.
 
     In today's fast-paced digital landscape, it is important to note that Acme Robotics, founded in 2019 by Dr. Lena Ortiz, has truly revolutionized warehouse automation. Moreover, the company's flagship robot not only reduced picking errors by 37% but also seamlessly integrated with existing systems. Ultimately, this serves as a testament to the transformative power of innovation.
-expected:
-  should_trigger: true
 graders:
   - type: text
     name: keeps-exact-facts

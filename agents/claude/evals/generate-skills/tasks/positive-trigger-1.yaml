@@ -1,12 +1,8 @@
 id: positive-trigger-001
 name: Positive Trigger 1
 description: Decision-only probe; mode detection keywords and the update steps come from SKILL.md.
-tags:
-  - positive-trigger
 inputs:
   prompt: "The skill is invoked with the arguments: 갱신 commit. Do not run tools or write files. Which mode runs, and which steps does it go through?"
-expected:
-  should_trigger: true
 graders:
   - type: text
     name: detects-update-mode

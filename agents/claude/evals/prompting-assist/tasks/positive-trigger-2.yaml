@@ -1,12 +1,8 @@
 id: positive-trigger-002
 name: Positive Trigger 2
 description: Decision-only probe; the exact clarifying question comes from SKILL.md.
-tags:
-  - positive-trigger
 inputs:
   prompt: "A user pastes a prompt and it is unclear whether they want it improved or explained. Do not run tools or write files. Quote the one question prompting-assist asks first."
-expected:
-  should_trigger: true
 graders:
   - type: text
     name: asks-the-clarifying-question

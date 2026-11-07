@@ -1,0 +1,14 @@
+id: commit-message-boundary
+name: Commit-message boundary
+description: Decision-only probe; the commit-message hand-off comes from SKILL.md.
+inputs:
+  prompt: "A user pastes a git commit message and asks: '이 커밋 메시지 AI 티 나는데 자연스럽게 다듬어줘'. Do not run tools or write files. Does humanizer rewrite it? Include one line exactly `rewrite: yes` or `rewrite: no`, then name the skill that owns commit-message wording."
+graders:
+  - type: text
+    name: hands-commit-messages-to-commit-skill
+    config:
+      regex_match:
+        - "(?im)^\\W*rewrite:\\s*no\\b"
+        - "(?i)\\bcommit\\b"
+      regex_not_match:
+        - "(?i)rewrite:\\s*yes\\b"

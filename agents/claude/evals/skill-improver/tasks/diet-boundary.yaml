@@ -1,0 +1,14 @@
+id: diet-boundary
+name: Diet boundary
+description: Decision-only probe; the diet-recommended hand-off comes from SKILL.md.
+inputs:
+  prompt: "skill-diet-growth reports diet-recommended for a target skill. Do not run tools or write files. Does skill-improver run the diet eval itself? Include one line exactly `diet: yes` or `diet: no`, then name the slash command it hands the diet to."
+graders:
+  - type: text
+    name: hands-diet-to-generate-skills
+    config:
+      regex_match:
+        - "(?im)^\\W*diet:\\s*no\\b"
+        - "generate-skills"
+      regex_not_match:
+        - "(?i)diet:\\s*yes\\b"

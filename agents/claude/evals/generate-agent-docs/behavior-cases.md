@@ -99,7 +99,6 @@ Artifact only, with no probe: selected-only, final-reference, stop-preserved, ra
 The suite runs on the launcher's eval model through `copilot-sdk`. Decision probes
 use `regex_match` and `regex_not_match` text graders; read them by trial pass
 rate. Artifact cases run in the skill-diet eval fixtures, not here.
-and https://raw.githubusercontent.com/microsoft/waza/main/internal/execution/mock.go.
 
 Prune test, stop-list and enforcement cases. Each row is a line in an existing CLAUDE.md with no user decision on it, unless stated.
 

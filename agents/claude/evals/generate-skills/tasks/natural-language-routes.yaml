@@ -1,7 +1,6 @@
 id: natural-language-routes
 name: Natural-language routes
 description: Decision-only probe; routes come from Mode detection. The small-edit boundary lives in description, so it is not graded here.
-tags: [decision-probe]
 inputs:
   prompt: "Do not run tools or write files. Each numbered request reached this skill. Answer with one line per request, in the form 1: <mode>. (1) 로그를 요약하는 스킬을 새로 만들어줘 (2) commit 스킬을 최신 스펙에 맞춰 고쳐줘 (3) humanizer 스킬 다이어트 해줘"
 graders:

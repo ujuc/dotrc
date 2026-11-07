@@ -1,12 +1,8 @@
 id: positive-trigger-001
 name: Positive Trigger 1
 description: Decision-only probe; only a score-neutral simplification may win a tie.
-tags:
-  - positive-trigger
 inputs:
   prompt: "An experiment scores exactly the same as the baseline, every eval outcome is unchanged, and the mutated file is larger than before. Do not run tools or write files. Is the mutation retained? Answer with the one-word decision term the skill uses."
-expected:
-  should_trigger: true
 graders:
   - type: text
     name: discards-neutral-growth

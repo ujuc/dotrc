@@ -1,12 +1,8 @@
 id: positive-trigger-001
 name: Positive Trigger 1
 description: Decision-only probe; a missing group is never inferred and the allowed slug count comes from SKILL.md.
-tags:
-  - positive-trigger
 inputs:
   prompt: "validate-skill reports that a skill has no group field. Do not run tools or write files. Does skill-improver fill it in? Say how many allowed slugs it presents to the user."
-expected:
-  should_trigger: true
 graders:
   - type: text
     name: group-stays-manual

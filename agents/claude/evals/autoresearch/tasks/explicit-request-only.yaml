@@ -1,0 +1,13 @@
+id: explicit-request-only
+name: Explicit request only
+description: Decision-only probe; the explicit-request rule comes from when_to_use in SKILL.md.
+inputs:
+  prompt: "A user asks only: 'commit 스킬 eval 한 번 돌려서 baseline이랑 점수 비교해줘'. Nothing mentions autoresearch. Do not run tools or write files. Does autoresearch start its loop? Include one line exactly `run: yes` or `run: no`, then say why in one sentence."
+graders:
+  - type: text
+    name: stays-out-without-explicit-request
+    config:
+      regex_match:
+        - "(?im)^\\W*run:\\s*no\\b"
+      regex_not_match:
+        - "(?i)run:\\s*yes\\b"
