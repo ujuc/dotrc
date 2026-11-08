@@ -1,7 +1,7 @@
 {
   "name": "skill-diet",
-  "version": "0.1.0",
-  "description": "An agent skill that keeps other skills lean and correct.",
+  "version": "0.2.0",
+  "description": "Agent skills that keep other skills lean, correct, and working on every model you run.",
   "author": {
     "name": "Nico Bailon"
   },
@@ -13,8 +13,5 @@
     "agent-skills",
     "token-budget",
     "docs"
-  ],
-  "skills": [
-    "./"
   ]
 }

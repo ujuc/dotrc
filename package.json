@@ -1,7 +1,7 @@
 {
   "name": "skill-diet",
-  "version": "0.1.0",
-  "description": "An agent skill that keeps other skills lean and correct.",
+  "version": "0.2.0",
+  "description": "Agent skills that keep other skills lean, correct, and working on every model you run.",
   "keywords": [
     "pi-package",
     "agent-skills",
@@ -16,21 +16,19 @@
     "url": "git+https://github.com/nicobailon/skill-diet.git"
   },
   "files": [
-    "SKILL.md",
-    "references",
-    "scripts",
+    "skills",
     ".claude-plugin",
     "CHANGELOG.md"
   ],
   "scripts": {
-    "check": "node scripts/eval.mjs check . && node tools/version.mjs --check",
+    "check": "node skills/skill-diet/scripts/eval.mjs check . && node tools/version.mjs --check",
     "preversion": "npm run check",
     "prepublishOnly": "npm run check",
-    "version": "node tools/version.mjs && git add .claude-plugin/plugin.json CHANGELOG.md"
+    "version": "node tools/version.mjs && git add .claude-plugin/plugin.json CHANGELOG.md skills/*/SKILL.md"
   },
   "pi": {
     "skills": [
-      "./"
+      "./skills"
     ],
     "image": "./.claude-plugin/icon.png"
   }
