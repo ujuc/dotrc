@@ -433,6 +433,20 @@ agents/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-upstream pul
 - [skill-diet](https://github.com/nicobailon/skill-diet) (MIT, `v0.1.0`) — 스킬 편집 순서·크기 예산·before/after/none eval. `generate-skills` 다이어트 모드와 `skill-improver`의 `diet-recommended`가 사용한다
 - [dual-brain](https://github.com/sleeplesshan/dual-brain) (MIT, `v1.7.0`) — 설계(Right)·구현(Left) 두 관점 검토. `/dual-brain`으로 호출하며, 쓰기 작업이면 프로젝트 루트의 `.dual-brain/MEMORY.md`에 바뀐 결정을 남긴다
 
+#### 릴리스 플러그인
+
+업스트림이 Claude용 플러그인 zip을 릴리스 자산으로 배포하면, 검증한 zip을 `agents/claude/skills/<name>/`에 풀어 그대로 커밋한다.
+`.claude-plugin/plugin.json`이 있으므로 `<name>@skills-dir` 플러그인으로 로드된다. marketplace로 같은 플러그인을 설치해 두면 이름이 겹쳐 이 사본은 로드되지 않는다.
+
+```sh
+cd "$(mktemp -d)" && gh release download v0.1.1 -R google/elephant-goldfish-model -p 'egm-claude-*.zip' -p SHA256SUMS
+grep claude SHA256SUMS | shasum -a 256 -c - && gh attestation verify egm-claude-*.zip -R google/elephant-goldfish-model
+rm -rf "$DOTRCDIR/agents/claude/skills/egm" && unzip -q egm-claude-*.zip -d "$DOTRCDIR/agents/claude/skills/egm"
+git -C "$DOTRCDIR" status --short agents/claude/skills/egm
+```
+
+- [egm](https://github.com/google/elephant-goldfish-model) (Apache-2.0, `v0.1.1`) — Elephant-Goldfish Model 설계 문서 작성·검토. `/egm:egm-brainstorm`, `/egm:egm-draft`, `/egm:egm-review`로 직접 호출한다(자동 호출 꺼짐). 리뷰어는 `egm:egm-*` 에이전트이며, 헤드리스 실행에는 `~/.claude/skills/egm/{agents,docs,resources,skills}/**` 읽기 권한이 필요하다
+
 ### [waza](https://github.com/microsoft/waza)
 
 `agents/claude/evals/<skill>/`의 스킬 평가 스위트를 실행하는 CLI다. `scripts/install.sh --agents`가
