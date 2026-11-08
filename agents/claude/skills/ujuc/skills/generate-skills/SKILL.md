@@ -1,6 +1,6 @@
 ---
 name: generate-skills
-description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, 스킬 다이어트, create a skill, update skill, generate-skills, /ujuc:generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza, 한두 줄 편집만 skill-diet가 맡고, 스킬 다이어트 요청은 이 스킬로 시작해 skill-diet 절차를 적용한다."
+description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, 스킬 다이어트, create a skill, update skill, generate-skills, /ujuc:generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza, 한두 줄 편집만 skill-diet:skill-diet가 맡고, 스킬 다이어트 요청은 이 스킬로 시작해 skill-diet 절차를 적용한다."
 group: meta
 argument-hint: "[skill-name]"
 ---
@@ -26,10 +26,10 @@ Read `$ARGUMENTS`, or the user's request when it is empty, and take the first
 mode it asks for. Judge what is asked, not a word inside a skill name.
 
 - **Diet mode**: a diet of a skill (`다이어트`, `diet`)
-  → Run Step 0 → [full diet](../../../skill-diet/references/diet.md) → Step 5. Eval via
+  → Run Step 0 → [full diet](../../../skill-diet/skills/skill-diet/references/diet.md) → Step 5. Eval via
   `scripts/skill-diet-eval` in `~/.claude/data/skill-diet/<skill>-<YYYYMMDD>/` with
-  `scripts/diet-adapter-claude` symlinked as `adapter`, `--parallel 2`, a pinned
-  `--model`. The shipping commit carries `Skill-Diet: <skill-name>`.
+  `scripts/diet-adapter-claude` symlinked as `adapter`, `--parallel 2`, a fresh eval folder,
+  and the same pinned `--model` for `calibrate`, `run` and `score`. The shipping commit carries `Skill-Diet: <skill-name>`.
 - **Update mode**: a change to an existing skill (`업데이트`, `수정`, `갱신`, `최신화`, `update`, `refresh`)
   → Run Step 0 → Steps U1–U2 → [Behavior baseline](#behavior-baseline) → Step U3 → Step 5 (validation)
 - **Create mode**: a new skill
@@ -176,7 +176,7 @@ Summarize the comparison, reuse any approved scope, and ask only about material 
 
 ## Step U3: Apply updates (update mode)
 
-Put each change through [Editing a skill](../../../skill-diet/SKILL.md#editing-a-skill),
+Put each change through [Editing a skill](../../../skill-diet/skills/skill-diet/SKILL.md#editing-a-skill),
 then edit frontmatter, `description` and body within the approved scope, and go to Step 5.
 
 ## Redundancy audit
@@ -204,7 +204,7 @@ the request, then fix and rerun until it passes:
 bash "$GS/validate-skill" <skill-dir> && bash "$GS/skill-diet-eval" check <skill-dir> && bash "$GS/skill-diet-growth" <skill-dir>
 ```
 
-**Size limits**: place each fact by [level](../../../skill-diet/SKILL.md#levels);
+**Size limits**: place each fact by [level](../../../skill-diet/skills/skill-diet/SKILL.md#levels);
 skill-diet's budget decides when to slim, and the validator's 500-line warning
 is the backstop.
 
@@ -270,4 +270,4 @@ Use these binary checks with the evidence statuses above.
 - Explore or reviewer subagents → [subagent-guidelines.md](references/subagent-guidelines.md)
 - Eval criteria and Waza suites → [eval-guide.md](references/eval-guide.md)
 - Choosing a guidance form, wording micro-tests, pressure scenarios → [guidance-testing.md](references/guidance-testing.md)
-- Editing an existing skill, sizing it, or teaching a tool → [skill-diet](../../../skill-diet/SKILL.md), [tool skills](../../../skill-diet/references/tool-skills.md)
+- Editing an existing skill, sizing it, or teaching a tool → [skill-diet](../../../skill-diet/skills/skill-diet/SKILL.md), [tool skills](../../../skill-diet/skills/skill-diet/references/tool-skills.md)

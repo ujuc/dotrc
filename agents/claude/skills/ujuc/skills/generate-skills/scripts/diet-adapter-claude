@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# diet-adapter-claude — skill-diet eval adapter for Claude Code (contract: ../../../../skill-diet/references/adapter.md).
+# diet-adapter-claude — skill-diet eval adapter for Claude Code (contract: ../../../../skill-diet/skills/skill-diet/references/adapter.md).
 # Usage: diet-adapter-claude <skill-dir|""> <prompt> <out-dir> <work-dir>
 #
 # Isolation keeps the real login: `--setting-sources project` hides user skills, plugins, hooks and
@@ -32,7 +32,9 @@ fi
 
 # Claude Code keeps per-project state under ~/.claude/projects/<cwd, non-alphanumerics as ->; remove ours on exit.
 project_state="${HOME}/.claude/projects/$(printf '%s' "${work_real}" | sed 's/[^A-Za-z0-9]/-/g')"
-trap 'rm -rf "${project_state}"' EXIT
+# Parallel runs must not share temp files.
+tmp="$(mktemp -d)" && export TMPDIR="${tmp}"
+trap 'rm -rf "${project_state}" "${tmp}"' EXIT
 trap 'kill 0; exit 143' TERM
 
 # zsh profiles can alias ls to a git-aware tool that stalls the Bash tool; keep eval shells plain.
@@ -54,7 +56,8 @@ jq -s \
   def back: if $name == "" then . else gsub($w2; $skill_dir) | gsub($w1; $skill_dir)
     | gsub("(?<p>^|[\\s\"\u0027=(])(\\.\\./)*\\.claude/skills/\($name)"; "\(.p)\($skill_dir)") end;
   (map(select(.type == "result")) | last) as $r
-  # Calls that errored (e.g. a denied read) touched nothing, so they keep only their name.
+  # Calls that errored (e.g. a denied read) touched nothing, so they keep only their name;
+  # a Bash call that exited non-zero still ran, so it keeps its command for must_not.
   | ([.[] | select(.type == "user") | .message.content[]? | select(.type == "tool_result" and .is_error == true) | .tool_use_id]) as $failed
   | ($r.modelUsage // {} | [.[]]) as $m
   | {
@@ -71,8 +74,11 @@ jq -s \
           cacheWrite: ($r.usage.cache_creation_input_tokens // 0)
         } end),
       turns: ([.[] | select(.type == "assistant") | .message.id] | unique | length),
+      # The served model, as the session reports it (not $EVAL_MODEL).
+      model: ((map(select(.type == "system" and .subtype == "init")) | last | .model)
+        // (map(select(.type == "assistant" and .parent_tool_use_id == null)) | last | .message.model)),
       calls: [.[] | select(.type == "assistant") | .message.content[]? | select(.type == "tool_use")
-        | if (.id | IN($failed[])) then {name} else . end
+        | if (.id | IN($failed[])) and .name != "Bash" then {name} else . end
         | {name}
           + (if .name == "Skill" then
                # With no skill installed, a Skill call by name loads nothing.

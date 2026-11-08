@@ -430,7 +430,7 @@ agents/claude/skills/ujuc/skills/generate-skills/scripts/upstream-check         
 agents/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-upstream pull v0.2.0  # subtree pull --squash 후 링크·검증
 ```
 
-- [skill-diet](https://github.com/nicobailon/skill-diet) (MIT, `v0.1.0`) — 스킬 편집 순서·크기 예산·before/after/none eval. `generate-skills` 다이어트 모드와 `skill-improver`의 `diet-recommended`가 사용한다
+- [skill-diet](https://github.com/nicobailon/skill-diet) (MIT, `v0.2.0`) — 스킬 편집 순서·크기 예산·before/after/none eval. `generate-skills` 다이어트 모드와 `skill-improver`의 `diet-recommended`가 사용한다. 플러그인(`skill-diet@skills-dir`)이라 `skill-diet:skill-diet`로 호출하며, 모델 간 성능 차이를 고치는 `/skill-diet:skill-model-gap`은 직접 호출만 된다
 - [dual-brain](https://github.com/sleeplesshan/dual-brain) (MIT, `v1.7.0`) — 설계(Right)·구현(Left) 두 관점 검토. `/dual-brain`으로 호출하며, 쓰기 작업이면 프로젝트 루트의 `.dual-brain/MEMORY.md`에 바뀐 결정을 남긴다
 
 #### 릴리스 플러그인

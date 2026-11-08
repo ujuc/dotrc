@@ -85,7 +85,7 @@ while drafting and fold in its result.
 - **Freedom**: match specificity to a named fragility ([degrees of freedom](design-principles.md#degrees-of-freedom)).
 - **Output shape**: a strict template when the format must be exact, a flexible
   one when only structure matters, input/output examples to convey style.
-- **Size**: place each fact by [level](../../../../skill-diet/SKILL.md#levels). A new
+- **Size**: place each fact by [level](../../../../skill-diet/skills/skill-diet/SKILL.md#levels). A new
   skill has no diet baseline, so draft `SKILL.md` toward 500 words (Superpowers
   recommendation, not a limit); `skill-diet-growth` prints the count. The first
   diet replaces this target with its growth budget.

@@ -11,7 +11,7 @@ Input: `<skill-path-or-name> [--check trigger|overlap|model|all]`; default is `a
 For a bare name, inspect both:
 
 - project: `<cwd>/.claude/skills/<name>/SKILL.md`
-- global: `~/.claude/skills/ujuc/skills/<name>/SKILL.md`, else `~/.claude/skills/<name>/SKILL.md`
+- global: `~/.claude/skills/ujuc/skills/<name>/SKILL.md`, else `~/.claude/skills/<name>/SKILL.md`, else `~/.claude/skills/<plugin>/skills/<name>/SKILL.md`
 
 Skip a global directory that `git -C ~/.claude check-ignore -q skills/<name>` reports as ignored (external or synced skills): do not read, judge or compare it. When both exist, the project skill wins. State which file was selected. Parse `description`, `when_to_use`, `disable-model-invocation`, `user-invocable`, `model`, and `effort` before judging triggers and model fitness.
 

@@ -1,7 +1,7 @@
 # Skill design principles
 
 Local defaults. What to cut and where each fact lives follow
-[skill-diet](../../../../skill-diet/SKILL.md).
+[skill-diet](../../../../skill-diet/skills/skill-diet/SKILL.md).
 
 ## Degrees of freedom
 

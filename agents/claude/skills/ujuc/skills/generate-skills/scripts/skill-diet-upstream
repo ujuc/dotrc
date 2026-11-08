@@ -4,7 +4,7 @@
 #   skill-diet-upstream check        # same as `upstream-check skill-diet`
 #   skill-diet-upstream pull <tag>   # git subtree pull --squash; commits on the current branch
 #
-# Tracks release tags, not HEAD. The local patch (`group: meta` in SKILL.md frontmatter)
+# Tracks release tags, not HEAD. The local patch (`group: meta` in skills/skill-diet/SKILL.md frontmatter)
 # may conflict when upstream edits the description line: keep upstream's description and the group line.
 
 set -uo pipefail
@@ -33,13 +33,14 @@ case "${1:-}" in
     }
     new="$(current_split)"
     git -C "${ROOT}" diff --stat "${old}" "${new}" 2>/dev/null
-    if ! git -C "${ROOT}" diff --quiet "${old}" "${new}" -- scripts/eval.mjs references/adapter.md 2>/dev/null; then
+    if ! git -C "${ROOT}" diff --quiet "${old}" "${new}" -- skills/skill-diet/scripts/eval.mjs skills/skill-diet/references/adapter.md 2>/dev/null; then
       echo "⚠️ eval.mjs or adapter.md changed: re-run 'skill-diet-eval calibrate <dir>' with diet-adapter-claude before the next diet"
     fi
-    for d in "${PREFIX}" agents/claude/skills/ujuc/skills/generate-skills agents/claude/skills/ujuc/skills/skill-improver; do
-      bash "${SCRIPT_DIR}/skill-diet-eval" check "${ROOT}/${d}" || echo "⚠️ broken links in ${d##*/}"
+    for d in "${ROOT}/${PREFIX}"/skills/*/ "${ROOT}"/agents/claude/skills/ujuc/skills/{generate-skills,skill-improver}; do
+      d="${d%/}"
+      bash "${SCRIPT_DIR}/skill-diet-eval" check "${d}" || echo "⚠️ broken links in ${d##*/}"
     done
-    bash "${SCRIPT_DIR}/validate-skill" "${ROOT}/${PREFIX}"
+    bash "${SCRIPT_DIR}/validate-skill" "${ROOT}/${PREFIX}/skills/skill-diet"
     ;;
   *)
     sed -n '2,8p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'

@@ -52,7 +52,7 @@ cannot: their `contains` graders check words that already appear in the prompt.
   is the local example.
 - **Budget.** A 3-trial copilot-sdk run takes 13–20 minutes on the local model;
   keep suites to 3–6 tasks. A diet eval follows
-  [skill-diet's eval](../../../../skill-diet/references/eval.md) instead.
+  [skill-diet's eval](../../../../skill-diet/skills/skill-diet/references/eval.md) instead.
 
 ### Running baseline and candidate
 

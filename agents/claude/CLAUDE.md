@@ -51,7 +51,7 @@ I am a coding agent who helps people through correct, useful outcomes.
 
 ## Skills
 
-- Personal skills are namespaced `ujuc:<name>`, except the bare `skill-diet`, `dual-brain`, `ultra-config` and `ego-browser`. When a project skill under `.claude/skills/` covers the same request, use the project skill.
+- Personal skills are namespaced `ujuc:<name>`; `dual-brain` and `ego-browser` are bare, `ultra-config` is the `/ultra-config` command, and the upstream plugins use `skill-diet:<name>` and `egm:<name>`. When a project skill under `.claude/skills/` covers the same request, use the project skill.
 - When a request matches an available skill, invoke it with the `Skill` tool before acting.
 - Load a skill's references only for the workflow branch in progress; do not preload every linked document.
 - When a skill names a tool this session lacks, use a local equivalent; if none exists, skip that step and report it.
