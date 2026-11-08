@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # skill-diet-upstream — Check or pull the skill-diet git subtree against upstream release tags.
 # Usage:
-#   skill-diet-upstream check        # advisory; always exits 0 and prints one "- skill-diet: ..." line
+#   skill-diet-upstream check        # same as `upstream-check skill-diet`
 #   skill-diet-upstream pull <tag>   # git subtree pull --squash; commits on the current branch
 #
 # Tracks release tags, not HEAD. The local patch (`group: meta` in SKILL.md frontmatter)
@@ -19,30 +19,9 @@ current_split() {
     sed -n 's/^git-subtree-split: //p'
 }
 
-# Prints "<tag> <commit>" per release tag; annotated tags resolve to their peeled commit.
-remote_tags() {
-  git ls-remote --tags "${URL}" | awk '
-    { sub("refs/tags/", "", $2) }
-    $2 ~ /\^\{\}$/ { t = $2; sub(/\^\{\}$/, "", t); peeled[t] = $1; next }
-    { plain[$2] = $1 }
-    END { for (t in plain) print t, (t in peeled ? peeled[t] : plain[t]) }' | sort -V
-}
-
 case "${1:-}" in
   check)
-    cur="$(current_split)"
-    tags="$(remote_tags 2>/dev/null)"
-    if [ -z "${tags}" ]; then
-      echo "- skill-diet: upstream unreachable; pinned ${cur:-unknown}"
-      exit 0
-    fi
-    cur_tag="$(awk -v c="${cur}" '$2 == c { print $1 }' <<<"${tags}" | tail -1)"
-    read -r latest latest_sha < <(tail -1 <<<"${tags}")
-    if [ "${latest_sha}" = "${cur}" ]; then
-      echo "- skill-diet: up to date (${latest})"
-    else
-      echo "- skill-diet: update available ${cur_tag:-${cur:0:7}} -> ${latest}; notes: ${URL%.git}/blob/${latest}/CHANGELOG.md; run: skill-diet-upstream pull ${latest}"
-    fi
+    exec bash "${SCRIPT_DIR}/upstream-check" skill-diet
     ;;
   pull)
     tag="${2:?usage: skill-diet-upstream pull <tag>}"

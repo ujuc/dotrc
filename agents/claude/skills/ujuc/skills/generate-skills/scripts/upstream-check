@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# upstream-check — Report whether vendored upstream skills lag their latest release tag.
+# Usage:
+#   upstream-check [name...]   # advisory; always exits 0 and prints one "- <name>: ..." line per skill
+#   upstream-check test        # offline self-check of the report logic
+#
+# Subtree skills pin the `git-subtree-split:` commit; release skills pin `.claude-plugin/plugin.json` version.
+
+set -uo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(git -C "${SCRIPT_DIR}" rev-parse --show-toplevel 2>/dev/null)"
+SKILLS="agents/claude/skills"
+
+# name|upstream git URL|kind (subtree or release)
+ENTRIES=(
+  "skill-diet|https://github.com/nicobailon/skill-diet.git|subtree"
+  "dual-brain|https://github.com/sleeplesshan/dual-brain.git|subtree"
+  "egm|https://github.com/google/elephant-goldfish-model.git|release"
+)
+
+# Prints "<tag> <commit>" per release tag, oldest first; annotated tags resolve to their peeled commit.
+remote_tags() {
+  GIT_TERMINAL_PROMPT=0 git ls-remote --tags "$1" 2>/dev/null | awk '
+    { sub("refs/tags/", "", $2) }
+    $2 ~ /\^\{\}$/ { t = $2; sub(/\^\{\}$/, "", t); peeled[t] = $1; next }
+    { plain[$2] = $1 }
+    END { for (t in plain) print t, (t in peeled ? peeled[t] : plain[t]) }' | sort -V
+}
+
+pinned() { # <name> <kind>
+  if [ "$2" = subtree ]; then
+    git -C "${ROOT}" log -1 --format=%B --grep="git-subtree-dir: ${SKILLS}/$1" |
+      sed -n 's/^git-subtree-split: //p'
+  else
+    sed -n 's/.*"version": *"\([^"]*\)".*/v\1/p' "${ROOT}/${SKILLS}/$1/.claude-plugin/plugin.json" 2>/dev/null | head -1
+  fi
+}
+
+update_hint() { # <name> <url> <kind> <tag>
+  case "$1|$3" in
+    skill-diet\|*) echo "notes: ${2%.git}/blob/$4/CHANGELOG.md; run: skill-diet-upstream pull $4" ;;
+    *\|subtree) echo "notes: ${2%.git}/blob/$4/CHANGELOG.md; run: git subtree pull --prefix=${SKILLS}/$1 $2 $4 --squash" ;;
+    *) echo "notes: ${2%.git}/releases/tag/$4; run: the README.md release-plugin steps" ;;
+  esac
+}
+
+# report <name> <url> <kind> <pinned> <tags>: pure, so `test` can drive it offline.
+report() {
+  local name="$1" url="$2" kind="$3" cur="$4" tags="$5" latest latest_sha cur_tag
+  if [ -z "${tags}" ]; then
+    echo "- ${name}: upstream unreachable; pinned ${cur:-unknown}"
+    return
+  fi
+  read -r latest latest_sha < <(tail -1 <<<"${tags}")
+  if [ "${kind}" = subtree ]; then
+    [ "${latest_sha}" = "${cur}" ] && { echo "- ${name}: up to date (${latest})"; return; }
+    cur_tag="$(awk -v c="${cur}" '$2 == c { print $1 }' <<<"${tags}" | tail -1)"
+    cur="${cur_tag:-${cur:0:7}}"
+  else
+    [ "${latest}" = "${cur}" ] && { echo "- ${name}: up to date (${latest})"; return; }
+  fi
+  echo "- ${name}: update available ${cur:-unknown} -> ${latest}; $(update_hint "${name}" "${url}" "${kind}" "${latest}")"
+}
+
+self_test() {
+  local tags=$'v1.0.0 aaa\nv1.1.0 bbb' fail=0 got
+  check() { [ "$2" = "$3" ] || { echo "FAIL $1: $3"; fail=1; }; }
+  got="$(report s u.git subtree bbb "${tags}")";  check subtree-current "- s: up to date (v1.1.0)" "${got}"
+  got="$(report s u.git subtree aaa "${tags}")"
+  check subtree-behind "- s: update available v1.0.0 -> v1.1.0; notes: u/blob/v1.1.0/CHANGELOG.md; run: git subtree pull --prefix=${SKILLS}/s u.git v1.1.0 --squash" "${got}"
+  got="$(report r u.git release v1.1.0 "${tags}")"; check release-current "- r: up to date (v1.1.0)" "${got}"
+  got="$(report r u.git release v1.0.0 "${tags}")"
+  check release-behind "- r: update available v1.0.0 -> v1.1.0; notes: u/releases/tag/v1.1.0; run: the README.md release-plugin steps" "${got}"
+  got="$(report r u.git release v1.0.0 "")";      check unreachable "- r: upstream unreachable; pinned v1.0.0" "${got}"
+  [ "${fail}" = 0 ] && echo "upstream-check self-test: ok"
+  return "${fail}"
+}
+
+[ "${1:-}" = test ] && { self_test; exit; }
+case "${1:-}" in -h|--help) sed -n '2,7p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
+
+for entry in "${ENTRIES[@]}"; do
+  IFS='|' read -r name url kind <<<"${entry}"
+  if [ "$#" -gt 0 ] && [[ " $* " != *" ${name} "* ]]; then continue; fi
+  report "${name}" "${url}" "${kind}" "$(pinned "${name}" "${kind}")" "$(remote_tags "${url}")"
+done
+for arg in "$@"; do # a typo must not read as "nothing to report"
+  [[ " ${ENTRIES[*]} " == *" ${arg}|"* ]] || echo "- ${arg}: not registered in upstream-check"
+done
+exit 0

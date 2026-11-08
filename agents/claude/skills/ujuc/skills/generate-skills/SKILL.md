@@ -50,7 +50,7 @@ bash "$GS/init-skill" <skill-name> --group <slug> --path <parent-dir> [--with-re
 bash "$GS/validate-skill" <skill-dir>
 bash "$GS/skill-diet-eval" check <skill-dir>   # SKILL.md bytes for the commit message; fails on a broken link or anchor
 bash "$GS/skill-diet-growth" <skill-dir>       # one line: within budget | diet-recommended | no diet baseline
-bash "$GS/skill-diet-upstream" check           # one advisory line; `pull <tag>` only when the user asks
+bash "$GS/upstream-check"                      # one advisory line per vendored skill; `skill-diet-upstream pull <tag>` only when the user asks
 bash "$GS/superpowers-upstream" check           # one advisory line for guidance-testing.md
 bash "$GS/register-skill" "${DOTRCDIR}/agents/claude/skills/README.md" --name <skill-name> --group <slug>
 ```
@@ -123,8 +123,8 @@ to another skill-generation workflow.
    upstream content alone does not authorize a date write. When fetching fails
    or is not permitted, leave both untouched and continue with a one-line notice
    that the spec is cached as of `last_upstream_check`. Report fetched or cached either way.
-4. Relay the one line from `skill-diet-upstream check` and from
-   `superpowers-upstream check`; pull a tag only when the user asks.
+4. Relay the lines from `upstream-check` and `superpowers-upstream check`;
+   update a vendored skill only when the user asks.
 
 ## Step 1: Capture the use case (create mode)
 
