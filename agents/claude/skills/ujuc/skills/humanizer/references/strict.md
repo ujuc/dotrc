@@ -6,6 +6,8 @@ Dispatch every worker with `Agent`, `subagent_type: "general-purpose"`, the rout
 
 `scanner` with `mode: baseline` (Standard): `input_path` (`01_input.txt`), `taxonomy_path` ([taxonomy-ko.md](taxonomy-ko.md)), `output_path` (`02_detection.json`), `run_id`, `genre_hint`, `min_severity`, `include_document_level: true`.
 
+Zero findings at `min_severity` means the text is already natural: skip Phases B and C, and in Phase D copy the file Phase A scanned (after any `_prev` rename) to `final.md` instead of step 1 and write `summary.md` from `02_detection.json` alone (grade A, change rate against `01_input.txt`, self-check 6/6, no edits).
+
 ## Phase B — Rewrite
 
 `rewriter` (Advanced): `original_path` (always `01_input.txt`), `source_path` (round 1: `01_input.txt`; later: the prior candidate), `detection_path`, `playbook_path` ([playbook-ko.md](playbook-ko.md)), `rewrite_path`, `diff_path`, and from round 2 the current `review_path`. Versions: `03_rewrite.md` + `03_rewrite_diff.json`, then `_v2`, then `_v3`.
@@ -17,7 +19,7 @@ Two `Agent` calls in parallel with this round's paths:
 - `fidelity-auditor` (Advanced): `original_path`, `rewrite_path`, `diff_path`, `output_path` (`04_fidelity_audit{_vN}.json`).
 - `scanner` with `mode: review` (Advanced): `original_path`, `original_detection_path`, `rewrite_path`, `taxonomy_path`, `output_path` (`05_naturalness_review{_vN}.json`), and `round` (1–3; pass it, the scanner never infers it from file names).
 
-**Verdict.** Any `hold_and_report` stops first; then fidelity `fail`, then `conditional_pass`, then naturalness.
+**Verdict.** Any `hold_and_report` stops first; then fidelity `fail`, then `conditional_pass`, then naturalness. A naturalness `rewrite_round_2` whose only cause is a 감소율 below 70% on a baseline with S1 0 and S2 ≤ 2 counts as `accept` with grade A: the text needed no change, and leaving it alone is not a defect.
 
 | fidelity | naturalness | verdict | next |
 |---|---|---|---|
@@ -32,7 +34,7 @@ Two `Agent` calls in parallel with this round's paths:
 ## Phase D — Final output
 
 1. Copy the latest `03_rewrite*.md` to `final.md`.
-2. Write `summary.md` in the fast format, with the grade from the final `quality_level` and the 6-item self-check scored from the final fidelity, naturalness and diff JSONs, adding any `unclassified_candidates` from the final naturalness JSON and any `over_polish_aborted` from the latest diff JSON.
+2. Write `summary.md` in the fast format, with the grade from the final `quality_level` (or A when the Verdict override for an unchanged clean baseline applied) and the 6-item self-check scored from the final fidelity, naturalness and diff JSONs, adding any `unclassified_candidates` from the final naturalness JSON and any `over_polish_aborted` from the latest diff JSON.
 3. Return the four-part response.
 
 ## Redo

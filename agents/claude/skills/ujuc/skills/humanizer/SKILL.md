@@ -16,7 +16,7 @@ allowed-tools:
   - Agent
 ---
 
-<!-- Adapted from epoko77-ai/im-not-ai and snflkd/fluent-korean (MIT). See LICENSE-THIRD-PARTY. -->
+<!-- Adapted from epoko77-ai/im-not-ai, snflkd/fluent-korean and evergreentree97/K-Humanizer (MIT). See LICENSE-THIRD-PARTY. -->
 
 # Humanizer
 
@@ -113,15 +113,16 @@ Strict and redo rewrite at most 3 rounds; unresolved after round 3 → `hold_and
 
 Applies inline and to strict verdicts. Workers keep their own copies; after changing a value here, run `scripts/check-consistency`.
 
-**Meaning invariance** overrides everything. Facts, claims, numbers, dates, proper nouns and quotations match the source exactly; a violation rolls back the edit. Genre and register stay (formality is not an AI tell).
+**Meaning invariance** overrides everything. Facts, claims, numbers, dates, proper nouns and quotations match the source exactly, and so do qualifiers (`최대`, `약`), negation and exceptions (`~에서만`) and whether a sentence requests, offers or promises: a possibility never hardens into a promise and a commitment never softens into a hedge. A violation rolls back the edit. Genre and register stay (formality is not an AI tell).
 
 - Completing a sentence adds no tense: `일부 요청 지연 가능성` → `일부 요청의 지연 가능성이 있습니다`, never `지연될 가능성` or `지연되었을 가능성`.
 - Brevity prescriptions (`줄임`, `삭제`, `종결만 직결`) never truncate a complete sentence into a `명사형 종결`: `검토했습니다` → `검토.` makes the A-16 tell and turns a fact into a label. Shorten inside a completed sentence.
 - Decision-strength words (`검토`, `예정`, `가능성`, `방향`, `판단`) stay unchanged.
 - Evaluative claims are claims: cut the filler around them, never their strength, and keep each one. `has truly transformed logistics` → `has transformed logistics`, never `has had an impact on logistics`.
 - Add nothing absent from the source: no new fact, detail, benefit, qualifier or conclusion, even one that seems implied.
+- Keep an edit only when it names the problem it fixes: a catalog finding that reads as a tell in place, a meaning or grammar error, or a register mismatch the source establishes. No word is banned: a `통해`, `진행` or `제공` that fits its sentence is a finding only when its catalog row says so. Roll back a synonym swap, particle trim or cut made only to move the change rate; already-natural text is returned unchanged.
 
-**Protected** (never detected or edited): proper nouns and product/model/org names; numbers, dates, units, percentages; direct quotes in double quotes; legal text; math/chemistry/statistics notation; standard acronyms (LLM, GPU, MCP, API, SDK); code, identifiers, commands, paths, API fields, logs, error messages and commit messages (`retry_count`, `/etc/app.yaml`), byte-identical.
+**Protected** (never detected or edited): proper nouns and product/model/org names; numbers, dates, units, percentages; direct quotes in double quotes; legal text; math/chemistry/statistics notation; standard acronyms (LLM, GPU, MCP, API, SDK); code, identifiers, commands, paths, API fields, logs, error messages and commit messages (`retry_count`, `/etc/app.yaml`), byte-identical; UI placeholders, variables and i18n keys (`{name}`, `%s`), byte-identical and never added, including a particle whose form depends on the placeholder's final sound (`{name}과`).
 
 **Change-rate guard:** Levenshtein distance(final candidate, `01_input.txt`) / original length, across all rounds. Over 30% → warning in summary.md; over 50% → roll back to the last safe version and set `over_polish_aborted: true`.
 
@@ -130,15 +131,15 @@ Applies inline and to strict verdicts. Workers keep their own copies; after chan
 1. Proper nouns, numbers, dates, quotes and protected tokens unchanged.
 2. Change rate recorded (over 30% warns, over 50% stops).
 3. No genre drift (a column does not become an essay).
-4. Register kept (formal stays formal).
+4. Register kept (formal stays formal; no speech-level mixing the source lacks).
 5. Zero residual S1 (Korean) or P1 (English) patterns.
-6. Every source claim kept at its strength; no fact, claim, metaphor or rhetoric absent from the source.
+6. Every source claim kept at its strength; no fact, claim, metaphor or rhetoric absent from the source; no cause, contrast or sequence link added or dropped; merged clauses keep each fact's own state, condition and time qualifier.
 
 On a violation, roll back that edit and retry once. If a meaning or protected-token violation or the 50% ceiling remains, output the last safe version (or the original). Only unresolved style checks may ship, as "자가검증 미통과 N건" in summary.md.
 
 **Grade** (strict takes the final `quality_level` instead):
 
-- **A**: S1/P1 residual 0, S2/P2 residual ≤ 2, change rate 10–25%, self-check 6/6.
+- **A**: S1/P1 residual 0, S2/P2 residual ≤ 2, change rate ≤ 25% (0% is valid: already-natural text returned unchanged earns A), self-check 6/6.
 - **B**: S1/P1 residual 0, S2/P2 residual ≤ 4, self-check 5+/6.
 - **C**: S1/P1 residual 1–2 or self-check ≤ 4/6 → recommend strict.
 - **D**: S1/P1 residual 3+ or change rate over 50% → recommend stopping.
@@ -163,4 +164,4 @@ Decide the type in this order: the user's word; the path (`README.md` → 기술
 
 ## Acknowledgements
 
-The strict pipeline, fast monolith, rulebooks, and role files are adapted from [`epoko77-ai/im-not-ai`](https://github.com/epoko77-ai/im-not-ai) v1.5 under the MIT License. Taxonomy patterns `A-16` and `A-17`, the protected-token expansion, and the tense-injection guard are adapted from [`snflkd/fluent-korean`](https://github.com/snflkd/fluent-korean), also MIT. See [`LICENSE-THIRD-PARTY`](./LICENSE-THIRD-PARTY) for provenance and local changes.
+The strict pipeline, fast monolith, rulebooks, and role files are adapted from [`epoko77-ai/im-not-ai`](https://github.com/epoko77-ai/im-not-ai) v1.5 under the MIT License. Taxonomy patterns `A-16` and `A-17`, the protected-token expansion, and the tense-injection guard are adapted from [`snflkd/fluent-korean`](https://github.com/snflkd/fluent-korean), also MIT. The edit-discipline rule, the "no word is banned" keep-conditions, the paragraph-flow guard, the protected-facts extension (qualifiers, negation, request/offer/promise, UI placeholders) and the register-consistency pattern `E-4` are adapted from [`evergreentree97/K-Humanizer`](https://github.com/evergreentree97/K-Humanizer), MIT as well. See [`LICENSE-THIRD-PARTY`](./LICENSE-THIRD-PARTY) for provenance and local changes.

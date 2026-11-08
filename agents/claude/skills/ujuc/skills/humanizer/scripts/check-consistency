@@ -9,7 +9,7 @@ Safety-net values (pipeline agent count, 30/50% over-polish guard, 6-item self-c
 grade A-D thresholds, max rewrite loops) are duplicated across SKILL.md, quick-rules.md,
 and the worker role files by design: each runs in an isolated context, so a local copy
 raises compliance. The duplication's risk is drift -- a one-place edit (the historical
-"5인->4인->3인" sequence) silently desyncs the others. This script asserts the values stay aligned.
+"5인→4인→3인" sequence) silently desyncs the others. This script asserts the values stay aligned.
 
 A regex can miss a reworded value, so a missing match is reported as a FAIL (never a silent
 pass). Exit 0 = all checks pass. Exit 1 = at least one mismatch. Exit 2 = a target file is missing.
@@ -46,8 +46,12 @@ def has(lines: list[str], pattern: str) -> bool:
     return any(rx.search(ln) for ln in lines)
 
 
+PLAYBOOK = REFS / "playbook-ko.md"
+PATTERNS_KO = REFS / "patterns-ko.md"
+PATTERNS_COMMON = REFS / "patterns-common.md"
+
 FILES = {p: load(p) for p in (SKILL, QUICK, TAXONOMY, MONOLITH, REWRITER, SCANNER,
-                              FIDELITY)}
+                              FIDELITY, PLAYBOOK, PATTERNS_KO, PATTERNS_COMMON)}
 
 missing = [str(p) for p, lines in FILES.items() if lines is None]
 if missing:
@@ -116,6 +120,43 @@ for p in (SKILL, QUICK, MONOLITH, REWRITER, SCANNER):
 check("self-check-claim-strength", SKILL, has(FILES[SKILL], r"kept at its strength"))
 for p in (QUICK, MONOLITH):
     check("self-check-claim-strength", p, has(FILES[p], r"주장.{0,3}강도"))
+
+# 11. No word is banned (K-Humanizer): a keep-condition match is not a finding.
+check("no-word-banned", SKILL, has(FILES[SKILL], r"No word is banned"))
+for p in (QUICK, TAXONOMY, PLAYBOOK, SCANNER, PATTERNS_KO):
+    check("no-word-banned", p, has(FILES[p], r"금지어"))
+
+# 12. Unchanged natural text is a valid top-grade outcome; grade A has no change-rate floor.
+check("unchanged-is-valid", SKILL, has(FILES[SKILL], r"returned unchanged") and not has(FILES[SKILL], r"10[–~-]25"))
+check("unchanged-is-valid", QUICK, has(FILES[QUICK], r"0%도 A") and not has(FILES[QUICK], r"10[–~-]25"))
+for p in (PLAYBOOK, MONOLITH, REWRITER):
+    check("unchanged-is-valid", p, has(FILES[p], r"(0%도|그대로가 정상 결과)"))
+check("unchanged-is-valid", FIDELITY, has(FILES[FIDELITY], r"edit이 0건"))
+
+# 13. Merged clauses keep each fact's own state, condition and time qualifier.
+check("merged-clause-guard", SKILL, has(FILES[SKILL], r"state, condition and time qualifier"))
+for p in (QUICK, TAXONOMY, PLAYBOOK, REWRITER, MONOLITH, FIDELITY, PATTERNS_COMMON):
+    check("merged-clause-guard", p, has(FILES[p], r"상태·조건·시(점|간)"))
+
+# 14. Never add a causal link the source lacks; keep connectors that carry a relation.
+check("no-invented-cause", SKILL, has(FILES[SKILL], r"link added or dropped"))
+for p in (QUICK, TAXONOMY, PLAYBOOK, REWRITER, MONOLITH, FIDELITY, SCANNER, PATTERNS_KO):
+    check("no-invented-cause", p, has(FILES[p], r"(없는|없던) (인과|연결)|세우지 않은 인과"))
+
+# 15. UI placeholders, variables and keys are protected like code strings.
+check("protected-placeholders", SKILL, has(FILES[SKILL], r"UI placeholders"))
+for p in (QUICK, PLAYBOOK, REWRITER, MONOLITH, SCANNER, FIDELITY):
+    check("protected-placeholders", p, has(FILES[p], r"플레이스홀더"))
+
+# 16. Request, offer and promise never trade places in either direction.
+check("request-offer-promise", SKILL, has(FILES[SKILL], r"requests, offers or promises"))
+for p in (QUICK, PLAYBOOK, REWRITER, MONOLITH, FIDELITY):
+    check("request-offer-promise", p, has(FILES[p], r"요청.{0,3}제안.{0,3}약속"))
+
+# 17. Register consistency: no 합쇼체/해요체 mixing the source lacks.
+check("register-mixing", SKILL, has(FILES[SKILL], r"speech-level mixing"))
+for p in (QUICK, TAXONOMY, PLAYBOOK, SCANNER, MONOLITH, PATTERNS_KO):
+    check("register-mixing", p, has(FILES[p], r"합쇼체.{0,3}해요체"))
 
 failed = [r for r in results if not r[1]]
 for name, ok, detail in results:

@@ -97,3 +97,69 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+---
+
+## K-Humanizer (evergreentree97/K-Humanizer)
+
+The following editing principles were adapted from the `k-humanizer` skill in
+[evergreentree97/K-Humanizer](https://github.com/evergreentree97/K-Humanizer)
+(commit `7e96372`, 2026-11-07), released under the MIT License:
+
+- `SKILL.md`, `references/quick-rules.md`, `references/roles/monolith.md`,
+  `references/roles/rewriter.md`, `references/roles/scanner.md` — the edit
+  discipline rule (keep an edit only when it fixes a nameable problem; already
+  natural text returns unchanged and still earns the top grade), from
+  `SKILL.md` §5 "Stop when the text works" and `references/evaluation.md`
+  "Edit Discipline"
+- `references/quick-rules.md`, `references/taxonomy-ko.md`,
+  `references/playbook-ko.md`, `references/patterns-ko.md` — the "no word is
+  banned" keep-conditions on `~에 대해`, `~를 통해`, `~에 있어서`,
+  `~와 관련하여`, `가지고 있다`, `~에 의해`, `진행`, `제공` and
+  `~하도록 하겠습니다`, from `references/patterns.md` "Translationese and
+  English-shaped grammar" and "Register and endings"
+- `references/taxonomy-ko.md` (`E-4`), `references/quick-rules.md`,
+  `references/playbook-ko.md`, `references/patterns-ko.md` — register
+  consistency (unify unmotivated 합쇼체/해요체 mixing to the dominant level
+  without changing that level), from `references/patterns.md` "Register and
+  endings"
+- `references/playbook-ko.md`, `references/roles/rewriter.md`,
+  `references/roles/fidelity-auditor.md` — the paragraph-flow guard (keep
+  connectors that carry cause, contrast or sequence; never add a causal link
+  the source lacks; merged clauses keep each fact's own state, condition and
+  time qualifier), from `references/patterns.md` "Sentence and paragraph flow"
+- `SKILL.md`, `references/roles/fidelity-auditor.md` — the protected-facts
+  extension (qualifiers such as `최대`/`약`, negation and exceptions, request
+  versus offer versus promise in both directions, UI placeholders, variables
+  and keys), from `SKILL.md` §4 and `references/evaluation.md` "Hard fails"
+
+Modifications applied: the principles were fitted to this skill's S1/S2/S3
+severity scheme, A–J taxonomy IDs, run-directory contract and A–D grades;
+K-Humanizer's input modes (translation, English-source pair check), business
+use cases, resume workflow and bare-Korean output format were not adopted.
+
+### MIT License
+
+```
+MIT License
+
+Copyright (c) 2026 K-Humanizer contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
