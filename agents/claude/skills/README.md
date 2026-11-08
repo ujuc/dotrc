@@ -7,7 +7,7 @@
 | slug | 한글 라벨 | 스킬 |
 | --- | --- | --- |
 | `planning` | 🧭 기획·스펙 | — |
-| `analysis` | 📐 분석·계획 | — |
+| `analysis` | 📐 분석·계획 | `dual-brain` |
 | `build` | 🛠 구현·실행 | — |
 | `docs` | 📝 문서·커밋 | `commit`, `generate-agent-docs` |
 | `writing` | ✍️ 글쓰기 | `humanizer`, `prompting-assist` |

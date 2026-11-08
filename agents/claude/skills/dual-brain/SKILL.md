@@ -1,6 +1,7 @@
 ---
 name: dual-brain
 description: Dual-brain review for ambiguous designs, risky refactors, and recurring project decisions. Combine macro-level design review with micro-level code verification and relevant project memory.
+group: analysis
 ---
 
 # Dual-Brain

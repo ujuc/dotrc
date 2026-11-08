@@ -405,7 +405,7 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 직접 만든 스킬은 `agents/claude/skills/ujuc/skills/<name>/`에 둔다. `ujuc/.claude-plugin/plugin.json`
 덕분에 Claude Code가 이 디렉터리를 `ujuc@skills-dir` 플러그인으로 제자리 로드하므로(별도 설치·마켓플레이스
 없음), 각 스킬은 `/ujuc:commit`처럼 `ujuc:` 접두사로 호출된다. 같은 이름의 개인 스킬이 프로젝트
-`.claude/skills/` 스킬을 가리는 일을 막기 위한 구분이다. 외부에서 받아 오는 `skill-diet`(subtree),
+`.claude/skills/` 스킬을 가리는 일을 막기 위한 구분이다. 외부에서 받아 오는 `skill-diet`·`dual-brain`(subtree),
 `ultra-config`(mod), `ego-browser`(심링크)는 `agents/claude/skills/` 바로 아래에 둔다.
 
 #### Mods ([claude-code-templates](https://github.com/davila7/claude-code-templates))
@@ -423,7 +423,7 @@ cd ~ && npx claude-code-templates@latest --mod productivity/ultra-config
 #### Subtree 스킬
 
 업스트림 스킬 저장소를 `git subtree --squash`로 `agents/claude/skills/<name>/`에 넣는다. 본문은 원본 그대로 두고 로컬에서는 `group:` 한 줄만 더한다.
-현재 버전은 squash 커밋의 `git-subtree-split:` 트레일러에 남는다. `generate-skills` Step 0과 `skill-improver` Phase 0이 새 릴리스 태그가 있으면 경고만 한다.
+현재 버전은 squash 커밋의 `git-subtree-split:` 트레일러에 남는다. `generate-skills` Step 0과 `skill-improver` Phase 0이 새 릴리스 태그가 있으면 경고만 한다(`skill-diet`만 해당하며 `dual-brain`은 `git subtree pull`로 직접 올린다).
 
 ```sh
 agents/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-upstream check        # 새 태그와 CHANGELOG 링크 확인
@@ -431,6 +431,7 @@ agents/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-upstream pul
 ```
 
 - [skill-diet](https://github.com/nicobailon/skill-diet) (MIT, `v0.1.0`) — 스킬 편집 순서·크기 예산·before/after/none eval. `generate-skills` 다이어트 모드와 `skill-improver`의 `diet-recommended`가 사용한다
+- [dual-brain](https://github.com/sleeplesshan/dual-brain) (MIT, `v1.7.0`) — 설계(Right)·구현(Left) 두 관점 검토. `/dual-brain`으로 호출하며, 쓰기 작업이면 프로젝트 루트의 `.dual-brain/MEMORY.md`에 바뀐 결정을 남긴다
 
 ### [waza](https://github.com/microsoft/waza)
 

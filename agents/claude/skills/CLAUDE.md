@@ -1,7 +1,7 @@
 # Skill Authoring
 
 - Follow `ujuc/skills/generate-skills/references/frontmatter-spec.md` for skill metadata.
-- `skill-diet/` is a git subtree of upstream: keep its text verbatim (only the `group` line is local) and update it with `ujuc/skills/generate-skills/scripts/skill-diet-upstream`.
+- `skill-diet/` and `dual-brain/` are git subtrees of upstream release tags: keep their text verbatim (only the `group` line is local). Update `skill-diet` with `ujuc/skills/generate-skills/scripts/skill-diet-upstream`; update `dual-brain` with `git subtree pull --prefix=agents/claude/skills/dual-brain <url> <tag> --squash`.
 - Write skill bodies in English. `description`, `when_to_use`, user-visible trigger phrases, and target-language corpora or linguistic rulebooks may use their functional language.
 - Update `README.md` when a skill's purpose, triggers, model, group, or pipeline role changes.
 - Read `README.md` before changing a pipeline component; changes can break downstream contracts.
