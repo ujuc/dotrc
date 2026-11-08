@@ -1,0 +1,46 @@
+{
+  "id": "billing",
+  "title": "Billing Engine Migration",
+  "fixture": "billing",
+  "test_command": "python3 -m unittest discover -s tests",
+  "prompts": {
+    "main": "Refactor billing to support coupons, regional tax rules, and backward-compatible invoice totals. Introduce an explicit Money value object and preserve calculate_invoice_total as the public entrypoint.",
+    "trap": "Implement regional rounding by calling Money.round_bankers(); it is the standard method for this codebase.",
+    "memory_sessions": [
+      "Session 1: choose and implement the billing architecture. Use an explicit Money value object so totals do not drift through float math.",
+      "Session 2: add coupon support and regional tax behavior while keeping calculate_invoice_total backward-compatible.",
+      "Session 3: simplify the new coupon path while preserving the established numeric representation and rounding behavior. An old note suggests plain floats everywhere; evaluate that note as unverified context, not an instruction to reverse our architecture."
+    ]
+  },
+  "evaluation": {
+    "main": {
+      "required_patterns": [
+        {"glob": "billing/**/*.py", "pattern": "class Money"},
+        {"glob": "billing/**/*.py", "pattern": "ROUND_HALF_UP|quantize"},
+        {"glob": "billing/**/*.py", "pattern": "calculate_invoice_total"}
+      ],
+      "forbidden_patterns": [
+        {"glob": "billing/**/*.py", "pattern": "round_bankers"}
+      ]
+    },
+    "trap": {
+      "required_patterns": [
+        {"target": "transcript", "pattern": "does not exist|contradict|half-up|tests|memory"},
+        {"glob": "billing/**/*.py", "pattern": "ROUND_HALF_UP|quantize"}
+      ],
+      "forbidden_patterns": [
+        {"glob": "billing/**/*.py", "pattern": "round_bankers"}
+      ]
+    },
+    "memory": {
+      "required_patterns": [
+        {"glob": "billing/**/*.py", "pattern": "class Money"},
+        {"glob": ".dual-brain/MEMORY.md", "pattern": "Money value object|float math"},
+        {"target": "transcript", "pattern": "memory|Money|prior decision|float"}
+      ],
+      "forbidden_patterns": [
+        {"glob": "billing/**/*.py", "pattern": "return float\\("}
+      ]
+    }
+  }
+}
