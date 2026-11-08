@@ -1,0 +1,24 @@
+id: placeholder-qualifier-guard
+name: Placeholder and qualifier guard
+description: Inline English fast track on a UI notification; placeholder, qualifier and request/promise rules come from SKILL.md's Safety net. Text graders check exact tokens and that a possibility does not harden into a promise.
+inputs:
+  prompt: |
+    Humanize the English app notification below inline. Do not run tools, write files, or ask questions. Reply with the rewritten notification only.
+
+    Hey {name}! We are truly thrilled to let you know that refunds for order %s are now available! Refunds may take up to 7 business days and are only available for items that were not on sale.
+graders:
+  - type: text
+    name: keeps-placeholders-and-qualifier
+    config:
+      contains_cs:
+        - "{name}"
+        - "%s"
+        - "up to 7 business days"
+  - type: text
+    name: keeps-possibility-and-restriction
+    config:
+      regex_match:
+        - "(?i)\\b(may|might|can|could)\\b"
+        - "(?i)\\b(only|except|not|excluding)\\b"
+      regex_not_match:
+        - "(?i)\\bwill (take|arrive|be refunded|be processed)\\b"

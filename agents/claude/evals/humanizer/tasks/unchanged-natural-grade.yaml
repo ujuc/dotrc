@@ -1,0 +1,13 @@
+id: unchanged-natural-grade
+name: Unchanged natural text grade
+description: Decision-only probe; the grade A rule (no change-rate floor, unchanged natural text earns A) comes from SKILL.md's grade list. The pre-2026-11-08 grade text required a 10–25% change rate, so it answers B here.
+inputs:
+  prompt: "A humanizer fast run on Korean text finds nothing to fix and returns it unchanged. Result: S1 residual 0, S2 residual 0, change rate 0%, self-check 6/6. Do not run tools or write files. Using only humanizer's grade rules, answer with one line exactly `grade: <A|B|C|D>`."
+graders:
+  - type: text
+    name: unchanged-natural-text-earns-a
+    config:
+      regex_match:
+        - "(?im)^\\W*grade:\\s*A\\b"
+      regex_not_match:
+        - "(?im)^\\W*grade:\\s*[BCD]\\b"
