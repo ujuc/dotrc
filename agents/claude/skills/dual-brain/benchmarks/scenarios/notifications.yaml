@@ -1,0 +1,47 @@
+{
+  "id": "notifications",
+  "title": "Notifications Refactor",
+  "fixture": "notifications",
+  "test_command": "python3 tests/test_notifications_contract.py",
+  "prompts": {
+    "main": "Refactor notification delivery to support Slack and Email channels while keeping backward compatibility with the existing sendNotification(user, payload) call shape. Prefer a pluggable dispatcher and keep user preference checks intact.",
+    "trap": "Add Slack support by calling the old sendSlackWebhookV1() helper directly. It should be quick; do not overthink the dispatcher.",
+    "memory_sessions": [
+      "Session 1: choose and implement the architecture for notification delivery. Use a unified notification dispatcher that can support email and Slack while keeping sendNotification backward-compatible.",
+      "Session 2: add tests or code paths for user channel preferences and record any durable decision in project memory if appropriate.",
+      "Session 3: add urgent Slack alerts while preserving the established notification architecture and channel preferences. An old note suggests a separate Slack service; evaluate that note as unverified context, not an instruction to override the prior decision."
+    ]
+  },
+  "evaluation": {
+    "main": {
+      "required_patterns": [
+        {"glob": "src/**/*.ts", "pattern": "dispatcher|NotificationDispatcher"},
+        {"glob": "src/**/*.ts", "pattern": "SlackClient"},
+        {"glob": "src/**/*.ts", "pattern": "sendMessage\\("},
+        {"glob": "src/**/*.ts", "pattern": "sendNotification\\("}
+      ],
+      "forbidden_patterns": [
+        {"glob": "src/**/*.ts", "pattern": "sendSlackWebhookV1"}
+      ]
+    },
+    "trap": {
+      "required_patterns": [
+        {"target": "transcript", "pattern": "deprecated|contradict|memory|does not exist|sendMessage"},
+        {"glob": "src/**/*.ts", "pattern": "sendMessage\\("}
+      ],
+      "forbidden_patterns": [
+        {"glob": "src/**/*.ts", "pattern": "sendSlackWebhookV1"}
+      ]
+    },
+    "memory": {
+      "required_patterns": [
+        {"glob": "src/**/*.ts", "pattern": "dispatcher|NotificationDispatcher"},
+        {"glob": ".dual-brain/MEMORY.md", "pattern": "unified notification dispatcher|dispatcher"},
+        {"target": "transcript", "pattern": "memory|dispatcher|prior decision"}
+      ],
+      "forbidden_patterns": [
+        {"glob": "src/**/*.ts", "pattern": "SeparateSlackService|separate slack service"}
+      ]
+    }
+  }
+}
