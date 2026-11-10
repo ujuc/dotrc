@@ -7,13 +7,14 @@ host availability before selecting a model.
 
 | Profile | Choose for | Claude candidate | Move up when |
 | --- | --- | --- | --- |
-| **Lightweight** | Clear, repeatable extraction, classification, formatting, exact lookups, or reporting a deterministic check | Claude Haiku | The task needs interpretation, state-changing decisions, or coordination across files. |
-| **Standard** | Bounded tool use, routine commits with known scope, local fixes with clear acceptance criteria, focused exploration | Claude Sonnet | Requirements conflict, changes cross components, or preserving semantics needs substantial judgment. |
-| **Advanced** | Multi-file implementation, architecture decisions, difficult debugging, nuanced writing, semantic/security review, synthesis | Claude Opus | Long-horizon dependencies, costly ambiguity, or a reproduced reasoning failure exceeds this profile. |
-| **Frontier** | The hardest interconnected work, consequential unresolved tradeoffs, long autonomous reasoning, or demonstrated gaps at Advanced | Claude Fable | Reassess inputs, tools, scope and stopping conditions; the top profile is not an unlimited retry budget. |
+| **Lightweight** | Clear, repeatable extraction, classification, routing, formatting, exact lookups, reporting a deterministic check, or side-task workers that search files, read logs or summarize | Claude Haiku | The task needs interpretation, state-changing decisions, or coordination across files. |
+| **Standard** | Bounded tool use, routine commits with known scope, local fixes with clear acceptance criteria, focused exploration, repeated, well-defined agent tasks such as investigation, checklist review or drafting | Claude Sonnet | Requirements conflict, changes cross components, or preserving semantics needs substantial judgment. |
+| **Advanced** | Multi-file implementation, difficult debugging, nuanced writing, semantic/security review, synthesis; the default when no row clearly fits (between two named rows, ask per Dispatch routing step 2) | Claude Opus | Long-horizon dependencies, costly ambiguity, or a reproduced reasoning failure exceeds this profile. |
+| **Frontier** | Major refactors and migrations, architecture planning, leading many subagents, deep research, long unattended runs, or Advanced at `high` still falls short | Claude Fable | Reassess inputs, tools, scope and stopping conditions; the top profile is not an unlimited retry budget. |
 
-Start with the profile that fits the current step. A task's length, number of
-agents, or the parent's model alone does not determine its profile. A strong
+Start with the profile that fits the current step. Apart from the Frontier
+row's named triggers, a task's length, number of agents, or the parent's model
+alone does not determine its profile. A strong
 coordinator can delegate a narrow worker at a lower profile; simple shell
 execution does not need the coordinator's full reasoning capacity.
 
@@ -36,13 +37,17 @@ execution does not need the coordinator's full reasoning capacity.
    carried over from another model. Raising effort does not add missing tools,
    context capacity, or permissions.
 5. If verification exposes a reasoning gap, first rule out missing inputs,
-   unavailable tools and environment errors. Then consider higher effort or the
-   next profile, retaining the same acceptance criteria and the owning workflow's
-   retry limit. Do not spend another model call on an unchanged missing input.
+   unavailable tools and environment errors. Then escalate in this order, keeping
+   the same acceptance criteria and the owning workflow's retry limit: give the
+   model a way to verify its own work (test, build, script); raise effort one
+   level; move to the next profile at a lower effort than the smaller model
+   used. Past `high`, test the next profile instead of `xhigh`/`max`. Do not
+   spend another model call on an unchanged missing input.
 6. Compare cost per successfully completed task, including
    handoff and retry overhead. Neither the cheapest token price nor the highest profile guarantees
    the cheapest successful run. Do not launch a worker for a trivial command
-   when dispatch/context-transfer cost dominates.
+   when dispatch/context-transfer cost dominates. Switch a session's model at a
+   natural break: the prompt cache belongs to the model that wrote it.
 
 Independent review needs a separate context with the relevant evidence. It may
 use the same model; changing model names alone does not create independence.
@@ -81,8 +86,8 @@ profile to these call arguments. Never write them into frontmatter.
 | --- | --- | --- |
 | Lightweight | `haiku` / `medium` | Deterministic checks, structured extraction, commits touching ≤2 files and ≤40 changed lines, waza launcher runs |
 | Standard | `sonnet` / `medium` | Bounded implementation, multi-file commits, focused exploration, research partial reports |
-| Advanced | `opus` / `high` | Design, semantic review, synthesis, debugging, humanizer strict verifiers |
-| Frontier | `fable` / `xhigh` | Interdependent problems unresolved at Advanced |
+| Advanced | `opus` / `medium`; `high` for verification, review and brownfield debugging | Component design, implementation, synthesis; semantic review and humanizer strict verifiers at `high` |
+| Frontier | `fable` / `medium` (also after an Advanced `high` failure, per step 5); `high` for long unattended runs or a `medium` shortfall; `xhigh` only after a measured gain | Planning and refactors at `medium`, the long unattended part at `high` (the playbook starts at medium; the Fable 5.2 guide starts at `high` and gives `high` to long unattended runs) |
 
 Procedure:
 
@@ -101,11 +106,44 @@ their own files dispatch as `general-purpose`. Role instructions live under the
 calling skill's `references/roles/` and the dispatch prompt begins with
 "Read `<absolute role path>` first and follow it."
 
+## Agent teams
+
+For a lead coordinating several workers ([multi-agent scaling post](https://claude.dev/blog/safely-scaling-multi-agent-teams-with-fable-5-2/),
+[model-choice playbook](https://claude.dev/blog/which-claude-model-should-you-build-with/); last checked 2026-11-10):
+
+- Playbook: use an Advanced or Frontier lead with Standard workers only for
+  work bigger than one context window; skip it for one chain of dependent steps.
+- The lead splits and assigns; workers check with the lead when a task is unclear.
+- Workers coordinate, including those questions, through shared state (in the
+  post, a database and Git); each writes only to its own branch or workspace,
+  and a separate step merges.
+- An objective check (tests, build, validator) decides when work counts as done.
+- A guard block on the lead stops the team until a person reviews it; a block
+  on a worker removes that worker.
+- Agents tend to give up early on hard problems; a person re-checks an
+  "infeasible" verdict before the work is dropped, since human encouragement
+  keeps agents from stopping too early.
+
+Local inference, not from the post: in Claude Code, parallel writers use
+`isolation: "worktree"`, least privilege comes from permission rules and the
+sandbox, and the auto-mode classifier is the pre-execution guard.
+
 ## Source basis
 
-Repository policy inferred from vendor descriptions. Last checked: 2026-11-01.
+Repository policy inferred from vendor descriptions. Last checked: 2026-11-10.
 
 - [Claude model overview](https://platform.claude.com/docs/en/models/overview)
   and [cost and intelligence guidance](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence):
   compare cost per completed task; a stronger model may avoid retries. Claude
-  Mythos 5.1 is Fable 5.1 for verified organizations, not a separate candidate.
+  Mythos 5.2 is Fable 5.2 for verified organizations, not a separate candidate.
+  The overview: *"Use Claude Fable 5.2 for demanding reasoning and long-horizon
+  agentic work, or when your evals on Claude Opus 5.5 at higher effort still
+  fall short."*
+- [Prompting Claude Fable 5.2](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-2):
+  effort, early stopping, subagents and earlier-model instructions for Fable
+  5.2. Fetch it live; read the [2026-11-10 backup](prompting-claude-fable-5-2.md)
+  only when the fetch fails, and say so in one line.
+- [Which Claude model should you build with](https://claude.dev/blog/which-claude-model-should-you-build-with/):
+  start on Opus 5.5 at medium; move down for well-scoped or side tasks; move up
+  to Fable 5.2 *"when Opus 5.5 at high still falls short, or for long unattended
+  runs"*; adjust effort before switching models.
