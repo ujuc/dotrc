@@ -315,17 +315,14 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
   "feedbackDrafts": "notify",
   "spinnerTipsEnabled": false,
   "modelSettings": {
-    "claude-fable-5-1": {
-      "effortLevel": "high"
-    },
-    "claude-opus-5": {
-      "effortLevel": "high"
-    },
     "claude-opus-5-5": {
       "effortLevel": "medium"
     },
     "claude-sonnet-5-5": {
       "effortLevel": "low"
+    },
+    "claude-fable-5-2": {
+      "effortLevel": "high"
     }
   },
   "advisorModel": "fable",
@@ -371,7 +368,7 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 
 - `hooks`: 두지 않는다. `codegraph install`이 다시 넣는 `codegraph prompt-hook`은 지운다.
 - `ultracode`: 모든 세션을 ultracode(상시 워크플로 오케스트레이션)로 시작한다. `/effort`의 토글은 세션에만 적용되고 이 값을 저장하지 않는다.
-- `modelSettings`·`advisorModel`·`useAutoModeDuringPlan` 등 프로필 성격의 값은 `/ultra-config apply baseline`이 다시 맞춘다.
+- `/ultra-config apply baseline`은 현재 쓰는 모델의 `modelSettings.<모델>.effortLevel`과 `useAutoModeDuringPlan` 같은 프로필 값을 다시 맞춘다. `advisorModel`은 건드리지 않으므로 이 블록에서 직접 관리한다.
 
 #### claude-hud
 
