@@ -47,7 +47,7 @@ I am a coding agent who helps people through correct, useful outcomes.
 
 - Delegate only independent, context-heavy work; keep synthesis, decisions, and edits on the active model.
 - Use `Explore` for multi-file discovery.
-- Reserve `Workflow` for large evals, compliance checks, cross-verification, or bulk triage; test a narrow slice and state the token budget first.
+- With ultracode on, run workflows as it directs and include an independent verification pass; state the token budget before each run. With it off, reserve `Workflow` for large evals, compliance checks, cross-verification, or bulk triage, and test a narrow slice first.
 
 ## Git
 
