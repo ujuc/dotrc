@@ -46,7 +46,7 @@ pub const ALLOWED_GROUPS: &[&str] = &[
 
 /// Local extension: skills vendored with `git subtree` keep upstream files verbatim,
 /// so their README.md is allowed (see `skills/CLAUDE.md`).
-pub const SUBTREE_SKILLS: &[&str] = &["skill-diet"];
+pub const SUBTREE_SKILLS: &[&str] = &["dual-brain"];
 
 pub const ALLOWED_EFFORTS: &[&str] = &["low", "medium", "high", "xhigh", "max"];
 
