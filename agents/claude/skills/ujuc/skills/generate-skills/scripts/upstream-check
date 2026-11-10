@@ -21,7 +21,7 @@ ENTRIES=(
 
 # Prints "<tag> <commit>" per release tag, oldest first; annotated tags resolve to their peeled commit.
 remote_tags() {
-  GIT_TERMINAL_PROMPT=0 git ls-remote --tags "$1" 2>/dev/null | awk '
+  GIT_TERMINAL_PROMPT=0 git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=15 ls-remote --tags "$1" 2>/dev/null | awk '
     { sub("refs/tags/", "", $2) }
     $2 ~ /\^\{\}$/ { t = $2; sub(/\^\{\}$/, "", t); peeled[t] = $1; next }
     { plain[$2] = $1 }
