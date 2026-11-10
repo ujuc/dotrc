@@ -299,7 +299,9 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
       "mcp__acp__Bash",
       "Skill(commit)",
       "Skill(commit:*)",
-      "mcp__codegraph__*"
+      "mcp__codegraph__*",
+      "Read(~/.claude/skills/egm/**)",
+      "Read(~/.config/dotrc/agents/claude/skills/egm/**)"
     ],
     "ask": [],
     "defaultMode": "auto",
