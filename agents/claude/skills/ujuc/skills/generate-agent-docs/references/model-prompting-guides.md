@@ -1,6 +1,7 @@
 ---
 source_urls:
-  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1.md
+  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-2.md  # own guide; does not inherit 5.1
+  - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1.md  # legacy; source of measured 5.1 findings
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5.md   # base guide inherited by 5.1
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5.md
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5.md    # base guide inherited by 5.5
@@ -31,12 +32,14 @@ are system-prompt content: the parts of Anthropic's per-model guides on how
 instructions are written are authoritative for Stage 3 (writing) and Stage 4
 (verifying). The rest is out of scope (see the end of this file).
 
-**Inheritance**: each newer guide says its predecessor's prompts should perform
-well without changes. Opus 5.5, Fable 5.1 and Sonnet 5.5 inherit their base guides
-(Opus 5, Fable 5, Sonnet 5), so rules quoting those apply to the successor
+**Inheritance**: Opus 5.5, Fable 5.1 and Sonnet 5.5 say their predecessor's
+prompts should perform well without changes, so they inherit their base guides
+(Opus 5, Fable 5, Sonnet 5) and rules quoting those apply to the successor
 unless a rule says otherwise. Haiku 5.5 inherits Haiku 4.5, which is not cached,
-so only rules naming Haiku 5.5 apply to it. Mythos 5.1 and Mythos 5 map onto the
-Fable 5.1 and Fable 5 guides; they are not separate sources. Never attribute a
+so only rules naming Haiku 5.5 apply to it. Fable 5.2 inherits nothing: its
+guide lists instructions written for Fable 5.1 or Opus 5.5 to review, so only
+rules naming Fable 5.2 apply to it. Mythos 5.2, 5.1 and 5 map onto the Fable
+5.2, 5.1 and 5 guides; they are not separate sources. Never attribute a
 finding to a newer model whose guide does not restate it (upstream: *"treat it
 as measured on that model and re-check it"*).
 
@@ -75,13 +78,14 @@ without deleting the requirement before an authorized replacement. See D1.
 
 Fable 5.1: *"Prompts, skills, and tool descriptions that ask the model to write
 its thinking or reasoning might be declined with the `reasoning_extraction`
-category."* Fable 5, Opus 5, Opus 5.5 and Sonnet 5.5 have the same category.
+category."* Fable 5, Fable 5.2, Opus 5, Opus 5.5 and Sonnet 5.5 have the same category.
 Opus 5: *"If your system prompt contains a rule instructing the model not to
 think or not to reason, remove it; that kind of instruction increases tag
 leakage."* Opus 5.5 and Sonnet 5.5 (with `between_tools`) also say remove it.
 Opus 5.5: *"Lowering effort reduces thinking ... more reliably than prompt
 instructions do."* Sonnet 5.5 (think less) and Haiku 5.5 (answer directly) report
-the same.
+the same. Fable 5.2: a think-less line *"didn’t stop Claude Fable 5.2 from
+thinking at `medium` and above. Remove these lines and lower the effort level"*.
 
 Reasoning visibility is an application concern (structured thinking blocks) and
 thinking amount, including think-harder/less lines, is effort configuration (D2):
@@ -94,6 +98,8 @@ internal-reasoning transcription, and stays allowed.
 Sonnet 5 and Opus 4.8: *"It does not silently generalize an instruction from
 one item to another, and it does not infer requests you didn't make ... If
 you need Claude to apply an instruction broadly, state the scope explicitly."*
+Fable 5.2: *"delete the cautions whose reason no longer holds, and rewrite
+absolute rules so that they state their scope and reason."*
 
 Name the paths, directories or file types a rule covers. Path-bound rules prefer
 `.claude/rules/` with `paths`.
@@ -101,7 +107,7 @@ Name the paths, directories or file types a rule covers. Path-bound rules prefer
 ### W4 — Carry the reason when the rule is not self-evident
 
 Fable 5: the model *"tends to perform better when the prompt states the intent
-behind a request"*. One clause of *why*, only where the why is non-obvious.
+behind a request"*; Fable 5.2 asks for each absolute rule's reason (W3 quote). One clause of *why*, only where the why is non-obvious.
 
 ### W5 — Never write confidence or severity filter bars
 
@@ -117,10 +123,14 @@ triage instructions.
 
 Opus 5 *"delegates to subagents more readily than prior models ... it
 multiplies cost and time when applied to small tasks"*; Fable 5 *"dispatches
-parallel subagents more readily ... Use subagents frequently"*. Emit an explicit
+parallel subagents more readily ... Use subagents frequently"*; Fable 5.2 *"delegates
+readily"* where prompts invite it: *"If your system prompt, skills, or agent files
+tell the model to delegate, review those lines first."* Emit an explicit
 bar for when delegation is warranted through the existing conditional
 orchestration guidance (stage3-generator.md Section A), never as a second,
-competing policy.
+competing policy. In update mode, propose removing standing lines that push
+work to subagents without such a project condition; do not add a bar where
+the doc does not invite delegation.
 
 ### W7 — Agent-memory notes: one lesson per file
 
@@ -179,6 +189,9 @@ across models** — never as `if <model> then <behavior>`.
   sometimes with subagents"* (the guide offers a stop-and-report paragraph).
 - Haiku 5.5: at `low` and `medium` it *"sometimes reports a code change as done
   without running a check"* (the guide offers a run-a-real-check paragraph).
+- Fable 5.2: *"Anthropic also observed Claude Fable 5.2 using subagents to review
+  its own work in an agentic coding product at higher effort levels, such as
+  `xhigh` and `max`. Claude Fable 5.1 didn’t do this on the same tasks."*
 
 Generic verification lines in project docs are expendable on all four families
 (W1). Independent verifier roles remain a skill/harness design choice. The
@@ -192,8 +205,11 @@ reconciliation turns on **whose work is verified**:
 
 ### D2 — Effort and thinking defaults differ per model
 
-Fable 5.1 and Opus 5.5: adaptive thinking always on (cannot be disabled);
-default effort `high` on Fable 5.1, `medium` on Opus 5.5. Sonnet 5: adaptive,
+Fable 5.2, Fable 5.1 and Opus 5.5: adaptive thinking always on (cannot be
+disabled); default effort `high` on Fable 5.2 and 5.1, `medium` on Opus 5.5.
+Fable 5.2 runs at `medium` by default in Claude Code (code.claude.com/docs/en/model-config); its guide: *"rerun your
+effort sweep instead of carrying over a setting you tuned on Claude Fable 5.1
+or Claude Opus 5.5."* Sonnet 5: adaptive,
 default `high`. Sonnet 5.5: adaptive, default `high` on the Claude API but
 `medium` in Claude Code; levels are *"recalibrated"* against Sonnet 5, and
 `between_tools` (accepted at `high` or below) is its lowest thinking setting.
