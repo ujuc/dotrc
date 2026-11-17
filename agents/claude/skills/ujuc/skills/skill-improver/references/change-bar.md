@@ -9,7 +9,7 @@ This bar covers **behavioral edits motivated by Dimension E**: procedure, constr
 - Explicit user-directed authoring stays separate; missing evidence blocks only evidence-motivated rewrites, not a user's request to improve a known instruction.
 - An already accepted exact proposal needs no second approval.
 - A source-consistency fix does not show observed behavior improved.
-- Mechanical lint follows the Phase 4 auto-fix table and needs no session evidence: broken reference paths, catalog drift, missing frontmatter fields.
+- Mechanical lint follows the Phase 4 auto-fix table and needs no session evidence: broken reference paths, missing frontmatter fields.
 
 ## Review the evidence
 

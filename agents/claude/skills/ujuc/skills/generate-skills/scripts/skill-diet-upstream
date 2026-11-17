@@ -4,8 +4,7 @@
 #   skill-diet-upstream check        # same as `upstream-check skill-diet`
 #   skill-diet-upstream pull <tag>   # git subtree pull --squash; commits on the current branch
 #
-# Tracks release tags, not HEAD. The local patch (`group: meta` in skills/skill-diet/SKILL.md frontmatter)
-# may conflict when upstream edits the description line: keep upstream's description and the group line.
+# Tracks release tags, not HEAD.
 
 set -uo pipefail
 
@@ -28,7 +27,7 @@ case "${1:-}" in
     old="$(current_split)"
     git -C "${ROOT}" subtree pull --prefix="${PREFIX}" "${URL}" "${tag}" --squash \
       -m "chore(skills): skill-diet를 ${tag} 버전으로 올리다" || {
-      echo "error: subtree pull failed; resolve conflicts (keep upstream description + local 'group: meta'), then commit" >&2
+      echo "error: subtree pull failed; resolve conflicts, then commit" >&2
       exit 1
     }
     new="$(current_split)"

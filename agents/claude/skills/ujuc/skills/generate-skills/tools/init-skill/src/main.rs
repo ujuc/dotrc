@@ -13,7 +13,6 @@ name: {name}
 description: |
   TODO: What does this skill do? (WHAT)
   TODO: When should it trigger? Include example phrases. (WHEN)
-group: {group}
 # Optional fields — uncomment and fill in as needed.
 # when_to_use: \"Trigger phrases and example utterances separated from description\"
 # Omit fixed model assignments; add workload recommendations in the body below.
@@ -79,10 +78,6 @@ struct Args {
     /// Skill name in kebab-case (e.g. my-new-skill)
     name: String,
 
-    /// Catalog group slug (required by validate-skill; never guessed)
-    #[arg(long)]
-    group: String,
-
     /// Target parent directory
     #[arg(long, default_value = DEFAULT_PATH)]
     path: PathBuf,
@@ -130,15 +125,6 @@ fn main() -> Result<ExitCode> {
         return Ok(ExitCode::FAILURE);
     }
 
-    if !rules::ALLOWED_GROUPS.contains(&args.group.as_str()) {
-        eprintln!(
-            "error: unknown group '{}' — allowed: {}",
-            args.group,
-            rules::ALLOWED_GROUPS.join(", ")
-        );
-        return Ok(ExitCode::FAILURE);
-    }
-
     create_skill(&args)?;
     Ok(ExitCode::SUCCESS)
 }
@@ -155,8 +141,7 @@ fn create_skill(args: &Args) -> Result<()> {
 
     let skill_md = skill_dir.join("SKILL.md");
     let content = SKILL_TEMPLATE
-        .replace("{name}", &args.name)
-        .replace("{group}", &args.group);
+        .replace("{name}", &args.name);
     fs::write(&skill_md, content)
         .with_context(|| format!("failed to write {}", skill_md.display()))?;
 
@@ -178,11 +163,11 @@ fn create_skill(args: &Args) -> Result<()> {
         optional_dirs.push(dirname);
     }
 
-    print_summary(&skill_dir, &args.name, &args.group, &optional_dirs);
+    print_summary(&skill_dir, &args.name, &optional_dirs);
     Ok(())
 }
 
-fn print_summary(skill_dir: &Path, name: &str, group: &str, optional_dirs: &[&str]) {
+fn print_summary(skill_dir: &Path, name: &str, optional_dirs: &[&str]) {
     println!("Created: {}", skill_dir.display());
     println!();
     println!("  {name}/");
@@ -191,13 +176,8 @@ fn print_summary(skill_dir: &Path, name: &str, group: &str, optional_dirs: &[&st
         println!("      {d}/  (empty)");
     }
     println!();
-    println!("Next steps (GS and DOTRCDIR as in generate-skills Scripts):");
+    println!("Next steps (GS as in generate-skills Scripts):");
     println!("  1. Edit SKILL.md — fill in TODO placeholders");
     println!("  2. Validate:");
     println!("     bash \"$GS/validate-skill\" {}", skill_dir.display());
-    println!("  3. Register in the catalog group map:");
-    println!("     bash \"$GS/register-skill\" \\");
-    println!(
-        "       \"${{DOTRCDIR}}/agents/claude/skills/README.md\" --name {name} --group {group}"
-    );
 }

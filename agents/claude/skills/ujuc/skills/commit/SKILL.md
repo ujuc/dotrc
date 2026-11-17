@@ -1,7 +1,6 @@
 ---
 name: commit
 description: "한국어 Conventional Commits 규칙에 따라 git 커밋을 생성하고, 요청 시 push까지 수행한다. /ujuc:commit, 커밋해줘, 변경사항 커밋, 커밋하고 푸시해줘, commit, commit and push 요청 시 사용한다."
-group: docs
 allowed-tools: Bash(git rev-parse:*), Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git push:*), Bash(git -C:*), Bash(git submodule:*), Bash(printf:*), Bash(wc:*), Read, Edit, Glob, Agent
 ---
 

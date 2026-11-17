@@ -4,7 +4,6 @@ description: Keep agent skills lean and correct. Use before editing an existing 
 metadata:
   version: 0.2.0
   creator: Nico Bailon
-group: meta
 ---
 
 # Skill Diet

@@ -59,7 +59,7 @@ Compare the winning installed definitions for all skills that resolve above; ign
 2. Exclude slash-menu collision analysis when `user-invocable: false`.
 3. Treat project/global copies of the same name as one skill, with the project copy winning.
 4. Construct a concrete utterance that would auto-match both remaining skills.
-5. Group, model, and file ordering do **not** establish invocation precedence. An overlap passes only when invocation controls or clearly different domains resolve it.
+5. Model and file ordering do **not** establish invocation precedence. An overlap passes only when invocation controls or clearly different domains resolve it.
 
 FAIL only when two auto-invocable skills can plausibly claim the same utterance without a domain distinction.
 
@@ -93,7 +93,7 @@ claiming a live test. The PASS/WARN verdict assesses the definition's policy.
 ## Rules
 
 - Cite the exact metadata or body section for every WARN/FAIL.
-- Skip structural validation, reference integrity, group/catalog checks, and edits; skill-improver owns them.
+- Skip structural validation, reference integrity, and edits; skill-improver owns them.
 - Preserve trigger text verbatim in quotations.
 
 ## Advisor

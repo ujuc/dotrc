@@ -1,7 +1,6 @@
 ---
 name: generate-skills
 description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, 스킬 다이어트, create a skill, update skill, generate-skills, /ujuc:generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza, 한두 줄 편집만 skill-diet:skill-diet가 맡고, 스킬 다이어트 요청은 이 스킬로 시작해 skill-diet 절차를 적용한다."
-group: meta
 argument-hint: "[skill-name]"
 ---
 
@@ -46,13 +45,12 @@ Node.js 18+.
 ```bash
 DOTRCDIR="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}"  # zshrc exports it only in interactive shells
 GS="${DOTRCDIR}/agents/claude/skills/ujuc/skills/generate-skills/scripts"
-bash "$GS/init-skill" <skill-name> --group <slug> --path <parent-dir> [--with-references] [--with-scripts] [--with-assets]
+bash "$GS/init-skill" <skill-name> --path <parent-dir> [--with-references] [--with-scripts] [--with-assets]
 bash "$GS/validate-skill" <skill-dir>
 bash "$GS/skill-diet-eval" check <skill-dir>   # SKILL.md bytes for the commit message; fails on a broken link or anchor
 bash "$GS/skill-diet-growth" <skill-dir>       # one line: within budget | diet-recommended | no diet baseline
 bash "$GS/upstream-check"                      # one advisory line per vendored skill; `skill-diet-upstream pull <tag>` only when the user asks
 bash "$GS/superpowers-upstream" check           # one advisory line for guidance-testing.md
-bash "$GS/register-skill" "${DOTRCDIR}/agents/claude/skills/README.md" --name <skill-name> --group <slug>
 ```
 
 ## Authority and scope
@@ -106,7 +104,7 @@ bash "$GS/register-skill" "${DOTRCDIR}/agents/claude/skills/README.md" --name <s
 
 ## Step 0: Spec freshness
 
-This skill stays the authoring controller (Rust validator, group catalog, Waza
+This skill stays the authoring controller (Rust validator, Waza
 integration). Ideas from Superpowers live in
 [guidance testing](references/guidance-testing.md); never hand control
 to another skill-generation workflow.
@@ -130,10 +128,9 @@ to another skill-generation workflow.
 
 Ask (AskUserQuestion or plain text) for the problem or scenario, target tools
 (built-ins, MCP servers, external CLIs), expected output, trigger phrases users
-actually say, and the catalog group: one of `planning`, `analysis`, `build`,
-`docs`, `writing`, `meta`. Then pick the domain type and structural
+actually say. Then pick the domain type and structural
 pattern in [create mode](references/create-mode.md#step-1-capture-the-use-case)
-and confirm the pattern and group before scaffolding.
+and confirm the pattern before scaffolding.
 
 ## Behavior baseline
 
@@ -156,7 +153,7 @@ frontmatter, note `references/` and `scripts/`, and run
 
 ## Step U2: Compare against the latest spec (update mode)
 
-1. **Required fields**: add non-empty `name`, `description` and `group`; the update cannot complete without them. Ask the user for `group`; never infer it.
+1. **Required fields**: add non-empty `name` and `description`; the update cannot complete without them.
 2. **Field compatibility**: separate standard, host-specific and local fields.
    `license` and `metadata` stay standard even when one host table omits them.
 3. **New fields**: suggest `context`, `agent`, `allowed-tools` and the like where
@@ -194,9 +191,9 @@ path. Prefer delete-and-link over rephrasing.
 
 ## Step 5: Validate
 
-Fail the workflow if `name`, `description` or `group` is missing or empty;
+Fail the workflow if `name` or `description` is missing or empty;
 validator warnings do not override this. If `cargo` or `node` is missing, stop and report
-the draft as unvalidated: no registration, no completion claim. Otherwise, after the last edit and before the final report, run this on the
+the draft as unvalidated: no completion claim. Otherwise, after the last edit and before the final report, run this on the
 changed skill with `GS` from [Scripts](#scripts), however small the edit or urgent
 the request, then fix and rerun until it passes:
 
@@ -228,12 +225,6 @@ user did not ask for a quick build, dispatch the blind reviewer in
 are in `description` and that it does not lead with generic words ("help",
 "manage"); use [trigger tuning](references/description-examples.md#trigger-tuning) when unsure.
 
-**Registration**: register only user-scope skills, and only when registration is
-in scope; project-local skills never enter the global catalog. The README table
-mirrors the `group:` frontmatter, so `register-skill --group` must equal it. The
-launcher is idempotent and errors if the skill sits under another group; edit by
-hand only for layouts it cannot produce.
-
 **Maintenance**: if repository policy requires skill-improver after edits, run
 one targeted batch for the changed skills. Its re-verification is enough: never
 recursively invoke authoring or maintenance after self-edits, and a targeted
@@ -254,7 +245,7 @@ Use these binary checks with the evidence statuses above.
 
 | ID | PASS condition |
 | --- | --- |
-| 1 | `name`, `description`, and `group` are non-empty. |
+| 1 | `name` and `description` are non-empty. |
 | 2 | Every concrete reference path in the body and loaded references resolves. |
 | 3 | `description` plus optional `when_to_use` covers WHAT and concrete WHEN triggers. |
 | 4 | The Step 5 validator exits 0 with no error-severity findings. |

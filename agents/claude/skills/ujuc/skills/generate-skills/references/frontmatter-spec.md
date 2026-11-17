@@ -34,8 +34,7 @@ Field names must match exactly: Claude Code silently ignores an unknown key, so
 write `true`/`false` for portability.
 
 Only `name`, `description`, `license`, `compatibility`, `metadata` and
-`allowed-tools` belong to the standard; every other field, including this
-repository's `group`, breaks uploads ([Portability](#portability-outside-claude-code)).
+`allowed-tools` belong to the standard; every other field breaks uploads ([Portability](#portability-outside-claude-code)).
 
 ### `name`
 
@@ -251,25 +250,6 @@ Claude Code ignores it.
 access), 1–500 characters. Claude Code ignores it. Omit unless the skill truly
 has such requirements.
 
-### `group`
-
-**[LOCAL]** Required here, not upstream: exactly one catalog slug for the
-`skills/README.md` table.
-
-| slug | 한글 라벨 | Used for |
-|------|----------|----------|
-| `planning` | 🧭 기획·스펙 | Spec writing |
-| `analysis` | 📐 분석·계획 | Codebase reading |
-| `build` | 🛠 구현·실행 | Plan execution |
-| `docs` | 📝 문서·커밋 | Commits, CLAUDE.md generation |
-| `writing` | ✍️ 글쓰기 | Prose humanization, prompt crafting |
-| `meta` | 🧪 메타·관리 | Skill management, session lifecycle |
-
-- `validate-skill` fails on a missing or unlisted slug. The list lives in
-  `tools/skill-core/src/rules.rs::ALLOWED_GROUPS`; change it there, here and in
-  `skills/README.md` together.
-- Never auto-fix a missing `group`: `skill-improver` reports it as manual,
-  because a guess from the name or description risks wrong placement.
 
 ## Portability outside Claude Code
 
@@ -286,7 +266,7 @@ Allowed properties are: allowed-tools, compatibility, description, license, meta
 ```
 
 No skill here is upload-destined, so do not strip `when_to_use`,
-`argument-hint`, `model` or `group` from existing skills. A skill newly meant
+`argument-hint` or `model` from existing skills. A skill newly meant
 for one of those paths uses only the six fields and no Claude Code-only body
 features (`` !`command` `` injection, `@` file references,
 `${CLAUDE_PROJECT_DIR}`, `${CLAUDE_SESSION_ID}`): in a skill synced from

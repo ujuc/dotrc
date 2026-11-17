@@ -420,7 +420,7 @@ cd ~ && npx claude-code-templates@latest --mod productivity/ultra-config
 
 #### Subtree 스킬
 
-업스트림 스킬 저장소를 `git subtree --squash`로 `agents/claude/skills/<name>/`에 넣는다. 본문은 원본 그대로 두고 로컬에서는 `group:` 한 줄만 더한다.
+업스트림 스킬 저장소를 `git subtree --squash`로 `agents/claude/skills/<name>/`에 넣는다. 본문은 원본 그대로 둔다.
 현재 버전은 squash 커밋의 `git-subtree-split:` 트레일러에 남는다. `generate-skills` Step 0과 `skill-improver` Phase 0이 `upstream-check`로 subtree·릴리스 플러그인의 새 릴리스 태그를 확인해 경고만 한다.
 
 ```sh

@@ -1,17 +1,6 @@
 # Skills
 
-이 디렉토리는 Claude Code 자체 스킬을 담는다. 아래 그룹 표가 카탈로그이며, SKILL.md frontmatter의 `group:` 필드를 단일 진실 소스로 삼아 손으로 유지한다 — `generate-skills`의 `register-skill` 런처가 신규 스킬을 이 표에 등록한다.
-
-## 그룹
-
-| slug | 한글 라벨 | 스킬 |
-| --- | --- | --- |
-| `planning` | 🧭 기획·스펙 | — |
-| `analysis` | 📐 분석·계획 | `dual-brain` |
-| `build` | 🛠 구현·실행 | — |
-| `docs` | 📝 문서·커밋 | `commit`, `generate-agent-docs` |
-| `writing` | ✍️ 글쓰기 | `humanizer`, `prompting-assist` |
-| `meta` | 🧪 메타·관리 | `generate-skills`, `skill-improver`, `autoresearch`, `waza`, `skill-diet` |
+이 디렉토리는 Claude Code 자체 스킬을 담는다.
 
 `waza`는 Microsoft waza CLI의 유일한 호출 지점(`ujuc/skills/waza/scripts/waza-run.sh`)이며 `generate-skills`·`skill-improver`가 스킬 평가·회귀 확인에 사용한다.
 
@@ -48,7 +37,7 @@
 [글쓰기]        prompting-assist → (선택) humanizer 후처리
 ```
 
-`generate-skills`는 로컬 validator·카탈로그를 유지하며
+`generate-skills`는 로컬 validator를 유지하며
 행동 기준 변경에 baseline/candidate 검증을 적용한다.
 `skill-improver`는 정적 점검(A–C)에 더해 로컬 세션 기록을
 요약·채점하는 Dimension E를 수행한다. 트랜스크립트는 기기 밖으로 나가지 않고,
@@ -63,8 +52,6 @@
 템플릿·예시는 `references/`에서 관리한다. Markdown 링크는 각 문서 위치를
 기준으로 해석한다. 여러 스킬이 공유하는 지침은 소유 스킬의 reference를 직접
 연결한다. 본문뿐 아니라 reference 내부 링크도 확인한다.
-
-신규 스킬 추가 시 frontmatter에 **반드시** `group: <slug>` 필드를 둔다 — 위 6개 슬러그 중 선택. 누락하거나 목록 밖 값이면 `validate-skill`이 실패한다 (`ujuc/skills/generate-skills/tools/skill-core/src/rules.rs::ALLOWED_GROUPS`).
 
 ## References
 

@@ -34,14 +34,6 @@ pub const ALLOWED_KEYS: &[&str] = &[
     "metadata",
     "license",
     "compatibility",
-    "group",
-];
-
-/// Local extension: every SKILL.md must declare exactly one of these slugs
-/// in its `group` field. The catalog table in `skills/README.md` mirrors it.
-/// See `frontmatter-spec.md` "group" section.
-pub const ALLOWED_GROUPS: &[&str] = &[
-    "planning", "analysis", "build", "docs", "writing", "meta",
 ];
 
 /// Local extension: skills vendored with `git subtree` keep upstream files verbatim,

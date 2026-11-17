@@ -2,7 +2,6 @@
 name: generate-agent-docs
 description: "CLAUDE.md, nested CLAUDE.md, .claude/rules, contributing-docs 등 Claude 에이전트 문서를 생성·갱신·점검한다(AGENTS.md는 만들거나 고치지 않는다). CLAUDE.md 업데이트, CLAUDE.md 점검, 에이전트 문서 생성 요청에 사용한다. README·API 문서·CHANGELOG는 제외. (구 명칭 generate-claude-md)"
 when_to_use: "에이전트 문서(CLAUDE.md, nested CLAUDE.md, .claude/rules, contributing-docs)를 만들거나 고치거나 점검할 때. 트리거: '/ujuc:generate-agent-docs', 'generate-agent-docs', 'CLAUDE.md 업데이트', 'CLAUDE.md에 추가', 'CLAUDE.md 만들어줘', '에이전트 문서 갱신', 'CLAUDE.md 점검', 'CLAUDE.md 감사', '에이전트 문서 점검', 'rules 생성', 'contributing-docs 추가', 'update CLAUDE.md', 'audit CLAUDE.md', 'check CLAUDE.md'. 커밋 워크플로 안의 문서 갱신 단계는 commit 스킬이 처리한다."
-group: docs
 allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch advisor
 ---
 

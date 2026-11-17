@@ -4,7 +4,6 @@ members = [
     "skill-core",
     "validate-skill",
     "init-skill",
-    "register-skill",
 ]
 
 [workspace.package]

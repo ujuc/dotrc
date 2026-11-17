@@ -138,7 +138,6 @@ pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
     validate_xml_tags(fm, &mut findings);
     validate_known_keys(fm, &mut findings);
     validate_values(fm, &mut findings);
-    validate_group(fm, &mut findings);
     validate_agent_context(fm, &mut findings);
     validate_allowed_tools(fm, &mut findings);
     validate_boolean_fields(fm, &mut findings);
@@ -319,34 +318,6 @@ fn check_enum(fm: &Frontmatter, key: &str, allowed: &[&str], findings: &mut Vec<
             "Values",
             format!("{key} must be one of {:?}, got '{value}'", allowed),
         ));
-    }
-}
-
-fn validate_group(fm: &Frontmatter, findings: &mut Vec<Finding>) {
-    match frontmatter::get_str(fm, "group") {
-        None => findings.push(Finding::fail(
-            "Frontmatter",
-            format!(
-                "group field is missing (local extension; required for /skills catalog). Set to one of: {:?}",
-                rules::ALLOWED_GROUPS
-            ),
-        )),
-        Some(g) => {
-            if rules::ALLOWED_GROUPS.contains(&g) {
-                findings.push(Finding::pass(
-                    "Frontmatter",
-                    format!("group value '{g}' is valid"),
-                ));
-            } else {
-                findings.push(Finding::fail(
-                    "Frontmatter",
-                    format!(
-                        "group must be one of {:?}, got '{g}'",
-                        rules::ALLOWED_GROUPS
-                    ),
-                ));
-            }
-        }
     }
 }
 
@@ -712,37 +683,5 @@ mod tests {
         let mut findings = Vec::new();
         validate_known_keys(&fm, &mut findings);
         assert!(findings.iter().any(|f| f.severity == Severity::Warn));
-    }
-
-    #[test]
-    fn group_is_in_allowed_keys() {
-        let fm = fm_from("---\nname: t\ngroup: planning\n---\n");
-        let mut findings = Vec::new();
-        validate_known_keys(&fm, &mut findings);
-        assert!(findings.iter().all(|f| f.severity != Severity::Warn));
-    }
-
-    #[test]
-    fn missing_group_fails() {
-        let fm = fm_from("---\nname: t\n---\n");
-        let mut findings = Vec::new();
-        validate_group(&fm, &mut findings);
-        assert!(findings.iter().any(|f| f.severity == Severity::Fail));
-    }
-
-    #[test]
-    fn invalid_group_fails() {
-        let fm = fm_from("---\nname: t\ngroup: foobar\n---\n");
-        let mut findings = Vec::new();
-        validate_group(&fm, &mut findings);
-        assert!(findings.iter().any(|f| f.severity == Severity::Fail));
-    }
-
-    #[test]
-    fn valid_group_passes() {
-        let fm = fm_from("---\nname: t\ngroup: planning\n---\n");
-        let mut findings = Vec::new();
-        validate_group(&fm, &mut findings);
-        assert!(findings.iter().any(|f| f.severity == Severity::Pass));
     }
 }

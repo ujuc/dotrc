@@ -23,21 +23,20 @@ Combine patterns with an explicit step heading at each boundary (interview then
 linear, linear then validation). Keep conditional branches to two or three that
 converge on one goal.
 
-Confirm the pattern, the reason, and the group with the user before scaffolding.
+Confirm the pattern and the reason with the user before scaffolding.
 While the user answers, the [Explore-1 survey](subagent-guidelines.md#explore-1-existing-skill-survey)
 may run; skip it when the request already names the skill, purpose and pattern.
 
 ## Step 2: Scaffold the structure
 
-Run `init-skill` ([Scripts](../SKILL.md#scripts)). `--group` is required and is
-a deliberate choice, never a guess. It writes `SKILL.md` with the required
+Run `init-skill` ([Scripts](../SKILL.md#scripts)). It writes `SKILL.md` with the required
 fields and commented placeholders for common optional fields; add
 `--with-references`, `--with-scripts` or `--with-assets` only for resources the
 skill needs.
 
 Without `cargo`, scaffold by hand (a kebab-case folder with an empty `SKILL.md`,
-plus the needed subfolders). That is a draft only: completion and registration
-stay blocked until Step 5 validates it.
+plus the needed subfolders). That is a draft only: completion stays blocked
+until Step 5 validates it.
 
 Structure rules the validator does not cover:
 
@@ -55,8 +54,7 @@ Structure rules the validator does not cover:
 
 Use [frontmatter-spec.md](frontmatter-spec.md) and [description-examples.md](description-examples.md).
 
-1. Set non-empty `name` (matching the folder) and `description`, and use the
-   `group` confirmed in Step 1.
+1. Set non-empty `name` (matching the folder) and `description`.
 2. Write a concise WHAT + WHEN `description` from the selected trigger phrases;
    workflow detail belongs in the body.
 3. Pick optional fields for the intended host and distribution path. Use manual

@@ -1,7 +1,6 @@
 ---
 name: skill-improver
 description: "스킬 정의를 구조·의미 점검과 최근 세션 기록에서 관찰된 실패로 감사해 안전한 기계적 결함은 자동 수정하고 행동 변경은 근거 있는 제안으로 남긴다. /ujuc:skill-improver, skill-improver, 스킬 개선해줘, 스킬 점검해줘, 스킬 감사해줘, 스킬 최적화, improve skill 요청 시 사용한다. 스킬 테스트·eval 실행·점수 비교는 waza, 반복 변이 루프는 autoresearch, 스킬 다이어트는 generate-skills 다이어트 모드가 맡는다."
-group: meta
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bash:*), Bash(git:*), Bash(date:*), Bash(mktemp:*), Bash(diff:*), Agent, advisor
 argument-hint: "[skill-name ...]"
 ---
@@ -18,7 +17,7 @@ Audit skills and their role files: fix safe mechanical defects, and propose beha
 - **Review, don't run:** read definitions, scripts and existing evidence. Never execute a target's workflow to fill an evidence gap; report the gap and route an authorized isolated run to the owning authoring or evaluation workflow. The Waza guard (Phases 4–5) is the only eval run.
 - **Independent review:** an advisor or a separate reviewer context, handed the inputs, instructions and evidence explicitly; a different model alone is not independent, and neither is your own reasoning. Use it for a complex skill's cross-skill test coverage (Phase 2), an ambiguous mechanical-vs-manual call or a contested E.1 finding (Phase 4), and at most once after three iterations (Phase 5). When none is available, say so and leave unresolved behavioral proposals unapplied.
 - **Questions:** without a question tool, ask in ordinary text; never assume an answer. An unanswered material choice blocks only the writes that depend on it.
-- **Write scope:** target files, the skills README catalog, `REPORT_DIR`, Waza result JSON under the gitignored `~/.claude/data/waza/results/`, and a commit the user asked for. Never scaffold or edit `claude/evals/`; suite authoring belongs to `generate-skills` through the `waza` skill.
+- **Write scope:** target files, `REPORT_DIR`, Waza result JSON under the gitignored `~/.claude/data/waza/results/`, and a commit the user asked for. Never scaffold or edit `claude/evals/`; suite authoring belongs to `generate-skills` through the `waza` skill.
 
 ## Phase 0 — Pre-flight
 
@@ -37,7 +36,7 @@ If step 1 or 2 fails, report an actionable fix and stop before Phase 1.
 ## Phase 1 — Inventory
 
 1. **Targets:** the named skills, or with no arguments every skill in `claude/skills/ujuc/skills/` and `<repo_root>/../.claude/skills/`.
-2. **Catalog map:** `name` and `group` of each user-scope `claude/skills/ujuc/skills/` skill, for B.6. Project-scope `.claude/skills/` skills are validated structurally but never join the user catalog.
+2. **Catalog:** the `name` of each user-scope `claude/skills/ujuc/skills/` skill, for Dimension E usage filtering.
 3. **Per target:** parse the frontmatter (`name`, `description`, `model`, `allowed-tools`, optional fields), the procedure, constraints and prohibitions, referenced paths (`references/`, `scripts/`, role files), and the description's trigger keywords. Summarize its intent in one line.
 4. **Session evidence** (once per run):
    ```bash
@@ -52,13 +51,12 @@ Each test is a concrete check with a PASS criterion.
 
 ### Dimension A — Structural
 
-Run `validate-skill <path>` (frontmatter, naming, size limits, `group` presence and slug), then `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-eval check <path>` (links and anchors in every file) and `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-growth <path>`. `diet-recommended` is a Manual finding, not a FAIL. Dimension B does not repeat these.
+Run `validate-skill <path>` (frontmatter, naming, size limits), then `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-eval check <path>` (links and anchors in every file) and `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-growth <path>`. `diet-recommended` is a Manual finding, not a FAIL. Dimension B does not repeat these.
 
 ### Dimension B — Semantic
 
 - **B.1 Description-body alignment:** the description's WHAT clause claims nothing the procedure lacks and misses no major capability.
 - **B.5 Reference integrity:** every path the body references exists; role files under `references/roles/` are checked like any reference.
-- **B.6 Catalog sync:** a valid user-scope skill is listed under its `group` in `<repo_root>/claude/skills/README.md`. `group` owns placement; no parallel trigger or model catalog in `claude/CLAUDE.md`. Project-scope targets: SKIP.
 - **B.7 Language policy:** `description` and `when_to_use` are Korean; SKILL.md bodies are English except functional examples and user-visible strings; role files keep their owning skill's language, except that role files applying a target-language rulebook may use that language. Trigger keywords are functional identifiers: never paraphrase or translate them. Report drift and ask before translating; `skill-diet/` is verbatim upstream, so this check is SKIP there.
 - **B.9 Authority and write scope:** the target reuses existing approval, puts explicit user and repository requirements over optimization defaults, resolves targets and dependencies before writing, names who owns each side effect, and keeps body and references consistent on cache/date writes and approval scope without new per-file approval gates. FAIL examples: asking again for the same exact patch; editing unrelated sibling or global caches; pruning a named team test gate as generic cleanup; an upstream recommendation shown as an unlabeled local hard limit. New scope and destructive actions still need their approval; when one is needed, quote the requirement and why existing authorization falls short.
 - **B.10 Evidence contract** (inspect evaluator prompts and checked-in suites; never run the target): each claim names its evidence level (structure/schema, fixed-input decision replay, actual artifact application, live integration) and has the inputs for it. Verifiers of preservation or confirmation get the original contents or diff, facts, decisions, scope and effective guidance, so a blind reviewer neither guesses hidden facts nor drops policy whose approval it cannot see. Baseline and candidate share inputs and channels; a changed suite supports no raw-score regression claim. SKIP and UNVERIFIED stay evidence statuses, never PASS. FAIL examples: mock keyword success shown as behavior; simulated tool calls shown as live runs; preservation PASS without a baseline; unchecked final repairs; skipped evidence or failed criteria hidden by a score. A source contradiction may be repaired without claiming baseline behavior failed.
@@ -94,16 +92,14 @@ Three or more Dimension A errors skip the rest for that target. Show a results t
 
 | Category | When | Fix |
 | --- | --- | --- |
-| Frontmatter | Missing field, typo, invalid format other than `group` | Add or correct the field |
+| Frontmatter | Missing field, typo, invalid format | Add or correct the field |
 | Description WHAT | B.1 fails | Rewrite the WHAT clause from the procedure; never change the WHEN clause (trigger phrases) without user approval |
-| Catalog sync | B.6 fails for a valid user-scope skill | Align the README group map; never register a project-scope skill |
 | Reference path | B.5 fails | Fix the path when a similarly named file exists nearby; otherwise Manual |
 
 Manual (report, do not attempt):
 
 - Cross-skill dependencies, core logic, workflow changes, structural design, and authority, scope or evidence decisions.
 - WHEN-clause changes and translations, unless explicitly approved.
-- Missing or invalid `group`: present the seven allowed slugs and take the user's choice; never infer a group from the name or description.
 - E.1 proposals: a draft at most, never an unattended procedure rewrite.
 - E.2 coverage gaps: suggestions for skill-engineer, which owns triggers.
 - `diet-recommended`: hand off to `/ujuc:generate-skills <name> 다이어트`; this skill never runs a diet eval.
@@ -119,7 +115,7 @@ eval_yaml="<repo_root>/claude/evals/<skill>/eval.yaml"
 [ -f "$eval_yaml" ] && bash "$waza_run" eval "$eval_yaml" --label improver-baseline --trials 3
 ```
 
-Use three trials; one run is noise. Budget about a minute per guard run on hosted Haiku, about 20 on local Ollama. Record the `- Result JSON: ...` path the report ends with as `waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: a bare skill name scaffolds a new suite, outside this skill's write scope. No suite → guard SKIP; catalog-only fixes → guard SKIP (catalog-only). Launcher exit 1 or no `- Result JSON:` line → no baseline, guard UNVERIFIED.
+Use three trials; one run is noise. Budget about a minute per guard run on hosted Haiku, about 20 on local Ollama. Record the `- Result JSON: ...` path the report ends with as `waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: a bare skill name scaffolds a new suite, outside this skill's write scope. No suite → guard SKIP; launcher exit 1 or no `- Result JSON:` line → no baseline, guard UNVERIFIED.
 
 ## Phase 5 — Re-verify (max 3 iterations)
 

@@ -2,7 +2,6 @@
 name: autoresearch
 description: "편집 가능한 대상(프롬프트, 설정, 코드 등)을 실행 → 채점 → 변이 → 유지/폐기 루프로 자율 최적화한다."
 when_to_use: "사용자가 `/ujuc:autoresearch` 또는 autoresearch 실행을 명시적으로 요청했을 때만 사용한다. 자동 실험과 eval 루프 요청만으로는 실행하지 않는다."
-group: meta
 disable-model-invocation: true
 argument-hint: "[target-path]"
 allowed-tools: Read, Write, Edit, Bash, AskUserQuestion
