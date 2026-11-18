@@ -28,13 +28,13 @@ No skill body names a model ID, so no skill body changes.
 
 ## Status (2026-11-10)
 
-Executed inline; not committed.
+Committed 2026-11-11 (`628775d`, `d8b918a`, `b04d910`, this plan `56a417d`). Checkboxes synced against those commits on 2026-11-18; unchecked steps left no trace in Git.
 - D1: Frontier `fable`/`medium` (also after an Advanced `high` failure); `high` for long unattended runs or a `medium` shortfall; `xhigh` only after a measured gain.
 - D2: Advanced `opus`/`medium`, `high` for verification, review and brownfield debugging.
-- D3: README and live `settings.json` both updated. The bootstrap `claude-opus-5-5` was aligned to the live `high` + `autoCompactWindow: 400000`.
+- D3: README bootstrap gained `claude-fable-5-2: high` and dropped `claude-fable-5-1` and `claude-opus-5`; the live `settings.json` was reported updated (untracked, not re-checked). The README `claude-opus-5-5` stays `medium` with no `autoCompactWindow`, so the first Follow-up is still open.
 - D4: dropped. `agents/claude/skills/CLAUDE.md` forbids `~/.claude/agents/` definitions.
 - D5: policy text only.
-- `last_upstream_check` in `model-prompting-guides.md` stays 2026-11-01, because only the Fable 5.2 guide and the best-practices page were re-fetched.
+- `last_upstream_check` in `model-prompting-guides.md` stays 2026-11-01, because only the Fable 5.2 guide and the best-practices page were re-fetched. It passed `check_interval_days` on 2026-11-15; bump it only after a full `source_urls` re-fetch.
 - Added: a verbatim English backup of the Fable 5.2 prompting guide at `generate-skills/references/prompting-claude-fable-5-2.md`, linked as the fetch-failure fallback.
 - Final review: 1 source-fidelity reviewer and 2 report-only skill-improver runs. All Important findings were fixed in one pass.
 
@@ -84,10 +84,10 @@ lower effort level than you used on the smaller one" and lists Fable 5.2 at
 - Produces: `source_urls` entry `prompting-claude-fable-5-2.md`; `last_upstream_check: 2026-11-10`.
 
 - [ ] **Step 1:** Invoke `skill-diet:skill-diet` for `generate-agent-docs` before editing.
-- [ ] **Step 2:** Add the Fable 5.2 guide URL to `source_urls` above the 5.1 entry; bump `last_upstream_check` to `2026-11-10`; fetch `secondary_source_url` and add any other guide listed there but missing here (Freshness rule).
-- [ ] **Step 3:** Rewrite the Inheritance paragraph: Fable 5.2 has its own guide, which does not say earlier prompts carry over unchanged and instead lists earlier-model instructions to review, so Fable 5.1/5 findings apply to 5.2 only where the 5.2 guide restates them. Mythos 5.2 maps onto the Fable 5.2 guide.
-- [ ] **Step 4:** Add Fable 5.2 quotes only where a rule already covers the topic: W6 (delegation: "If your system prompt, skills, or agent files tell the model to delegate, review those lines first"), W2 (think-less lines: "such a line didn't stop Claude Fable 5.2 from thinking at `medium` and above"), D2 (Fable 5.2 API default `high`, Claude Code default `medium`). Quote verbatim from the fetched guide.
-- [ ] **Step 5:** Run `bash agents/claude/skills/ujuc/skills/generate-skills/scripts/validate-skill agents/claude/skills/ujuc/skills/generate-agent-docs` — Expected: no ERROR findings.
+- [ ] **Step 2:** Add the Fable 5.2 guide URL to `source_urls` above the 5.1 entry; bump `last_upstream_check` to `2026-11-10` (not done, see Status); fetch `secondary_source_url` and add any other guide listed there but missing here (Freshness rule).
+- [x] **Step 3:** Rewrite the Inheritance paragraph: Fable 5.2 has its own guide, which does not say earlier prompts carry over unchanged and instead lists earlier-model instructions to review, so Fable 5.1/5 findings apply to 5.2 only where the 5.2 guide restates them. Mythos 5.2 maps onto the Fable 5.2 guide.
+- [x] **Step 4:** Add Fable 5.2 quotes only where a rule already covers the topic: W6 (delegation: "If your system prompt, skills, or agent files tell the model to delegate, review those lines first"), W2 (think-less lines: "such a line didn't stop Claude Fable 5.2 from thinking at `medium` and above"), D2 (Fable 5.2 API default `high`, Claude Code default `medium`). Quote verbatim from the fetched guide.
+- [x] **Step 5:** Run `bash agents/claude/skills/ujuc/skills/generate-skills/scripts/validate-skill agents/claude/skills/ujuc/skills/generate-agent-docs` — Expected: no ERROR findings.
 
 ### Task 2: Model-selection policy (requests 1 and 3)
 
@@ -101,12 +101,12 @@ lower effort level than you used on the smaller one" and lists Fable 5.2 at
 - Produces: profile names unchanged; routing rows `haiku`/`medium`, `sonnet`/`medium`, Advanced per D2, Frontier per D1.
 
 - [ ] **Step 1:** Invoke `skill-diet:skill-diet` for `generate-skills` before editing.
-- [ ] **Step 2:** Profiles table: Advanced "Choose for" gains "the default when the fit is unclear"; Frontier gains "major refactors and migrations, architecture planning, leading many subagents, deep research, long unattended runs, or Opus at `high` still falls short". Standard gains "repeated agent tasks such as investigation, review or drafting". Lightweight gains "subagents that search files, read logs or summarize".
-- [ ] **Step 3:** Selection step 5: escalation order is (a) give the model a way to verify its own work (test, build, script), (b) raise effort one level, (c) move to the next profile at a lower effort; past `high`, test the next profile instead of `xhigh`/`max`. Step 6: switch models at a natural break, because the prompt cache belongs to the model that wrote it.
-- [ ] **Step 4:** Dispatch routing rows per D1/D2. Read the table back and confirm Review Focus 1–2.
-- [ ] **Step 5:** Source basis: `Last checked: 2026-11-10`; Mythos line becomes "Claude Mythos 5.2 is Fable 5.2 for verified organizations, not a separate candidate"; add the playbook URL and the models-overview line "Use Claude Fable 5.2 … when your evals on Claude Opus 5.5 at higher effort still fall short."
-- [ ] **Step 6:** Sync the 고급/최상위 rows in `skills/README.md` with Step 2 wording.
-- [ ] **Step 7:** Run `validate-skill agents/claude/skills/ujuc/skills/generate-skills` — Expected: no ERROR findings.
+- [x] **Step 2:** Profiles table: Advanced "Choose for" gains "the default when the fit is unclear"; Frontier gains "major refactors and migrations, architecture planning, leading many subagents, deep research, long unattended runs, or Opus at `high` still falls short". Standard gains "repeated agent tasks such as investigation, review or drafting". Lightweight gains "subagents that search files, read logs or summarize".
+- [x] **Step 3:** Selection step 5: escalation order is (a) give the model a way to verify its own work (test, build, script), (b) raise effort one level, (c) move to the next profile at a lower effort; past `high`, test the next profile instead of `xhigh`/`max`. Step 6: switch models at a natural break, because the prompt cache belongs to the model that wrote it.
+- [x] **Step 4:** Dispatch routing rows per D1/D2. Read the table back and confirm Review Focus 1–2.
+- [x] **Step 5:** Source basis: `Last checked: 2026-11-10`; Mythos line becomes "Claude Mythos 5.2 is Fable 5.2 for verified organizations, not a separate candidate"; add the playbook URL and the models-overview line "Use Claude Fable 5.2 … when your evals on Claude Opus 5.5 at higher effort still fall short."
+- [x] **Step 6:** Sync the 고급/최상위 rows in `skills/README.md` with Step 2 wording.
+- [x] **Step 7:** Run `validate-skill agents/claude/skills/ujuc/skills/generate-skills` — Expected: no ERROR findings.
 
 ### Task 3: Multi-agent team practices (request 2)
 
@@ -119,9 +119,9 @@ dispatching skill links the former; the latter is scoped to skill generation.
 **Interfaces:**
 - Consumes: Task 2 file state.
 
-- [ ] **Step 1:** Add ≤12 lines, each traceable to a quote in the post: one lead splits and assigns, workers escalate when unclear; workers coordinate through shared state (files, Git), not chat; each worker writes only its own branch/workspace and a separate step merges; an objective checker (tests, build) decides done; a block on a worker drops that worker, a block on the lead stops the run for human review; push back on early "infeasible" verdicts. Lead/worker model split from the playbook: Opus or Fable lead with Sonnet workers only for work bigger than one context window; skip it for dependent chains.
-- [ ] **Step 2:** One line labeled "Local inference": in Claude Code these map onto `isolation: "worktree"` for parallel writers, sandbox/permission deny rules, and the auto-mode classifier. Cite the post URL and `Last checked: 2026-11-10`.
-- [ ] **Step 3:** Re-run `validate-skill` for `generate-skills`.
+- [x] **Step 1:** Add ≤12 lines, each traceable to a quote in the post: one lead splits and assigns, workers escalate when unclear; workers coordinate through shared state (files, Git), not chat; each worker writes only its own branch/workspace and a separate step merges; an objective checker (tests, build) decides done; a block on a worker drops that worker, a block on the lead stops the run for human review; push back on early "infeasible" verdicts. Lead/worker model split from the playbook: Opus or Fable lead with Sonnet workers only for work bigger than one context window; skip it for dependent chains.
+- [x] **Step 2:** One line labeled "Local inference": in Claude Code these map onto `isolation: "worktree"` for parallel writers, sandbox/permission deny rules, and the auto-mode classifier. Cite the post URL and `Last checked: 2026-11-10`.
+- [x] **Step 3:** Re-run `validate-skill` for `generate-skills`.
 
 ### Task 4: settings.json bootstrap (request 1)
 
@@ -129,23 +129,22 @@ dispatching skill links the former; the latter is scoped to skill generation.
 - Modify: `README.md:317-331` (bootstrap `modelSettings`)
 - Modify (only if D3 approves): `agents/claude/settings.json` (untracked)
 
-- [ ] **Step 1:** Apply D3 to the README block. The `claude-fable-5-2` key is inferred from the documented canonical-name rule, not shown in a doc example; note this nowhere in the README, only in the report.
-- [ ] **Step 2:** If approved, apply the same keys to the live file with `jq … >| tmp && [ -s tmp ] && mv` (noclobber guard).
-- [ ] **Step 3:** Confirm `advisorModel: "fable"` stays valid for Opus 5.5 and Fable 5.2 main models (advisor pairing table).
+- [x] **Step 1:** Apply D3 to the README block. The `claude-fable-5-2` key is inferred from the documented canonical-name rule, not shown in a doc example; note this nowhere in the README, only in the report.
+- [x] **Step 2:** If approved, apply the same keys to the live file with `jq … >| tmp && [ -s tmp ] && mv` (noclobber guard).
+- [x] **Step 3:** Confirm `advisorModel: "fable"` stays valid for Opus 5.5 and Fable 5.2 main models (advisor pairing table).
 
 ### Task 5: Verification
 
-- [ ] **Step 1:** `git grep -nE 'fable-5-1|Fable 5\.1|Mythos 5\.1'` — classify each hit as measured evidence, historical doc, or stale candidate; only stale candidates are fixed.
-- [ ] **Step 2:** Run `skill-improver` on `generate-skills` and `generate-agent-docs` (required by `agents/CLAUDE.md` after a skill change).
-- [ ] **Step 3:** One independent reviewer (separate context, budget ≈150k tokens) checks every changed sentence against the source quotes saved under the session scratchpad and reports unsupported claims.
-- [ ] **Step 4:** Report checks and outcomes; offer a commit (`skills` scope for Tasks 1–3, `docs` for README) without running it.
+- [x] **Step 1:** `git grep -nE 'fable-5-1|Fable 5\.1|Mythos 5\.1'` — classify each hit as measured evidence, historical doc, or stale candidate; only stale candidates are fixed.
+- [x] **Step 2:** Run `skill-improver` on `generate-skills` and `generate-agent-docs` (required by `agents/CLAUDE.md` after a skill change).
+- [x] **Step 3:** One independent reviewer (separate context, budget ≈150k tokens) checks every changed sentence against the source quotes saved under the session scratchpad and reports unsupported claims.
+- [x] **Step 4:** Report checks and outcomes; offer a commit (`skills` scope for Tasks 1–3, `docs` for README) without running it.
 
 ## Follow-ups (not in this change)
 
 | Drift | Purpose | Method | Check |
 | --- | --- | --- | --- |
 | README says `claude-opus-5-5` medium, live is `high` + `autoCompactWindow` | one bootstrap truth | settle in D3 | diff README block vs live |
-| README:374 claims `/ultra-config apply baseline` re-applies `advisorModel` | accurate docs | fix wording or add it to `profiles.ts` baseline | ultra-config tests |
 | `teammateMode` `auto` (settings) vs `tmux` (`~/.claude.json`) | predictable teams | pick one | `/config` |
 | Explore runs on the session model (Opus under Fable) | cheaper discovery | D4: user `Explore` agent with `model: haiku` + install link | sub-agent list |
 | Advisor shows little measured gain (playbook) | cost | measure consult rate before keeping `advisorModel` | session cost per task |
