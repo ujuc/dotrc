@@ -36,6 +36,17 @@ cannot: their `contains` graders check words that already appear in the prompt.
   a `prompt` grader whose judge (`config.judge_model` in eval.yaml; the launcher
   exposes no judge flag) is not the eval model. Keep the `behavior` token budget
   as a side check, not the only one.
+- **Decision probes.** Ask for fixed answer lines (`KEY: a` or `KEY: b`) and
+  grade one pattern per line; long patterns over a free-form answer fail on
+  correct paraphrases. Accept `^[\W\d]*KEY\W*good\b`, so a same-line explanation
+  still passes. Reject the wrong token only on a line that ends after it
+  (`KEY\s*[^\w\s]\W*bad[^\w\n]*$`), and `good or bad` or `good/bad` only when the
+  two tokens are adjacent; a wider hedge check rejects ordinary explanations
+  such as "keep: it is not reworded or replaced".
+  Run a control with the rule's sentences removed from the body and record the
+  result in the task `description`: a probe that still passes is a regression
+  guard, not evidence that the rule is followed.
+  `claude/evals/generate-agent-docs/tasks/` has both kinds.
 - **Negative task.** Keep at least one prompt where the skill must not change
   the answer, graded with `text` `not_contains` or a `skill_invocation` grader
   that lists the skill under `forbidden_skills`.
