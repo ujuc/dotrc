@@ -52,6 +52,7 @@ jq -c --arg id "$sid" '. + {sessionId: $id}' >"$session" <<'JSON'
 {"type":"user","cwd":"/test/proj","gitBranch":"main","timestamp":"2026-08-01T00:00:00Z",
  "message":{"content":"fix the failing import"}}
 {"type":"user","message":{"content":"<command-name>/commit</command-name>"}}
+{"type":"user","message":{"content":"<command-message>ujuc:commit</command-message>\n<command-name>/ujuc:commit</command-name>"}}
 {"type":"user","message":{"content":"<local-command-stdout>noise that must not be scored</local-command-stdout>"}}
 {"type":"assistant","message":{"content":[
   {"type":"thinking","thinking":"dropped"},
@@ -91,6 +92,7 @@ echo "collect-sessions self-check:"
 check "digest written"                  test -s "$digest"
 check "human turn kept"                 grep -q '^USR fix the failing import$' "$digest"
 check "slash command tagged"            grep -q '^CMD commit$' "$digest"
+check "plugin slash command tagged"     grep -q '^CMD ujuc:commit$' "$digest"
 check "tool call and target captured"   grep -q '^USE Bash | cargo test$' "$digest"
 check "skill dispatch captured"         grep -q '^USE Skill | commit$' "$digest"
 check "failed result captured"          grep -q '^ERR .*cannot find value' "$digest"
@@ -103,7 +105,7 @@ check "inventory records the session"   test -n "$meta"
 check "cwd is the launch dir"           json_matches '.cwd == "/test/proj"' <<<"$meta"
 check "tool errors counted"             json_matches '.tool_errors == 1' <<<"$meta"
 check "skills_used from Skill tool"     json_matches '.skills_used == ["commit"]' <<<"$meta"
-check "commands_used kept separate"     json_matches '.commands_used == ["commit"]' <<<"$meta"
+check "commands_used kept separate"     json_matches '.commands_used == ["commit","ujuc:commit"]' <<<"$meta"
 check "sidechain tool not counted"      json_matches '.tools | index("Grep") == null' <<<"$meta"
 
 long_digest="$out/transcripts/$lid.txt"

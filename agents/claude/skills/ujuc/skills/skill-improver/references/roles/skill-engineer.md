@@ -10,10 +10,10 @@ Input: `<skill-path-or-name> [--check trigger|overlap|model|all]`; default is `a
 
 For a bare name, inspect both:
 
-- project: `<cwd>/.claude/skills/<name>/SKILL.md`
-- global: `~/.claude/skills/ujuc/skills/<name>/SKILL.md`, else `~/.claude/skills/<name>/SKILL.md`, else `~/.claude/skills/<plugin>/skills/<name>/SKILL.md`
+- project: `.claude/skills/<name>/SKILL.md` in `<cwd>` or any parent directory up to the repository root
+- global: `~/.claude/skills/<name>/SKILL.md` (a bare personal skill), else `~/.claude/skills/ujuc/skills/<name>/SKILL.md`, else `~/.claude/skills/<plugin>/skills/<name>/SKILL.md`
 
-Skip a global directory that `git -C ~/.claude check-ignore -q skills/<name>` reports as ignored (external or synced skills): do not read, judge or compare it. When both exist, the project skill wins. State which file was selected. Parse `description`, `when_to_use`, `disable-model-invocation`, `user-invocable`, `model`, and `effort` before judging triggers and model fitness.
+Skip a global directory that `git -C ~/.claude check-ignore -q skills/<name>` reports as ignored (external or synced skills): do not read, judge or compare it. When both exist, the project skill wins the bare name over a plugin copy (`ujuc/skills/<name>` or `<plugin>/skills/<name>`), which stays loaded as `/<plugin>:<name>`; a bare personal `~/.claude/skills/<name>` overrides the project copy. State which file was selected. Parse `description`, `when_to_use`, `disable-model-invocation`, `user-invocable`, `paths`, `model`, and `effort` before judging triggers and model fitness.
 
 ## Output
 
@@ -45,7 +45,7 @@ Omit excluded sections. When every requested check passes, a short no-findings r
 
 ## Trigger Completeness
 
-Check obvious Korean register variants, genuine synonyms, English aliases used by the domain, domain verbs, and the slash form (`/ujuc:<name>` for a skill under `~/.claude/skills/ujuc/skills/`, otherwise `/<name>`) when `user-invocable` is not false.
+Check obvious Korean register variants, genuine synonyms, English aliases used by the domain, domain verbs, and the slash form (`/<plugin>:<name>` for a skill under `skills/<plugin>/skills/<name>/`, so `/ujuc:<name>` for a skill under `ujuc/skills/` whichever path form is given; otherwise `/<name>`) when `user-invocable` is not false.
 
 - `disable-model-invocation: true`: do not demand natural-language auto-trigger coverage; assess documentation quality and explicit invocation only.
 - `user-invocable: false`: do not demand slash-command coverage; natural auto-trigger coverage still matters.
@@ -57,9 +57,10 @@ Compare the winning installed definitions for all skills that resolve above; ign
 
 1. Exclude a skill from natural-language collision analysis when `disable-model-invocation: true`.
 2. Exclude slash-menu collision analysis when `user-invocable: false`.
-3. Treat project/global copies of the same name as one skill, with the project copy winning.
+3. Treat a project copy and a same-named plugin copy (`ujuc:<name>`, `<plugin>:<name>`) as one skill with the project copy winning. Both load in Claude Code; this is repository policy, which prefers the project skill.
 4. Construct a concrete utterance that would auto-match both remaining skills.
-5. Model and file ordering do **not** establish invocation precedence. An overlap passes only when invocation controls or clearly different domains resolve it.
+5. Model and file ordering do **not** establish invocation precedence. An overlap passes only when invocation controls or clearly different domains resolve it. A settings-level control resolves an overlap on that machine only; report it as machine-local next to the definition-level verdict: `skillOverrides` `"user-invocable-only"` or `"off"` for a non-plugin skill (no effect on `ujuc:*` or any other plugin skill), or a `Skill(<name>)` / `Skill(<plugin>:<name>)` deny rule, in `~/.claude/settings.json`, `<project>/.claude/settings.json` or `<project>/.claude/settings.local.json`.
+6. A skill with `paths` auto-loads only while Claude works with matching files under the working directory; judge its triggers and overlaps within that scope and report the globs under 호출 제어.
 
 FAIL only when two auto-invocable skills can plausibly claim the same utterance without a domain distinction.
 

@@ -37,7 +37,7 @@ With the label, write 1–3 sentences: the dominant waste with a rough count (su
 
 A finding belongs to a target only when the digest shows that target's work. In order of strength:
 
-1. The session invoked the skill (`USE Skill | <name>` or a matching `CMD`), and the waste happened inside that stretch.
+1. The session invoked the skill (`USE Skill | ujuc:<name>` or `USE Skill | <name>`, or a matching `CMD`), and the waste happened inside that stretch.
 2. The waste happened in a surface the skill owns (its scripts, artifacts, documented procedure), invoked or not.
 3. The reason names the skill that should have prevented the waste.
 
@@ -47,7 +47,7 @@ Unattributable findings stay in the run summary and motivate no edit. Never stre
 
 From `inventory.json`, separate from scores:
 
-- A session **used a skill** when `skills_used` is non-empty or `commands_used` holds a name in the Phase 1 catalog. Filter `commands_used` against that catalog first: it also holds built-ins (`/clear`, `/compact`, `/model`, `/effort`) and plugin commands.
+- A session **used a skill** when `skills_used` is non-empty or `commands_used` holds a Phase 1 catalog name. Filter `commands_used` against that catalog first: it also holds built-ins (`clear`, `compact`, `model`, `effort`) and other plugins' commands.
 - `skill_coverage` = sessions that used a skill ÷ `sessions_sampled`.
 
 A catalog skill that never appears although the sample clearly exercises its domain is a **trigger-description** suggestion for `skill-engineer`, not an instruction gap; never auto-edit a WHEN clause on it.

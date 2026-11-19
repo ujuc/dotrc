@@ -35,10 +35,11 @@ def is_noise:
   or test("^\\s*Caveat: The messages below were generated");
 
 def user_text:
-  if is_noise then empty
-  elif test("<command-name>") then
+  # A skill's slash turn opens with <command-message>, so test the tag before the noise filter.
+  if test("<command-name>") then
     "CMD " + ([scan("<command-name>/?([^<]*)</command-name>")]
       | flatten | join(" ") | clip(120))
+  elif is_noise then empty
   else "USR " + clip(400) end;
 
 def user_event:

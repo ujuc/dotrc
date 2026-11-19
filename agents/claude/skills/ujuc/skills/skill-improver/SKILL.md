@@ -36,7 +36,7 @@ If step 1 or 2 fails, report an actionable fix and stop before Phase 1.
 ## Phase 1 — Inventory
 
 1. **Targets:** the named skills, or with no arguments every skill in `claude/skills/ujuc/skills/` and `<repo_root>/../.claude/skills/`.
-2. **Catalog:** the `name` of each user-scope `claude/skills/ujuc/skills/` skill, for Dimension E usage filtering.
+2. **Catalog:** the `name` of each user-scope `claude/skills/ujuc/skills/` skill, in both its bare and `ujuc:<name>` forms (both appear in session history), for Dimension E usage filtering.
 3. **Per target:** parse the frontmatter (`name`, `description`, `model`, `allowed-tools`, optional fields), the procedure, constraints and prohibitions, referenced paths (`references/`, `scripts/`, role files), and the description's trigger keywords. Summarize its intent in one line.
 4. **Session evidence** (once per run):
    ```bash
