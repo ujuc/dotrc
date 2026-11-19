@@ -1,0 +1,18 @@
+id: create-diet-pass
+name: Create-mode skill-diet pass
+description: Decision-only probe; after Create mode's validation commands pass, the new skill goes through skill-diet:skill-diet and validation reruns, without a full diet.
+inputs:
+  prompt: "Do not run tools or write files. Create mode has written a new skill, and the three Step 5 validation commands have just passed. Include one line exactly `INVOKE: yes` or `INVOKE: no`, saying whether this workflow now invokes the skill `skill-diet:skill-diet` through the Skill tool on the new skill; one line exactly `RERUN: yes` or `RERUN: no`, saying whether the validation commands run again after that; and one line exactly `FULL-DIET: yes` or `FULL-DIET: no`, saying whether Create mode runs a full diet at this point. Explain briefly in English."
+graders:
+  - type: text
+    name: diet-pass-after-validation
+    config:
+      regex_match:
+        - "(?im)^[\\W\\d]*INVOKE\\W*yes\\b"
+        - "(?im)^[\\W\\d]*RERUN\\W*yes\\b"
+        - "(?im)^[\\W\\d]*FULL[\\W_]*DIET\\W*no\\b"
+      regex_not_match:
+        - "(?im)^[\\W\\d]*INVOKE\\W*no\\b"
+        - "(?im)^[\\W\\d]*RERUN\\W*no\\b"
+        - "(?im)^[\\W\\d]*FULL[\\W_]*DIET\\W*yes\\b"
+        - "(?im)^[\\W\\d]*(INVOKE|RERUN|FULL[\\W_]*DIET)\\W*(yes|no)\\s*(/|\\bor\\b)\\s*(yes|no)\\b"

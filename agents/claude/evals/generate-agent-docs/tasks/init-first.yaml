@@ -1,0 +1,18 @@
+id: init-first
+name: init-first
+description: Decision probe; a missing CLAUDE.md starts from a built-in /init draft, except over an existing file or beside a rule-bearing AGENTS.md.
+tags: [decision-probe]
+inputs:
+  prompt: "The user says 'CLAUDE.md 만들어줘' in three repositories. Case A has no CLAUDE.md and no AGENTS.md. Case B already has a CLAUDE.md. Case C has no CLAUDE.md, and an AGENTS.md with team rules sits in the repository root. For each case say whether this run invokes the built-in /init: include one line exactly `A: init` or `A: no-init`, one line exactly `B: init` or `B: no-init`, and one line exactly `C: init` or `C: no-init`. Explain briefly in English. Do not run tools, write files, or ask questions."
+graders:
+  - type: text
+    name: init-only-for-a-missing-file
+    config:
+      regex_match:
+        - "(?im)^[\\W\\d]*(case\\s+)?A\\W*init\\b"
+        - "(?im)^[\\W\\d]*(case\\s+)?B\\W*no-init\\b"
+        - "(?im)^[\\W\\d]*(case\\s+)?C\\W*no-init\\b"
+      regex_not_match:
+        - "(?im)^[\\W\\d]*(case\\s+)?A\\W*no-init\\b"
+        - "(?im)^[\\W\\d]*(case\\s+)?[BC]\\W*init\\b"
+        - "(?im)^[\\W\\d]*(case\\s+)?[ABC]\\W*(no-)?init\\s*(/|\\bor\\b)\\s*([ABC]\\W*)?(no-)?init\\b"
