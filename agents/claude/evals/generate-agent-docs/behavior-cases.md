@@ -83,11 +83,11 @@ set.
 | tasks/cache-ownership.yaml | cache-drift |
 | tasks/authorization.yaml | authorized-update |
 | tasks/tool-fallback.yaml | tools, no-interview |
-| tasks/verification-evidence.yaml | evidence, review-states |
-| tasks/verification-partial.yaml | review-states |
-| tasks/policy-preservation.yaml | policy |
-| tasks/budget-precedence.yaml | policy |
-| tasks/size-labels.yaml | policy |
+| tasks/verification-evidence.yaml | evidence (missing approval record), review-states (third FAIL) |
+| tasks/verification-partial.yaml | review-states (fast mode, short route, no delegation) |
+| tasks/policy-preservation.yaml | policy (requirements against pruning and rewrite rules) |
+| tasks/budget-precedence.yaml | policy (requirement against the local budget) |
+| tasks/size-labels.yaml | policy (separate size limits) |
 | tasks/negative-trigger-1.yaml | anti-trigger |
 | tasks/stop-list.yaml | stop-context, stop-emphasis, stop-subagent-quality, stop-thinking, stop-persistence, stop-repo, stop-tools |
 | tasks/enforcement-fit.yaml | enforce-rule, enforce-preference |
@@ -96,6 +96,9 @@ set.
 | tasks/session-placement.yaml | session-capture |
 | tasks/broken-reference.yaml | broken-pointer, summary-growth |
 | tasks/standalone-claude.yaml | standalone-claude |
+
+A parenthesis names the part of a case that the probe asks about; the rest of
+that case is covered only by the application test above.
 
 Artifact only, with no probe: selected-only, final-reference, stop-preserved, rare-language, colleague, missing-import.
 
