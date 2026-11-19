@@ -1,9 +1,9 @@
 id: verification-partial
 name: verification-partial decision probe
-description: Decision probe; a run without blind review (short route, or no delegation) reports PARTIAL. Control on 2026-11-19 with the Stage 4 status rules removed from the body failed 3 of 3.
+description: Decision probe; a run without blind review (short route, no delegation, or fast mode) reports PARTIAL. Control on 2026-11-19 with the Stage 4 status rules removed from the body failed 3 of 3; the fast-mode line flipped every time, the short-route line once and the no-delegation line never.
 tags: [decision-probe]
 inputs:
-  prompt: "The user says 'CLAUDE.md에 추가해줘: always run pnpm test:unit before pushing'. CLAUDE.md already exists, so this workflow takes its short route and appends the line. In the same session, a second request asks to refresh three .claude/rules/ files, but this session has no Agent tool, so the orchestrator writes them and runs the checklist itself. Both runs have the original contents and the user's confirmed decisions, and every checklist item passes on the final bytes. Include one line exactly `SHORT: pass` or `SHORT: partial`, saying the verification status the first run reports. Include one line exactly `SOLO: pass` or `SOLO: partial`, saying the verification status the second run reports. Explain briefly in English. Do not run tools or write files; describe what the workflow does."
+  prompt: "The user says 'CLAUDE.md에 추가해줘: always run pnpm test:unit before pushing'. CLAUDE.md already exists, so this workflow takes its short route and appends the line. In the same session, a second request asks to refresh three .claude/rules/ files, but this session has no Agent tool, so the orchestrator writes them and runs the checklist itself. A third request, in a session that does have the Agent tool, asks for a fast update of two contributing-docs files, and the workflow runs it in fast mode. All three runs have the original contents and the user's confirmed decisions, and every checklist item passes on the final bytes. Include one line exactly `SHORT: pass` or `SHORT: partial`, saying the verification status the first run reports. Include one line exactly `SOLO: pass` or `SOLO: partial`, saying the verification status the second run reports. Include one line exactly `FAST: pass` or `FAST: partial`, saying the verification status the third run reports. Explain briefly in English. Do not run tools or write files; describe what the workflow does."
 graders:
   - type: text
     name: partial-without-blind-review
@@ -11,8 +11,11 @@ graders:
       regex_match:
         - "(?im)^[\\W\\d]*SHORT\\W*partial\\b"
         - "(?im)^[\\W\\d]*SOLO\\W*partial\\b"
+        - "(?im)^[\\W\\d]*FAST\\W*partial\\b"
       regex_not_match:
         - "(?im)^[\\W\\d]*SHORT\\s*[^\\w\\s]\\W*pass[^\\w\\n]*$"
         - "(?im)^[\\W\\d]*SOLO\\s*[^\\w\\s]\\W*pass[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*FAST\\s*[^\\w\\s]\\W*pass[^\\w\\n]*$"
         - "(?im)^[\\W\\d]*SHORT\\W*partial\\b[^\\n]*([/?]|\\bor\\b)\\W*(SHORT\\W*)?pass\\b"
         - "(?im)^[\\W\\d]*SOLO\\W*partial\\b[^\\n]*([/?]|\\bor\\b)\\W*(SOLO\\W*)?pass\\b"
+        - "(?im)^[\\W\\d]*FAST\\W*partial\\b[^\\n]*([/?]|\\bor\\b)\\W*(FAST\\W*)?pass\\b"
