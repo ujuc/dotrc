@@ -8,6 +8,7 @@
 - Update `README.md` when a skill's purpose, triggers, model, or pipeline role changes.
 - Read `README.md` before changing a pipeline component; changes can break downstream contracts.
 - Put shared logic in one authoritative skill's `references/` and link to it instead of copying.
+- When two skills can claim the same request, record the boundary in `../rules/skill-routing.md` (loaded in every session as `~/.claude/rules/`) instead of widening either `description`.
 - State each skill's recommended workload profile and escalation conditions using [the model selection guide](ujuc/skills/generate-skills/references/model-selection.md).
 - Worker roles a skill dispatches live in `references/roles/<role>.md`; dispatch built-in `Explore` (read-only) or `general-purpose` with per-call `model`/`effort` from `ujuc/skills/generate-skills/references/model-selection.md#dispatch-routing`. Do not create `~/.claude/agents/` definitions.
 - `Explore` workers load no CLAUDE.md, so a role file must carry every rule its worker needs.
