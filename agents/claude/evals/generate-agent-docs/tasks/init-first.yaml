@@ -15,4 +15,4 @@ graders:
       regex_not_match:
         - "(?im)^[\\W\\d]*(case\\s+)?A\\W*no-init[^\\w\\n]*$"
         - "(?im)^[\\W\\d]*(case\\s+)?[BC]\\W*init[^\\w\\n]*$"
-        - "(?im)^[\\W\\d]*(case\\s+)?[ABC]\\W*(no-)?init\\s*(/|\\bor\\b)\\s*([ABC]\\W*)?(no-)?init[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*(case\\s+)?[ABC]\\W*(no-)?init\\s*(/|\\bor\\b)\\s*([ABC]\\W*)?(no-)?init\\b"

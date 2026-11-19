@@ -15,4 +15,4 @@ graders:
         - "(?im)^[\\W\\d]*INVOKE\\W*no[^\\w\\n]*$"
         - "(?im)^[\\W\\d]*RERUN\\W*no[^\\w\\n]*$"
         - "(?im)^[\\W\\d]*FULL[\\W_]*DIET\\W*yes[^\\w\\n]*$"
-        - "(?im)^[\\W\\d]*(INVOKE|RERUN|FULL[\\W_]*DIET)\\W*(yes|no)\\s*(/|\\bor\\b)\\s*(yes|no)[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*(INVOKE|RERUN|FULL[\\W_]*DIET)\\W*(yes|no)\\s*(/|\\bor\\b)\\s*(yes|no)\\b"
