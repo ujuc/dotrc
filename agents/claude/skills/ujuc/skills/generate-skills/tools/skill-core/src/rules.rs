@@ -57,7 +57,8 @@ pub const BOOLEAN_KEYS: &[&str] = &["disable-model-invocation", "user-invocable"
 pub const LOOSE_BOOLEAN_WORDS: &[&str] = &["true", "false", "yes", "no", "on", "off", "1", "0"];
 
 /// Fields documented as "string or YAML list".
-pub const STRING_OR_LIST_KEYS: &[&str] = &["allowed-tools", "disallowed-tools", "paths", "arguments"];
+pub const STRING_OR_LIST_KEYS: &[&str] =
+    &["allowed-tools", "disallowed-tools", "paths", "arguments"];
 
 /// Variables that point outside the skill directory, so paths behind them are not checked.
 pub const NON_SKILL_PATH_VARS: &[&str] = &[

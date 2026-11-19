@@ -148,8 +148,7 @@ fn create_skill(args: &Args) -> Result<()> {
         .with_context(|| format!("failed to create {}", skill_dir.display()))?;
 
     let skill_md = skill_dir.join("SKILL.md");
-    let content = SKILL_TEMPLATE
-        .replace("{name}", &args.name);
+    let content = SKILL_TEMPLATE.replace("{name}", &args.name);
     fs::write(&skill_md, content)
         .with_context(|| format!("failed to write {}", skill_md.display()))?;
 

@@ -106,7 +106,10 @@ pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
     if skill_dir.join("README.md").is_file()
         && rules::SUBTREE_SKILLS.contains(&folder_name.as_str())
     {
-        findings.push(Finding::pass("Structure", "README.md kept from upstream subtree"));
+        findings.push(Finding::pass(
+            "Structure",
+            "README.md kept from upstream subtree",
+        ));
     } else if skill_dir.join("README.md").is_file() {
         findings.push(Finding::fail(
             "Structure",
@@ -775,7 +778,10 @@ mod tests {
             validate_boolean_fields(&fm_from(src), &mut findings);
             findings[0].severity
         };
-        assert_eq!(sev("---\ndisable-model-invocation: \"yes\"\n---\n"), Severity::Warn);
+        assert_eq!(
+            sev("---\ndisable-model-invocation: \"yes\"\n---\n"),
+            Severity::Warn
+        );
         assert_eq!(sev("---\nbackground: 1\n---\n"), Severity::Warn);
         assert_eq!(sev("---\nbackground: false\n---\n"), Severity::Pass);
         assert_eq!(sev("---\nuser-invocable: maybe\n---\n"), Severity::Fail);
@@ -805,7 +811,10 @@ mod tests {
         assert!(fails("---\narguments:\n  a: 1\n---\n"));
         assert!(fails("---\nmetadata: text\n---\n"));
         assert!(fails("---\ncompatibility: \"\"\n---\n"));
-        assert!(fails(&format!("---\ncompatibility: {}\n---\n", "x".repeat(501))));
+        assert!(fails(&format!(
+            "---\ncompatibility: {}\n---\n",
+            "x".repeat(501)
+        )));
         assert!(!fails(
             "---\npaths: \"src/**\"\narguments: [a, b]\nmetadata:\n  version: \"1.0\"\ncompatibility: needs git\n---\n"
         ));
@@ -834,7 +843,11 @@ mod tests {
     #[test]
     fn reserved_folder_name_warns() {
         let mut findings = Vec::new();
-        validate_name(&fm_from("---\nname: synced\n---\n"), "Synced", &mut findings);
+        validate_name(
+            &fm_from("---\nname: synced\n---\n"),
+            "Synced",
+            &mut findings,
+        );
         assert_eq!(findings[0].severity, Severity::Warn);
     }
 
