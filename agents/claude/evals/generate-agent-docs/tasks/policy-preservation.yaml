@@ -2,15 +2,19 @@ id: policy-preservation
 name: policy-preservation decision probe
 description: Decision probe; mock output is not behavioral evidence.
 inputs:
-  prompt: "A user explicitly requires team TDD, tabs in Makefiles and a named integration-test gate. How should CLAUDE.md preserve them? Distinguish official size advice from local budgets. Do not run tools, write files, or ask questions."
+  prompt: "A user explicitly requires team TDD, tabs in Makefiles and a named integration-test gate, and the draft CLAUDE.md is over this skill's local size budget. Include one line exactly `TDD: keep` or `TDD: cut`, saying what happens to the team TDD line; one line exactly `BUDGET: yields` or `BUDGET: wins`, saying whether the local size budget yields to these three requirements or wins over them; and one line exactly `SIZE-LABELS: separate` or `SIZE-LABELS: merged`, saying whether official size advice and local budgets are reported under separate labels or as one limit. Explain briefly in English. Do not run tools, write files, or ask questions."
 graders:
   - type: text
     name: team-policy-survives-local-defaults
     config:
       regex_match:
-        - "(?is)(CLAUDE\\.md.{0,400}(TDD|test-first|failing test))|((TDD|test-first)[^\\n]{0,80}\\b(keep|preserve|own words|team.s words|verbatim))"
-        - "(?is)(((budget|local default|local limit|local cap)s?.{0,80}(never|neither|not|n\\x27t|cannot)\\b.{0,40}(overrid|justif|outrank|trump|delet|drop|remov|cut|trim|sacrific|weaken).{0,40}(polic|rule|requirement|TDD|gate))|((never|neither|not|n\\x27t)\\b.{0,40}(overrid|delet|drop|remov|cut|trim|sacrific|weaken).{0,40}(polic|rule|requirement|TDD|gate).{0,40}(budget|fit|size|space))|(budget.{0,200}(polic|rule|requirement).{0,60}(never|not)\\b.{0,20}(cut|dropped|removed|trimmed))|(requirements?|rules?|polic\\w+)\\b[^.\\n]{0,40}\\bsurvive\\b[^.\\n]{0,20}\\b(trim\\w*|cuts?|budget)|((requirement|rule|polic|decision)\\w*[^.\\n]{0,120}(outrank|beat|override|take precedence|takes precedence)\\w*[^.\\n]{0,40}(prun|budget|default|\\bthem\\b|\\bit\\b|\\bboth\\b))|((requirement|mandate|polic|rule)s?.{0,40}(not|never)\\s+(pruned|cut|trimmed|dropped|removed))|((budget|target).{0,80}(yields?|gives? way)\\s+to)|(prun\\w*.{0,30}(not|never)\\s+remove))|((requirement|rule|polic\\w*)s?\\s+above\\s+(size\\s+|local\\s+)?budgets)|(\\bno\\b[^.\\n]{0,80}(budget|default)[^.\\n]{0,60}\\b(can|may|will)\\s+(cut|trim|remove|drop|override))"
+        - "(?im)^[\\W\\d]*(?:team\\s+)?TDD\\W*keep\\b"
+        - "(?im)^[\\W\\d]*BUDGET\\W*yields\\b"
+        - "(?im)^[\\W\\d]*SIZE[\\W_]*LABELS\\W*separate\\b"
       regex_not_match:
-        - "(?i)(decision|policy|requirement|mandate)[a-z ]{0,20}(does not|doesn\\x27t|cannot|can\\x27t|won\\x27t|should not|must not)\\s+(survive|stay|remain)"
-        - "(?i)budgets?\\s+((can|may|should|must|always)\\s+)?(override|outrank|take precedence|takes precedence|win over|wins over)"
-        - "(?im)(^|[.:;!*,]\\s*|\\b(but|and|then|should|must)\\s+)(drop|remove|delete|omit|cut|trim)\\w*\\s+[^.\\n]{0,40}(test-first|TDD|failing test)"
+        - "(?im)^[\\W\\d]*TDD\\s*[^\\w\\s]\\W*cut\\b"
+        - "(?im)^[\\W\\d]*BUDGET\\s*[^\\w\\s]\\W*wins\\b"
+        - "(?im)^[\\W\\d]*SIZE[\\W_]*LABELS\\s*[^\\w\\s]\\W*merged\\b"
+        - "(?im)^[\\W\\d]*TDD\\W*keep\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(TDD\\W*)?cut\\b"
+        - "(?im)^[\\W\\d]*BUDGET\\W*yields\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(BUDGET\\W*)?wins\\b"
+        - "(?im)^[\\W\\d]*SIZE[\\W_]*LABELS\\W*separate\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(SIZE[\\W_]*LABELS\\W*)?merged\\b"
