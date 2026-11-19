@@ -1,14 +1,20 @@
 id: tool-fallback
 name: tool-fallback decision probe
-description: Decision probe; mock output is not behavioral evidence.
+description: Decision probe; guards against a body change that drops the HTML retry, the plain-text question or the missing-advisor report. A control on 2026-11-19 with those three statements removed from the body still passed 3 of 3, so a pass does not show they are present.
 inputs:
-  prompt: "A host has native web and interactive text questions but no ToolSearch, WebFetch or advisor. A .md source fails on MIME; HTML works. State the fetch and unresolved-question handling without claiming missing tools ran. Do not run tools, write files, or ask questions."
+  prompt: "A host has a native web tool and can exchange ordinary interactive text with the user, but it has no ToolSearch, WebFetch, AskUserQuestion or advisor. The guide's .md URL fails on content type, while the official HTML page loads. One material question is still unresolved. Include one line exactly `FETCH: html` or `FETCH: cache`, saying which source the workflow uses for the guide next; one line exactly `QUESTION: text` or `QUESTION: skip`, saying whether the workflow puts the unresolved question to the user as ordinary text or goes on without asking; and one line exactly `ADVISOR: unavailable` or `ADVISOR: consulted`, saying how the final report describes the advisor role. Explain briefly in English. Do not run tools or write files; describe what the workflow does."
 graders:
   - type: text
     name: fallback-decisions
     config:
       regex_match:
-        - "(?i)\\b(ask|posed?|raised?)\\b[^.\\n]{0,40}\\b(text|chat|message|prose|reply|conversation|directly|the user|interactive\\w*)\\b|\\b(ordinary|normal|plain|regular)\\b[^.\\n]{0,20}\\bquestion"
-        - "(?i)\\b(retry|retries|try|tries|switch\\w*|fall\\w*|fetch\\w*|use|using|request\\w*|load\\w*)\\b[^.;\\n]{0,40}\\bHTML\\b"
+        - "(?im)^[\\W\\d]*FETCH\\W*html\\b"
+        - "(?im)^[\\W\\d]*QUESTIONS?\\W*text\\b"
+        - "(?im)^[\\W\\d]*ADVISOR\\W*unavailable\\b"
       regex_not_match:
-        - "(?i)\\b(don['’]?t|do not|won['’]?t|will not|can['’]?t|cannot|never|unable to|not able to|no way to|impossible to)\\s+(ask|posed?|raised?)\\b[^.\\n]{0,40}\\b(text|chat|message|prose|reply|conversation|directly|the user|interactive\\w*)\\b"
+        - "(?im)^[\\W\\d]*FETCH\\s*[^\\w\\s]\\W*cache[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*QUESTIONS?\\s*[^\\w\\s]\\W*skip[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*ADVISOR\\s*[^\\w\\s]\\W*consulted[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*FETCH\\W*html\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(FETCH\\W*)?cache\\b"
+        - "(?im)^[\\W\\d]*QUESTIONS?\\W*text\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(QUESTIONS?\\W*)?skip\\b"
+        - "(?im)^[\\W\\d]*ADVISOR\\W*unavailable\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(ADVISOR\\W*)?consulted\\b"
