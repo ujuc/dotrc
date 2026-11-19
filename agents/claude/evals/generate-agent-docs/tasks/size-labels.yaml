@@ -1,0 +1,21 @@
+id: size-labels
+name: size-labels decision probe
+description: Decision probe; official size advice and the local budget are reported as two limits, and no required line is cut. A control on 2026-11-19 with the precedence statements removed from the body still passed 3 of 3, so a pass does not show the labelling rule is present.
+tags: [decision-probe]
+inputs:
+  prompt: "You are at Stage 4 of a run that created a new CLAUDE.md. The fetched official best-practices page advises keeping CLAUDE.md under about 200 lines. The skill's cached rulebook sets a local budget of 120 lines. The final file is 150 lines, and the user explicitly required every line in it. The writer's draft report contains this sentence: \"Size: 150 lines, over the recommended size limit (120 lines).\" Include one line exactly `SIZE-SENTENCE: kept` or `SIZE-SENTENCE: rewritten`, saying whether the final report uses the writer's size sentence unchanged. Include one line exactly `REPORTED-LIMITS: one` or `REPORTED-LIMITS: two`, saying how many size limits the final report states. Include one line exactly `CUT-LINES: none` or `CUT-LINES: some`, saying whether the workflow removes lines to reach a limit. Explain briefly in English. Do not run tools or write files; describe what the workflow does."
+graders:
+  - type: text
+    name: two-size-limits
+    config:
+      regex_match:
+        - "(?im)^[\\W\\d]*SIZE[\\W_]*SENTENCE\\W*rewritten\\b"
+        - "(?im)^[\\W\\d]*REPORTED[\\W_]*LIMITS\\W*two\\b"
+        - "(?im)^[\\W\\d]*CUT[\\W_]*LINES\\W*none\\b"
+      regex_not_match:
+        - "(?im)^[\\W\\d]*SIZE[\\W_]*SENTENCE\\s*[^\\w\\s]\\W*kept[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*REPORTED[\\W_]*LIMITS\\s*[^\\w\\s]\\W*one[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*CUT[\\W_]*LINES\\s*[^\\w\\s]\\W*some[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*SIZE[\\W_]*SENTENCE\\W*rewritten\\b[^\\n]*([/?]|\\bor\\b)\\W*(SIZE[\\W_]*SENTENCE\\W*)?kept\\b"
+        - "(?im)^[\\W\\d]*REPORTED[\\W_]*LIMITS\\W*two\\b[^\\n]*([/?]|\\bor\\b)\\W*(REPORTED[\\W_]*LIMITS\\W*)?one\\b"
+        - "(?im)^[\\W\\d]*CUT[\\W_]*LINES\\W*none\\b[^\\n]*([/?]|\\bor\\b)\\W*(CUT[\\W_]*LINES\\W*)?some\\b"

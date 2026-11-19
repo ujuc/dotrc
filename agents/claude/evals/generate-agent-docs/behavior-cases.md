@@ -84,7 +84,10 @@ set.
 | tasks/authorization.yaml | authorized-update |
 | tasks/tool-fallback.yaml | tools, no-interview |
 | tasks/verification-evidence.yaml | evidence, review-states |
+| tasks/verification-partial.yaml | review-states |
 | tasks/policy-preservation.yaml | policy |
+| tasks/budget-precedence.yaml | policy |
+| tasks/size-labels.yaml | policy |
 | tasks/negative-trigger-1.yaml | anti-trigger |
 | tasks/stop-list.yaml | stop-context, stop-emphasis, stop-subagent-quality, stop-thinking, stop-persistence, stop-repo, stop-tools |
 | tasks/enforcement-fit.yaml | enforce-rule, enforce-preference |

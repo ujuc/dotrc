@@ -1,0 +1,18 @@
+id: budget-precedence
+name: budget-precedence decision probe
+description: Decision probe; a layout tree the user asked for stays although it puts the file over the local budget. Control on 2026-11-19 with the precedence statements removed from the body failed 3 of 3.
+tags: [decision-probe]
+inputs:
+  prompt: "You are running this skill on a repository whose CLAUDE.md already exists and is 82 lines long. In this session the user says: \"Add our directory layout to CLAUDE.md. Use the 18-line tree I pasted; new contributors keep asking where things live.\" The user also asks you to add `make e2e` as the pre-merge test command, which takes 2 lines. The skill's cached rulebook sets a local budget of 100 lines for a root CLAUDE.md. The fetched official best-practices page says to keep CLAUDE.md short and prune lines Claude would not miss, without giving a fixed line count. With both additions the file would be 102 lines. Every existing line is a test command, a gotcha or a safety boundary. Include one line exactly `LAYOUT-TREE: added` or `LAYOUT-TREE: omitted`, saying whether the pasted tree ends up in the final CLAUDE.md. Include one line exactly `LINE-COUNT: over-budget` or `LINE-COUNT: within-budget`, saying where the final file lands against the 100-line local budget. Explain briefly in English. Do not run tools or write files; describe what the workflow does."
+graders:
+  - type: text
+    name: requirement-beats-budget
+    config:
+      regex_match:
+        - "(?im)^[\\W\\d]*LAYOUT[\\W_]*TREE\\W*added\\b"
+        - "(?im)^[\\W\\d]*LINE[\\W_]*COUNT\\W*over[\\W_]*budget\\b"
+      regex_not_match:
+        - "(?im)^[\\W\\d]*LAYOUT[\\W_]*TREE\\s*[^\\w\\s]\\W*omitted[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*LINE[\\W_]*COUNT\\s*[^\\w\\s]\\W*within[\\W_]*budget[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*LAYOUT[\\W_]*TREE\\W*added\\b[^\\n]*([/?]|\\bor\\b)\\W*(LAYOUT[\\W_]*TREE\\W*)?omitted\\b"
+        - "(?im)^[\\W\\d]*LINE[\\W_]*COUNT\\W*over[\\W_]*budget\\b[^\\n]*([/?]|\\bor\\b)\\W*(LINE[\\W_]*COUNT\\W*)?within[\\W_]*budget\\b"
