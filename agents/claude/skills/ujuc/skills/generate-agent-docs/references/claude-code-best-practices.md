@@ -1,7 +1,7 @@
 ---
 source_url: https://code.claude.com/docs/en/best-practices.md
 secondary_source_url: https://code.claude.com/docs/en/memory.md
-last_upstream_check: 2026-11-01
+last_upstream_check: 2026-11-18
 check_interval_days: 0  # 0 = fetch on every run (user preference: always live; the doc changes often). WebFetch caches per-URL for ~15 min, so this is cheap.
 ---
 
@@ -35,7 +35,7 @@ snapshot below is a fallback, not frozen truth.
 
 ---
 
-## Cached snapshot (last verified 2026-11-01)
+## Cached snapshot (last verified 2026-11-18)
 
 ### ✅ Include / ❌ Exclude (source: best-practices + memory)
 
@@ -46,6 +46,8 @@ snapshot below is a fallback, not frozen truth.
 | Decisions that aren't in the repo: which error helper the team settled on, how deploys work, what needs a migration review (local: also branch and PR conventions) | Multi-step procedures and rules for one part of the codebase (skill or path-scoped rule) |
 | The environment variable your integration tests need | Personal preferences (`CLAUDE.local.md`) |
 | Anything you've had to correct twice already | |
+| Something a code review caught that Claude should have known about this codebase | |
+| Context a new teammate would need to be productive | |
 | Pitfalls, rationale, and conventions that differ from tool defaults (`/doctor` keeps these) | |
 
 ### Prune test — the real gate (source: best-practices)
@@ -66,6 +68,9 @@ retained line inside authorized scope, must pass it.
   bug fix the way it would in `CLAUDE.md`."*
 - Contradicting lines are a defect: *"if two instructions contradict each other,
   Claude may pick one arbitrarily."*
+- Write lines concrete enough to verify (memory): *"Use 2-space indentation"
+  instead of "Format code properly"*. Group related instructions under headers
+  and bullets, not dense paragraphs.
 - Skip emphasis (`IMPORTANT`, ALL CAPS): *"Older models sometimes needed the
   emphasis. Current ones follow a plainly worded line, and piling on emphasis
   mostly makes Claude over-apply the rule."*
@@ -105,7 +110,10 @@ Local defaults for this skill (local targets, not upstream limits):
   is not imported either; escape spaces with a backslash instead.
 - An import outside the working directory in a project file triggers a one-time
   approval dialog; user-scope files load it without the dialog, except in desktop
-  Cowork sessions, which skip such an import.
+  Cowork sessions, which skip such an import. Those sessions also skip a
+  `~/.claude/CLAUDE.md` that is a symlink or hard link, and a symlinked
+  `~/.claude/rules/` directory or rule file pointing outside the working
+  directory.
 - An external import in an `AGENTS.md` read directly, not through a `CLAUDE.md`,
   gets no prompt: it loads only if external imports were already approved for
   the project.
@@ -137,8 +145,10 @@ managed settings.
 What counts for the default-read table: `CLAUDE.md`, `.claude/CLAUDE.md`, or
 `CLAUDE.local.md` at or above the working directory (not `~/.claude/CLAUDE.md`,
 managed CLAUDE.md, or `.claude/rules/`). Adding a `CLAUDE.local.md` therefore
-*"stops Claude from reading `AGENTS.md` for you"*. `.claude/AGENTS.md` and
-subdirectory `AGENTS.md` files are read; *"Not read: `AGENTS.local.md`,
+*"stops Claude from reading `AGENTS.md` for you"*. `.claude/AGENTS.md` is read;
+a subdirectory `AGENTS.md` is read only when Claude opens a file there with the
+Read tool and that subdirectory has no `CLAUDE.md`, `.claude/CLAUDE.md` or
+`CLAUDE.local.md` of its own; *"Not read: `AGENTS.local.md`,
 `AGENTS.override.md`, or anything under a `.agents/` directory."*
 
 > Keeping the import never makes Claude read `AGENTS.md` twice, whichever
@@ -188,11 +198,18 @@ Use plan mode for changes under `src/billing/`.
   file, or views one with a Bash read such as `cat`/`head` on a single file.
   Each pattern is relative to the rule's base directory: for a project rule, the
   directory containing its `.claude` folder; for a user-level rule, the session's
-  primary working directory. Brace expansion is supported
-  (`src/**/*.{ts,tsx}`). Escape a literal `[` (`photos \[2024/**`): `[` starts a
-  bracket expression, and an invalid one matches nothing. User-level rules load
+  primary working directory. `*.md` matches at any depth under it, `/*.md` only
+  directly in it, and `src/components/*.tsx` only directly in that folder.
+  Brace expansion is supported (`src/**/*.{ts,tsx}`); a rule's whole `paths`
+  list shares a budget of 1,000 expanded patterns and 4 MiB, and a pattern over
+  it stays unexpanded, so its literal braces match no files. Escape a literal
+  `[` inside single quotes (`'photos \[2024/**'`): `[` starts a bracket
+  expression, and an invalid one matches nothing while the rule's other
+  patterns keep working. User-level rules load
   before project rules; neither overrides the other.
-- `.md` files are discovered recursively; symlinks are supported. A symlink
+- `.md` files are discovered recursively; symlinks are supported, except that a
+  `.claude/rules/` or `CLAUDE.md` symlink to a network path (UNC share, `/net`,
+  `/Network`) is not followed and does not load. A symlink
   whose target is outside the working directory is treated like an external
   import: it loads only after external imports are approved for the project,
   and then only rules without `paths`. For machine-wide shared rules, prefer
@@ -204,6 +221,18 @@ Use plan mode for changes under `src/billing/`.
 
 - Project file may live at `./CLAUDE.md` **or** `./.claude/CLAUDE.md`; personal
   gitignored notes in `./CLAUDE.local.md`; user-global in `~/.claude/CLAUDE.md`.
+  A gitignored `CLAUDE.local.md` exists only in the worktree that created it;
+  to share personal notes across worktrees, import a home-directory file
+  (`@~/.claude/my-project-instructions.md`), which is an external import.
+- Load order is managed, user, project, local. Files are concatenated, not
+  overridden, from the filesystem root down to the working directory, with
+  `CLAUDE.local.md` after `CLAUDE.md` in each directory, so the closest file is
+  read last. A subdirectory CLAUDE.md or CLAUDE.local.md loads once Claude
+  reads (including a Bash read such as `cat`/`head`), writes or edits another
+  file there.
+- Auto memory (`MEMORY.md`, first 200 lines or 25KB loaded) holds Claude's own
+  learnings, not instructions, and skips what CLAUDE.md already says. "Remember
+  X" goes to auto memory; "add this to CLAUDE.md" goes to CLAUDE.md.
 - Block-level HTML comments (`<!-- ... -->`) are stripped before context
   injection (preserved inside code blocks): a free channel for human-maintainer
   notes.
@@ -222,14 +251,16 @@ automation where useful. Preserve the documented team requirement until
 equivalent automation exists and its replacement is authorized; a concrete test
 command is not generic self-check scaffolding.
 
+If CLAUDE.md sets commit or PR rules, recommend turning off the built-in ones
+with `includeGitInstructions` and setting `attribution`; otherwise they compete.
+
 ### `/init` behavior (source: memory) — the baseline this skill refines
 
 > Run `/init` to generate a starting CLAUDE.md automatically. ... **If a CLAUDE.md
 > already exists, `/init` suggests improvements rather than overwriting it.**
 > Refine from there with instructions Claude wouldn't discover on its own.
 
-- *"A few built-in commands are also available through the Skill tool, including
-  `/init`"*, but this skill does not run it: `/init` writes CLAUDE.md directly,
+- This skill does not run `/init`, even where the Skill tool exposes it: `/init` writes CLAUDE.md directly,
   bypassing the interview and writer. **Consume its output** (an existing
   CLAUDE.md) as the baseline and refine.
 - `CLAUDE_CODE_NEW_INIT=1` enables an interactive multi-phase flow: `/init` asks
@@ -239,13 +270,19 @@ command is not generic self-check scaffolding.
   exploration and interview, so keep the refine pass **light** (discoverability
   filter, contributing-docs/ / rules/, blind review), not a full
   Stage 1 re-analysis.
-- `/doctor` (v2.1.206+) proposes trims for a checked-in CLAUDE.md (see the table
+- `/doctor` proposes trims for a checked-in CLAUDE.md (see the table
   above), complementary to this skill's update mode. `/doctor prompt-audit`
-  (v2.1.283+) audits CLAUDE.md, CLAUDE.local.md, AGENTS.md, rules and skills
-  for *"instructions written for older models, references to files or commands
+  (v2.1.283+; needs the bundled `/claude-api` skill enabled) audits CLAUDE.md,
+  CLAUDE.local.md, AGENTS.md and the rules, skills, commands, subagents and
+  output styles under `.claude/` and `~/.claude/` (or one path passed as an
+  argument) for *"instructions written for older models, references to files or commands
   that don't exist, and files that contradict each other"* and proposes edits;
   it is user-invoked, so this skill never runs it.
-- `/context` confirms which instruction files actually loaded.
+- `/context all` (the **Memory files** list) confirms which launch-time
+  instruction files loaded; plain `/context` collapses that list in fullscreen,
+  and an on-demand subdirectory CLAUDE.md is not listed there. For an
+  `AGENTS.md` read directly, check `/memory`; before v2.1.280 neither `/memory`
+  nor `/context` listed it.
 
 ### Over-specified CLAUDE.md — the failure to avoid (source: best-practices + memory)
 

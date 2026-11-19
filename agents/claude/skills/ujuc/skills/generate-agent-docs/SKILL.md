@@ -199,5 +199,5 @@ instructions.
 - Per-file writing rules → [stage3-generator.md](references/stage3-generator.md) and the rulebooks [roles/writer.md](references/roles/writer.md) lists
 - Repair loop, blind review, final check → [stage4-verifier.md](references/stage4-verifier.md)
 - Safety governance for autonomous-agent projects, only when relevant → [entry-router-guidelines.md](references/entry-router-guidelines.md)
-- Identity content, only when requested → [SOUL.md](references/SOUL.md), a static seed (synced 2026-10-09); never substitute the live `~/.claude/SOUL.md`; re-sync it from the Agent Identity in `~/.claude/CLAUDE.md` during skill updates
+- Identity content, only when requested → [SOUL.md](references/SOUL.md), a static seed (synced 2026-11-19); never substitute the live `~/.claude/SOUL.md`; re-sync it from the Agent Identity in `~/.claude/CLAUDE.md` during skill updates
 - Maintaining or evaluating this skill (skill-improver, waza, autoresearch) → [eval-criteria.md](references/eval-criteria.md).

@@ -11,7 +11,7 @@ source_urls:
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-haiku-5-5.md
   - https://platform.claude.com/docs/en/models/opus-5-5/migration-guide.md  # source of the S1 quote
 secondary_source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md
-last_upstream_check: 2026-11-01
+last_upstream_check: 2026-11-18
 check_interval_days: 14
 ---
 
@@ -84,12 +84,16 @@ think or not to reason, remove it; that kind of instruction increases tag
 leakage."* Opus 5.5 and Sonnet 5.5 (with `between_tools`) also say remove it.
 Opus 5.5: *"Lowering effort reduces thinking ... more reliably than prompt
 instructions do."* Sonnet 5.5 (think less) and Haiku 5.5 (answer directly) report
-the same. Fable 5.2: a think-less line *"didn’t stop Claude Fable 5.2 from
-thinking at `medium` and above. Remove these lines and lower the effort level"*.
+the same. Fable 5.2: a think-less line *"doesn’t stop the model from thinking at
+`medium` and above. Remove such lines and lower the effort level"*. Opus 5.5, on
+chat prompts with instructions that *"tell Claude to think carefully before
+answering, consider removing them"*.
 
 Reasoning visibility is an application concern (structured thinking blocks) and
 thinking amount, including think-harder/less lines, is effort configuration (D2):
-neither is a repository doc line. Asking for the **rationale behind a
+neither is a repository doc line. The think-first or answer-directly lines some
+guides offer (Sonnet 5.5 structured outputs, Opus 5.5 at `low`) are API prompt
+tuning. Asking for the **rationale behind a
 decision** ("propose alternatives with reasoning") is output content, not
 internal-reasoning transcription, and stays allowed.
 
@@ -98,11 +102,18 @@ internal-reasoning transcription, and stays allowed.
 Sonnet 5 and Opus 4.8: *"It does not silently generalize an instruction from
 one item to another, and it does not infer requests you didn't make ... If
 you need Claude to apply an instruction broadly, state the scope explicitly."*
-Fable 5.2: *"delete the cautions whose reason no longer holds, and rewrite
-absolute rules so that they state their scope and reason."*
+The no-inference half does not carry over: Sonnet 5.5 tends to add tests and docs
+*"even when you don’t ask for them"*, and Opus 5 *"can also expand the scope of
+a task"*. Fable 5.2: *"delete cautions whose reason no longer holds, and rewrite
+absolute rules with their scope and reason."* It *"treats an instruction that
+contains “never” as absolute"*; for approval rules, *"be specific about the
+actions you want double-checked"*.
 
 Name the paths, directories or file types a rule covers. Path-bound rules prefer
-`.claude/rules/` with `paths`.
+`.claude/rules/` with `paths`. Where an action stays allowed with approval, write
+that condition ("ask before deleting files"), not "never delete files". An
+approval rule names its exact actions; list the routine steps that need no
+approval instead of a general act-freely line.
 
 ### W4 — Carry the reason when the rule is not self-evident
 
@@ -123,7 +134,7 @@ triage instructions.
 
 Opus 5 *"delegates to subagents more readily than prior models ... it
 multiplies cost and time when applied to small tasks"*; Fable 5 *"dispatches
-parallel subagents more readily ... Use subagents frequently"*; Fable 5.2 *"delegates
+parallel subagents more readily ... Use subagents frequently"*; Fable 5.2 *"delegated
 readily"* where prompts invite it: *"If your system prompt, skills, or agent files
 tell the model to delegate, review those lines first."* Emit an explicit
 bar for when delegation is warranted through the existing conditional
@@ -145,7 +156,7 @@ fails the prune test.
 
 Fable 5: *"you can steer most behaviors with a brief instruction rather than
 enumerating each behavior by name"*. Write the one line that names the behavior,
-with its scope (W3). Keep lists a team policy requires.
+with its scope (W3). Keep lists a team policy requires. See D3.
 
 ### W9 — Do not discourage tool use
 
@@ -189,9 +200,9 @@ across models** — never as `if <model> then <behavior>`.
   sometimes with subagents"* (the guide offers a stop-and-report paragraph).
 - Haiku 5.5: at `low` and `medium` it *"sometimes reports a code change as done
   without running a check"* (the guide offers a run-a-real-check paragraph).
-- Fable 5.2: *"Anthropic also observed Claude Fable 5.2 using subagents to review
-  its own work in an agentic coding product at higher effort levels, such as
-  `xhigh` and `max`. Claude Fable 5.1 didn’t do this on the same tasks."*
+- Fable 5.2: *"At higher effort levels such as `xhigh` and `max`, Anthropic saw
+  Claude Fable 5.2 use subagents in an agentic coding product to review its own
+  work, which Claude Fable 5.1 didn’t do on the same tasks."*
 
 Generic verification lines in project docs are expendable on all four families
 (W1). Independent verifier roles remain a skill/harness design choice. The
@@ -208,10 +219,10 @@ reconciliation turns on **whose work is verified**:
 Fable 5.2, Fable 5.1 and Opus 5.5: adaptive thinking always on (cannot be
 disabled); default effort `high` on Fable 5.2 and 5.1, `medium` on Opus 5.5.
 Fable 5.2 runs at `medium` by default in Claude Code (code.claude.com/docs/en/model-config); its guide: *"rerun your
-effort sweep instead of carrying over a setting you tuned on Claude Fable 5.1
+effort sweep rather than carrying over a setting you tuned on Claude Fable 5.1
 or Claude Opus 5.5."* Sonnet 5: adaptive,
 default `high`. Sonnet 5.5: adaptive, default `high` on the Claude API but
-`medium` in Claude Code; levels are *"recalibrated"* against Sonnet 5, and
+`medium` in Claude Code (code.claude.com/docs/en/best-practices); levels are *"recalibrated"* against Sonnet 5, and
 `between_tools` (accepted at `high` or below) is its lowest thinking setting.
 Haiku 5.5: adaptive, on by default, default `medium`; the first Haiku with effort
 levels, and `disabled` is accepted only at `high` or below. Legacy Opus 5:
@@ -220,6 +231,16 @@ thinking across models"* (Opus 5.5; Fable 5.1 says the same).
 
 These are API/harness configuration, not project knowledge: never write effort
 or thinking settings into a project doc; they go stale per model.
+
+### D3 — Steering wording: Fable 5 says brief; Opus 5.5 names patterns
+
+- Fable 5: a brief instruction, not an enumeration (W8).
+- Opus 5.5: *"a general instruction such as “avoid a generic AI look” mostly
+  swaps one default for another. It responds well to instructions that name
+  specific patterns to avoid"*; its early-stop example names four stops.
+
+Both Opus 5.5 sections are out-of-scope topics. W8 stays the default: its one
+line names the specific behavior, never a generic quality.
 
 ## Out of scope — do not import
 
