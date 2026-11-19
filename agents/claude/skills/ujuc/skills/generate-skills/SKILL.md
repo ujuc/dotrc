@@ -203,11 +203,13 @@ bash "$GS/validate-skill" <skill-dir> && bash "$GS/skill-diet-eval" check <skill
 
 **Size limits**: place each fact by [level](../../../skill-diet/skills/skill-diet/SKILL.md#levels);
 skill-diet's budget decides when to slim, and the validator's 500-line warning
-is the backstop. In Create mode, once the commands above pass, invoke
-`skill-diet:skill-diet` (`Skill` tool) on the new skill, move each fact to the
-level that skill assigns, and rerun the commands; without the tool, read its
-SKILL.md and report the missing invocation. A full diet stays a separate
-Diet-mode request.
+is the backstop.
+
+**Skill-diet pass (Create mode)**: the order is write the skill, pass the
+commands above, invoke `skill-diet:skill-diet` (`Skill` tool) on the written
+skill, move each fact to the level that skill assigns, then rerun the commands.
+Without the tool, read its SKILL.md and report the missing invocation. A full
+diet stays a separate Diet-mode request.
 
 **Behavior evaluation**: write 3–6 binary checks under `## Eval Criteria` or in
 `evals.md` ([eval guide](references/eval-guide.md)). Rerun the exact baseline
