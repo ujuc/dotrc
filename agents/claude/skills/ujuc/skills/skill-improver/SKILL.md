@@ -1,6 +1,6 @@
 ---
 name: skill-improver
-description: "스킬 정의를 구조·의미 점검과 최근 세션 기록에서 관찰된 실패로 감사해 안전한 기계적 결함은 자동 수정하고 행동 변경은 근거 있는 제안으로 남긴다. /ujuc:skill-improver, skill-improver, 스킬 개선해줘, 스킬 점검해줘, 스킬 감사해줘, 스킬 최적화, improve skill 요청 시 사용한다. 스킬 테스트·eval 실행·점수 비교는 waza, 반복 변이 루프는 autoresearch, 스킬 다이어트는 generate-skills 다이어트 모드가 맡는다."
+description: "스킬 정의를 구조·의미 점검과 최근 세션 기록에서 관찰된 실패로 감사해 안전한 기계적 결함은 자동 수정하고 행동 변경은 근거 있는 제안으로 남긴다. /ujuc:skill-improver, skill-improver, 스킬 개선해줘, 스킬 점검해줘, 스킬 감사해줘, 스킬 최적화, improve skill, audit skill 요청 시 사용한다. 스킬 테스트·eval 실행·점수 비교는 waza, 반복 변이 루프는 autoresearch, 스킬 다이어트는 generate-skills 다이어트 모드가 맡는다."
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(bash:*), Bash(git:*), Bash(date:*), Bash(mktemp:*), Bash(diff:*), Agent, advisor
 argument-hint: "[skill-name ...]"
 ---
@@ -63,7 +63,7 @@ Run `validate-skill <path>` (frontmatter, naming, size limits), then `bash <repo
   - **WARN low-signal suite** (report only; never PASS evidence, never blocks Phase 5): `eval.yaml` has `config.executor: mock` or the launcher's `| Engine |` row shows `mock` (the mock never loads SKILL.md); or every grader in `eval.yaml` and `tasks/*.yaml` is a `type: text` `contains`/`not_contains` check or a `type: behavior` token budget, with no `skill_invocation` grader. `| Skill invocations | 0 / M |` alone is no WARN: with the default `inject_skill_body: true` the body is already in the system prompt.
 - **B.11 Host and source integrity:** tool and model names are supported or mapped to the host's capabilities, with unavailable roles disclosed; upstream requirements, recommendations, local policy and model or study findings keep their own scope; reference paths, section names and writer roles are current. FAIL examples: a missing AskUserQuestion treated as headless operation; claiming an unavailable advisor ran; a model-specific default required globally; shared instructions moved into one host's rule files only.
 
-Trigger completeness, trigger overlap and model fitness belong to the skill-engineer role; do not check them here. To run them, dispatch `Agent` with `subagent_type: "Explore"`, Advanced routing, and the prompt "Read `<abs>/references/roles/skill-engineer.md` first and follow it. Target: <absolute target path> [--check trigger|overlap|model|all]"; print the returned report.
+Trigger completeness, trigger overlap and model fitness belong to the skill-engineer role; do not check them here. To run them, dispatch `Agent` with `subagent_type: "Explore"`, Advanced routing at its review effort, and the prompt "Read `<abs>/references/roles/skill-engineer.md` first and follow it. Target: <absolute target path> [--check trigger|overlap|model|all]"; print the returned report.
 
 ### Dimension C — Type-specific
 
