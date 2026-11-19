@@ -32,7 +32,7 @@ mode it asks for. Judge what is asked, not a word inside a skill name.
 - **Update mode**: a change to an existing skill (`업데이트`, `수정`, `갱신`, `최신화`, `update`, `refresh`)
   → Run Step 0 → Steps U1–U2 → [Behavior baseline](#behavior-baseline) → Step U3 → Step 5 (validation)
 - **Create mode**: a new skill
-  → Run Step 0 → Step 1 below → [Behavior baseline](#behavior-baseline) → Steps 2–4 in [create mode](references/create-mode.md) → Step 5
+  → Run Step 0 → Step 1 below → [Behavior baseline](#behavior-baseline) → Steps 2–4 in [create mode](references/create-mode.md) → Step 5, ending with its skill-diet pass
 
 When it names only a skill, or asks for none of these, ask which mode and which skill.
 
@@ -203,7 +203,11 @@ bash "$GS/validate-skill" <skill-dir> && bash "$GS/skill-diet-eval" check <skill
 
 **Size limits**: place each fact by [level](../../../skill-diet/skills/skill-diet/SKILL.md#levels);
 skill-diet's budget decides when to slim, and the validator's 500-line warning
-is the backstop.
+is the backstop. In Create mode, once the commands above pass, invoke
+`skill-diet:skill-diet` (`Skill` tool) on the new skill, move each fact to the
+level that skill assigns, and rerun the commands; without the tool, read its
+SKILL.md and report the missing invocation. A full diet stays a separate
+Diet-mode request.
 
 **Behavior evaluation**: write 3–6 binary checks under `## Eval Criteria` or in
 `evals.md` ([eval guide](references/eval-guide.md)). Rerun the exact baseline

@@ -34,6 +34,8 @@
                 (waza: 평가 스위트 baseline/after 회귀 확인)
                 skill-improver(diet-recommended) → generate-skills 다이어트 모드
                 (skill-diet eval: before/after/none을 실제 에이전트로 측정)
+[스킬 생성]     generate-skills(Create) → skill-diet:skill-diet 레벨 점검
+[에이전트 문서] 새 CLAUDE.md: 내장 /init 초안 → generate-agent-docs 검토
 [글쓰기]        prompting-assist → (선택) humanizer 후처리
 ```
 
