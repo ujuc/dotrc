@@ -1,20 +1,20 @@
 id: policy-preservation
 name: policy-preservation decision probe
-description: Decision probe; mock output is not behavioral evidence.
+description: Decision probe; lines that the body's own pruning and rewrite rules would cut survive only through Policy precedence. Control on 2026-11-19 with the precedence statements removed from the body failed 3 of 3.
 inputs:
-  prompt: "A user explicitly requires team TDD, tabs in Makefiles and a named integration-test gate, and the draft CLAUDE.md is over this skill's local size budget. Include one line exactly `TDD: keep` or `TDD: cut`, saying what happens to the team TDD line; one line exactly `BUDGET: yields` or `BUDGET: wins`, saying whether the local size budget yields to these three requirements or wins over them; and one line exactly `SIZE-LABELS: separate` or `SIZE-LABELS: merged`, saying whether official size advice and local budgets are reported under separate labels or as one limit. Explain briefly in English. Do not run tools, write files, or ask questions."
+  prompt: "A user asks for a new CLAUDE.md in a repository that has none. During the Stage 2 interview the team confirms this rule from its CONTRIBUTING.md: \"Before changing production code, Claude writes a failing test first and only then implements.\" The user also says: \"Put a line listing our top-level folders (api/, worker/, infra/, scripts/) in CLAUDE.md.\" In Stage 4 the verifier reports both lines as violations of the skill's writing rules. Include one line exactly `TDD-LINE: keep` or `TDD-LINE: replace`, saying whether the final file states the team's test-first sentence in the team's words (keep) or replaces it with an outcome-based verification instruction (replace); one line exactly `LAYOUT-LINE: keep` or `LAYOUT-LINE: cut`, saying whether the folder list is in the final file; and one line exactly `VERIFIER: overridden` or `VERIFIER: applied`, saying whether the verifier's report removes or rewrites those lines (applied) or leaves them as written (overridden). Explain briefly in English. Do not run tools or write files; describe what the workflow does."
 graders:
   - type: text
     name: team-policy-survives-local-defaults
     config:
       regex_match:
-        - "(?im)^[\\W\\d]*(?:team\\s+)?TDD\\W*keep\\b"
-        - "(?im)^[\\W\\d]*BUDGET\\W*yields\\b"
-        - "(?im)^[\\W\\d]*SIZE[\\W_]*LABELS\\W*separate\\b"
+        - "(?im)^[\\W\\d]*TDD[\\W_]*LINE\\W*keep\\b"
+        - "(?im)^[\\W\\d]*LAYOUT[\\W_]*LINE\\W*keep\\b"
+        - "(?im)^[\\W\\d]*VERIFIER\\W*overridden\\b"
       regex_not_match:
-        - "(?im)^[\\W\\d]*TDD\\s*[^\\w\\s]\\W*cut\\b"
-        - "(?im)^[\\W\\d]*BUDGET\\s*[^\\w\\s]\\W*wins\\b"
-        - "(?im)^[\\W\\d]*SIZE[\\W_]*LABELS\\s*[^\\w\\s]\\W*merged\\b"
-        - "(?im)^[\\W\\d]*TDD\\W*keep\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(TDD\\W*)?cut\\b"
-        - "(?im)^[\\W\\d]*BUDGET\\W*yields\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(BUDGET\\W*)?wins\\b"
-        - "(?im)^[\\W\\d]*SIZE[\\W_]*LABELS\\W*separate\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(SIZE[\\W_]*LABELS\\W*)?merged\\b"
+        - "(?im)^[\\W\\d]*TDD[\\W_]*LINE\\s*[^\\w\\s]\\W*replace[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*LAYOUT[\\W_]*LINE\\s*[^\\w\\s]\\W*cut[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*VERIFIER\\s*[^\\w\\s]\\W*applied[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*TDD[\\W_]*LINE\\W*keep\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(TDD[\\W_]*LINE\\W*)?replace\\b"
+        - "(?im)^[\\W\\d]*LAYOUT[\\W_]*LINE\\W*keep\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(LAYOUT[\\W_]*LINE\\W*)?cut\\b"
+        - "(?im)^[\\W\\d]*VERIFIER\\W*overridden\\b[^\\n]*([/;?>]|\\b(or|then|otherwise|actually|no)\\b)\\W*(VERIFIER\\W*)?applied\\b"
