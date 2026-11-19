@@ -1,6 +1,6 @@
 ---
 name: generate-skills
-description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, 스킬 다이어트, create a skill, update skill, generate-skills, /ujuc:generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza, 한두 줄 편집만 skill-diet:skill-diet가 맡고, 스킬 다이어트 요청은 이 스킬로 시작해 skill-diet 절차를 적용한다."
+description: "Claude 스킬을 생성하거나 기존 스킬의 구조·frontmatter를 최신 spec에 맞게 업데이트하며, skill-diet 기준의 다이어트를 실행한다. 스킬 만들어줘, 새 스킬 추가, 스킬 업데이트, 스킬 수정, 스킬 갱신, 스킬 최신화, 스킬 다이어트, create a skill, update skill, refresh skill, skill diet, generate-skills, /ujuc:generate-skills 요청 시 사용한다. 세션 실패 근거의 자동 개선은 skill-improver, eval 실행은 waza, 한두 줄 편집만 skill-diet:skill-diet가 맡고, 스킬 다이어트 요청은 이 스킬로 시작해 skill-diet 절차를 적용한다."
 argument-hint: "[skill-name]"
 ---
 
@@ -95,9 +95,9 @@ bash "$GS/superpowers-upstream" check           # one advisory line for guidance
 
 ## Language policy
 
-- `description` → Korean: its trigger phrases are matched against `$ARGUMENTS` and user wording.
+- `description` → Korean: Claude picks the skill by comparing its trigger phrases with the user's wording.
 - SKILL.md body, `references/`, `scripts/`, init templates → English.
-- Keep Korean verbatim where it is functional: `$ARGUMENTS` trigger keywords,
+- Keep Korean verbatim where it is functional: `\$ARGUMENTS` trigger keywords,
   Korean examples in description guides, Korean Conventional Commits examples,
   user-facing output text, and target-language corpora or rulebooks.
 - Updating a legacy skill: translate Korean body prose to English, keeping the above.
@@ -181,7 +181,7 @@ then edit frontmatter, `description` and body within the approved scope, and go 
 Run it in Step U2 and after writing a new skill. Cut a line that restates:
 
 - a dispatched worker's role file: keep the rule in the role file, since
-  workers load no CLAUDE.md; task inputs, dispatch conditions and inline safety
+  Explore workers load no CLAUDE.md; task inputs, dispatch conditions and inline safety
   gates stay at the call site;
 - a sibling skill's procedure: name the skill instead;
 - standard LLM or tool knowledge: name the tool and trust its docs.

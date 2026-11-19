@@ -44,6 +44,9 @@ Structure rules the validator does not cover:
 - `references/` holds what only some tasks need, each linked from `SKILL.md`
   with a load condition. Resolve a Markdown link from the file that contains it:
   `references/api-guide.md` in `SKILL.md`, `api-guide.md` from a sibling reference.
+  (Local policy: the spec says paths relative to the skill root and references
+  one level deep from `SKILL.md`; this repository resolves from the containing
+  file because `skill-diet-eval check` validates links that way.)
 - Link a sibling skill's shared reference (such as `model-selection.md`) instead of copying it.
 - `scripts/`: Rust in a Cargo workspace under `tools/` behind thin, executable
   bash launchers (this skill's layout); Python only via `uv` with PEP 723
@@ -54,7 +57,11 @@ Structure rules the validator does not cover:
 
 Use [frontmatter-spec.md](frontmatter-spec.md) and [description-examples.md](description-examples.md).
 
-1. Set non-empty `name` (matching the folder) and `description`.
+1. Set non-empty `name` (matching the folder) and `description`. A name that
+   matches a bundled skill or built-in command you can see in the session is a
+   conflict too: a personal or project skill replaces that command (not its
+   aliases; a built-in command only in a local terminal session), and a plugin
+   skill keeps `/plugin:name` but loses the bare `/name`.
 2. Write a concise WHAT + WHEN `description` from the selected trigger phrases;
    workflow detail belongs in the body.
 3. Pick optional fields for the intended host and distribution path. Use manual
@@ -90,15 +97,26 @@ while drafting and fold in its result.
 - **Shape**: state when not to use the skill as a negative trigger in
   `description`, since the body loads too late to decide that. A technique or
   pattern skill gets one before/after example of its core pattern. Common
-  mistakes go under Gotchas, and `SKILL.md` ends with `Look up the rest`.
+  mistakes go under Gotchas, and `SKILL.md` ends with `Look up the rest`. Put
+  the rules that must outlast compaction near the top
+  ([content lifecycle](frontmatter-spec.md#content-lifecycle)).
 
 ### Dynamic context
 
 `` !`command` `` in the body runs before the prompt reaches the model and is
-replaced by its stdout (shell set by the `shell` field). It runs on every load,
-injects error output as-is when it fails, cannot branch, and delays loading when
-slow. Use it for always-needed, fixed context (git status, current branch, tool
-versions), never for user-dependent commands or anything that prints secrets.
+replaced by its output (shell set by the `shell` field; `bash` merges stderr into
+stdout). It runs on every load, cannot branch, and delays loading when slow: at
+the Bash tool's 2-minute timeout it is moved to the background (the skill
+renders with a note instead of its output) or killed, which aborts the
+invocation. A failing command aborts the whole invocation, so Claude never sees
+the skill: with `bash` any non-zero exit fails, except exit 1 from search and
+comparison commands, so append `|| true` to another command expected to exit
+non-zero. It is permission-checked without a prompt; pre-approve a command your
+rules do not already allow in [`allowed-tools`](frontmatter-spec.md#allowed-tools).
+It runs in the session's current directory, so reach bundled files through
+`${CLAUDE_SKILL_DIR}`. Use it for always-needed, fixed context (git status,
+current branch, tool versions), never for user-dependent commands or anything
+that prints secrets.
 
 ### Post-write checks
 
@@ -108,5 +126,6 @@ versions), never for user-dependent commands or anything that prints secrets.
 
 For team distribution, choose repo check-in (every checked-in skill costs
 context) or a [plugin marketplace](https://code.claude.com/docs/en/plugin-marketplaces).
-Measure usage with a PreToolUse hook that logs skill invocations: it shows which
-skills are popular, which undertrigger, and trends over time.
+Measure your own usage with `/skill-doctor` (v2.1.252+): it reports each listed
+skill's context cost and use and flags never-invoked skills. Across a team or
+over time, log Skill calls with a PreToolUse hook.

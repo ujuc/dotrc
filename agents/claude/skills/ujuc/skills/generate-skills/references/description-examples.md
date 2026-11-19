@@ -1,8 +1,8 @@
 # `description` writing guide
 
 Write `[WHAT sentence]. [WHEN sentence].`: WHAT is the minimum capability label,
-not a workflow summary; WHEN names the requests that should load the skill. The
-matcher compares it with raw user input, so trigger phrases decide accuracy.
+not a workflow summary; WHEN names the requests that should load the skill. Claude
+decides from it in the skill listing, so trigger phrases decide accuracy.
 
 ## Examples
 
@@ -51,6 +51,10 @@ trigger allows: about 100–300 characters, front-loaded, no empty modifiers.
 **Under-triggering** (not loaded for related requests): first check the
 [invocation controls](frontmatter-spec.md#invocation-control-matrix); a
 manual-only skill is not expected to auto-load, so keep its selected mode.
+Then confirm the description reaches Claude, ruling out a listing-budget
+overflow ([two truncations](frontmatter-spec.md#description)), frontmatter YAML
+that does not parse ([delimiter rules](frontmatter-spec.md#delimiter-rules);
+`--debug` shows the error) and a [`paths`](frontmatter-spec.md#paths) limit.
 Otherwise add the phrases users actually say, with synonyms, abbreviations and
 colloquial variants ("PR 만들어줘", "풀리퀘 생성", "pull request").
 

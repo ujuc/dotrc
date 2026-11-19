@@ -47,7 +47,9 @@ execution does not need the coordinator's full reasoning capacity.
    handoff and retry overhead. Neither the cheapest token price nor the highest profile guarantees
    the cheapest successful run. Do not launch a worker for a trivial command
    when dispatch/context-transfer cost dominates. Switch a session's model at a
-   natural break: the prompt cache belongs to the model that wrote it.
+   natural break: the prompt cache belongs to the model that wrote it. On the
+   API, changing top-level effort between requests can also invalidate the cache;
+   a per-message effort change (beta) keeps it.
 
 Independent review needs a separate context with the relevant evidence. It may
 use the same model; changing model names alone does not create independence.
@@ -85,7 +87,7 @@ profile to these call arguments. Never write them into frontmatter.
 | Profile | `model` / `effort` | Typical work |
 | --- | --- | --- |
 | Lightweight | `haiku` / `medium` | Deterministic checks, structured extraction, commits touching ≤2 files and ≤40 changed lines, waza launcher runs |
-| Standard | `sonnet` / `medium` | Bounded implementation, multi-file commits, focused exploration, research partial reports |
+| Standard | `sonnet` / `medium`; `high` for long or multipart agentic runs (the Sonnet 5.5 guide: at `medium` it may check in before finishing them) | Bounded implementation, multi-file commits, focused exploration, research partial reports |
 | Advanced | `opus` / `medium`; `high` for verification, review and brownfield debugging | Component design, implementation, synthesis; semantic review and humanizer strict verifiers at `high` |
 | Frontier | `fable` / `medium` (also after an Advanced `high` failure, per step 5); `high` for long unattended runs or a `medium` shortfall; `xhigh` only after a measured gain | Planning and refactors at `medium`, the long unattended part at `high` (the playbook starts at medium; the Fable 5.2 guide starts at `high` and gives `high` to long unattended runs) |
 
@@ -141,7 +143,7 @@ Repository policy inferred from vendor descriptions. Last checked: 2026-11-10.
   fall short."*
 - [Prompting Claude Fable 5.2](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-2):
   effort, early stopping, subagents and earlier-model instructions for Fable
-  5.2. Fetch it live; read the [2026-11-10 backup](prompting-claude-fable-5-2.md)
+  5.2. Fetch it live; read the [2026-11-18 backup](prompting-claude-fable-5-2.md)
   only when the fetch fails, and say so in one line.
 - [Which Claude model should you build with](https://claude.dev/blog/which-claude-model-should-you-build-with/):
   start on Opus 5.5 at medium; move down for well-scoped or side tasks; move up

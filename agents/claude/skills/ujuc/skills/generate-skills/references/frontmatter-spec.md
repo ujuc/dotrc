@@ -1,7 +1,7 @@
 ---
 source_url: https://code.claude.com/docs/en/skills
 spec_url: https://agentskills.io/specification
-last_upstream_check: 2026-11-01
+last_upstream_check: 2026-11-18
 check_interval_days: 14
 ---
 
@@ -30,8 +30,8 @@ Field names must match exactly: Claude Code silently ignores an unknown key, so
 `disable_model_invocation` does nothing (`validate-skill` warns on unknown keys).
 
 **[CC]** Boolean fields (`disable-model-invocation`, `user-invocable`,
-`background`) accept `yes`/`no`/`on`/`off`/`1`/`0` in any case since v2.1.218;
-write `true`/`false` for portability.
+`background`) accept `yes`/`no`/`on`/`off`/`1`/`0` in any case;
+write `true`/`false` for portability (`validate-skill` warns on the other forms).
 
 Only `name`, `description`, `license`, `compatibility`, `metadata` and
 `allowed-tools` belong to the standard; every other field breaks uploads ([Portability](#portability-outside-claude-code)).
@@ -43,7 +43,8 @@ Only `name`, `description`, `license`, `compatibility`, `metadata` and
 | Format | **[SPEC]** | `^[a-z0-9]+(-[a-z0-9]+)*$`, max 64 characters |
 | Folder match | **[SPEC]** | Must match the parent directory name |
 | Reserved prefixes | **[LOCAL]** | No name starting with `claude` or `anthropic` (no hyphen required); `RESERVED_NAME_PREFIXES` only |
-| Reserved names | **[CC]** | Outside plugins, `anthropic-skills` and names inside it (`anthropic-skills:*`) do not load, and a folder named `synced` (any case) is skipped |
+| Refused characters | **[CC]** | Characters such as zero-width, control, private-use, unassigned or direction-changing ones, a blank other than one plain space between words, `<`/`>`. A refused folder name stops the skill loading, except in a plugin's `skills/`, where the characters become hyphens in the command; a refused `name` leaves the skill loaded, but the `/` menu does not show that value and typing it does not invoke the skill (`claude --debug`, search `[names]`) |
+| Reserved names | **[CC]** | Outside plugins, `anthropic-skills` and names inside it (`anthropic-skills:*`) do not load, and a folder named `synced` (any case) is skipped (for `synced`, `validate-skill` warns and `init-skill` refuses; `anthropic-skills` fails the reserved-prefix rule above) |
 
 **[CC]** For personal and project skills `name` sets the `/command` unless another
 command uses that name, and the directory name also invokes the skill. Under a
@@ -58,9 +59,9 @@ What the skill does and when to use it; the primary trigger-matching field.
 
 | Rule | Origin | Description |
 |------|--------|-------------|
-| Spec max length | **[SPEC]** | **1,024 characters** for `description` alone |
-| Listing cap | **[CC]** | **1,536 characters** for `description` + `when_to_use`, truncated in the listing (`skillListingMaxDescChars`); `DESCRIPTION_COMBINED_MAX` enforces this one, not the 1,024 |
-| XML tags | **[LOCAL]** | Tag-shaped tokens (`<name ...>`) fail; upstream displays `<`/`>` in `description` and `when_to_use` as `&lt;`/`&gt;`, and escapes them in text that reaches Claude for skills synced from claude.ai (v2.1.228+) |
+| Spec max length | **[SPEC]** | **1,024 characters** for `description` alone; `validate-skill` warns above it |
+| Listing cap | **[CC]** | **1,536 characters** for `description` + `when_to_use`, truncated in the listing (`skillListingMaxDescChars`); `validate-skill` fails above it |
+| XML tags | **[LOCAL]** | Tag-shaped tokens (`<name ...>`) in `description` or `when_to_use` fail; upstream displays `<`/`>` in `description` and `when_to_use` as `&lt;`/`&gt;`, and escapes them in text that reaches Claude for skills synced from claude.ai (v2.1.228+) |
 
 Two truncations apply:
 
@@ -69,7 +70,8 @@ Two truncations apply:
   window), Claude Code drops **whole** descriptions, least-invoked skills first.
   Front-loading does not help; raise `skillListingBudgetFraction` (e.g. `0.02`)
   or `SLASH_COMMAND_TOOL_CHAR_BUDGET`, or mark low-priority skills `name-only`
-  via `skillOverrides`.
+  via `skillOverrides`. `skillOverrides` does not affect plugin skills, which
+  includes this repository's `ujuc:*` skills; manage those through `/plugin`.
 
 ### `when_to_use`
 
@@ -91,6 +93,9 @@ or YAML list mapped to positions in order: `arguments: [issue, branch]` makes
 ### `disable-model-invocation`
 
 `true` stops Claude from loading the skill on its own; users run it with `/name`.
+Claude Code blocks Claude's call unless the user's message holds `/name` as a
+separate word with no punctuation attached: at the start it runs the skill
+directly, after plain text it only permits Claude to run it for that message.
 Default `false`. Recommended for destructive or high-cost workflows. It also
 keeps the skill out of subagent preloads and stops it running when
 a session-scoped scheduled task fires with it as the prompt.
@@ -123,6 +128,16 @@ allowed-tools: Read Grep Glob            # or "Read, Grep, Bash(git status:*)", 
   `${CLAUDE_PLUGIN_ROOT}`/`${CLAUDE_PLUGIN_DATA}` substitute in Bash rules, so
   `Bash(${CLAUDE_SKILL_DIR}/scripts/lint.sh *)` matches the body's call and lets
   a bundled script run without a prompt.
+- Injected `` !`command` `` lines never prompt; each is checked against the
+  permission rules, and one a deny rule matches aborts the invocation. Outside
+  auto mode any check result but allow aborts it, so pre-approve here a command
+  the rules do not already allow. An ask rule still aborts it, and when the
+  closest repository at or above the working directory looks bare (`HEAD`
+  beside `refs` or `commondir`) the grant is ignored for an injected Bash
+  command that contains `git` or cannot be parsed. In auto mode a command that
+  would otherwise need approval does not abort: the skill loads with an
+  instruction to run it first, except in a forked skill that sets `agent` or a
+  session without the shell tool that runs injected commands, which still abort.
 
 ### `disallowed-tools`
 
@@ -186,7 +201,7 @@ Subagent type for `context: fork` (`validate-skill` fails `agent` without it): `
 ### `background`
 
 With `context: fork`, `false` makes the invoking turn wait for the fork's result
-(default `true`, v2.1.218+; earlier versions always waited). Claude Code also
+(default `true`). Claude Code also
 waits at `true` in non-interactive runs (`-p`, Agent SDK), with
 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1`, while a previous invocation of the
 same skill runs, when a session-scoped scheduled task fires it, and when a
@@ -287,8 +302,8 @@ frontmatter still loads unchanged in Claude Code.
 - Invoked content enters the conversation once and stays for the session; the
   file is not re-read, so write standing instructions, not one-time steps.
 - Instructions persist; an `allowed-tools` grant does not (it clears on the next message).
-- Re-invoking with identical rendered content adds a short "already loaded" note
-  (v2.1.202+); changed arguments or dynamic-context output append the full content again.
+- Re-invoking with identical rendered content adds a short "already loaded" note;
+  changed arguments or dynamic-context output append the full content again.
 - Auto-compaction re-attaches the most recent invocation of each skill (first
   5,000 tokens each, 25,000-token shared budget, most recent first); older skills can drop out.
 
@@ -308,15 +323,21 @@ frontmatter still loads unchanged in Claude Code.
 
 Indexed arguments use shell-style quoting (`/my-skill "hello world" second` →
 `$0` = `hello world`). Escape a literal `$` before a digit, `ARGUMENTS` or a
-declared name with one backslash: `\$1.00`. The escape does not stop a
-`${CLAUDE_*}` variable from substituting.
+declared name with one backslash: `\$1.00`; a doubled backslash (`\\$1`) keeps
+both backslashes and still expands. The escape does not stop a `${CLAUDE_*}`
+variable from substituting. An argument value is inserted literally: a `$1` or
+`$ARGUMENTS` inside it is not expanded again, though `${CLAUDE_*}` variables are.
 
 ## Manual checks
 
-`validate-skill` enforces the rest; check these by hand:
+`validate-skill` checks the rest. A wrong value type (it does not type-check
+`hooks`, `license`, `argument-hint` or the `agent` value), a non-map `metadata`
+and a `compatibility` outside 1–500 characters fail; non-string `metadata` keys
+or values, a `metadata` key that reuses a field name, a `description` over
+1,024 characters and `background` without `context: fork` only warn, and a
+warning does not fail the run. **[LOCAL]** It also fails a `README.md` in a
+skill folder (vendored subtree skills in `SUBTREE_SKILLS` excepted), which the
+standard allows. Check these by hand:
 
-- [ ] `description` alone ≤ 1,024 characters
 - [ ] `description` states WHAT; WHEN lives in `description` or `when_to_use`
-- [ ] `compatibility`, if set, is a string of ≤ 500 characters
-- [ ] `metadata`, if set, is a flat map of string keys to string values
 - [ ] An upload-destined skill uses only the six standard fields
