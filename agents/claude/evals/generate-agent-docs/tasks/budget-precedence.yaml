@@ -14,5 +14,5 @@ graders:
       regex_not_match:
         - "(?im)^[\\W\\d]*LAYOUT[\\W_]*TREE\\s*[^\\w\\s]\\W*omitted[^\\w\\n]*$"
         - "(?im)^[\\W\\d]*LINE[\\W_]*COUNT\\s*[^\\w\\s]\\W*within[\\W_]*budget[^\\w\\n]*$"
-        - "(?im)^[\\W\\d]*LAYOUT[\\W_]*TREE\\W*added\\b[^\\n]*([/?]|\\bor\\b)\\W*(LAYOUT[\\W_]*TREE\\W*)?omitted\\b"
-        - "(?im)^[\\W\\d]*LINE[\\W_]*COUNT\\W*over[\\W_]*budget\\b[^\\n]*([/?]|\\bor\\b)\\W*(LINE[\\W_]*COUNT\\W*)?within[\\W_]*budget\\b"
+        - "(?im)^[\\W\\d]*LAYOUT[\\W_]*TREE\\W*added\\b[\\s`*]*(/|\\bor\\b)[\\s`*]*(LAYOUT[\\W_]*TREE\\W*)?omitted\\b"
+        - "(?im)^[\\W\\d]*LINE[\\W_]*COUNT\\W*over[\\W_]*budget\\b[\\s`*]*(/|\\bor\\b)[\\s`*]*(LINE[\\W_]*COUNT\\W*)?within[\\W_]*budget\\b"

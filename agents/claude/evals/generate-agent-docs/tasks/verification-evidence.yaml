@@ -13,5 +13,5 @@ graders:
       regex_not_match:
         - "(?im)^[\\W\\d]*REMOVAL\\s*[^\\w\\s]\\W*pass[^\\w\\n]*$"
         - "(?im)^[\\W\\d]*OUTCOME\\s*[^\\w\\s]\\W*fail[^\\w\\n]*$"
-        - "(?im)^[\\W\\d]*REMOVAL\\W*unverified\\b[^\\n]*([/?]|\\bor\\b)\\W*(REMOVAL\\W*)?pass\\b"
-        - "(?im)^[\\W\\d]*OUTCOME\\W*incomplete\\b[^\\n]*([/?]|\\bor\\b)\\W*(OUTCOME\\W*)?fail\\b"
+        - "(?im)^[\\W\\d]*REMOVAL\\W*unverified\\b[\\s`*]*(/|\\bor\\b)[\\s`*]*(REMOVAL\\W*)?pass\\b"
+        - "(?im)^[\\W\\d]*OUTCOME\\W*incomplete\\b[\\s`*]*(/|\\bor\\b)[\\s`*]*(OUTCOME\\W*)?fail\\b"
