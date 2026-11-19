@@ -260,9 +260,9 @@ with `includeGitInstructions` and setting `attribution`; otherwise they compete.
 > already exists, `/init` suggests improvements rather than overwriting it.**
 > Refine from there with instructions Claude wouldn't discover on its own.
 
-- This skill does not run `/init`, even where the Skill tool exposes it: `/init` writes CLAUDE.md directly,
-  bypassing the interview and writer. **Consume its output** (an existing
-  CLAUDE.md) as the baseline and refine.
+- For a missing CLAUDE.md this skill runs `/init` first and reviews its draft
+  ([init first](../SKILL.md#route-by-file-state)). An existing CLAUDE.md is the
+  baseline to refine, and `/init` is never run over it.
 - `CLAUDE_CODE_NEW_INIT=1` enables an interactive multi-phase flow: `/init` asks
   which artifacts to set up (CLAUDE.md, skills, hooks), explores the codebase
   with a subagent, fills gaps via follow-up questions, and presents a reviewable

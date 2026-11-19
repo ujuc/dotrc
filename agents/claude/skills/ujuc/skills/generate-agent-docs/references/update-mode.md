@@ -2,7 +2,10 @@
 
 U1 follows Stage 1, U2 runs during Stage 2, U3 replaces Stage 3 for existing
 files, and the Stage 4 roles follow all writes outside the short route. Any
-existing file is a baseline, regardless of its author or origin.
+existing file is a baseline, regardless of its author or origin. The one
+exception is a CLAUDE.md that `/init` wrote earlier in this run
+([init first](../SKILL.md#route-by-file-state)): it is the run's own draft, so
+prune it by the new-file rules without separate deletion approval.
 
 ## U1 — Audit selected targets
 
