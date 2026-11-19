@@ -48,9 +48,34 @@ pub const ALLOWED_SHELLS: &[&str] = &["bash", "powershell"];
 
 pub const RESERVED_NAME_PREFIXES: &[&str] = &["claude", "anthropic"];
 
+/// Folder names Claude Code skips outside plugins (compared lowercase).
+pub const RESERVED_NAMES: &[&str] = &["synced"];
+
+pub const BOOLEAN_KEYS: &[&str] = &["disable-model-invocation", "user-invocable", "background"];
+
+/// Other spellings Claude Code also reads as booleans (compared lowercase).
+pub const LOOSE_BOOLEAN_WORDS: &[&str] = &["true", "false", "yes", "no", "on", "off", "1", "0"];
+
+/// Fields documented as "string or YAML list".
+pub const STRING_OR_LIST_KEYS: &[&str] = &["allowed-tools", "disallowed-tools", "paths", "arguments"];
+
+/// Variables that point outside the skill directory, so paths behind them are not checked.
+pub const NON_SKILL_PATH_VARS: &[&str] = &[
+    "${CLAUDE_PLUGIN_ROOT}",
+    "${CLAUDE_PROJECT_DIR}",
+    "${CLAUDE_PLUGIN_DATA}",
+];
+
 pub const NAME_MAX_LEN: usize = 64;
 
 /// Combined `description` + `when_to_use` character cap.
 pub const DESCRIPTION_COMBINED_MAX: usize = 1536;
 
-pub const BODY_LINE_WARN_THRESHOLD: usize = 500;
+/// Agent Skills spec cap for `description` alone; Claude Code accepts more.
+pub const DESCRIPTION_SPEC_MAX: usize = 1024;
+
+/// Agent Skills spec cap for `compatibility`.
+pub const COMPATIBILITY_MAX: usize = 500;
+
+/// Upstream: keep the whole SKILL.md under this many lines.
+pub const SKILL_LINE_WARN_THRESHOLD: usize = 500;

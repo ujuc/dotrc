@@ -31,7 +31,7 @@ description: |
 
 TODO: One-line description of what this skill does.
 
-If $ARGUMENTS is provided, treat it as the target path / name. Otherwise, ask the user.
+Target: `$ARGUMENTS` (if this is empty or still shows the placeholder, no argument was given: ask the user).
 
 ## Model guidance
 
@@ -121,6 +121,14 @@ fn main() -> Result<ExitCode> {
         eprintln!(
             "error: name must not start with reserved prefix ({:?})",
             rules::RESERVED_NAME_PREFIXES
+        );
+        return Ok(ExitCode::FAILURE);
+    }
+
+    if rules::RESERVED_NAMES.contains(&args.name.as_str()) {
+        eprintln!(
+            "error: '{}' is reserved outside plugins; Claude Code skips that folder",
+            args.name
         );
         return Ok(ExitCode::FAILURE);
     }

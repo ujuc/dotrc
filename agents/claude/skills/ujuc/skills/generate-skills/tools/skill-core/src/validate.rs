@@ -110,7 +110,7 @@ pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
     } else if skill_dir.join("README.md").is_file() {
         findings.push(Finding::fail(
             "Structure",
-            "README.md found (skill folders must not contain README.md)",
+            "README.md found (local rule: skill folders keep no README.md; the Agent Skills spec allows extra files)",
         ));
     } else {
         findings.push(Finding::pass("Structure", "no README.md"));
@@ -139,10 +139,9 @@ pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
     validate_known_keys(fm, &mut findings);
     validate_values(fm, &mut findings);
     validate_agent_context(fm, &mut findings);
-    validate_allowed_tools(fm, &mut findings);
     validate_boolean_fields(fm, &mut findings);
     validate_references(skill_dir, &parsed.raw, &mut findings);
-    validate_body_length(parsed.body_lines, &mut findings);
+    validate_skill_length(parsed.raw.lines().count(), &mut findings);
 
     Ok(ValidationReport {
         findings,
@@ -151,6 +150,14 @@ pub fn validate_skill(skill_dir: &Path) -> anyhow::Result<ValidationReport> {
 }
 
 fn validate_name(fm: &Frontmatter, folder_name: &str, findings: &mut Vec<Finding>) {
+    if rules::RESERVED_NAMES.contains(&folder_name.to_ascii_lowercase().as_str()) {
+        findings.push(Finding::warn(
+            "Frontmatter",
+            format!(
+                "folder name '{folder_name}' is reserved outside plugins; Claude Code skips it in enterprise, personal and project locations"
+            ),
+        ));
+    }
     match frontmatter::get_str(fm, "name") {
         None => findings.push(Finding::fail(
             "Frontmatter",
@@ -248,19 +255,35 @@ fn validate_description(fm: &Frontmatter, findings: &mut Vec<Finding>) {
             ),
         ));
     }
+
+    let desc_len = desc.chars().count();
+    if desc_len > rules::DESCRIPTION_SPEC_MAX {
+        findings.push(Finding::warn(
+            "Frontmatter",
+            format!(
+                "description is {desc_len} chars; the Agent Skills spec allows {} (Claude Code accepts more)",
+                rules::DESCRIPTION_SPEC_MAX
+            ),
+        ));
+    }
 }
 
 fn validate_xml_tags(fm: &Frontmatter, findings: &mut Vec<Finding>) {
-    let Ok(serialized) = serde_yaml::to_string(&Value::Mapping(fm.clone())) else {
-        return;
-    };
-    if xml_re().is_match(&serialized) {
+    // Only the listing fields: `argument-hint: <branch>` and hook commands are valid upstream.
+    let hit = ["description", "when_to_use"]
+        .iter()
+        .filter_map(|k| frontmatter::get_str(fm, k))
+        .any(|s| xml_re().is_match(s));
+    if hit {
         findings.push(Finding::fail(
             "Frontmatter",
-            "XML tags found in frontmatter",
+            "XML tags found in description/when_to_use",
         ));
     } else {
-        findings.push(Finding::pass("Frontmatter", "no XML tags in frontmatter"));
+        findings.push(Finding::pass(
+            "Frontmatter",
+            "no XML tags in description/when_to_use",
+        ));
     }
 }
 
@@ -286,6 +309,81 @@ fn validate_values(fm: &Frontmatter, findings: &mut Vec<Finding>) {
     check_enum(fm, "effort", rules::ALLOWED_EFFORTS, findings);
     check_enum(fm, "context", rules::ALLOWED_CONTEXTS, findings);
     check_enum(fm, "shell", rules::ALLOWED_SHELLS, findings);
+    for key in rules::STRING_OR_LIST_KEYS {
+        check_string_or_list(fm, key, findings);
+    }
+    validate_metadata(fm, findings);
+    validate_compatibility(fm, findings);
+}
+
+fn check_string_or_list(fm: &Frontmatter, key: &str, findings: &mut Vec<Finding>) {
+    let Some(v) = frontmatter::get_value(fm, key) else {
+        return;
+    };
+    let ok = match v {
+        Value::String(s) => !s.trim().is_empty(),
+        Value::Sequence(items) => items.iter().all(Value::is_string),
+        _ => false,
+    };
+    if ok {
+        findings.push(Finding::pass("Values", format!("{key} format is valid")));
+    } else {
+        findings.push(Finding::fail(
+            "Values",
+            format!("{key} must be a non-empty string or a list of strings"),
+        ));
+    }
+}
+
+fn validate_metadata(fm: &Frontmatter, findings: &mut Vec<Finding>) {
+    let Some(v) = frontmatter::get_value(fm, "metadata") else {
+        return;
+    };
+    let Value::Mapping(map) = v else {
+        findings.push(Finding::fail(
+            "Values",
+            "metadata must be a map; Claude Code drops other values",
+        ));
+        return;
+    };
+    let mut clean = true;
+    for (k, val) in map {
+        if let Some(key) = k.as_str().filter(|key| rules::ALLOWED_KEYS.contains(key)) {
+            clean = false;
+            findings.push(Finding::warn(
+                "Values",
+                format!("metadata key '{key}' reuses a frontmatter field name"),
+            ));
+        }
+        if !(k.is_string() && val.is_string()) {
+            clean = false;
+            findings.push(Finding::warn(
+                "Values",
+                format!("metadata entry {k:?} must map a string key to a string value (quote scalars such as version: \"1.0\")"),
+            ));
+        }
+    }
+    if clean {
+        findings.push(Finding::pass("Values", "metadata is a flat map of strings"));
+    }
+}
+
+fn validate_compatibility(fm: &Frontmatter, findings: &mut Vec<Finding>) {
+    let Some(v) = frontmatter::get_value(fm, "compatibility") else {
+        return;
+    };
+    let len = v.as_str().map(|s| s.chars().count());
+    if len.is_some_and(|n| (1..=rules::COMPATIBILITY_MAX).contains(&n)) {
+        findings.push(Finding::pass("Values", "compatibility length is valid"));
+    } else {
+        findings.push(Finding::fail(
+            "Values",
+            format!(
+                "compatibility must be a string of 1-{} characters",
+                rules::COMPATIBILITY_MAX
+            ),
+        ));
+    }
 }
 
 fn validate_model(fm: &Frontmatter, findings: &mut Vec<Finding>) {
@@ -305,7 +403,14 @@ fn validate_model(fm: &Frontmatter, findings: &mut Vec<Finding>) {
 }
 
 fn check_enum(fm: &Frontmatter, key: &str, allowed: &[&str], findings: &mut Vec<Finding>) {
-    let Some(value) = frontmatter::get_str(fm, key) else {
+    let Some(raw) = frontmatter::get_value(fm, key) else {
+        return;
+    };
+    let Some(value) = raw.as_str() else {
+        findings.push(Finding::fail(
+            "Values",
+            format!("{key} must be one of {:?}", allowed),
+        ));
         return;
     };
     if allowed.contains(&value) {
@@ -322,6 +427,14 @@ fn check_enum(fm: &Frontmatter, key: &str, allowed: &[&str], findings: &mut Vec<
 }
 
 fn validate_agent_context(fm: &Frontmatter, findings: &mut Vec<Finding>) {
+    if frontmatter::get_value(fm, "background").is_some()
+        && frontmatter::get_str(fm, "context") != Some("fork")
+    {
+        findings.push(Finding::warn(
+            "Values",
+            "background is set but context is not 'fork'; Claude Code ignores it",
+        ));
+    }
     if frontmatter::get_value(fm, "agent").is_none() {
         return;
     }
@@ -343,43 +456,27 @@ fn validate_agent_context(fm: &Frontmatter, findings: &mut Vec<Finding>) {
     }
 }
 
-fn validate_allowed_tools(fm: &Frontmatter, findings: &mut Vec<Finding>) {
-    let Some(v) = frontmatter::get_value(fm, "allowed-tools") else {
-        return;
-    };
-    match v {
-        Value::String(s) => {
-            if s.trim().is_empty() {
-                findings.push(Finding::fail("Values", "allowed-tools string is empty"));
-            } else if s.contains(',') && !s.contains(' ') {
-                findings.push(Finding::warn(
-                    "Values",
-                    "allowed-tools has commas without spaces — ensure separator is consistent",
-                ));
-            } else {
-                findings.push(Finding::pass("Values", "allowed-tools format is valid"));
-            }
-        }
-        Value::Sequence(_) => {
-            findings.push(Finding::pass(
-                "Values",
-                "allowed-tools format is valid (list)",
-            ));
-        }
-        _ => findings.push(Finding::fail(
-            "Values",
-            "allowed-tools must be a string or list",
-        )),
-    }
-}
-
 fn validate_boolean_fields(fm: &Frontmatter, findings: &mut Vec<Finding>) {
-    for key in ["disable-model-invocation", "user-invocable"] {
+    for key in rules::BOOLEAN_KEYS {
         let Some(v) = frontmatter::get_value(fm, key) else {
             continue;
         };
-        if matches!(v, Value::Bool(_)) {
-            findings.push(Finding::pass("Values", format!("{key} is a boolean")));
+        let loose = match v {
+            Value::Bool(_) => {
+                findings.push(Finding::pass("Values", format!("{key} is a boolean")));
+                continue;
+            }
+            Value::Number(n) => n.as_u64().is_some_and(|n| n <= 1),
+            Value::String(s) => {
+                rules::LOOSE_BOOLEAN_WORDS.contains(&s.to_ascii_lowercase().as_str())
+            }
+            _ => false,
+        };
+        if loose {
+            findings.push(Finding::warn(
+                "Values",
+                format!("{key} uses a form Claude Code also reads as a boolean; write true/false for portability"),
+            ));
         } else {
             findings.push(Finding::fail(
                 "Values",
@@ -394,6 +491,13 @@ fn validate_references(skill_dir: &Path, raw: &str, findings: &mut Vec<Finding>)
     let mut broken: Vec<String> = Vec::new();
 
     for m in ref_path_re().find_iter(raw) {
+        let lead = raw[..m.start()]
+            .rsplit(char::is_whitespace)
+            .next()
+            .unwrap_or("");
+        if rules::NON_SKILL_PATH_VARS.iter().any(|v| lead.contains(v)) {
+            continue;
+        }
         let p = m.as_str().trim_end_matches(['.', ',', ')']);
         if !seen.insert(p.to_string()) {
             continue;
@@ -418,22 +522,17 @@ fn validate_references(skill_dir: &Path, raw: &str, findings: &mut Vec<Finding>)
     }
 }
 
-fn validate_body_length(body_lines: usize, findings: &mut Vec<Finding>) {
-    if body_lines <= rules::BODY_LINE_WARN_THRESHOLD {
+fn validate_skill_length(lines: usize, findings: &mut Vec<Finding>) {
+    let max = rules::SKILL_LINE_WARN_THRESHOLD;
+    if lines < max {
         findings.push(Finding::pass(
             "Content",
-            format!(
-                "SKILL.md body is {body_lines} lines (max {})",
-                rules::BODY_LINE_WARN_THRESHOLD
-            ),
+            format!("SKILL.md is {lines} lines (keep under {max})"),
         ));
     } else {
         findings.push(Finding::warn(
             "Content",
-            format!(
-                "SKILL.md body exceeds {} lines ({body_lines} lines) — consider moving content to references/",
-                rules::BODY_LINE_WARN_THRESHOLD
-            ),
+            format!("SKILL.md is {lines} lines (keep under {max}) — consider moving content to references/"),
         ));
     }
 }
@@ -632,23 +731,23 @@ mod tests {
         // comma-separated with spaces is the de-facto convention across all skills.
         let fm = fm_from("---\nname: t\nallowed-tools: \"Read, Grep, Glob\"\n---\n");
         let mut findings = Vec::new();
-        validate_allowed_tools(&fm, &mut findings);
+        check_string_or_list(&fm, "allowed-tools", &mut findings);
         assert!(findings.iter().all(|f| f.severity != Severity::Fail));
     }
 
     #[test]
-    fn allowed_tools_comma_no_space_warns() {
+    fn allowed_tools_comma_no_space_passes() {
         let fm = fm_from("---\nname: t\nallowed-tools: \"Read,Grep,Glob\"\n---\n");
         let mut findings = Vec::new();
-        validate_allowed_tools(&fm, &mut findings);
-        assert!(findings.iter().any(|f| f.severity == Severity::Warn));
+        check_string_or_list(&fm, "allowed-tools", &mut findings);
+        assert!(findings.iter().all(|f| f.severity == Severity::Pass));
     }
 
     #[test]
     fn allowed_tools_space_separated_passes() {
         let fm = fm_from("---\nname: t\nallowed-tools: \"Read Grep Glob\"\n---\n");
         let mut findings = Vec::new();
-        validate_allowed_tools(&fm, &mut findings);
+        check_string_or_list(&fm, "allowed-tools", &mut findings);
         assert!(findings.iter().all(|f| f.severity != Severity::Fail));
     }
 
@@ -657,7 +756,7 @@ mod tests {
         let src = "---\nname: t\nallowed-tools:\n  - Read\n  - Grep\n---\n";
         let fm = fm_from(src);
         let mut findings = Vec::new();
-        validate_allowed_tools(&fm, &mut findings);
+        check_string_or_list(&fm, "allowed-tools", &mut findings);
         assert!(findings.iter().all(|f| f.severity != Severity::Fail));
     }
 
@@ -665,16 +764,97 @@ mod tests {
     fn allowed_tools_empty_string_fails() {
         let fm = fm_from("---\nname: t\nallowed-tools: \"\"\n---\n");
         let mut findings = Vec::new();
-        validate_allowed_tools(&fm, &mut findings);
+        check_string_or_list(&fm, "allowed-tools", &mut findings);
         assert!(findings.iter().any(|f| f.severity == Severity::Fail));
     }
 
     #[test]
-    fn non_boolean_disable_invocation_fails() {
-        let fm = fm_from("---\nname: t\ndisable-model-invocation: \"yes\"\n---\n");
+    fn loose_boolean_forms_warn_and_others_fail() {
+        let sev = |src: &str| {
+            let mut findings = Vec::new();
+            validate_boolean_fields(&fm_from(src), &mut findings);
+            findings[0].severity
+        };
+        assert_eq!(sev("---\ndisable-model-invocation: \"yes\"\n---\n"), Severity::Warn);
+        assert_eq!(sev("---\nbackground: 1\n---\n"), Severity::Warn);
+        assert_eq!(sev("---\nbackground: false\n---\n"), Severity::Pass);
+        assert_eq!(sev("---\nuser-invocable: maybe\n---\n"), Severity::Fail);
+        assert_eq!(sev("---\nbackground: 2\n---\n"), Severity::Fail);
+    }
+
+    fn severities(run: fn(&Frontmatter, &mut Vec<Finding>), src: &str) -> Vec<Severity> {
         let mut findings = Vec::new();
-        validate_boolean_fields(&fm, &mut findings);
-        assert!(findings.iter().any(|f| f.severity == Severity::Fail));
+        run(&fm_from(src), &mut findings);
+        findings.iter().map(|f| f.severity).collect()
+    }
+
+    #[test]
+    fn xml_check_covers_listing_fields_only() {
+        let hint = "---\ndescription: plain\nargument-hint: <branch>\n---\n";
+        assert_eq!(severities(validate_xml_tags, hint), [Severity::Pass]);
+        let desc = "---\ndescription: use <b>bold</b>\n---\n";
+        assert_eq!(severities(validate_xml_tags, desc), [Severity::Fail]);
+    }
+
+    #[test]
+    fn value_types_are_checked() {
+        let fails = |src: &str| severities(validate_values, src).contains(&Severity::Fail);
+        assert!(fails("---\neffort: 3\n---\n"));
+        assert!(fails("---\ndisallowed-tools: 5\n---\n"));
+        assert!(fails("---\npaths: true\n---\n"));
+        assert!(fails("---\narguments:\n  a: 1\n---\n"));
+        assert!(fails("---\nmetadata: text\n---\n"));
+        assert!(fails("---\ncompatibility: \"\"\n---\n"));
+        assert!(fails(&format!("---\ncompatibility: {}\n---\n", "x".repeat(501))));
+        assert!(!fails(
+            "---\npaths: \"src/**\"\narguments: [a, b]\nmetadata:\n  version: \"1.0\"\ncompatibility: needs git\n---\n"
+        ));
+    }
+
+    #[test]
+    fn metadata_non_string_value_or_field_name_key_warns() {
+        let warns = |src: &str| severities(validate_metadata, src) == [Severity::Warn];
+        assert!(warns("---\nmetadata:\n  version: 1.0\n---\n"));
+        assert!(warns("---\nmetadata:\n  paths: x\n---\n"));
+    }
+
+    #[test]
+    fn description_over_spec_cap_warns_without_failing() {
+        let src = format!("---\ndescription: {}\n---\n", "x".repeat(1100));
+        let got = severities(validate_description, &src);
+        assert!(got.contains(&Severity::Warn) && !got.contains(&Severity::Fail));
+    }
+
+    #[test]
+    fn background_without_fork_warns() {
+        let got = severities(validate_agent_context, "---\nbackground: false\n---\n");
+        assert_eq!(got, [Severity::Warn]);
+    }
+
+    #[test]
+    fn reserved_folder_name_warns() {
+        let mut findings = Vec::new();
+        validate_name(&fm_from("---\nname: synced\n---\n"), "Synced", &mut findings);
+        assert_eq!(findings[0].severity, Severity::Warn);
+    }
+
+    #[test]
+    fn references_behind_plugin_root_are_not_resolved() {
+        let mut findings = Vec::new();
+        let raw = "see `${CLAUDE_PLUGIN_ROOT}/skills/peer/references/shared.md`";
+        validate_references(Path::new("/nonexistent"), raw, &mut findings);
+        assert!(findings.is_empty());
+    }
+
+    #[test]
+    fn skill_length_warns_at_threshold() {
+        let sev = |n| {
+            let mut findings = Vec::new();
+            validate_skill_length(n, &mut findings);
+            findings[0].severity
+        };
+        assert_eq!(sev(499), Severity::Pass);
+        assert_eq!(sev(500), Severity::Warn);
     }
 
     #[test]
