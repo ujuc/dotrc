@@ -12,7 +12,7 @@ graders:
         - "(?im)^[\\W\\d]*RERUN\\W*yes\\b"
         - "(?im)^[\\W\\d]*FULL[\\W_]*DIET\\W*no\\b"
       regex_not_match:
-        - "(?im)^[\\W\\d]*INVOKE\\W*no\\b"
-        - "(?im)^[\\W\\d]*RERUN\\W*no\\b"
-        - "(?im)^[\\W\\d]*FULL[\\W_]*DIET\\W*yes\\b"
-        - "(?im)^[\\W\\d]*(INVOKE|RERUN|FULL[\\W_]*DIET)\\W*(yes|no)\\s*(/|\\bor\\b)\\s*(yes|no)\\b"
+        - "(?im)^[\\W\\d]*INVOKE\\W*no[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*RERUN\\W*no[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*FULL[\\W_]*DIET\\W*yes[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*(INVOKE|RERUN|FULL[\\W_]*DIET)\\W*(yes|no)\\s*(/|\\bor\\b)\\s*(yes|no)[^\\w\\n]*$"
