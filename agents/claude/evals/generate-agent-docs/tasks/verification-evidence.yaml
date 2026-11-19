@@ -1,19 +1,17 @@
 id: verification-evidence
 name: verification-evidence decision probe
-description: Decision probe; mock output is not behavioral evidence.
+description: Decision probe; a removal with no approval record is UNVERIFIED, and a required FAIL on the third checklist pass ends as incomplete. Control on 2026-11-19 with the Stage 4 status rules removed from the body failed 3 of 3.
 inputs:
-  prompt: "Checklist gets only final file paths and update flag, with no baseline or confirmed user decisions. State the preservation status. Also state final status for fast multi-file output and for a third checklist run still failing. Do not run tools, write files, or ask questions."
+  prompt: "An update-mode run of this workflow is in Stage 4. Earlier in the session, the user approved in chat removing the hand-written 'Legacy deploy' section from CLAUDE.md, and the orchestrator removed it. The verifier was given the original and the final CLAUDE.md but no record of that approval. In a different, already finished run, the required item 'test command matches package.json' was still FAIL on the third checklist pass, and the workflow did not run another pass. Include one line exactly `REMOVAL: pass` or `REMOVAL: unverified`, saying how the verifier marks the removed section. Include one line exactly `OUTCOME: fail` or `OUTCOME: incomplete`, saying the overall verification outcome the finished run reports for itself as a whole. Explain briefly in English. Do not run tools or write files; describe what the workflow does."
 graders:
   - type: text
     name: status-per-case
     config:
       regex_match:
-        - "(?i)preserv(?:[^.\\n]|\\.md){0,80}\\bunverified\\b|\\bunverified\\b(?:[^.\\n]|\\.md){0,80}preserv"
-        - "(?i)\\bfast\\b(?:[^.\\n]|\\.md){0,80}\\bpartial\\b|\\bpartial\\b(?:[^.\\n]|\\.md){0,80}\\bfast\\b"
-        - "(?i)(third|3rd|still[ -]fail)(?:[^.\\n]|\\.md){0,80}(\\bincomplete\\b|\\bnot\\s+complete\\b)|(\\bincomplete\\b|\\bnot\\s+complete\\b)(?:[^.\\n]|\\.md){0,80}(third|3rd|still[ -]fail)"
+        - "(?im)^[\\W\\d]*REMOVAL\\W*unverified\\b"
+        - "(?im)^[\\W\\d]*OUTCOME\\W*incomplete\\b"
       regex_not_match:
-        - "(?i)preserv\\w*[\\w -]{0,20}(:|\\bis\\b)[*\\s]*(pass|passed|verified|complete|partial)\\b"
-        - "(?i)\\bfast\\b[\\w -]{0,30}(:|\\bis\\b)[*\\s]*(pass|passed|verified|complete|unverified)\\b"
-        - "(?im)(third|3rd|still[ -]fail)[\\w -]{0,40}(:|\\bis\\b)[*\\s]*(pass|passed|verified|complete|partial)\\b\\s*([.,;(*]|$)"
-        - "(?i)preserv\\w*(\\s+status)?(\\W{1,6}partial\\b|\\s+pass(es|ed)\\b)"
-        - "(?i)\\bfast\\b[\\w -]{0,20}\\s+unverified\\b|\\bfast(\\s+[\\w-]+){0,3}\\s+pass(es|ed)\\b"
+        - "(?im)^[\\W\\d]*REMOVAL\\s*[^\\w\\s]\\W*pass[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*OUTCOME\\s*[^\\w\\s]\\W*fail[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*REMOVAL\\W*unverified\\b[^\\n]*([/?]|\\bor\\b)\\W*(REMOVAL\\W*)?pass\\b"
+        - "(?im)^[\\W\\d]*OUTCOME\\W*incomplete\\b[^\\n]*([/?]|\\bor\\b)\\W*(OUTCOME\\W*)?fail\\b"
