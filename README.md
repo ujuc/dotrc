@@ -302,6 +302,9 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
       "Read(~/.claude/skills/egm/**)",
       "Read(~/.config/dotrc/agents/claude/skills/egm/**)"
     ],
+    "deny": [
+      "Skill(superpowers:writing-skills)"
+    ],
     "ask": [],
     "defaultMode": "auto",
     "disableBypassPermissionsMode": "disable"
