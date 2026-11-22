@@ -93,6 +93,13 @@ claude/state
 claude/ponytail-modes/
 **/.system*
 
+### Orca-managed (written by the Orca app; skills symlink into ~/.agents/skills)
+claude/keybindings.json
+claude/orca-agent-view.json
+claude/skills/orca-cli
+claude/skills/orca-computer-use
+claude/skills/orchestration
+
 ### Manual backups taken before editing config (e.g. settings.json.bak)
 *.bak
 *.doctor-bak
