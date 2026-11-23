@@ -24,8 +24,8 @@ scripts/install.sh --agents
 
 - `claude/`에는 추적하는 설정과 무시하는 런타임 상태가 함께 존재한다.
   런타임 파일을 강제로 추가하지 않는다.
-- 전역 지침(`claude/CLAUDE.md`)과 에이전트 정체성(`claude/SOUL.md`)은 `claude/`에 둔다.
-  다른 소비자가 생기면 그때 공용 위치로 옮긴다.
+- 공용 전역 지침(`claude/AGENTS.global.md`), Claude 전용 전역 지침(`claude/CLAUDE.md`), 에이전트 정체성(`claude/SOUL.md`)은 `claude/`에 둔다.
+  `claude/CLAUDE.md`는 `claude/AGENTS.global.md`를 import한다.
 - 토큰, 자격 증명, 장비별 경로는 추적하지 않는다.
 - 스킬을 변경한 뒤 해당 스킬을 검증한다.
 
