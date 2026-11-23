@@ -15,7 +15,7 @@ C6 → 3; C7 → all six and this suite's evidence separation.
 
 | ID / criteria | Input and fixture | Expected result |
 | --- | --- | --- |
-| pair-new / C2 | Empty repository; user: "에이전트 문서 만들어줘" with the fact "Run integration tests against the disposable database." | Write set {AGENTS.md, CLAUDE.md}, AGENTS.md first; AGENTS.md holds the fact; CLAUDE.md is "@AGENTS.md" with no copy of it. |
+| pair-new / C2 | Empty repository; user: "에이전트 문서 만들어줘" with the fact "Run integration tests against the disposable database." | Write set {AGENTS.md, CLAUDE.md}; an `/init` CLAUDE.md draft may come first, and the final AGENTS.md is written before the CLAUDE.md edit that imports it; AGENTS.md holds the fact; CLAUDE.md is "@AGENTS.md" with no copy of it. |
 | agents-beside / C2,C5 | Existing AGENTS.md: "# Work Rules\n\nUse the disposable database for integration tests.\n"; no CLAUDE.md; user: "CLAUDE.md 만들어줘" with the rule "Use /context to check loaded memory files." | AGENTS.md byte-identical; CLAUDE.md is "@AGENTS.md" followed by the /context rule only; the disposable rule is not copied. |
 | import-kept / C2 | Fixture S2; user adds "Run new-test before delivery." | Rule lands in AGENTS.md; CLAUDE.md byte-identical, `@AGENTS.md` kept. |
 | agents-request / C2 | Fixture S; user: "AGENTS.md 만들어줘" | Split: AGENTS.md = "# Work Rules\n\nRun old-test.\nKeep the release freeze exception.\n", CLAUDE.md = "@AGENTS.md\n"; no line in both. |
@@ -93,8 +93,9 @@ set.
 | tasks/stop-list.yaml | stop-context, stop-emphasis, stop-subagent-quality, stop-thinking, stop-persistence, stop-repo, stop-tools |
 | tasks/enforcement-fit.yaml | enforce-rule, enforce-preference |
 | tasks/report-only.yaml | audit-only |
-| tasks/supplied-fact.yaml | named-claude, import-kept |
+| tasks/supplied-fact.yaml | import-kept |
 | tasks/placement.yaml | placement |
+| tasks/portability.yaml | agent-specific, restriction |
 | tasks/session-placement.yaml | session-capture |
 | tasks/broken-reference.yaml | broken-pointer, summary-growth |
 | tasks/standalone-claude.yaml | standalone-claude |
@@ -102,7 +103,7 @@ set.
 A parenthesis names the part of a case that the probe asks about; the rest of
 that case is covered only by the application test above.
 
-Artifact only, with no probe: selected-only, final-reference, stop-preserved, rare-language, colleague, missing-import.
+Artifact only, with no probe: selected-only, final-reference, stop-preserved, rare-language, colleague, missing-import, named-claude, nested-sibling, agents-only-short, shared-path-rule, codex-bytes.
 
 The suite runs on the launcher's eval model through `copilot-sdk`. Decision probes
 use `regex_match` and `regex_not_match` text graders; read them by trial pass
@@ -131,13 +132,20 @@ Prune test, stop-list and enforcement cases. Each row is a line in an existing C
 | broken-pointer / red flag | "Deployment steps are in docs/deploy.md." with no such file, no deletion requested | Line stays and is reported |
 | summary-growth / red flag | CLAUDE.md with a directory list; "CLAUDE.md 갱신해줘" with no verifier run | No new directory entry survives |
 | standalone-claude / routes | CLAUDE.md with no import, no AGENTS.md; user: "CLAUDE.md에 이 규칙 추가해줘" | No question; the rule lands in CLAUDE.md, no AGENTS.md or import is written; the report proposes the split once |
-| placement / routes | AGENTS.md = "# Work Rules\n" and CLAUDE.md = "@AGENTS.md\n"; user adds a disposable-database rule, a plan-mode rule, a `/ujuc:commit` rule, a `make lint` rule, and a docs/deploy.md pointer | Shared rules and the pointer (plain path, no `@`) in AGENTS.md; plan-mode and slash-command rules in CLAUDE.md below the import |
+| placement / routes | AGENTS.md = "# Work Rules\n" and CLAUDE.md = "@AGENTS.md\n"; user adds a disposable-database rule, a plan-mode rule, a `/ujuc:commit` rule, a `make lint` rule, an AskUserQuestion rule, and a docs/deploy.md pointer | Shared rules and the pointer (plain path, no `@`) in AGENTS.md; plan-mode, slash-command and tool-name rules in CLAUDE.md below the import |
 | missing-import / routes | Rule-bearing AGENTS.md exists, CLAUDE.md has no import | Audit reports that Claude no longer reads AGENTS.md and proposes the import; no write without approval |
+| agent-specific / red flag | S2; user: "Codex만 따를 규칙을 추가해줘: run cargo nextest instead of cargo test." | Write set {AGENTS.md}, the line worded for Codex; no `AGENTS.override.md` or `AGENTS.local.md`; the report says Claude Code ignores both |
+| restriction / routes | S2; user: "AGENTS.md만 고쳐줘: use plan mode before editing src/billing/." | Write set {AGENTS.md}; the report says the line belongs in CLAUDE.md |
+| nested-sibling / stage3 | S2 plus an approved rule for packages/api only | Write set {packages/api/AGENTS.md, packages/api/CLAUDE.md = "@AGENTS.md\n"}; root files byte-identical |
+| agents-only-short / routes | AGENTS.md = S2's AGENTS.md, no CLAUDE.md; user supplies "Use plan mode before editing src/billing/." | CLAUDE.md = "@AGENTS.md\n" plus the rule; AGENTS.md byte-identical |
+| shared-path-rule / stage3 | S2; user adds "Files under src/api/ must validate input with zod." with no file named | The rule goes in AGENTS.md (root, or src/api/AGENTS.md with its importing CLAUDE.md when that nested file is approved), not `.claude/rules/` |
+| codex-bytes / check 3 | Variant 1: project AGENTS.md chain is 40 KiB before the run and the run edits only CLAUDE.md. Variant 2: chain is 31.9 KiB and the run adds 1 KiB to AGENTS.md | Both reports state the measured project-chain bytes; variant 1 records an observation, variant 2 a FAIL |
 
 The YAML tasks exercise decisions through the runner's supported text graders.
 They do not prove filesystem writes. Record actual fixture diffs and ordered
 writes separately for pair-new, agents-beside, import-kept, agents-request,
-authorized-update, standalone-claude and placement.
+authorized-update, standalone-claude, placement, restriction, nested-sibling,
+agents-only-short and shared-path-rule.
 Inspect all read-only cases for absence of unintended writes.
 Dispatch a Lightweight general-purpose worker that runs waza-run.sh for optional automated runs; no direct CLI invocation.
 Mock runs and missing-runner skips cannot satisfy artifact assertions.

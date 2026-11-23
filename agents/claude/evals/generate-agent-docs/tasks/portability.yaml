@@ -1,0 +1,17 @@
+id: portability
+name: portability decision probe
+description: Decision probe; a rule for one non-Claude agent goes into AGENTS.md worded for that agent, never AGENTS.override.md or AGENTS.local.md, and an explicit file restriction wins over ownership.
+tags: [decision-probe]
+inputs:
+  prompt: "A repository has AGENTS.md and a CLAUDE.md that starts with `@AGENTS.md`. Case A: the user says 'Codex만 따를 규칙을 추가해줘: run cargo nextest instead of cargo test.' Case B: the user says 'AGENTS.md만 고쳐줘: use plan mode before editing src/billing/.' Include one line exactly `A: override-file` or `A: agents-md`, saying whether the Codex rule goes into AGENTS.override.md or AGENTS.local.md, or into AGENTS.md worded for Codex; and one line exactly `B: agents-md` or `B: claude-md`, saying which file receives the plan-mode rule. Explain briefly in English. Do not run tools, write files, or ask questions."
+graders:
+  - type: text
+    name: no-forked-files-and-restriction-wins
+    config:
+      regex_match:
+        - "(?im)^\\W*A\\s*:\\W*agents-md\\b"
+        - "(?im)^\\W*B\\s*:\\W*agents-md\\b"
+      regex_not_match:
+        - "(?im)^\\W*A\\s*:\\W*override-file\\b"
+        - "(?im)^\\W*B\\s*:\\W*claude-md\\b"
+        - "(?im)^\\W*[AB]\\s*:\\W*(agents-md|override-file|claude-md)\\b[\\s`*]*\\(?[\\s`*]*(/|\\bor\\b)"

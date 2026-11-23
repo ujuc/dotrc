@@ -40,7 +40,7 @@ load guidance.
 | Harness | User-global file | Project discovery | Imports | Notes |
 | --- | --- | --- | --- | --- |
 | Claude Code | `~/.claude/CLAUDE.md` only | AGENTS.md only when no CLAUDE.md, `.claude/CLAUDE.md` or `CLAUDE.local.md` sits at or above cwd (default `claude-md-or-agents-md`) | `@path` expanded | `@AGENTS.md` in CLAUDE.md works in every read mode and never loads twice |
-| Codex | `~/.codex/AGENTS.override.md`, else `~/.codex/AGENTS.md` | Git root down to cwd, one file per directory (`AGENTS.override.md` › `AGENTS.md` › fallback names), concatenated root first | Not expanded: `@path` stays literal text | Stops adding files at `project_doc_max_bytes`, 32 KiB combined by default; never reads CLAUDE.md |
+| Codex | `~/.codex/AGENTS.override.md`, else `~/.codex/AGENTS.md` | Git root down to cwd, one file per directory (`AGENTS.override.md` › `AGENTS.md` › fallback names), concatenated root first | Not expanded: `@path` stays literal text | Stops adding project files at `project_doc_max_bytes` (32 KiB default, configurable; the user-global file is loaded separately and does not count); never reads CLAUDE.md |
 | omp | `~/.omp/agent/AGENTS.md`, shadows every other user file | One file per directory depth, cwd up to the repo root; AGENTS.md and CLAUDE.md compete for the same depth | `@path` expanded, 5 hops | Task subagents drop files named AGENTS.md but keep AGENTS.md text imported through CLAUDE.md |
 | pi | `~/.pi/agent/AGENTS.md` | AGENTS.md or CLAUDE.md in cwd and its parents | — | — |
 
@@ -63,9 +63,12 @@ under `.agents/`.
   gets a sibling CLAUDE.md that imports it.
 - Never create `AGENTS.override.md` or `AGENTS.local.md`: Claude Code ignores
   both, so a rule there forks the agents. Report an existing one and its effect.
-- Size: Codex truncates the whole chain (user-global plus every project level)
-  at 32 KiB. Report the measured bytes of the AGENTS.md chain a target sits in;
-  over 32 KiB, losing the tail is a defect, not a style note.
+- Size: Codex stops adding project files once the chain from the git root
+  down to cwd reaches `project_doc_max_bytes`, 32 KiB by default
+  (`codex-rs/core/src/agents_md.rs`); the user-global file is outside that
+  budget. Report the measured bytes of the project chain a target sits in. A
+  run that adds bytes beyond 32 KiB has a defect (Codex drops the tail);
+  excess that predates the run, with nothing added past it, is an observation.
 
 ## Reconciliation with this skill's defaults
 

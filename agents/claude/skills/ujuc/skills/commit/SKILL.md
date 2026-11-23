@@ -90,7 +90,7 @@ If `git status` shows a modified submodule, commit inside it first (`git -C <sub
 
 Only for structural changes or new external dependencies; skip content-only edits, submodule pointers, and internal `style` or `refactor` changes.
 
-- `AGENTS.md` (shared) or `CLAUDE.md` (Claude-only lines): only when an undiscoverable workflow, scope policy, deployment target or cross-repository relationship changed; no directory trees or file tables.
+- `AGENTS.md` (shared rules, when CLAUDE.md imports it or no CLAUDE.md exists) or `CLAUDE.md` (Claude-only lines, and shared rules otherwise): only when an undiscoverable workflow, scope policy, deployment target or cross-repository relationship changed; no directory trees or file tables.
 - `README.md`: installation steps, symlink targets or external dependencies changed.
 - Edit existing docs only: no new doc files, nothing inside a submodule.
 - Show each proposed edit, apply only what the user approves, and stage it with this commit.

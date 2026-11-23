@@ -7,7 +7,8 @@ Model guidance: see [dispatch routing](../../../generate-skills/references/model
 
 ## Review only properties visible in the supplied documents
 
-- Shared/Claude-specific placement and duplicated clauses.
+- Shared/Claude-specific placement and duplicated clauses. A shared rule in a
+  CLAUDE.md is a defect only when that CLAUDE.md imports AGENTS.md.
 - Contradictions within the supplied documents.
 - Import syntax, explicit path scope, clarity and measured line counts.
 - Vague instructions or unfilled templates.

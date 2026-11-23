@@ -1,18 +1,25 @@
 id: placement
 name: placement decision probe
-description: Decision probe; in an imported pair each line goes to its owner, and AGENTS.md names supporting files by plain path.
+description: Decision probe; in an imported pair each line goes to its owner (slash commands and Claude tool names stay out of AGENTS.md), and AGENTS.md names supporting files by plain path.
 tags: [decision-probe]
 inputs:
-  prompt: "A repository has AGENTS.md and a CLAUDE.md that starts with `@AGENTS.md`. The user asks to add four rules. A: integration tests use the disposable database. B: use plan mode before editing src/billing/. C: run `/ujuc:commit` for commits. D: run `make lint` before pushing. Separately, AGENTS.md must point to docs/deploy.md for release work. Include one line each exactly `A: <file>` through `D: <file>`, where <file> is `agents-md` or `claude-md`, and one line exactly `REF: plain-path` or `REF: at-import`, saying how AGENTS.md references docs/deploy.md. Explain briefly in English. Do not run tools, write files, or ask questions."
+  prompt: "A repository has AGENTS.md and a CLAUDE.md that starts with `@AGENTS.md`. The user asks to add five rules. A: integration tests use the disposable database. B: use plan mode before editing src/billing/. C: run `/ujuc:commit` for commits. D: run `make lint` before pushing. E: use the AskUserQuestion tool for scope choices. Separately, AGENTS.md must point to docs/deploy.md for release work. Include one line each exactly `A: <file>` through `E: <file>`, where <file> is `agents-md` or `claude-md`, and one line exactly `REF: plain-path` or `REF: at-import`, saying how AGENTS.md references docs/deploy.md. Explain briefly in English. Do not run tools, write files, or ask questions."
 graders:
   - type: text
     name: line-per-owner
     config:
       regex_match:
-        - "(?im)^\\W*A\\W+agents-md\\b"
-        - "(?im)^\\W*B\\W+claude-md\\b"
-        - "(?im)^\\W*C\\W+claude-md\\b"
-        - "(?im)^\\W*D\\W+agents-md\\b"
-        - "(?im)^\\W*REF\\W*plain-path\\b"
+        - "(?im)^\\W*A\\s*:\\W*agents-md\\b"
+        - "(?im)^\\W*B\\s*:\\W*claude-md\\b"
+        - "(?im)^\\W*C\\s*:\\W*claude-md\\b"
+        - "(?im)^\\W*D\\s*:\\W*agents-md\\b"
+        - "(?im)^\\W*E\\s*:\\W*claude-md\\b"
+        - "(?im)^\\W*REF\\s*:\\W*plain-path\\b"
       regex_not_match:
-        - "(?im)^\\W*REF\\s*[^\\w\\s]\\W*at-import[^\\w\\n]*$"
+        - "(?im)^\\W*A\\s*:\\W*claude-md\\b"
+        - "(?im)^\\W*B\\s*:\\W*agents-md\\b"
+        - "(?im)^\\W*C\\s*:\\W*agents-md\\b"
+        - "(?im)^\\W*D\\s*:\\W*claude-md\\b"
+        - "(?im)^\\W*E\\s*:\\W*agents-md\\b"
+        - "(?im)^\\W*REF\\s*:\\W*at-import\\b"
+        - "(?im)^\\W*([A-E]|REF)\\s*:\\W*(agents-md|claude-md|plain-path|at-import)\\b[\\s`*]*\\(?[\\s`*]*(/|\\bor\\b)"

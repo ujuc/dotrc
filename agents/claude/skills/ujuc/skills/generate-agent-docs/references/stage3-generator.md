@@ -13,7 +13,9 @@ files follow update-mode.md U3.
   that make sense inside Claude Code alone: the `Skill`, `Agent`/`Explore`,
   `AskUserQuestion` or `advisor` tools, slash commands, hooks, `.claude/`
   settings and permissions, plan mode, `/context` or `/memory`, output styles.
-  Unsure → AGENTS.md: Claude still reads it through the import.
+  Unsure → AGENTS.md: Claude still reads it through the import. An existing
+  CLAUDE.md without the import keeps receiving shared rules until the import
+  is approved.
 - One rule, one file. Never copy an AGENTS.md rule into CLAUDE.md, never use
   `/import` (it appends a duplicate copy), and keep an existing `@AGENTS.md`
   import. A symlinked CLAUDE.md → AGENTS.md is an existing layout to keep, not
@@ -48,8 +50,9 @@ files follow update-mode.md U3.
 - Apply W/C/T reference rules within their documented scope and exceptions.
   Decision rationale is allowed; internal reasoning transcripts are not needed.
 - Use the local budgets in claude-code-best-practices.md, counting AGENTS.md
-  inside its importing CLAUDE.md, and report the AGENTS.md chain's bytes
-  against Codex's 32 KiB cap (agents-md-best-practices.md).
+  inside its importing CLAUDE.md, and report the project AGENTS.md chain's
+  bytes (git root down to the target) against Codex's default 32 KiB
+  `project_doc_max_bytes` (agents-md-best-practices.md).
 - Preserve unrelated content. Report optional improvements outside authorized
   changes separately, even when auditing every line.
 - Keep a rule with no exceptions as a line and recommend a hook, deny rule or
@@ -81,8 +84,9 @@ omit an orchestration section. Do not manufacture model budgets or new rules.
 
 Selected contributing-docs/ files hold necessary detail shared by humans and
 agents: non-obvious architecture decisions, build/test setup, migrations or
-conventions. Link them from AGENTS.md after they exist; prefer existing docs to
-a parallel source. Do not move universally needed instructions out of
+conventions. Link them from AGENTS.md when CLAUDE.md imports it or no CLAUDE.md
+exists, else from CLAUDE.md, after they exist; prefer existing docs to a
+parallel source. Do not move universally needed instructions out of
 AGENTS.md or CLAUDE.md merely to reach a default size target. Recommending a
 skill for a sometimes-relevant procedure does not authorize creating it or
 removing a team runbook.
@@ -99,7 +103,10 @@ parent-repository paths when checked out independently.
 
 ## Section D — Path rules
 
-Selected `.claude/rules/` files hold confirmed path-scoped behavior.
+Selected `.claude/rules/` files hold confirmed path-scoped behavior that only
+Claude needs. A path-scoped rule every agent needs goes in the nested AGENTS.md
+of that directory (Section C); if the user selects `.claude/rules/` for it
+anyway, write it there and report that other agents will not see it.
 
 ```markdown
 ---

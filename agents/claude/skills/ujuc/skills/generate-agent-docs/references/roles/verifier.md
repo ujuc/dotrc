@@ -27,18 +27,25 @@ dependent check, never assumed PASS.
    exceptions. Destructive changes require explicit authorization.
 2. **Ownership**: per
    [stage3-generator.md](../stage3-generator.md#ownership-agentsmd-shared-claudemd-claude-only),
-   shared rules sit in AGENTS.md and Claude-only lines in CLAUDE.md, with no
-   rule in both (an explicit file restriction excuses placement, reported);
-   a CLAUDE.md beside an AGENTS.md starts with `@AGENTS.md`, and an existing
-   import survives; a CLAUDE.md-only repository was split only with a recorded
-   approval or a request naming AGENTS.md (otherwise UNVERIFIED); supporting
-   files exist before the files that link them.
+   shared rules sit in AGENTS.md and Claude-only lines in a CLAUDE.md that
+   imports it, with no rule in both. Not placement defects: an explicit file
+   restriction (reported), or a shared rule in a CLAUDE.md with no imported
+   AGENTS.md. A CLAUDE.md created beside an AGENTS.md starts with
+   `@AGENTS.md`; on an existing CLAUDE.md a missing import is reported as
+   proposed; an existing import survives. A CLAUDE.md-only repository was
+   split only with a recorded approval or a request naming AGENTS.md
+   (otherwise UNVERIFIED). A path-scoped rule every agent needs is not only in
+   `.claude/rules/` unless the user selected that, with the blind spot
+   reported. Supporting files exist before the files that link them.
 3. **AGENTS.md portability**: no AGENTS.md names a Claude tool, slash command,
    hook or `.claude/` setting, or relies on an `@path` import; no
    `AGENTS.override.md` or `AGENTS.local.md` was written; each new nested
    AGENTS.md below a CLAUDE.md has a sibling CLAUDE.md importing it; a nested
-   file holds only its differences from ancestor files; the AGENTS.md chain's
-   measured bytes are reported, and over Codex's 32 KiB cap is a FAIL.
+   file holds only its differences from ancestor files. Report the project
+   AGENTS.md chain's measured bytes (git root down to the target; the user's
+   `~/.codex/AGENTS.md` is outside it): FAIL when this run adds bytes beyond
+   32 KiB, an observation when the excess predates the run and nothing is
+   added past it.
 4. **Evidence and necessity**: facts are grounded in supplied sources and
    decisions. Prune redundant summaries and linter defaults within authorized
    scope. Preserve explicit project requirements, nondefault conventions and

@@ -44,8 +44,9 @@ Report: path, original text, proposed text, reason, source, authorization
 status. Check that:
 
 - every new line lands in its owner (stage3-generator.md ownership): a shared
-  rule in AGENTS.md, a Claude-only line in CLAUDE.md, a path-scoped Claude
-  rule in `.claude/rules/`; an existing `@AGENTS.md` import stays;
+  rule in AGENTS.md (CLAUDE.md when it does not import AGENTS.md), a
+  Claude-only line in CLAUDE.md, a path-scoped Claude rule in
+  `.claude/rules/`; an existing `@AGENTS.md` import stays;
 - links and nested imports resolve relative to their files;
 - path-scoped rules use paths where relevant (a glob without current matches is
   a review observation, not proof a deliberate future rule is invalid).
@@ -95,12 +96,13 @@ names CLAUDE.md still places a shared fact in an imported AGENTS.md.
    | Fact | Destination |
    | --- | --- |
    | Project rule for every agent | AGENTS.md when CLAUDE.md imports it or no CLAUDE.md exists; else CLAUDE.md, with the split or import proposed in the report |
-   | Claude Code–only rule | CLAUDE.md, or an existing `.claude/rules/` file when path-scoped |
+   | Claude Code–only rule | CLAUDE.md (a new one beside AGENTS.md starts with `@AGENTS.md`, and the report names nested AGENTS.md files it hides), or an existing `.claude/rules/` file when path-scoped |
    | Already stated in AGENTS.md or CLAUDE.md | No write; say where it already is |
-   | Personal | No write, not even a new `CLAUDE.local.md` or `.gitignore` entry; name `~/.claude/CLAUDE.md`, or `CLAUDE.local.md` when a CLAUDE.md exists |
+   | Personal | No write, not even a new `CLAUDE.local.md` or `.gitignore` entry; name the user-global file of each harness the user runs (agents-md-best-practices.md table), or `CLAUDE.local.md` when a CLAUDE.md exists |
    | From session corrections: one-off or discoverable | Drop and say why |
    | Dictated with "add this" | Keep under policy precedence, in the owner above or a restricted file (`CLAUDE.md만`, `AGENTS.md만`); only a named file overrides Personal |
 
 3. Run U2 and U3 on the placed facts only: add no other line the user did
-   not supply, and report U1 findings without patching them. Then run stage4-verifier.md's
+   not supply except the `@AGENTS.md` import a new CLAUDE.md needs, and report
+   U1 findings without patching them. Then run stage4-verifier.md's
    final artifact check. Report PARTIAL.
