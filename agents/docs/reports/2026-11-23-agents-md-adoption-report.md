@@ -29,7 +29,7 @@ Code alone. Codex, omp and pi now read the same instructions.
 | [agents.md](https://agents.md/) | Plain Markdown, no required fields; the nearest file wins; nested files per package |
 | [Claude Code memory](https://code.claude.com/docs/en/memory.md) | By default Claude reads AGENTS.md only when no CLAUDE.md, `.claude/CLAUDE.md` or `CLAUDE.local.md` sits at or above cwd. The `instructionFiles` setting works only in user or managed settings, so projects need the official `@AGENTS.md` + `## Claude Code` shape |
 | [Codex AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md.md), `codex-rs/core/src/agents_md.rs` | Global `~/.codex/AGENTS.md`; project files from git root to cwd; `@path` is not expanded; `project_doc_max_bytes` (32 KiB default) budgets project files only, not the global file |
-| [omp context files](https://github.com/can1357/oh-my-pi/blob/main/docs/context-files.md) | User-global `~/.omp/agent/AGENTS.md`. Task subagents drop files named AGENTS.md but keep AGENTS.md text imported through CLAUDE.md |
+| [omp context files](https://github.com/can1357/oh-my-pi/blob/main/docs/context-files.md), `packages/coding-agent/src` | User-global `~/.omp/agent/AGENTS.md`. When AGENTS.md and CLAUDE.md share a directory, AGENTS.md wins and CLAUDE.md is not loaded. Task subagents drop files named AGENTS.md, so they get no project or user-global instructions |
 | pi | User-global `~/.pi/agent/AGENTS.md`; AGENTS.md or CLAUDE.md in parent directories |
 
 The cached research lives in
@@ -46,6 +46,11 @@ The cached research lives in
 - **Global file name**: `AGENTS.global.md`, approved after the fact (see
   Deviations). A file named AGENTS.md inside `agents/claude/` would also load as
   a project-level file whenever Codex, omp or pi works under that directory.
+- **omp task subagents**: no workaround (option A). The parent puts the rules
+  a subagent needs into its task prompt, as omp intends. Rejected: disabling
+  the `agents-md` provider for dotrc only, which lets CLAUDE.md win so the
+  imported text reaches subagents but depends on an omp internal; and a
+  `.omp/RULES.md`, which would duplicate AGENTS.md rules.
 
 ## Skill behavior (generate-agent-docs)
 
@@ -82,6 +87,7 @@ scope source, skill-improver's `change-bar.md`, and `skills/README.md`.
 | Live loading of `AGENTS.global.md` | Claude Code, Codex and omp each reported the "Global Agent Guidance" heading. Codex inside dotrc listed `~/.codex/AGENTS.md` and the root `AGENTS.md`. pi 1.6.0 (`-p --no-session`) reported the heading, quoted the first Agent Identity bullet verbatim, and inside dotrc listed `~/.pi/agent/AGENTS.md` and the root `AGENTS.md` |
 | `install.sh` preflight | Passes for the three existing links; stops on a regular file at the destination |
 | Split preservation | Every line of the four original CLAUDE.md files is in the new pair, except 8 lines deliberately reworded for the new layout; no line appears in both files of a pair |
+| omp precedence at one depth | Two throwaway repositories, one with unrelated AGENTS.md and CLAUDE.md and one with CLAUDE.md = `@AGENTS.md` + a Claude-only line: omp loaded only AGENTS.md in both. A task subagent saw neither file. Source agrees: both providers have priority 10, equal priorities keep registration order (`capability/index.ts:179`), `agents-md` registers before `claude-md` (`discovery/index.ts`), and the first item wins (`capability/index.ts:285`). This is registration order, not documented behavior |
 
 The Waza suite contains decision probes only (the eval model answers about the
 SKILL.md body; no files are written). The artifact cases in `behavior-cases.md`
@@ -138,6 +144,3 @@ appear in the skill listing.
 - No session evidence yet for the new ownership policy. The skill-improver
   digests predate `f02ae37`.
 - Artifact cases in `behavior-cases.md` have not been executed.
-- When AGENTS.md and CLAUDE.md sit in the same directory, which file omp loads
-  is undocumented (both have priority 10). Either outcome delivers the content,
-  but omp task subagents keep it only if CLAUDE.md wins.
