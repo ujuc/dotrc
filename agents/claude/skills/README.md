@@ -35,7 +35,7 @@
                 skill-improver(diet-recommended) → generate-skills 다이어트 모드
                 (skill-diet eval: before/after/none을 실제 에이전트로 측정)
 [스킬 생성]     generate-skills(Create) → skill-diet:skill-diet 레벨 점검
-[에이전트 문서] 새 CLAUDE.md: 내장 /init 초안 → generate-agent-docs 검토
+[에이전트 문서] 새 문서: 내장 /init 초안 → generate-agent-docs 검토 → AGENTS.md(공용) + CLAUDE.md(@AGENTS.md + Claude 전용)
 [글쓰기]        prompting-assist → (선택) humanizer 후처리
 ```
 
@@ -57,5 +57,5 @@
 
 ## References
 
-- [`CLAUDE.md`](./CLAUDE.md) — skill 작성 규약과 conventions
-- [`../CLAUDE.md`](../CLAUDE.md) — Claude Code global configuration
+- [`AGENTS.md`](./AGENTS.md) — skill 작성 규약과 conventions ([`CLAUDE.md`](./CLAUDE.md)는 이를 import하고 Claude 전용 규칙을 더한다)
+- [`../CLAUDE.md`](../CLAUDE.md) — Claude Code global configuration ([`../AGENTS.global.md`](../AGENTS.global.md)는 모든 하니스 공용 전역 지침)

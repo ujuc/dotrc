@@ -1,6 +1,6 @@
 id: agents-md-beside
 name: agents-md-beside
-description: Decision probe; a new CLAUDE.md beside a rule-bearing AGENTS.md imports it, adds only new rules, and leaves AGENTS.md untouched.
+description: Decision probe; a new CLAUDE.md beside a rule-bearing AGENTS.md imports it, adds only the Claude-only rule, and leaves AGENTS.md untouched.
 tags: [decision-probe]
 inputs:
   prompt: "The repository has AGENTS.md containing 'Use a disposable database for integration tests.' and no CLAUDE.md. The user says: 'CLAUDE.md 만들어줘. 추가 규칙: /context checks loaded memory.' Show the final CLAUDE.md contents and state whether AGENTS.md changes, without requesting approval. Do not run tools, write files, or ask questions."

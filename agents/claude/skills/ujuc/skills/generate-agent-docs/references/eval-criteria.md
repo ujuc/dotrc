@@ -7,13 +7,16 @@ fast, short-route or unavailable blind review yields PARTIAL, not fully verified
 completion. `disable-model-invocation` stays unset on purpose; set it and rely
 on `/ujuc:generate-agent-docs` only if false triggers become a problem.
 
-1. **Target routing and CLAUDE.md ownership**
-   Pass: targets and dependencies are resolved before routing; every new rule
-   lands in CLAUDE.md, a supporting doc or `.claude/rules/`; an existing
-   `@AGENTS.md` import survives; existing files receive surgical edits; each
-   rule has one source. Explicit file restrictions are respected.
-   Fail: a broken import, a regenerated existing file, any AGENTS.md write, a
-   dropped `@AGENTS.md` import, or an AGENTS.md rule copied into CLAUDE.md.
+1. **Target routing and ownership**
+   Pass: targets and dependencies are resolved before routing; shared rules
+   land in AGENTS.md and Claude-only lines in CLAUDE.md, which imports it; an
+   existing `@AGENTS.md` import survives; a CLAUDE.md-only repository is split
+   only on approval or a request naming AGENTS.md; existing files receive
+   surgical edits; each rule has one source. Explicit file restrictions are
+   respected.
+   Fail: a broken import, a regenerated existing file, a rule in both files, a
+   dropped `@AGENTS.md` import, an unapproved split, or an AGENTS.md that only
+   Claude can follow (Claude tool names, `@path` imports).
 
 2. **Authorization and preservation**
    Pass: existing explicit approval is reused; original snapshots/diffs prove

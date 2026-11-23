@@ -1,15 +1,13 @@
-id: claude-md-setup
-name: claude-md-setup
-description: Decision probe; new instructions go to CLAUDE.md only and no AGENTS.md is written.
+id: pair-setup
+name: pair-setup
+description: Decision probe; new instructions put the shared rule in AGENTS.md and a CLAUDE.md that imports it.
 tags: [decision-probe]
 inputs:
-  prompt: "Create agent instructions for a project. Rule: integration tests use a disposable database. Give the ordered files and exact document contents. Do not run tools, write files, or ask questions."
+  prompt: "Create agent instructions for a project that has none. Rule: integration tests use a disposable database. Give the ordered files and exact document contents. Do not run tools, write files, or ask questions."
 graders:
   - type: text
-    name: claude-md-only-setup
+    name: shared-rule-in-agents-md
     config:
       regex_match:
-        - "(?is)CLAUDE\\.md.{0,1000}disposable"
-      regex_not_match:
-        - "@AGENTS\\.md"
-        - "(?im)^[ \\t>*#-]*(?:\\d+[.)][ \\t]*)?[`*]*AGENTS\\.md[`*]*[ \\t]*:?[ \\t]*$"
+        - "(?is)AGENTS\\.md.{0,1000}disposable"
+        - "(?m)^[ \\t>]*@AGENTS\\.md[ \\t]*$"

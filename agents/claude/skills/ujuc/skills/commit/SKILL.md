@@ -25,7 +25,7 @@ Route the message draft by staged size ([dispatch routing](../generate-skills/re
 `<type>(<scope>): <한국어 제목 -다>`
 
 - Project instructions, a repository `gitmessage`, and its commit hook override these rules.
-- **scope**: from the project's CLAUDE.md or its imports.
+- **scope**: from the project's AGENTS.md or CLAUDE.md and their imports.
 - **Subject ≤ 50 characters** including the prefix; Korean declarative `-다` ending (any verb stem); no trailing period.
 - **Body**: blank line after the subject, wrapped at 72 characters.
 - One change per commit; the subject says what, the body why: never stack clauses with `·`, `및`, `그리고` or `~해`. Split the commit, or move the list into a Why body.
@@ -90,7 +90,7 @@ If `git status` shows a modified submodule, commit inside it first (`git -C <sub
 
 Only for structural changes or new external dependencies; skip content-only edits, submodule pointers, and internal `style` or `refactor` changes.
 
-- `CLAUDE.md`: only when an undiscoverable workflow, scope policy, deployment target or cross-repository relationship changed; no directory trees or file tables.
+- `AGENTS.md` (shared) or `CLAUDE.md` (Claude-only lines): only when an undiscoverable workflow, scope policy, deployment target or cross-repository relationship changed; no directory trees or file tables.
 - `README.md`: installation steps, symlink targets or external dependencies changed.
 - Edit existing docs only: no new doc files, nothing inside a submodule.
 - Show each proposed edit, apply only what the user approves, and stage it with this commit.

@@ -25,15 +25,20 @@ dependent check, never assumed PASS.
 1. **Scope and preservation**: only selected/authorized files changed;
    untouched text is byte-preserved; moved clauses retain meaning and
    exceptions. Destructive changes require explicit authorization.
-2. **CLAUDE.md-only ownership**: per
-   [stage3-generator.md](../stage3-generator.md#scope-claudemd-only), no
-   AGENTS.md was created, edited or deleted; every new rule is in CLAUDE.md, a
-   supporting doc or `.claude/rules/`; supporting files exist before the
-   CLAUDE.md that links them.
-3. **AGENTS.md handling**: an existing `@AGENTS.md` import survives; a new
-   CLAUDE.md beside a rule-bearing AGENTS.md starts with that import; no
-   AGENTS.md rule is copied into CLAUDE.md. A nested CLAUDE.md holds only its
-   differences from ancestor files.
+2. **Ownership**: per
+   [stage3-generator.md](../stage3-generator.md#ownership-agentsmd-shared-claudemd-claude-only),
+   shared rules sit in AGENTS.md and Claude-only lines in CLAUDE.md, with no
+   rule in both (an explicit file restriction excuses placement, reported);
+   a CLAUDE.md beside an AGENTS.md starts with `@AGENTS.md`, and an existing
+   import survives; a CLAUDE.md-only repository was split only with a recorded
+   approval or a request naming AGENTS.md (otherwise UNVERIFIED); supporting
+   files exist before the files that link them.
+3. **AGENTS.md portability**: no AGENTS.md names a Claude tool, slash command,
+   hook or `.claude/` setting, or relies on an `@path` import; no
+   `AGENTS.override.md` or `AGENTS.local.md` was written; each new nested
+   AGENTS.md below a CLAUDE.md has a sibling CLAUDE.md importing it; a nested
+   file holds only its differences from ancestor files; the AGENTS.md chain's
+   measured bytes are reported, and over Codex's 32 KiB cap is a FAIL.
 4. **Evidence and necessity**: facts are grounded in supplied sources and
    decisions. Prune redundant summaries and linter defaults within authorized
    scope. Preserve explicit project requirements, nondefault conventions and
@@ -45,10 +50,10 @@ dependent check, never assumed PASS.
    resolved is an observation, not a FAIL.
 6. **Budgets**: apply the local 100/200 combined targets and 50/100 nested
    targets in
-   [claude-code-best-practices.md](../claude-code-best-practices.md),
-   separately from the upstream per-file recommendation. Report measured
-   counts and rationale for necessary excess; no silent deletion of
-   requirements to achieve a number.
+   [claude-code-best-practices.md](../claude-code-best-practices.md), counting
+   an imported AGENTS.md with its CLAUDE.md, separately from the upstream
+   per-file recommendation. Report measured counts and rationale for necessary
+   excess; no silent deletion of requirements to achieve a number.
 7. **Instruction scope and exceptions**: apply the scoped `[W]`
    ([model-prompting-guides.md](../model-prompting-guides.md)), C1–C4
    ([context-engineering-claude5.md](../context-engineering-claude5.md)) and

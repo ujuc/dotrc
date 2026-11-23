@@ -1,15 +1,15 @@
 id: target-scope
 name: target-scope
-description: Decision-only probe; a request naming AGENTS.md still writes CLAUDE.md only.
+description: Decision-only probe; a request naming AGENTS.md writes the pair, and in a CLAUDE.md-only repository it approves the split.
 tags: [decision-probe]
 inputs:
-  prompt: "A user requests project instructions. AGENTS.md and CLAUDE.md are both absent. State the write targets. Then consider the user instead saying 'AGENTS.md 만들어줘': include one line exactly `agents-request-write: CLAUDE.md`, `agents-request-write: AGENTS.md`, `agents-request-write: AGENTS.md and CLAUDE.md` or `agents-request-write: none`. Do not create actual files. Do not run tools, write files, or ask questions."
+  prompt: "Case A: a repository has neither AGENTS.md nor CLAUDE.md, and the user says 'AGENTS.md 만들어줘'. Case B: a repository has only a CLAUDE.md holding team build and test rules, and the user says 'AGENTS.md 만들어줘'. For each case state which files this run writes: include one line exactly `A-WRITE: <files>` and one line exactly `B-WRITE: <files>`, where <files> is one of `CLAUDE.md`, `AGENTS.md`, `AGENTS.md and CLAUDE.md` or `none`. Explain briefly in English. Do not run tools, write files, or ask questions."
 graders:
   - type: text
-    name: claude-md-target
+    name: agents-request-writes-pair
     config:
       regex_match:
-        - "(?im)^\\W*agents-request-write:\\W*CLAUDE\\.md\\b"
+        - "(?im)^[\\W\\d]*A[\\W_]*WRITE\\W*AGENTS\\.md and CLAUDE\\.md\\b"
+        - "(?im)^[\\W\\d]*B[\\W_]*WRITE\\W*AGENTS\\.md and CLAUDE\\.md\\b"
       regex_not_match:
-        - "(?im)^\\W*(1[.)]|first)\\W{0,6}AGENTS\\.md"
-        - "@AGENTS\\.md"
+        - "(?im)^[\\W\\d]*[AB][\\W_]*WRITE\\s*[^\\w\\s]\\W*(CLAUDE\\.md|AGENTS\\.md|none)[^\\w\\n]*$"

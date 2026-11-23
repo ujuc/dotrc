@@ -61,8 +61,9 @@ Scan documentation and CI configuration. One-line summary per file.
 
 1. Existing agent config, including the less obvious locations: CLAUDE.md
    (root, `.claude/`, `CLAUDE.local.md`, every nested path), AGENTS.md (root,
-   `.claude/`, nested),
-   `.claude/rules/`, `.cursor/rules/*.mdc`, `.github/copilot-instructions.md`
+   `.claude/`, nested, plus `AGENTS.override.md` and `AGENTS.local.md`),
+   `.claude/rules/`, `.cursor/rules/*.mdc`, `.github/copilot-instructions.md`,
+   `GEMINI.md`
 2. Contributing docs: CONTRIBUTING.md, contributing-docs/, docs/
 3. CI/CD config — extract the test, build, and deploy commands it actually runs
 4. For every CLAUDE.md and AGENTS.md found: its line count and section headings

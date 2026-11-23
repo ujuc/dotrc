@@ -77,23 +77,24 @@ After the Stage 1 dispatches complete, before Stage 2:
    | Class | Definition | Action |
    |-------|-----------|--------|
    | **Discoverable** | Readable from code/config | Usually omit; retain explicit team requirements and the exact test, typecheck and lint commands |
-   | **Undiscoverable** | Requires project context beyond code | CLAUDE.md |
+   | **Undiscoverable** | Requires project context beyond code | AGENTS.md, or CLAUDE.md when Claude-only |
 
 3. **Separate** facts (directly observed; cite the source file) from
    assumptions (inferred from patterns or absence of evidence): mark those
    `[ASSUMPTION]` and verify them in the Stage 2 interview.
 4. **List** what Stage 1 could not determine as Stage 2 interview questions.
-5. **Nested candidates**: propose a nested CLAUDE.md for package differences.
-   Existing ancestor coverage can suffice when no package difference remains.
-   Do not classify general build/test commands as Claude-only content. If the
-   structure findings show monorepo packages or submodules, prepare this table
-   for the Stage 2 interview:
+5. **Nested candidates**: propose a nested AGENTS.md (with a sibling CLAUDE.md
+   importing it) for package differences. Existing ancestor coverage can
+   suffice when no package difference remains. Do not classify general
+   build/test commands as Claude-only content. If the structure findings show
+   monorepo packages or submodules, prepare this table for the Stage 2
+   interview:
 
-   | Path | Type | Existing CLAUDE.md | Recommended |
-   |------|------|-------------------|-------------|
+   | Path | Type | Existing AGENTS.md / CLAUDE.md | Recommended |
+   |------|------|-------------------------------|-------------|
    | e.g., packages/core | monorepo package | No | Yes — if package has distinct agent workflow rules |
-   | e.g., tools/cli | monorepo package | Yes (12 lines) | Update — existing file is outdated |
-   | e.g., infra/ | submodule | No | Inspect independent checkout scope; its own CLAUDE.md owns its rules |
+   | e.g., tools/cli | monorepo package | CLAUDE.md (12 lines) | Update — existing file is outdated; propose the split |
+   | e.g., infra/ | submodule | No | Inspect independent checkout scope; its own AGENTS.md owns its rules |
 
 6. **Present** the merged analysis to the user before Stage 2: detected project
    type and structure, a brief discoverable/undiscoverable list, facts vs

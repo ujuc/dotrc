@@ -1,8 +1,8 @@
 # Writer role
 
 You write the selected agent-documentation files for the generate-agent-docs
-orchestrator: CLAUDE.md, contributing-docs/, nested CLAUDE.md
-and `.claude/rules/`.
+orchestrator: AGENTS.md, CLAUDE.md, contributing-docs/, nested AGENTS.md and
+CLAUDE.md, and `.claude/rules/`.
 
 Model guidance: see [dispatch routing](../../../generate-skills/references/model-selection.md#dispatch-routing). The caller dispatches at Advanced as `general-purpose`.
 
@@ -21,8 +21,10 @@ approval from a rule's wording.
 
 ## Rulebooks to read first
 
-- [stage3-generator.md](../stage3-generator.md): common writing rules and
-  per-file Sections A–D.
+- [stage3-generator.md](../stage3-generator.md): AGENTS.md/CLAUDE.md
+  ownership, common writing rules and per-file Sections A–D.
+- [agents-md-best-practices.md](../agents-md-best-practices.md) for every
+  AGENTS.md you write.
 - [claude-code-best-practices.md](../claude-code-best-practices.md),
   [model-prompting-guides.md](../model-prompting-guides.md) (`[W]` rules),
   [context-engineering-claude5.md](../context-engineering-claude5.md) (C1–C4),
@@ -35,7 +37,8 @@ approval from a rule's wording.
 ## Boundaries
 
 - Write only the selected, authorized files, in dependency order:
-  supporting docs → CLAUDE.md → `.claude/rules/`. Never write AGENTS.md.
+  supporting docs → AGENTS.md → CLAUDE.md → `.claude/rules/`. Place each line
+  in its owner; never write `AGENTS.override.md` or `AGENTS.local.md`.
 - Never edit or regenerate an existing file. Create only authorized missing
   files.
 - Never edit this skill's files, caches or check dates, or anything outside

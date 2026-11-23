@@ -15,10 +15,10 @@ C6 → 3; C7 → all six and this suite's evidence separation.
 
 | ID / criteria | Input and fixture | Expected result |
 | --- | --- | --- |
-| claude-new / C2 | Empty repository; user: "에이전트 문서 만들어줘" with the fact "Run integration tests against the disposable database." | Write set {CLAUDE.md}, holding the fact with no import; no AGENTS.md. |
+| pair-new / C2 | Empty repository; user: "에이전트 문서 만들어줘" with the fact "Run integration tests against the disposable database." | Write set {AGENTS.md, CLAUDE.md}, AGENTS.md first; AGENTS.md holds the fact; CLAUDE.md is "@AGENTS.md" with no copy of it. |
 | agents-beside / C2,C5 | Existing AGENTS.md: "# Work Rules\n\nUse the disposable database for integration tests.\n"; no CLAUDE.md; user: "CLAUDE.md 만들어줘" with the rule "Use /context to check loaded memory files." | AGENTS.md byte-identical; CLAUDE.md is "@AGENTS.md" followed by the /context rule only; the disposable rule is not copied. |
-| import-kept / C2 | Fixture S2; user adds "Run new-test before delivery." | Rule lands in CLAUDE.md below the import; `@AGENTS.md` stays; AGENTS.md byte-identical. |
-| agents-request / C2 | Fixture S; user: "AGENTS.md 만들어줘" | Write set {CLAUDE.md} at most; no AGENTS.md; the report says this skill writes CLAUDE.md only. |
+| import-kept / C2 | Fixture S2; user adds "Run new-test before delivery." | Rule lands in AGENTS.md; CLAUDE.md byte-identical, `@AGENTS.md` kept. |
+| agents-request / C2 | Fixture S; user: "AGENTS.md 만들어줘" | Split: AGENTS.md = "# Work Rules\n\nRun old-test.\nKeep the release freeze exception.\n", CLAUDE.md = "@AGENTS.md\n"; no line in both. |
 | selected-only / C2 | User selects one nested CLAUDE.md; root CLAUDE.md exists | Update selected file only; existence of unrelated documents does not reroute or expand target set. |
 | authorized-update / C3,C5 | U2 proposed replacing "old-test" with "new-test" in CLAUDE.md; user says "Apply all listed edits"; untouched line "Keep the release freeze exception." | Apply the already approved patch without asking per file; preserve sentinel verbatim. |
 | cache-drift / C1 | Successful live fetch differs from bundled snapshot | Use fetched guidance in session, pass it to verifier, report drift; all global skill files and dates byte-identical. |
@@ -44,7 +44,8 @@ Fixture S is CLAUDE.md = "# Work Rules\n\nRun old-test.\nKeep the release freeze
 with no AGENTS.md. Fixture S2 is AGENTS.md = "# Work Rules\n\nUse the disposable database for integration tests.\n"
 and CLAUDE.md = "@AGENTS.md\n". The approved patch changes only old-test to
 new-test. Use S for authorized-update; expected write set is {CLAUDE.md}, with
-the sentinel unchanged. Every case's write set excludes AGENTS.md.
+the sentinel unchanged. No case writes AGENTS.md unless its expected result
+names it.
 
 Cache-drift uses S plus an injected successful source response: "Size: target
 under 180 lines per CLAUDE.md file." No project edits are requested by the fetch
@@ -77,8 +78,8 @@ set.
 
 | Exact task path (relative to this suite) | Cases |
 | --- | --- |
-| tasks/target-scope.yaml | claude-new, agents-request |
-| tasks/positive-trigger-1.yaml | claude-new |
+| tasks/target-scope.yaml | pair-new, agents-request |
+| tasks/positive-trigger-1.yaml | pair-new |
 | tasks/positive-trigger-2.yaml | agents-beside |
 | tasks/cache-ownership.yaml | cache-drift |
 | tasks/authorization.yaml | authorized-update |
@@ -93,6 +94,7 @@ set.
 | tasks/enforcement-fit.yaml | enforce-rule, enforce-preference |
 | tasks/report-only.yaml | audit-only |
 | tasks/supplied-fact.yaml | named-claude, import-kept |
+| tasks/placement.yaml | placement |
 | tasks/session-placement.yaml | session-capture |
 | tasks/broken-reference.yaml | broken-pointer, summary-growth |
 | tasks/standalone-claude.yaml | standalone-claude |
@@ -124,17 +126,18 @@ Prune test, stop-list and enforcement cases. Each row is a line in an existing C
 | rare-language / stage3 | Repository written in a lesser-known language | Document says what it is and links its documentation |
 | colleague / stage3 | Instruction only the author can follow | Rewritten so a reader with minimal context can follow it |
 | audit-only / routes | S; user: "CLAUDE.md 점검만 해줘. 고치지 마." | Report ends `REPORT ONLY`; write set empty; no Stage 3–4 claim |
-| named-claude / routes | S2; user: "배운 거 CLAUDE.md에 반영해줘: integration tests use a disposable database." | Rule lands in CLAUDE.md below the import, no explorers or writer role |
+| named-claude / routes | S2; user: "배운 거 CLAUDE.md에 반영해줘: integration tests use a disposable database." | No write: AGENTS.md already states it; the report says where; no explorers or writer role |
 | session-capture / routes | S; corrections: a team rule, a personal preference, a finished fix, a discoverable fact, a plan-mode rule | Team and plan-mode rules in CLAUDE.md; personal item reported with no write; the other two dropped |
 | broken-pointer / red flag | "Deployment steps are in docs/deploy.md." with no such file, no deletion requested | Line stays and is reported |
 | summary-growth / red flag | CLAUDE.md with a directory list; "CLAUDE.md 갱신해줘" with no verifier run | No new directory entry survives |
-| standalone-claude / routes | CLAUDE.md with no import, no AGENTS.md; user: "CLAUDE.md에 이 규칙 추가해줘" | No question; the rule lands in CLAUDE.md, no AGENTS.md or import is written |
-| missing-import / routes | Rule-bearing AGENTS.md exists, CLAUDE.md has no import | Audit reports that Claude no longer reads AGENTS.md and proposes the import or a fold-in; no write without approval |
+| standalone-claude / routes | CLAUDE.md with no import, no AGENTS.md; user: "CLAUDE.md에 이 규칙 추가해줘" | No question; the rule lands in CLAUDE.md, no AGENTS.md or import is written; the report proposes the split once |
+| placement / routes | AGENTS.md = "# Work Rules\n" and CLAUDE.md = "@AGENTS.md\n"; user adds a disposable-database rule, a plan-mode rule, a `/ujuc:commit` rule, a `make lint` rule, and a docs/deploy.md pointer | Shared rules and the pointer (plain path, no `@`) in AGENTS.md; plan-mode and slash-command rules in CLAUDE.md below the import |
+| missing-import / routes | Rule-bearing AGENTS.md exists, CLAUDE.md has no import | Audit reports that Claude no longer reads AGENTS.md and proposes the import; no write without approval |
 
 The YAML tasks exercise decisions through the runner's supported text graders.
 They do not prove filesystem writes. Record actual fixture diffs and ordered
-writes separately for claude-new, agents-beside, import-kept, agents-request,
-authorized-update and standalone-claude.
+writes separately for pair-new, agents-beside, import-kept, agents-request,
+authorized-update, standalone-claude and placement.
 Inspect all read-only cases for absence of unintended writes.
 Dispatch a Lightweight general-purpose worker that runs waza-run.sh for optional automated runs; no direct CLI invocation.
 Mock runs and missing-runner skips cannot satisfy artifact assertions.

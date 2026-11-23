@@ -31,7 +31,8 @@ A checklist PASS proceeds to the selected blind review.
 
 ## Phase 3 — Blind reviewer
 
-Run for outputs beyond a single root CLAUDE.md, unless the user explicitly
+Run for outputs beyond one root instruction file (a CLAUDE.md that only imports
+AGENTS.md does not count), unless the user explicitly
 requests fast mode. Fast mode or unavailable independent delegation skips this
 optional role: report SKIP and PARTIAL, even if the checklist passes.
 Self-review is not independence.

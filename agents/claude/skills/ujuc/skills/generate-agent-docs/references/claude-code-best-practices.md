@@ -140,7 +140,9 @@ upgrading from v2.1.276 or earlier, and before v2.1.281 Amazon Bedrock or
 telemetry-disabled sessions. The **Project instructions** setting (`/config`)
 takes `claude-md-or-agents-md` (default), `claude-md-and-agents-md`,
 `claude-md`, or `managed-only`, and is honored only in user, `--settings`, or
-managed settings.
+managed settings (`pluginConfigs` key `cc-plugin-agents-md@builtin`, before
+v2.1.285 `agents-md@builtin`). A project therefore cannot rely on it: teammates
+on the default still need the import.
 
 What counts for the default-read table: `CLAUDE.md`, `.claude/CLAUDE.md`, or
 `CLAUDE.local.md` at or above the working directory (not `~/.claude/CLAUDE.md`,
@@ -173,10 +175,11 @@ Use plan mode for changes under `src/billing/`.
   in words to read AGENTS.md becomes `@AGENTS.md` or is deleted; *"A
   `SessionStart` hook that prints `AGENTS.md`: remove it. Once Claude reads
   `AGENTS.md` directly, the hook adds a second copy to the context."*
-- **This skill writes CLAUDE.md only** (stage3-generator.md Scope): it never
-  writes AGENTS.md. Because Claude Code skips AGENTS.md once a CLAUDE.md exists,
-  it keeps an existing `@AGENTS.md` import and starts a new CLAUDE.md beside a
-  rule-bearing AGENTS.md with that import.
+- **This skill keeps shared rules in AGENTS.md** (stage3-generator.md
+  ownership): CLAUDE.md imports it and adds Claude-only lines. Because Claude
+  Code skips AGENTS.md once a CLAUDE.md exists, the import is what makes the
+  shared rules reach Claude; other harnesses' loading is in
+  agents-md-best-practices.md.
 - `/init` incorporates other tools' instruction files: Cursor
   (`.cursor/rules/`, `.cursorrules`) and Copilot
   (`.github/copilot-instructions.md`) by default; `AGENTS.md`,
