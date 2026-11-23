@@ -90,8 +90,58 @@ scope source, skill-improver's `change-bar.md`, and `skills/README.md`.
 | omp precedence at one depth | Two throwaway repositories, one with unrelated AGENTS.md and CLAUDE.md and one with CLAUDE.md = `@AGENTS.md` + a Claude-only line: omp loaded only AGENTS.md in both. A task subagent saw neither file. Source agrees: both providers have priority 10, equal priorities keep registration order (`capability/index.ts:179`), `agents-md` registers before `claude-md` (`discovery/index.ts`), and the first item wins (`capability/index.ts:285`). This is registration order, not documented behavior |
 
 The Waza suite contains decision probes only (the eval model answers about the
-SKILL.md body; no files are written). The artifact cases in `behavior-cases.md`
-were not run.
+SKILL.md body; no files are written). The artifact cases below are separate.
+
+## Artifact eval (behavior-cases.md)
+
+Run on 2026-11-23/24 with `skill-diet-eval run` and `diet-adapter-claude`:
+one isolated Claude Code session per run (`claude-opus-5-5`), the skill copy
+as its only skill, a throwaway git repository per case, and a shell check on
+the final files plus answer regexes. Before any session, each check was run
+on the untouched fixture: every write case fails there, and the read-only
+cases pass only through their answer regexes. Results live in
+`~/.claude/data/skill-diet/generate-agent-docs-artifacts-20261123/`
+(gitignored).
+
+| Round | Cases × runs | Result |
+| --- | --- | --- |
+| 1, skill at `e8d56ba` | 19 × 3 | 54/57 |
+| 2, after the fixes below, affected and short-route cases | 7 × 3 | 21/21 |
+
+Passing in round 1 and not rerun (12 cases, 36/36): agent-specific,
+agents-beside, agents-request, anti-trigger, audit-only, authorized-update,
+missing-import, named-claude, nested-sibling, policy, restriction,
+shared-path-rule. Rerun in round 2: pair-new, placement, import-kept,
+agents-only-short, standalone-claude, codex-bytes-pre, codex-bytes-push.
+
+The three round-1 misses and what changed:
+
+- **standalone-claude**: correct behavior. The agent translated the Korean
+  rule into English to match the file; the check looked only for `일회용`.
+  The check now accepts `일회용|disposable`.
+- **codex-bytes-pre** (39 KB chain, run edits only CLAUDE.md): one run gave
+  the size in lines, not bytes. The short route skips U1's size inventory, and
+  a run that does not touch AGENTS.md has no byte duty, so the expectation now
+  requires AGENTS.md unchanged and no FAIL. A size note, if any, is an
+  observation.
+- **codex-bytes-push** (32,644-byte chain plus a dictated rule): runs
+  disagreed. One put the rule at the top and pushed an old rule past the cap.
+  Another shortened the user's wording to end 3 bytes under it. Neither was
+  backed by the skill. Rule added (stage3-generator.md, update-mode.md
+  dictated row, verifier check 3, agents-md-best-practices.md): text that
+  would push the project chain past 32 KiB is not written as is. The run
+  reports the bytes and proposes a shorter wording that keeps every fact, or a
+  nested AGENTS.md, then waits for approval; headless runs leave the write
+  pending. In round 2 all three runs left AGENTS.md unchanged and proposed
+  the options. The answer regex was widened after the fact to accept "cut-down
+  version"; that run's behavior matched the rule. One of those runs also
+  skipped the live best-practices fetch that Stage 0 requires on every run.
+
+Not run, because they need injected tool failures, fetch responses or
+reviewer patches: cache-drift, tools, no-interview, evidence, review-states,
+final-reference. Also not run: session-capture, broken-pointer and
+summary-growth, whose decisions the Waza probes cover, and stop-preserved,
+rare-language, colleague and selected-only, which have no coverage yet.
 
 ## Independent review
 
@@ -143,4 +193,5 @@ appear in the skill listing.
 
 - No session evidence yet for the new ownership policy. The skill-improver
   digests predate `f02ae37`.
-- Artifact cases in `behavior-cases.md` have not been executed.
+- Artifact cases not yet run: the six fault-injection cases and
+  stop-preserved, rare-language, colleague and selected-only.
