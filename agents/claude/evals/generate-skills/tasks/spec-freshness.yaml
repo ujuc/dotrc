@@ -1,0 +1,18 @@
+id: spec-freshness
+name: spec-freshness decision probe
+description: Decision probe; Step 0 fetches the frontmatter spec only when upstream-check reports its source changed, and an unrelated run never bumps the cache date.
+inputs:
+  prompt: "Do not run tools or write files. Step 0 of this workflow is running before creating a new skill; this run's write scope is the new skill only. Case A: `upstream-check` prints `- generate-skills/frontmatter-spec.md: sources unchanged (cached 2026-11-18)`, and that cache date is 40 days old. Case B: it prints `- generate-skills/frontmatter-spec.md: source changed (https://code.claude.com/docs/en/skills.md); run: /ujuc:generate-skills generate-skills 업데이트`. Include one line exactly `A: fetch` or `A: cached`, saying whether Case A fetches the spec pages or uses the cached spec; one line exactly `B: fetch` or `B: cached`, the same for Case B; and one line exactly `DATE: bumped` or `DATE: unchanged`, saying whether either run changes frontmatter-spec.md's `last_upstream_check`. Explain briefly in English."
+graders:
+  - type: text
+    name: fetch-only-on-reported-change
+    config:
+      regex_match:
+        - "(?im)^[\\W\\d]*A\\s*:\\W*cached\\b"
+        - "(?im)^[\\W\\d]*B\\s*:\\W*fetch\\b"
+        - "(?im)^[\\W\\d]*DATE\\s*:\\W*unchanged\\b"
+      regex_not_match:
+        - "(?im)^[\\W\\d]*A\\s*:\\W*fetch\\b"
+        - "(?im)^[\\W\\d]*B\\s*:\\W*cached\\b"
+        - "(?im)^[\\W\\d]*DATE\\s*:\\W*bumped\\b"
+        - "(?im)^[\\W\\d]*(A|B|DATE)\\s*:\\W*(fetch|cached|bumped|unchanged)\\b[\\s`*]*\\(?[\\s`*]*(/|\\bor\\b)"

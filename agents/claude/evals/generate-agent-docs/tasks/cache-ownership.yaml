@@ -1,21 +1,23 @@
 id: cache-ownership
 name: cache-ownership decision probe
-description: Decision-only probe; guards against a body change that lets a project run edit the bundled cache or its check date. A control on 2026-11-19 with the read-only and separate-run statements removed from the body still passed 3 of 3, so a pass does not show they are present.
+description: Decision probe; a project run uses the bundled guidance and reports its date, fetches live only when the user asks, and never edits the bundled cache or its check date.
 tags: [decision-probe]
 inputs:
-  prompt: "A user asks the agent-docs workflow to refresh CLAUDE.md in their mobile-app repository. The workflow loads the live claude-code-best-practices page, and it differs materially from the bundled copy: the page now recommends a smaller size budget for CLAUDE.md. Include one line exactly `GUIDANCE: fetched` or `GUIDANCE: bundled`, saying which text this session applies when sizing the CLAUDE.md. Include one line exactly `SYNC: this-run` or `SYNC: separate-run`, saying when the bundled copy is brought in line with the page. Include one line exactly `CHECK-DATE: bumped` or `CHECK-DATE: unchanged`, saying whether the bundled copy's `last_upstream_check` changes during this CLAUDE.md refresh. Explain briefly in English. Do not run tools or write files; describe what the workflow does."
+  prompt: "Case A: a user asks the agent-docs workflow to refresh CLAUDE.md in their mobile-app repository and says nothing about guidance sources. The bundled claude-code-best-practices copy was last checked 2026-11-18. Case B: the same request, but the user adds 'check the latest official best-practices page first'; the live page loads and differs materially from the bundled copy (it now recommends a smaller size budget). Include one line exactly `A: bundled` or `A: fetched`, saying which guidance text Case A applies; one line exactly `B: bundled` or `B: fetched`, the same for Case B; one line exactly `SYNC: this-run` or `SYNC: separate-run`, saying when the bundled copy is brought in line with the page in Case B; and one line exactly `CHECK-DATE: bumped` or `CHECK-DATE: unchanged`, saying whether the bundled copy's `last_upstream_check` changes during either refresh. Explain briefly in English. Do not run tools or write files; describe what the workflow does."
 graders:
   - type: text
-    name: live-text-separate-cache-maintenance
+    name: bundled-by-default-separate-cache-maintenance
     config:
       regex_match:
-        - "(?im)^[\\W\\d]*GUIDANCE\\W*fetched\\b"
+        - "(?im)^[\\W\\d]*A\\s*:\\W*bundled\\b"
+        - "(?im)^[\\W\\d]*B\\s*:\\W*fetched\\b"
         - "(?im)^[\\W\\d]*SYNC\\W*separate[\\W_]*run\\b"
         - "(?im)^[\\W\\d]*CHECK[\\W_]*DATE\\W*unchanged\\b"
       regex_not_match:
-        - "(?im)^[\\W\\d]*GUIDANCE\\s*[^\\w\\s]\\W*bundled[^\\w\\n]*$"
+        - "(?im)^[\\W\\d]*A\\s*:\\W*fetched\\b"
+        - "(?im)^[\\W\\d]*B\\s*:\\W*bundled\\b"
         - "(?im)^[\\W\\d]*SYNC\\s*[^\\w\\s]\\W*this[\\W_]*run[^\\w\\n]*$"
         - "(?im)^[\\W\\d]*CHECK[\\W_]*DATE\\s*[^\\w\\s]\\W*bumped[^\\w\\n]*$"
-        - "(?im)^[\\W\\d]*GUIDANCE\\W*fetched\\b[\\s`*]*(/|\\bor\\b)[\\s`*]*(GUIDANCE\\W*)?bundled\\b"
+        - "(?im)^[\\W\\d]*(A|B)\\s*:\\W*(bundled|fetched)\\b[\\s`*]*\\(?[\\s`*]*(/|\\bor\\b)"
         - "(?im)^[\\W\\d]*SYNC\\W*separate[\\W_]*run\\b[\\s`*]*(/|\\bor\\b)[\\s`*]*(SYNC\\W*)?this[\\W_]*run\\b"
         - "(?im)^[\\W\\d]*CHECK[\\W_]*DATE\\W*unchanged\\b[\\s`*]*(/|\\bor\\b)[\\s`*]*(CHECK[\\W_]*DATE\\W*)?bumped\\b"

@@ -1,7 +1,6 @@
 ---
 source_url: https://martinfowler.com/articles/exploring-gen-ai/tdd-in-the-agent-loop.html
 last_upstream_check: 2026-11-01
-check_interval_days: 90  # a published article, not a living doc page — same long gate as context-engineering-claude5.md
 ---
 
 # TDD in the Agent Loop — Testing-Instruction Constraint
@@ -19,10 +18,11 @@ its date; use native fetch equivalents under SKILL.md's Session capabilities.
 T1 governs generated project docs, never this skill's own prose: Stage 3 writes
 by it, Stage 4 rejects by it, update mode flags existing docs against it.
 
-**Freshness**: re-fetch `source_url` only when `today - last_upstream_check >
-check_interval_days` (`ToolSearch` `select:WebFetch` first — deferred tool).
-On any fetch failure use this snapshot and say so in one line:
-*"tdd-agent-loop 가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."*
+**Freshness**: project runs use this snapshot as is and fetch `source_url` only
+when the user asks for the latest article; on a failed fetch say so in one
+line: *"tdd-agent-loop 가이드 라이브 로드 실패, 캐시 사용 (last check:
+<date>)."* `upstream-check` reports a changed page through `source_sha256`;
+`/ujuc:generate-skills generate-agent-docs 업데이트` refreshes this file.
 
 ## Cached snapshot (last verified 2026-11-01)
 

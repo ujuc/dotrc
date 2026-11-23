@@ -1,16 +1,21 @@
 #!/usr/bin/env bash
-# upstream-check — Report whether vendored upstream skills lag their latest release tag.
+# upstream-check — Report whether vendored upstream skills lag their latest release tag, and whether the
+# upstream pages behind cached skill references changed.
 # Usage:
-#   upstream-check [name...]   # advisory; always exits 0 and prints one "- <name>: ..." line per skill
-#   upstream-check test        # offline self-check of the report logic
+#   upstream-check [name...]      # advisory; always exits 0 and prints one "- <name>: ..." line per skill or reference
+#   upstream-check hashes <file>  # print a fresh `source_sha256:` frontmatter block for a reference's URLs
+#   upstream-check test           # offline self-check of the report logic
 #
 # Subtree skills pin the `git-subtree-split:` commit; release skills pin `.claude-plugin/plugin.json` version.
+# Cached references under ujuc/skills/*/references/ pin each upstream page by `source_sha256` in their
+# frontmatter (needs yq); `last_upstream_check` records when that cache was last reviewed.
 
 set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(git -C "${SCRIPT_DIR}" rev-parse --show-toplevel 2>/dev/null)"
 SKILLS="agents/claude/skills"
+DOC_SKILLS="${SKILLS}/ujuc/skills"
 
 # name|upstream git URL|kind (subtree or release)
 ENTRIES=(
@@ -63,6 +68,61 @@ report() {
   echo "- ${name}: update available ${cur:-unknown} -> ${latest}; $(update_hint "${name}" "${url}" "${kind}" "${latest}")"
 }
 
+# Every upstream URL a reference's frontmatter names, in a stable order.
+doc_urls() { # <file>
+  yq --front-matter=extract '[.source_url, .secondary_source_url, .spec_url, (.source_urls // [])[]] | .[] | select(. != null)' "$1" 2>/dev/null
+}
+
+# sha256 of the page as served; empty when the fetch fails.
+page_sha() { # <url>
+  (set -o pipefail; curl -fsSL --max-time 20 "$1" 2>/dev/null | shasum -a 256 | cut -c1-64) || true
+}
+
+# doc_report <label> <skill> <cached-date> <changed urls> <unreachable urls> <missing-baseline yes|no>: pure.
+doc_report() {
+  local label="$1" skill="$2" date="$3" changed="$4" down="$5" missing="$6" hint
+  hint="run: /ujuc:generate-skills ${skill} 업데이트"
+  if [ "${missing}" = yes ]; then
+    echo "- ${label}: no source_sha256 baseline (cached ${date:-unknown}); ${hint}"
+  elif [ -n "${changed}" ]; then
+    echo "- ${label}: source changed (${changed})${down:+; unreachable: ${down}}; ${hint}"
+  elif [ -n "${down}" ]; then
+    echo "- ${label}: unreachable (${down}); cached ${date:-unknown}"
+  else
+    echo "- ${label}: sources unchanged (cached ${date:-unknown})"
+  fi
+}
+
+doc_check() { # <file>
+  local file="$1" rel skill date url want got changed="" down="" missing=no urls
+  rel="${file#"${ROOT}/${DOC_SKILLS}/"}"
+  skill="${rel%%/*}"
+  date="$(yq --front-matter=extract '.last_upstream_check // ""' "${file}" 2>/dev/null)"
+  urls="$(doc_urls "${file}")"
+  [ -n "${urls}" ] || return 0
+  [ "$(yq --front-matter=extract '.source_sha256 // "" | type' "${file}" 2>/dev/null)" = '!!map' ] || missing=yes
+  if [ "${missing}" = no ]; then
+    while IFS= read -r url; do
+      want="$(U="${url}" yq --front-matter=extract '.source_sha256[strenv(U)] // ""' "${file}")"
+      [ -n "${want}" ] || { missing=yes; break; }
+      got="$(page_sha "${url}")"
+      if [ -z "${got}" ]; then down="${down:+${down}, }${url}"
+      elif [ "${got}" != "${want}" ]; then changed="${changed:+${changed}, }${url}"; fi
+    done <<<"${urls}"
+  fi
+  doc_report "${skill}/${rel#*/references/}" "${skill}" "${date}" "${changed}" "${down}" "${missing}"
+}
+
+print_hashes() { # <file>
+  local url sha
+  echo "source_sha256:"
+  while IFS= read -r url; do
+    sha="$(page_sha "${url}")"
+    [ -n "${sha}" ] || { echo "upstream-check: cannot fetch ${url}" >&2; return 1; }
+    echo "  ${url}: ${sha}"
+  done < <(doc_urls "$1")
+}
+
 self_test() {
   local tags=$'v1.0.0 aaa\nv1.1.0 bbb' fail=0 got
   check() { [ "$2" = "$3" ] || { echo "FAIL $1: $3"; fail=1; }; }
@@ -73,19 +133,45 @@ self_test() {
   got="$(report r u.git release v1.0.0 "${tags}")"
   check release-behind "- r: update available v1.0.0 -> v1.1.0; notes: u/releases/tag/v1.1.0; run: the README.md release-plugin steps" "${got}"
   got="$(report r u.git release v1.0.0 "")";      check unreachable "- r: upstream unreachable; pinned v1.0.0" "${got}"
+  got="$(doc_report g/a.md g 2026-11-01 "" "" no)"; check doc-current "- g/a.md: sources unchanged (cached 2026-11-01)" "${got}"
+  got="$(doc_report g/a.md g 2026-11-01 "https://x" "" no)"
+  check doc-changed "- g/a.md: source changed (https://x); run: /ujuc:generate-skills g 업데이트" "${got}"
+  got="$(doc_report g/a.md g 2026-11-01 "https://x" "https://y" no)"
+  check doc-changed-down "- g/a.md: source changed (https://x); unreachable: https://y; run: /ujuc:generate-skills g 업데이트" "${got}"
+  got="$(doc_report g/a.md g 2026-11-01 "" "https://y" no)"; check doc-down "- g/a.md: unreachable (https://y); cached 2026-11-01" "${got}"
+  got="$(doc_report g/a.md g 2026-11-01 "" "" yes)"
+  check doc-missing "- g/a.md: no source_sha256 baseline (cached 2026-11-01); run: /ujuc:generate-skills g 업데이트" "${got}"
   [ "${fail}" = 0 ] && echo "upstream-check self-test: ok"
   return "${fail}"
 }
 
 [ "${1:-}" = test ] && { self_test; exit; }
-case "${1:-}" in -h|--help) sed -n '2,7p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
+case "${1:-}" in -h|--help) sed -n '2,10p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;; esac
+if [ "${1:-}" = hashes ]; then
+  [ -f "${2:-}" ] || { echo "usage: upstream-check hashes <reference.md>" >&2; exit 2; }
+  print_hashes "$2"; exit
+fi
 
 for entry in "${ENTRIES[@]}"; do
   IFS='|' read -r name url kind <<<"${entry}"
   if [ "$#" -gt 0 ] && [[ " $* " != *" ${name} "* ]]; then continue; fi
   report "${name}" "${url}" "${kind}" "$(pinned "${name}" "${kind}")" "$(remote_tags "${url}")"
 done
+doc_skills=""
+if command -v yq >/dev/null 2>&1 && command -v curl >/dev/null 2>&1; then
+  for file in "${ROOT}/${DOC_SKILLS}"/*/references/*.md; do
+    skill="${file#"${ROOT}/${DOC_SKILLS}/"}"; skill="${skill%%/*}"
+    [ -n "$(doc_urls "${file}")" ] || continue
+    # A commit-pinned reference (source_commit) belongs to its own checker, such as superpowers-upstream.
+    [ -z "$(yq --front-matter=extract '.source_commit // ""' "${file}" 2>/dev/null)" ] || continue
+    doc_skills="${doc_skills} ${skill}"
+    if [ "$#" -gt 0 ] && [[ " $* " != *" ${skill} "* ]]; then continue; fi
+    doc_check "${file}"
+  done
+else
+  echo "- cached references: yq or curl missing; source pages not checked"
+fi
 for arg in "$@"; do # a typo must not read as "nothing to report"
-  [[ " ${ENTRIES[*]} " == *" ${arg}|"* ]] || echo "- ${arg}: not registered in upstream-check"
+  [[ " ${ENTRIES[*]} " == *" ${arg}|"* || " ${doc_skills} " == *" ${arg} "* ]] || echo "- ${arg}: not registered in upstream-check"
 done
 exit 0

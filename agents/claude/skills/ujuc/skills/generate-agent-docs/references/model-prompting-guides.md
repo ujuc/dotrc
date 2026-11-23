@@ -12,7 +12,6 @@ source_urls:
   - https://platform.claude.com/docs/en/models/opus-5-5/migration-guide.md  # source of the S1 quote
 secondary_source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md
 last_upstream_check: 2026-11-18
-check_interval_days: 14
 ---
 
 # Model Prompting Guides — Instruction-Authoring Constraints
@@ -43,15 +42,14 @@ rules naming Fable 5.2 apply to it. Mythos 5.2, 5.1 and 5 map onto the Fable
 finding to a newer model whose guide does not restate it (upstream: *"treat it
 as measured on that model and re-check it"*).
 
-**Freshness**: re-fetch `source_urls` only when `today - last_upstream_check >
-check_interval_days` (`ToolSearch` `select:WebFetch` first — deferred tool).
-When that gate fires, also fetch `secondary_source_url` and compare the guide
-links in its "Model-specific guidance" table with `source_urls`. A guide listed
-there but missing here is drift: report it in one line and route cache
-maintenance to `/ujuc:generate-skills generate-agent-docs 업데이트`. Otherwise fetch
-`secondary_source_url` only for a cross-model question. On any fetch failure,
-use this file and say so in one line:
-*"model-prompting 가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."*
+**Freshness**: project runs use this file as is and fetch `source_urls` only
+when the user asks for the latest guides, or `secondary_source_url` for a
+cross-model question; on a failed fetch say so in one line: *"model-prompting
+가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."* `upstream-check`
+reports a changed page through `source_sha256`. The refresh in
+`/ujuc:generate-skills generate-agent-docs 업데이트` also compares the guide
+links in the secondary page's "Model-specific guidance" table with
+`source_urls`; a guide listed there but missing here is drift to add.
 
 Rules are tagged by consumer; do not mix them. **[W]** governs what this skill
 emits into generated project docs (Stage 3 and 4). **[S]** governs how this

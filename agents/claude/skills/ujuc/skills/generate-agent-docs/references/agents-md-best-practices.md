@@ -4,7 +4,6 @@ source_urls:
   - https://learn.chatgpt.com/docs/agent-configuration/agents-md.md
   - https://raw.githubusercontent.com/can1357/oh-my-pi/main/docs/context-files.md
 last_upstream_check: 2026-11-23
-check_interval_days: 30  # the standard and harness loaders change rarely; re-fetch only when stale
 ---
 
 # AGENTS.md — Shared Instructions for Every Coding Agent

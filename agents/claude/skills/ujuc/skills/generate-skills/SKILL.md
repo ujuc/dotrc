@@ -49,7 +49,8 @@ bash "$GS/init-skill" <skill-name> --path <parent-dir> [--with-references] [--wi
 bash "$GS/validate-skill" <skill-dir>
 bash "$GS/skill-diet-eval" check <skill-dir>   # SKILL.md bytes for the commit message; fails on a broken link or anchor
 bash "$GS/skill-diet-growth" <skill-dir>       # one line: within budget | diet-recommended | no diet baseline
-bash "$GS/upstream-check"                      # one advisory line per vendored skill; `skill-diet-upstream pull <tag>` only when the user asks
+bash "$GS/upstream-check"                      # one advisory line per vendored skill and cached reference; `skill-diet-upstream pull <tag>` only when the user asks
+bash "$GS/upstream-check" hashes <reference.md> # fresh source_sha256 block, only after reviewing that reference's content
 bash "$GS/superpowers-upstream" check           # one advisory line for guidance-testing.md
 ```
 
@@ -102,27 +103,30 @@ bash "$GS/superpowers-upstream" check           # one advisory line for guidance
   user-facing output text, and target-language corpora or rulebooks.
 - Updating a legacy skill: translate Korean body prose to English, keeping the above.
 
-## Step 0: Spec freshness
+## Step 0: Upstream and spec freshness
 
 This skill stays the authoring controller (Rust validator, Waza
 integration). Ideas from Superpowers live in
 [guidance testing](references/guidance-testing.md); never hand control
 to another skill-generation workflow.
 
-1. Lines 1–6 of [frontmatter-spec.md](references/frontmatter-spec.md) hold
-   `source_url`, `spec_url`, `last_upstream_check` and `check_interval_days`
-   (default 14). Within the interval, skip the fetch and go to step 4.
-2. Otherwise WebFetch both URLs (**[SPEC]** rules exist only at `spec_url`; try
-   the HTML page when a Markdown response fails). Diff fields, string
-   substitutions and the invocation-control matrix against the spec's
-   Field Reference; use verified guidance in-session and report drift.
-3. Rewrite the spec or its date only when cache maintenance is in the selected
-   write scope, confirming a large change set with the user first. Unchanged
-   upstream content alone does not authorize a date write. When fetching fails
-   or is not permitted, leave both untouched and continue with a one-line notice
-   that the spec is cached as of `last_upstream_check`. Report fetched or cached either way.
-4. Relay the lines from `upstream-check` and `superpowers-upstream check`;
-   update a vendored skill only when the user asks.
+1. Run `upstream-check` and `superpowers-upstream check` and relay their lines.
+   `upstream-check` also compares each cached reference's `source_sha256`
+   with its live pages; that comparison is the only freshness check.
+2. Use [frontmatter-spec.md](references/frontmatter-spec.md) as cached. Fetch
+   its `source_url` and `spec_url` only when step 1 reports it `source changed`
+   or the user asks (**[SPEC]** rules exist only at `spec_url`; try the HTML
+   page when a Markdown response fails). Diff fields, string substitutions and
+   the invocation-control matrix against the spec's Field Reference; use
+   verified guidance in-session and report drift. A failed fetch continues on
+   the cache with a one-line notice of its `last_upstream_check`.
+3. Refresh a cached reference only in an update run whose write scope holds its
+   skill, typically the `run:` hint of a `source changed` or `no source_sha256
+   baseline` line. Fetch every URL, bring the cached content in line (confirm a
+   large change set with the user first), then replace `source_sha256` with the
+   output of `upstream-check hashes <file>` and set `last_upstream_check` to
+   today. Never write hashes or a date for content you did not review.
+4. Update a vendored skill only when the user asks.
 
 ## Step 1: Capture the use case (create mode)
 

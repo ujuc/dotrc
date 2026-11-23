@@ -1,8 +1,7 @@
 ---
-source_url: https://code.claude.com/docs/en/skills
+source_url: https://code.claude.com/docs/en/skills.md
 spec_url: https://agentskills.io/specification
 last_upstream_check: 2026-11-18
-check_interval_days: 14
 ---
 
 # YAML Frontmatter Field Specification
@@ -10,8 +9,8 @@ check_interval_days: 14
 Rules for SKILL.md frontmatter. Origins: **[CC]** Claude Code docs (`source_url`),
 **[SPEC]** the Agent Skills standard (`spec_url`; these rules are not on the
 Claude Code page), **[LOCAL]** this repository's `validate-skill` only. Step 0
-reads the header above and re-fetches both URLs when
-`today - last_upstream_check > check_interval_days`.
+uses this file as cached and fetches both URLs only when `upstream-check`
+reports a changed `source_sha256` for it.
 
 ## Delimiter Rules
 

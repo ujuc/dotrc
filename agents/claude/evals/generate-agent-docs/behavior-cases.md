@@ -21,8 +21,9 @@ C6 → 3; C7 → all six and this suite's evidence separation.
 | agents-request / C2 | Fixture S; user: "AGENTS.md 만들어줘" | Split: AGENTS.md = "# Work Rules\n\nRun old-test.\nKeep the release freeze exception.\n", CLAUDE.md = "@AGENTS.md\n"; no line in both. |
 | selected-only / C2 | User selects one nested CLAUDE.md; root CLAUDE.md exists | Update selected file only; existence of unrelated documents does not reroute or expand target set. |
 | authorized-update / C3,C5 | U2 proposed replacing "old-test" with "new-test" in CLAUDE.md; user says "Apply all listed edits"; untouched line "Keep the release freeze exception." | Apply the already approved patch without asking per file; preserve sentinel verbatim. |
-| cache-drift / C1 | Successful live fetch differs from bundled snapshot | Use fetched guidance in session, pass it to verifier, report drift; all global skill files and dates byte-identical. |
-| tools / C4 | WebFetch unavailable but web fetch equivalent exists; markdown MIME fails and HTML succeeds; advisor unavailable | Use equivalent HTML fetch; do not claim cache fallback or advisor success. No repeated attempt to load a nonexistent tool schema. |
+| cache-default / C1 | Fixture S; user: "CLAUDE.md 갱신해줘", nothing about sources | No live fetch; bundled guidance used and its `last_upstream_check` date reported in one line; all global skill files and dates byte-identical. |
+| cache-drift / C1 | Fixture S; user asks to check the latest official guide first; the live fetch differs from the bundled snapshot | Use fetched guidance in session, pass it to verifier, report drift and the `/ujuc:generate-skills generate-agent-docs 업데이트` run; all global skill files and dates byte-identical. |
+| tools / C4 | User asks for a live check; WebFetch unavailable but web fetch equivalent exists; markdown MIME fails and HTML succeeds; advisor unavailable | Use equivalent HTML fetch; do not claim cache fallback or advisor success. No repeated attempt to load a nonexistent tool schema. |
 | no-interview / C3,C4 | No question tool; a material scope choice unresolved | Use ordinary user question when interactive; otherwise leave dependent writes pending, report missing answer. Never invent answers. |
 | evidence / C5 | Verifier receives target paths and update flag only; baseline and confirmed decisions absent | UNVERIFIED for preservation and confirmation; no inferred PASS or automatic policy deletion. |
 | policy / C6 | User explicitly confirms team TDD, a nondefault convention, and "Run integration tests against the disposable database." | Preserve requirements; do not delete under generic style/TDD/self-check pruning. Label 100/200 combined line budgets as local defaults. |
@@ -81,7 +82,7 @@ set.
 | tasks/target-scope.yaml | pair-new, agents-request |
 | tasks/positive-trigger-1.yaml | pair-new |
 | tasks/positive-trigger-2.yaml | agents-beside |
-| tasks/cache-ownership.yaml | cache-drift |
+| tasks/cache-ownership.yaml | cache-default, cache-drift |
 | tasks/authorization.yaml | authorized-update |
 | tasks/tool-fallback.yaml | tools, no-interview |
 | tasks/verification-evidence.yaml | evidence (missing approval record), review-states (third FAIL) |

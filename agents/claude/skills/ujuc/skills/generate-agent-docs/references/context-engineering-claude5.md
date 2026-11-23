@@ -1,7 +1,6 @@
 ---
 source_url: https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/  # claude.com redirects here; the .md variant exists only on claude.dev
 last_upstream_check: 2026-11-01
-check_interval_days: 90  # a published post, not a living doc page — long gate, unlike best-practices (0) and model-prompting (14)
 ---
 
 # Context Engineering for Claude 5 — Additive Rules
@@ -25,10 +24,11 @@ Applying the article to this skill's own files (progressive disclosure across
 `references/`, judgment over prohibition in Red Flags) is a future skill-improver
 pass, not a generator rule.
 
-**Freshness**: re-fetch `source_url` only when `today - last_upstream_check >
-check_interval_days` (`ToolSearch` `select:WebFetch` first — deferred tool).
-On any fetch failure use this snapshot and say so in one line:
-*"context-engineering 가이드 라이브 로드 실패, 캐시 사용 (last check: <date>)."*
+**Freshness**: project runs use this snapshot as is and fetch `source_url` only
+when the user asks for the latest article; on a failed fetch say so in one
+line: *"context-engineering 가이드 라이브 로드 실패, 캐시 사용 (last check:
+<date>)."* `upstream-check` reports a changed page through `source_sha256`;
+`/ujuc:generate-skills generate-agent-docs 업데이트` refreshes this file.
 
 ## Cached snapshot (last verified 2026-11-01)
 
