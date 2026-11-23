@@ -50,9 +50,12 @@ files follow update-mode.md U3.
 - Apply W/C/T reference rules within their documented scope and exceptions.
   Decision rationale is allowed; internal reasoning transcripts are not needed.
 - Use the local budgets in claude-code-best-practices.md, counting AGENTS.md
-  inside its importing CLAUDE.md, and report the project AGENTS.md chain's
-  bytes (git root down to the target) against Codex's default 32 KiB
-  `project_doc_max_bytes` (agents-md-best-practices.md).
+  inside its importing CLAUDE.md. When a write adds to AGENTS.md, report the
+  project AGENTS.md chain's bytes (git root down to the target) against
+  Codex's default 32 KiB `project_doc_max_bytes` (agents-md-best-practices.md).
+  If the new text would push the chain past it, write nothing yet: propose a
+  shorter wording that keeps every fact, or a nested AGENTS.md, and wait for
+  approval; a headless run leaves that write pending and reports it.
 - Preserve unrelated content. Report optional improvements outside authorized
   changes separately, even when auditing every line.
 - Keep a rule with no exceptions as a line and recommend a hook, deny rule or

@@ -100,7 +100,7 @@ names CLAUDE.md still places a shared fact in an imported AGENTS.md.
    | Already stated in AGENTS.md or CLAUDE.md | No write; say where it already is |
    | Personal | No write, not even a new `CLAUDE.local.md` or `.gitignore` entry; name the user-global file of each harness the user runs (agents-md-best-practices.md table), or `CLAUDE.local.md` when a CLAUDE.md exists |
    | From session corrections: one-off or discoverable | Drop and say why |
-   | Dictated with "add this" | Keep under policy precedence, in the owner above or a restricted file (`CLAUDE.md만`, `AGENTS.md만`); only a named file overrides Personal |
+   | Dictated with "add this" | Keep under policy precedence, in the owner above or a restricted file (`CLAUDE.md만`, `AGENTS.md만`); only a named file overrides Personal. If it would push the project AGENTS.md chain past Codex's 32 KiB, follow stage3-generator.md's budget rule instead of writing it as is |
 
 3. Run U2 and U3 on the placed facts only: add no other line the user did
    not supply except the `@AGENTS.md` import a new CLAUDE.md needs, and report

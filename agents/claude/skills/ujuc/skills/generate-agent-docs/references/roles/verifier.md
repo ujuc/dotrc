@@ -41,11 +41,12 @@ dependent check, never assumed PASS.
    hook or `.claude/` setting, or relies on an `@path` import; no
    `AGENTS.override.md` or `AGENTS.local.md` was written; each new nested
    AGENTS.md below a CLAUDE.md has a sibling CLAUDE.md importing it; a nested
-   file holds only its differences from ancestor files. Report the project
-   AGENTS.md chain's measured bytes (git root down to the target; the user's
-   `~/.codex/AGENTS.md` is outside it): FAIL when this run adds bytes beyond
-   32 KiB, an observation when the excess predates the run and nothing is
-   added past it.
+   file holds only its differences from ancestor files. When the run added
+   to AGENTS.md, report the project AGENTS.md chain's measured bytes (git root
+   down to the target; the user's `~/.codex/AGENTS.md` is outside it): FAIL
+   when this run's writes pass 32 KiB without the user approving that size or
+   a shortened wording; excess that predates the run, with nothing added past
+   it, is an observation.
 4. **Evidence and necessity**: facts are grounded in supplied sources and
    decisions. Prune redundant summaries and linter defaults within authorized
    scope. Preserve explicit project requirements, nondefault conventions and

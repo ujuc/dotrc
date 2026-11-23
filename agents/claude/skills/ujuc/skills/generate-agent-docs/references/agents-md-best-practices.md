@@ -69,9 +69,11 @@ under `.agents/`.
 - Size: Codex stops adding project files once the chain from the git root
   down to cwd reaches `project_doc_max_bytes`, 32 KiB by default
   (`codex-rs/core/src/agents_md.rs`); the user-global file is outside that
-  budget. Report the measured bytes of the project chain a target sits in. A
-  run that adds bytes beyond 32 KiB has a defect (Codex drops the tail);
-  excess that predates the run, with nothing added past it, is an observation.
+  budget. When a run adds to AGENTS.md, report the measured bytes of the
+  project chain it sits in. Text that would push the chain past 32 KiB is not
+  written as is: propose a shorter wording that keeps every fact (or a nested
+  AGENTS.md) and wait for approval, because Codex silently drops the tail.
+  Excess that predates the run, with nothing added past it, is an observation.
 
 ## Reconciliation with this skill's defaults
 

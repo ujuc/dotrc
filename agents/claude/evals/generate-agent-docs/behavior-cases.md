@@ -139,7 +139,7 @@ Prune test, stop-list and enforcement cases. Each row is a line in an existing C
 | nested-sibling / stage3 | S2 plus an approved rule for packages/api only | Write set {packages/api/AGENTS.md, packages/api/CLAUDE.md = "@AGENTS.md\n"}; root files byte-identical |
 | agents-only-short / routes | AGENTS.md = S2's AGENTS.md, no CLAUDE.md; user supplies "Use plan mode before editing src/billing/." | CLAUDE.md = "@AGENTS.md\n" plus the rule; AGENTS.md byte-identical |
 | shared-path-rule / stage3 | S2; user adds "Files under src/api/ must validate input with zod." with no file named | The rule goes in AGENTS.md (root, or src/api/AGENTS.md with its importing CLAUDE.md when that nested file is approved), not `.claude/rules/` |
-| codex-bytes / check 3 | Variant 1: project AGENTS.md chain is 40 KiB before the run and the run edits only CLAUDE.md. Variant 2: chain is 31.9 KiB and the run adds 1 KiB to AGENTS.md | Both reports state the measured project-chain bytes; variant 1 records an observation, variant 2 a FAIL |
+| codex-bytes / check 3 | Variant 1: project AGENTS.md chain is 39 KB before the run and the run edits only CLAUDE.md. Variant 2: chain is 32,644 bytes and the user dictates a rule for AGENTS.md that would push it past 32 KiB, in a headless run | Variant 1: AGENTS.md byte-identical, no FAIL; a size note, if any, is an observation. Variant 2: AGENTS.md byte-identical; the report states the measured bytes and proposes a shorter wording that keeps every fact, leaving the write pending |
 
 The YAML tasks exercise decisions through the runner's supported text graders.
 They do not prove filesystem writes. Record actual fixture diffs and ordered
