@@ -107,6 +107,8 @@ cases pass only through their answer regexes. Results live in
 | --- | --- | --- |
 | 1, skill at `e8d56ba` | 19 × 3 | 54/57 |
 | 2, after the fixes below, affected and short-route cases | 7 × 3 | 21/21 |
+| 3, remaining cases (selected-only, stop-preserved, rare-language, colleague) | 4 × 3 | 12/12 |
+| 4, after the guidance redesign below (cache-default, import-kept, pair-new) | 3 × 3 | 9/9 |
 
 Passing in round 1 and not rerun (12 cases, 36/36): agent-specific,
 agents-beside, agents-request, anti-trigger, audit-only, authorized-update,
@@ -134,14 +136,59 @@ The three round-1 misses and what changed:
   nested AGENTS.md, then waits for approval; headless runs leave the write
   pending. In round 2 all three runs left AGENTS.md unchanged and proposed
   the options. The answer regex was widened after the fact to accept "cut-down
-  version"; that run's behavior matched the rule. One of those runs also
-  skipped the live best-practices fetch that Stage 0 requires on every run.
+  version"; that run's behavior matched the rule.
+
+Round 3 behavior: selected-only edited only the nested file and proposed the
+root fix and split; stop-preserved kept the "Think harder" line under the team
+decision; rare-language ran `/init`, then wrote an AGENTS.md naming Gleam with
+a link to its documentation and a CLAUDE.md of `@AGENTS.md`; colleague
+rewrote the vague release line from the supplied facts.
 
 Not run, because they need injected tool failures, fetch responses or
 reviewer patches: cache-drift, tools, no-interview, evidence, review-states,
 final-reference. Also not run: session-capture, broken-pointer and
-summary-growth, whose decisions the Waza probes cover, and stop-preserved,
-rare-language, colleague and selected-only, which have no coverage yet.
+summary-growth, whose decisions the Waza probes cover.
+
+## Guidance freshness redesign
+
+Rounds 1–3 showed that 18 of 87 skill runs had skipped Stage 0's "fetch the
+best-practices page on every run" rule, mostly small updates, with no effect
+on results. Fetching every run also made the bundled copy a fallback rather
+than a cache, and it cost context tokens each time. The user chose to move the
+freshness check into the skill-update notification:
+
+- `upstream-check` (relayed by generate-skills Step 0 and skill-improver
+  Phase 0) now also fetches each cached reference's upstream URLs and compares
+  their sha256 with a `source_sha256` block in the reference's frontmatter. A
+  changed page prints `source changed (...); run: /ujuc:generate-skills
+  <skill> 업데이트`. `upstream-check hashes <file>` prints a fresh block. Ten
+  source URLs fetched twice a second apart hashed identically. HTML pages can
+  still change on a site deploy; that error only means one extra update run.
+- Project runs of generate-agent-docs use the bundled rulebooks and state the
+  cache date in one line. They fetch live only when the user asks.
+- generate-skills fetches its frontmatter spec only when `upstream-check`
+  reports it changed. Only an update run refreshes a cached reference, its
+  hashes and `last_upstream_check`, after reviewing the content.
+- `check_interval_days` was removed from the six references this covers.
+  `guidance-testing.md` stays commit-pinned under `superpowers-upstream`.
+- No hashes were recorded in this change, because recording one asserts that
+  the cache matches today's page and no content review was done. The first
+  `upstream-check` therefore reports `no source_sha256 baseline` for the six
+  references until their update runs.
+
+Verification: Waza baseline on the unchanged skills with the updated suites,
+then after the change (3 trials each).
+
+| Skill | Before | After |
+| --- | --- | --- |
+| generate-agent-docs (`cache-ownership` probe rewritten) | 21/22, `cache-ownership` failed 3/3 | 22/22 |
+| generate-skills (new `spec-freshness` probe) | 5/6, `spec-freshness` failed 3/3 | 6/6 |
+| skill-improver | 3/3 | 3/3 |
+
+Round 4 above made no fetch in 9 of 9 runs. 8 of the 9 runs stated the
+cache date. `upstream-check test` passes. A scratch reference with a real
+block reported `sources unchanged`, and `source changed` after one hash was
+altered.
 
 ## Independent review
 
@@ -193,5 +240,6 @@ appear in the skill listing.
 
 - No session evidence yet for the new ownership policy. The skill-improver
   digests predate `f02ae37`.
-- Artifact cases not yet run: the six fault-injection cases and
-  stop-preserved, rare-language, colleague and selected-only.
+- `source_sha256` baselines: run `/ujuc:generate-skills generate-agent-docs
+  업데이트` and `/ujuc:generate-skills generate-skills 업데이트` to review the six
+  cached references and record them.
