@@ -41,7 +41,7 @@ load guidance.
 | --- | --- | --- | --- | --- |
 | Claude Code | `~/.claude/CLAUDE.md` only | AGENTS.md only when no CLAUDE.md, `.claude/CLAUDE.md` or `CLAUDE.local.md` sits at or above cwd (default `claude-md-or-agents-md`) | `@path` expanded | `@AGENTS.md` in CLAUDE.md works in every read mode and never loads twice |
 | Codex | `~/.codex/AGENTS.override.md`, else `~/.codex/AGENTS.md` | Git root down to cwd, one file per directory (`AGENTS.override.md` › `AGENTS.md` › fallback names), concatenated root first | Not expanded: `@path` stays literal text | Stops adding project files at `project_doc_max_bytes` (32 KiB default, configurable; the user-global file is loaded separately and does not count); never reads CLAUDE.md |
-| omp | `~/.omp/agent/AGENTS.md`, shadows every other user file | One file per directory depth, cwd up to the repo root; AGENTS.md and CLAUDE.md compete for the same depth | `@path` expanded, 5 hops | Task subagents drop files named AGENTS.md but keep AGENTS.md text imported through CLAUDE.md |
+| omp | `~/.omp/agent/AGENTS.md`, shadows every other user file | One file per directory depth, cwd up to the repo root; at the same depth AGENTS.md wins and CLAUDE.md is not loaded (equal priority, registration order; undocumented) | `@path` expanded, 5 hops | Task subagents drop files named AGENTS.md and get no user-global file, so they see no instructions in an AGENTS.md + CLAUDE.md pair |
 | pi | `~/.pi/agent/AGENTS.md` | AGENTS.md or CLAUDE.md in cwd and its parents | — | — |
 
 Claude Code reads neither `AGENTS.local.md`, `AGENTS.override.md` nor anything
@@ -56,8 +56,11 @@ under `.agents/`.
   `.claude/` settings instructions. Name a supporting document by plain path
   with when to read it, never as an `@path` import that Codex shows literally.
 - Keep the `@AGENTS.md` line in CLAUDE.md even where Claude Code would read
-  AGENTS.md directly: some sessions cannot, a `CLAUDE.local.md` silently turns
-  direct reading off, and omp subagents only see the imported text.
+  AGENTS.md directly: some sessions cannot, and a `CLAUDE.local.md` silently
+  turns direct reading off.
+- omp task subagents receive no AGENTS.md: rules a subagent needs travel in
+  its task prompt. Do not duplicate AGENTS.md rules into `.omp/RULES.md` to
+  work around this.
 - A nested AGENTS.md below a directory that has a CLAUDE.md at or above it is
   invisible to Claude Code in the default mode, so a selected nested AGENTS.md
   gets a sibling CLAUDE.md that imports it.
