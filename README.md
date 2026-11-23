@@ -434,10 +434,11 @@ cd ~ && npx claude-code-templates@latest --mod productivity/ultra-config
 #### Subtree 스킬
 
 업스트림 스킬 저장소를 `git subtree --squash`로 `agents/claude/skills/<name>/`에 넣는다. 본문은 원본 그대로 둔다.
-현재 버전은 squash 커밋의 `git-subtree-split:` 트레일러에 남는다. `generate-skills` Step 0과 `skill-improver` Phase 0이 `upstream-check`로 subtree·릴리스 플러그인의 새 릴리스 태그를 확인해 경고만 한다.
+현재 버전은 squash 커밋의 `git-subtree-split:` 트레일러에 남는다. `generate-skills` Step 0과 `skill-improver` Phase 0이 `upstream-check`로 subtree·릴리스 플러그인의 새 릴리스 태그를 확인해 경고만 한다. 같은 스크립트가 원문 URL을 캐시한 참조 문서(`references/*.md`)의 `source_sha256`을 live 페이지와 비교해, 바뀐 원문이 있으면 `/ujuc:generate-skills <skill> 업데이트`를 안내한다. 스킬 실행 중에는 캐시만 쓰고, 사본과 해시·`last_upstream_check`는 그 업데이트 실행에서만 갱신한다.
 
 ```sh
-agents/claude/skills/ujuc/skills/generate-skills/scripts/upstream-check                    # skill-diet·dual-brain·egm 새 태그와 갱신 명령 확인
+agents/claude/skills/ujuc/skills/generate-skills/scripts/upstream-check                    # skill-diet·dual-brain·egm 새 태그와 캐시 참조 문서의 원문 변경 확인
+agents/claude/skills/ujuc/skills/generate-skills/scripts/upstream-check hashes <ref.md>    # 내용 검토를 마친 참조 문서의 새 source_sha256 블록 출력
 agents/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-upstream pull v0.2.0  # subtree pull --squash 후 링크·검증
 ```
 
