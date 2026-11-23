@@ -169,6 +169,9 @@ visit_static_selected_links() {
     fi
     if $SELECT_AGENTS; then
         "$callback" "$DOTRC_AGENTS_DIR/claude" "$HOME/.claude" || failed=1
+        "$callback" "$DOTRC_AGENTS_DIR/claude/AGENTS.global.md" "$HOME/.codex/AGENTS.md" || failed=1
+        "$callback" "$DOTRC_AGENTS_DIR/claude/AGENTS.global.md" "$HOME/.omp/agent/AGENTS.md" || failed=1
+        "$callback" "$DOTRC_AGENTS_DIR/claude/AGENTS.global.md" "$HOME/.pi/agent/AGENTS.md" || failed=1
     fi
     return "$failed"
 }
@@ -329,6 +332,9 @@ install_fonts() {
 
 install_agent_links() {
     safe_link "$DOTRC_AGENTS_DIR/claude" "$HOME/.claude"
+    safe_link "$DOTRC_AGENTS_DIR/claude/AGENTS.global.md" "$HOME/.codex/AGENTS.md"
+    safe_link "$DOTRC_AGENTS_DIR/claude/AGENTS.global.md" "$HOME/.omp/agent/AGENTS.md"
+    safe_link "$DOTRC_AGENTS_DIR/claude/AGENTS.global.md" "$HOME/.pi/agent/AGENTS.md"
 }
 
 json_has_string_field() {

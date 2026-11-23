@@ -217,7 +217,17 @@ curl -fsSL https://claude.ai/install.sh | bash
 ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 ```
 
-이 저장소는 Claude만 관리한다. 예전 버전으로 설치한 기기에 `~/.codex`, `~/.config/amp`, `~/.pi`가 `agents/` 하위를 가리키는 심링크로 남아 있으면 깨진 링크이므로 직접 지운다(`[ -L ~/.codex ] && rm ~/.codex`).
+#### 공용 전역 지침 (AGENTS.global.md)
+
+공용 전역 지침 `agents/claude/AGENTS.global.md`는 `install.sh --agents`가 `~/.codex/AGENTS.md`, `~/.omp/agent/AGENTS.md`, `~/.pi/agent/AGENTS.md`로 링크하고, `~/.claude/CLAUDE.md`는 이 파일을 import한다.
+
+```sh
+ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.codex/AGENTS.md
+ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.omp/agent/AGENTS.md
+ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.pi/agent/AGENTS.md
+```
+
+예전 버전으로 설치한 기기에 `~/.codex`, `~/.config/amp`, `~/.pi`가 `agents/` 하위를 가리키는 심링크로 남아 있으면 깨진 링크다. `install.sh`가 이제 `~/.codex/AGENTS.md`를 만들므로 먼저 직접 지운다(`[ -L ~/.codex ] && rm ~/.codex`).
 
 #### Plugins
 
