@@ -79,7 +79,7 @@ scope source, skill-improver's `change-bar.md`, and `skills/README.md`.
 | Waza after the review fixes, new suite with 22 tasks (3 trials) | 65/66. The one miss was the model misspelling the answer key (`REMAVAL`); the verdict itself was correct |
 | Waza after the refuter fixes (3 trials) | 66/66 |
 | Grader regexes, Python replay | 6 correct answers pass, 7 wrong answers fail, as intended |
-| Live loading of `AGENTS.global.md` | Claude Code, Codex and omp each reported the "Global Agent Guidance" heading. Codex inside dotrc listed `~/.codex/AGENTS.md` and the root `AGENTS.md`. pi was not run |
+| Live loading of `AGENTS.global.md` | Claude Code, Codex and omp each reported the "Global Agent Guidance" heading. Codex inside dotrc listed `~/.codex/AGENTS.md` and the root `AGENTS.md`. pi 1.6.0 (`-p --no-session`) reported the heading, quoted the first Agent Identity bullet verbatim, and inside dotrc listed `~/.pi/agent/AGENTS.md` and the root `AGENTS.md` |
 | `install.sh` preflight | Passes for the three existing links; stops on a regular file at the destination |
 | Split preservation | Every line of the four original CLAUDE.md files is in the new pair, except 8 lines deliberately reworded for the new layout; no line appears in both files of a pair |
 
@@ -141,4 +141,3 @@ appear in the skill listing.
 - When AGENTS.md and CLAUDE.md sit in the same directory, which file omp loads
   is undocumented (both have priority 10). Either outcome delivers the content,
   but omp task subagents keep it only if CLAUDE.md wins.
-- pi loading of `~/.pi/agent/AGENTS.md` is unverified.
