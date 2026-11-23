@@ -1,7 +1,7 @@
 ---
 name: generate-agent-docs
 description: "AGENTS.md(모든 코딩 에이전트 공용 지침)와 이를 @AGENTS.md로 import하는 CLAUDE.md(Claude 전용 지침), nested 파일, .claude/rules, contributing-docs 등 에이전트 문서를 생성·갱신·점검한다(새 문서는 내장 /init 초안을 먼저 만든 뒤 AGENTS.md와 CLAUDE.md로 나눠 완성하고, CLAUDE.md만 있는 저장소는 분리를 제안한다). AGENTS.md·CLAUDE.md 업데이트, 점검, 에이전트 문서 생성 요청에 사용한다. README·API 문서·CHANGELOG는 제외. (구 명칭 generate-claude-md)"
-when_to_use: "에이전트 문서(AGENTS.md, CLAUDE.md, nested AGENTS.md/CLAUDE.md, .claude/rules, contributing-docs)를 만들거나 고치거나 점검할 때. 트리거: '/ujuc:generate-agent-docs', 'generate-agent-docs', 'AGENTS.md 만들어줘', 'AGENTS.md 업데이트', 'AGENTS.md 점검', 'CLAUDE.md 업데이트', 'CLAUDE.md 수정', 'CLAUDE.md 갱신', 'CLAUDE.md에 추가', 'CLAUDE.md 만들어줘', '에이전트 문서 갱신', 'CLAUDE.md 점검', 'CLAUDE.md 감사', '에이전트 문서 점검', 'rules 생성', 'contributing-docs 추가', 'update AGENTS.md', 'update CLAUDE.md', 'refresh CLAUDE.md', 'audit CLAUDE.md', 'check CLAUDE.md'. 커밋 워크플로 안의 문서 갱신 단계는 commit 스킬이 처리한다."
+when_to_use: "에이전트 문서(AGENTS.md, CLAUDE.md, nested AGENTS.md/CLAUDE.md, .claude/rules, contributing-docs)를 만들거나 고치거나 점검할 때. 트리거: '/ujuc:generate-agent-docs', 'generate-agent-docs', 'AGENTS.md 만들어줘', 'AGENTS.md 업데이트', 'AGENTS.md 수정', 'AGENTS.md 갱신', 'AGENTS.md에 추가', 'AGENTS.md로 분리', 'AGENTS.md 점검', 'CLAUDE.md 업데이트', 'CLAUDE.md 수정', 'CLAUDE.md 갱신', 'CLAUDE.md에 추가', 'CLAUDE.md 만들어줘', '에이전트 문서 만들어줘', '에이전트 문서 갱신', 'CLAUDE.md 점검', 'CLAUDE.md 감사', '에이전트 문서 점검', 'rules 생성', 'contributing-docs 추가', 'update AGENTS.md', 'update CLAUDE.md', 'refresh CLAUDE.md', 'audit AGENTS.md', 'audit CLAUDE.md', 'check AGENTS.md', 'check CLAUDE.md'. 커밋 워크플로 안의 문서 갱신 단계는 commit 스킬이 처리한다."
 allowed-tools: Read Write Edit Glob Grep Agent AskUserQuestion ToolSearch WebFetch advisor
 ---
 
