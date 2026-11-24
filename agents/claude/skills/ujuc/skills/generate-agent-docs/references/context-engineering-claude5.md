@@ -1,6 +1,8 @@
 ---
 source_url: https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/  # claude.com redirects here; the .md variant exists only on claude.dev
-last_upstream_check: 2026-11-01
+last_upstream_check: 2026-11-24
+source_sha256:
+  https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/: b8e86c5d8ebaecbc15b76fd6d7477c2b7b9712345eccbee500f363f28f85cc46
 ---
 
 # Context Engineering for Claude 5 — Additive Rules
@@ -30,7 +32,7 @@ line: *"context-engineering 가이드 라이브 로드 실패, 캐시 사용 (la
 <date>)."* `upstream-check` reports a changed page through `source_sha256`;
 `/ujuc:generate-skills generate-agent-docs 업데이트` refreshes this file.
 
-## Cached snapshot (last verified 2026-11-01)
+## Cached snapshot (last verified 2026-11-24)
 
 ### C1 — Anchor instructions to context, not to absolute prohibitions
 

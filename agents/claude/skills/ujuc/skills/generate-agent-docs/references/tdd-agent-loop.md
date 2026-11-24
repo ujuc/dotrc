@@ -1,6 +1,8 @@
 ---
 source_url: https://martinfowler.com/articles/exploring-gen-ai/tdd-in-the-agent-loop.html
-last_upstream_check: 2026-11-01
+last_upstream_check: 2026-11-24
+source_sha256:
+  https://martinfowler.com/articles/exploring-gen-ai/tdd-in-the-agent-loop.html: 00e80f3b1956f1a8a68ca371d7b6626704ac67f2a436089dc7606d6a384120a2
 ---
 
 # TDD in the Agent Loop — Testing-Instruction Constraint
@@ -24,12 +26,12 @@ line: *"tdd-agent-loop 가이드 라이브 로드 실패, 캐시 사용 (last ch
 <date>)."* `upstream-check` reports a changed page through `source_sha256`;
 `/ujuc:generate-skills generate-agent-docs 업데이트` refreshes this file.
 
-## Cached snapshot (last verified 2026-11-01)
+## Cached snapshot (last verified 2026-11-24)
 
 Birgitta Böckeler's evaluation (martinfowler.com, *exploring-gen-ai* series)
 found that mandating TDD inside an agent's autonomous loop produced no
 measurable quality gain — Opus-judged rankings favored non-TDD runs, mutation
-scores showed no meaningful difference — at *"at least 3x the tokens"* (small
+scores showed no meaningful difference — at *"At least 3x the tokens"* (small
 8.50x, medium 2.96x, large 4.89x; many are cache hits, so *"how many times
 exactly is variable"*). A TDD run ranked first only after she *"strengthened the
 TDD prompt with a more explicit refactor-and-design-review step"*. She stopped
@@ -42,7 +44,7 @@ TDD's goals do not transfer into a fully-agentic loop:
 
 - **Test-first does not prevent tautology**: agent *"tests checked the
   implementation's output against itself, re-running the same code to produce
-  the 'expected' answer."*
+  the “expected” answer."*
 - **Red proves nothing unattended**: *"Watching a test go red is only proof
   of anything if someone is checking why it went red."*
 - **Design quality favored non-TDD**: TDD runs let design emerge test-by-test

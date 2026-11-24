@@ -11,7 +11,19 @@ source_urls:
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-haiku-5-5.md
   - https://platform.claude.com/docs/en/models/opus-5-5/migration-guide.md  # source of the S1 quote
 secondary_source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md
-last_upstream_check: 2026-11-18
+last_upstream_check: 2026-11-24
+source_sha256:
+  https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md: e2eb2735d5364e88c262519476f64a5f5e5faaf57dc219b81b86c286a2b5a267
+  https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-2.md: c20db12661c1cea8594aaf29a20dc2ad460437200f6ffbbbf8d3086b9c724c5d
+  https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1.md: 7a71c59ccbb0d6e18ef5a6dbebda6e6d1f7a996e6adba831e44b4b73d6af6755
+  https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5.md: d809aae83b41969254007894c700664d8e5ecc107e3377b01d142924616e33c8
+  https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5.md: 6171e5c0ada4178cf93c40470f7371df9e7380e8b6514b9fb34e183c914c784a
+  https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5.md: b34cb10619cc7b2ba2b6a195210673055c6fb84e1c5d1141ffd26a863f6514a0
+  https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8.md: e0b9e6d9eb54b13798ed8ca5b37b7b6763655032cbf11a04fa1a399aac6ec9a7
+  https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5-5.md: c3197181ae54c77e0333cb6965b916cdb27a23efcf2469d25fae93f0ff3d65e0
+  https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5.md: a4ea39b6f0a7fc3b23a8883434d2a55f7f6bafeeddb0f669566ebc0fe289e644
+  https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-haiku-5-5.md: 19ef5baedd6303ce1383213cbcd8a26be74aa5b3097ae466cb0b0aa7b6766d5c
+  https://platform.claude.com/docs/en/models/opus-5-5/migration-guide.md: dab58cdf8d441f4d1f4955f73360cf765ae8b8bc52e7e78b16885d6d7fe6b6e7
 ---
 
 # Model Prompting Guides — Instruction-Authoring Constraints

@@ -3,7 +3,11 @@ source_url: https://agents.md/
 source_urls:
   - https://learn.chatgpt.com/docs/agent-configuration/agents-md.md
   - https://raw.githubusercontent.com/can1357/oh-my-pi/main/docs/context-files.md
-last_upstream_check: 2026-11-23
+last_upstream_check: 2026-11-24
+source_sha256:
+  https://agents.md/: 6438e1ff8cf75cb9ec51a39cc98cf8c6210f0a9e9d4a28c83188fe40d866c20e
+  https://learn.chatgpt.com/docs/agent-configuration/agents-md.md: 9d1f87a2d1cb55b4782b95abe710692b35b9659789c2db31a22c7074a3383e8e
+  https://raw.githubusercontent.com/can1357/oh-my-pi/main/docs/context-files.md: 30393c492d558ff204d2f49991410ab664f3161b42985511e033ebaa03ab438c
 ---
 
 # AGENTS.md — Shared Instructions for Every Coding Agent
@@ -14,7 +18,7 @@ Claude Code's side (the `@AGENTS.md` import, read modes, size warnings) lives in
 claude-code-best-practices.md. Freshness and fetch failure follow SKILL.md's
 load guidance.
 
-## Cached snapshot (last verified 2026-11-23)
+## Cached snapshot (last verified 2026-11-24)
 
 ### The standard (source: agents.md)
 
@@ -40,7 +44,7 @@ load guidance.
 | --- | --- | --- | --- | --- |
 | Claude Code | `~/.claude/CLAUDE.md` only | AGENTS.md only when no CLAUDE.md, `.claude/CLAUDE.md` or `CLAUDE.local.md` sits at or above cwd (default `claude-md-or-agents-md`) | `@path` expanded | `@AGENTS.md` in CLAUDE.md works in every read mode and never loads twice |
 | Codex | `~/.codex/AGENTS.override.md`, else `~/.codex/AGENTS.md` | Git root down to cwd, one file per directory (`AGENTS.override.md` › `AGENTS.md` › fallback names), concatenated root first | Not expanded: `@path` stays literal text | Stops adding project files at `project_doc_max_bytes` (32 KiB default, configurable; the user-global file is loaded separately and does not count); never reads CLAUDE.md |
-| omp | `~/.omp/agent/AGENTS.md`, shadows every other user file | One file per directory depth, cwd up to the repo root; at the same depth AGENTS.md wins and CLAUDE.md is not loaded (equal priority, registration order; undocumented) | `@path` expanded, 5 hops | Task subagents drop files named AGENTS.md and get no user-global file, so they see no instructions in an AGENTS.md + CLAUDE.md pair |
+| omp | `~/.omp/agent/AGENTS.md`, shadows every other user file | One file per directory depth, cwd up to the repo root (then enclosing workspace directories up to, not including, home); at the same depth AGENTS.md wins and CLAUDE.md is not loaded (equal priority, registration order; undocumented) | `@path` expanded, 5 hops | Task subagents drop files named AGENTS.md and get no user-global file, so they see no instructions in an AGENTS.md + CLAUDE.md pair |
 | pi | `~/.pi/agent/AGENTS.md` | AGENTS.md or CLAUDE.md in cwd and its parents | — | — |
 
 Claude Code reads neither `AGENTS.local.md`, `AGENTS.override.md` nor anything

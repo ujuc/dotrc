@@ -1,7 +1,10 @@
 ---
 source_url: https://code.claude.com/docs/en/skills.md
 spec_url: https://agentskills.io/specification
-last_upstream_check: 2026-11-18
+last_upstream_check: 2026-11-24
+source_sha256:
+  https://code.claude.com/docs/en/skills.md: 78e1b49913a55380e65a9293bed3a0ae67b3c90ee43d5eef2a1b55a4c4f72de5
+  https://agentskills.io/specification: 1c788199fbdd73b0ead350e10d5dbe421582a47c3214634f5d43c7f7b8db3529
 ---
 
 # YAML Frontmatter Field Specification
@@ -233,7 +236,9 @@ hooks:
 Globs (comma-separated string or YAML list, same format as path-specific memory
 rules) that limit **automatic** activation to matching files, e.g.
 `paths: "src/**/*.ts, tests/**/*.spec.ts"`. Patterns are relative to Claude's
-current working directory; files outside it do not match. No effect on `/skill-name`.
+current working directory (in the main conversation, the primary working
+directory even after a `cd` into one of its subdirectories in the same Git
+worktree); files outside it do not match. No effect on `/skill-name`.
 
 ### `shell`
 
@@ -275,8 +280,7 @@ has such requirements.
 Any other field is a **hard error** there, not an ignored key:
 
 ```
-Unexpected key(s) in SKILL.md frontmatter: argument-hint.
-Allowed properties are: allowed-tools, compatibility, description, license, metadata, name
+Unexpected key(s) in SKILL.md frontmatter: argument-hint. Allowed properties are: allowed-tools, compatibility, description, license, metadata, name
 ```
 
 No skill here is upload-destined, so do not strip `when_to_use`,
