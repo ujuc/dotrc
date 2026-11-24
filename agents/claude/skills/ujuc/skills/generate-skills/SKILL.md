@@ -29,6 +29,7 @@ mode it asks for. Judge what is asked, not a word inside a skill name.
   `scripts/skill-diet-eval` in `~/.claude/data/skill-diet/<skill>-<YYYYMMDD>/` with
   `scripts/diet-adapter-claude` symlinked as `adapter`, `--parallel 2`, a fresh eval folder,
   and the same pinned `--model` for `calibrate`, `run` and `score`. The shipping commit carries `Skill-Diet: <skill-name>`.
+  Skip diet.md's "After the diet" step: `skill-diet/` is a vendored subtree, so report what the run showed about skill-diet instead of editing it.
 - **Update mode**: a change to an existing skill (`업데이트`, `수정`, `갱신`, `최신화`, `update`, `refresh`)
   → Run Step 0 → Steps U1–U2 → [Behavior baseline](#behavior-baseline) → Step U3 → Step 5 (validation)
 - **Create mode**: a new skill
@@ -123,8 +124,9 @@ to another skill-generation workflow.
    the cache with a one-line notice of its `last_upstream_check`.
 3. Refresh a cached reference only in an update run whose write scope holds its
    skill, typically the `run:` hint of a `source changed` or `no source_sha256
-   baseline` line. Fetch every URL, bring the cached content in line (confirm a
-   large change set with the user first), then replace `source_sha256` with the
+   baseline` line. Fetch every URL, bring the cached content in line (first
+   confirm with the user a change set of more than about 15 lines or any change
+   to what the skill does), then replace `source_sha256` with the
    output of `upstream-check hashes <file>` and set `last_upstream_check` to
    today. Never write hashes or a date for content you did not review.
 4. Update a vendored skill only when the user asks.
@@ -222,7 +224,7 @@ diet stays a separate Diet-mode request.
 `evals.md` ([eval guide](references/eval-guide.md)). Rerun the exact baseline
 scenarios and any tests that assert the skill's text on the candidate, recording
 each evidence level separately. Purely mechanical corrections may mark behavior
-N/A with structural evidence.
+SKIP with structural evidence.
 
 **Waza**: when usable, run the candidate beside the baseline. All Waza operations
 go through the [`waza` skill](../waza/SKILL.md) launcher `../waza/scripts/waza-run.sh`;

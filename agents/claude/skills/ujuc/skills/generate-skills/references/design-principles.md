@@ -16,7 +16,8 @@ it only for a fragility you can name. State the goal and constraints; leave the
 route to the model. A recipe for an output's shape is a separate form, picked from
 a [baseline failure](guidance-testing.md#match-the-form-to-the-failure). (Local
 default. Model-specific finding for Fable: prescribing the route step by step
-tends to hinder it. Claude Code model-config, Fable guidance.)
+tends to hinder it; Claude Code model-config: *"Describe the outcome, not the
+steps"*.)
 
 A multi-workflow skill keeps `SKILL.md` a router: enough to pick the workflow
 and find its reference or script, with each reference linked under its case
@@ -27,8 +28,9 @@ and find its reference or script, with each reference linked under its case
 
 Add one only for a non-obvious decision or a loop an agent may leave early; use
 lists for steps and tables for reference. Write it inline as a `mermaid` block,
-which needs no install and renders on GitHub. For a picture meant for people, use
-the `artifact-diagramming` skill. (Adapted from Superpowers `writing-skills`.)
+which needs no install and renders on GitHub. For a picture meant for people,
+draw it outside the skill and link the file. (Adapted from Superpowers
+`writing-skills`.)
 
 ## Gotchas
 
