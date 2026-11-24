@@ -1,8 +1,11 @@
 # Entry Router Guidelines
 
 A user-provided governance pattern: behavioral guardrails, particularly a
-CLAUDE.md Boundaries section or behavioral guidelines,
-in projects where agents operate with significant autonomy.
+boundaries section in AGENTS.md (CLAUDE.md while no AGENTS.md exists) or
+behavioral guidelines, in projects where agents operate with significant
+autonomy. These rules bind every coding agent, so they follow the ownership
+rule in stage3-generator.md; only Claude-specific mechanics (plan mode,
+hooks, permissions) go in CLAUDE.md.
 
 ## When to apply
 
@@ -23,7 +26,7 @@ in projects where agents operate with significant autonomy.
 | 5 | No test bypass: fix root causes; never delete or weaken tests to make them pass | Any test suite |
 | 6 | No "done" claim without verification evidence | Always |
 
-In a CLAUDE.md Boundaries section, map rules 1-4 to project-specific
+In that boundaries section, map rules 1-4 to project-specific
 prohibitions under Never Do, rule 3 to risky operations under Ask First, and
 rules 5-6 to verification requirements under Always Do. In behavioral
 guidelines, include the relevant rules as non-negotiable constraints and never emit a
@@ -42,8 +45,8 @@ already plan, scope, and verify by default (model-prompting-guides.md W1).
 
 - **Classify** by risk: production, contract, database, security, destructive.
   Higher risk → stricter approval.
-- **Plan**: enter Plan Mode when ANY applies: 3+ steps, architecture decisions,
-  multi-step verification.
+- **Plan** first when any applies: 3+ steps, architecture decisions,
+  multi-step verification. In Claude Code that is plan mode, a CLAUDE.md line.
 - **Execute**: minimal change, narrow scope, small diffs, one concern per change.
 - **Verify**: evidence summary (rule 6). Do not add a "final self-check" or
   "re-verify before responding" step (model-prompting-guides.md W1).

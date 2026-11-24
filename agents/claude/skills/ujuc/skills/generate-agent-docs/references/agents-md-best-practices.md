@@ -75,7 +75,8 @@ under `.agents/`.
   budget. When a run adds to AGENTS.md, report the measured bytes of the
   project chain it sits in. Text that would push the chain past 32 KiB is not
   written as is: propose a shorter wording that keeps every fact (or a nested
-  AGENTS.md) and wait for approval, because Codex silently drops the tail.
+  AGENTS.md) and wait for approval, which may also accept the text as is,
+  because Codex silently drops the tail.
   Excess that predates the run, with nothing added past it, is an observation.
 
 ## Reconciliation with this skill's defaults

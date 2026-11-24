@@ -55,7 +55,8 @@ files follow update-mode.md U3.
   Codex's default 32 KiB `project_doc_max_bytes` (agents-md-best-practices.md).
   If the new text would push the chain past it, write nothing yet: propose a
   shorter wording that keeps every fact, or a nested AGENTS.md, and wait for
-  approval; a headless run leaves that write pending and reports it.
+  approval, which may also accept the text as is; a headless run leaves that
+  write pending and reports it.
 - Preserve unrelated content. Report optional improvements outside authorized
   changes separately, even when auditing every line.
 - Keep a rule with no exceptions as a line and recommend a hook, deny rule or

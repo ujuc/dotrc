@@ -12,8 +12,8 @@ prune and split it by the new-file rules without separate approval.
 1. Keep the original contents of every selected existing file in the
    conversation for preservation checks, never as a copy on disk. Diff with
    `git diff` for tracked files, otherwise
-   `diff -u <(printf '%s' "$original") path`. Record absent files and
-   unresolved imports.
+   `diff -u <(printf '%s' "$original") path`, where `$original` holds the
+   kept contents. Record absent files and unresolved imports.
 2. Inventory headings, sizes (lines, and bytes for AGENTS.md), imports
    (including `@AGENTS.md`) and supporting references. Inspect dependencies,
    AGENTS.md included, read-only when unselected.

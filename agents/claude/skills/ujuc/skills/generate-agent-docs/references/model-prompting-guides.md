@@ -10,6 +10,7 @@ source_urls:
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5.md  # base guide inherited by 5.5
   - https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-haiku-5-5.md
   - https://platform.claude.com/docs/en/models/opus-5-5/migration-guide.md  # source of the S1 quote
+  - https://code.claude.com/docs/en/model-config.md  # Claude Code defaults: Fable tips, per-model effort
 secondary_source_url: https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices.md
 last_upstream_check: 2026-11-24
 source_sha256:
@@ -24,6 +25,7 @@ source_sha256:
   https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-sonnet-5.md: a4ea39b6f0a7fc3b23a8883434d2a55f7f6bafeeddb0f669566ebc0fe289e644
   https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-haiku-5-5.md: 19ef5baedd6303ce1383213cbcd8a26be74aa5b3097ae466cb0b0aa7b6766d5c
   https://platform.claude.com/docs/en/models/opus-5-5/migration-guide.md: dab58cdf8d441f4d1f4955f73360cf765ae8b8bc52e7e78b16885d6d7fe6b6e7
+  https://code.claude.com/docs/en/model-config.md: 1cdaf31e2e7f32a13ab3d6ed3ece595d6018959d3588d4b5c949f4d5439f1c8d
 ---
 
 # Model Prompting Guides — Instruction-Authoring Constraints

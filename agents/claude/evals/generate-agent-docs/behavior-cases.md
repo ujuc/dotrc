@@ -9,7 +9,8 @@ result. A textual simulation is evidence of instruction interpretation only.
 ## Fixtures and assertions
 
 C1–C7 below are the approved implementation plan's acceptance identifiers,
-not the six runtime checks in references/eval-criteria.md. Their mapping is:
+not the six runtime checks in references/eval-criteria.md nor the C1–C4
+placement rules in references/context-engineering-claude5.md. Their mapping is:
 C1 → runtime 4; C2 → 1; C3 → 2; C4 → 4/5; C5 → 2/5;
 C6 → 3; C7 → all six and this suite's evidence separation.
 

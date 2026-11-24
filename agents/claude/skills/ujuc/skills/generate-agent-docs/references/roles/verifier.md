@@ -34,7 +34,8 @@ dependent check, never assumed PASS.
    `@AGENTS.md`; on an existing CLAUDE.md a missing import is reported as
    proposed; an existing import survives. A CLAUDE.md-only repository was
    split only with a recorded approval or a request naming AGENTS.md
-   (otherwise UNVERIFIED). A path-scoped rule every agent needs is not only in
+   (otherwise UNVERIFIED); splitting a CLAUDE.md that `/init` wrote in this
+   run needs neither. A path-scoped rule every agent needs is not only in
    `.claude/rules/` unless the user selected that, with the blind spot
    reported. Supporting files exist before the files that link them.
 3. **AGENTS.md portability**: no AGENTS.md names a Claude tool, slash command,
@@ -70,8 +71,10 @@ dependent check, never assumed PASS.
    decision. Team TDD and named test gates survive generic anti-scaffolding
    defaults. Do not infer approval from a rule's wording.
 8. **Execution integrity**: effective live/cache guidance is the one actually
-   used; no global skill/cache/date edits.
-   Report unavailable roles and source fallbacks accurately.
+   used; no global skill/cache/date edits. The no-edit half is UNVERIFIED
+   unless the inputs show the skill tree's state before and after the run
+   (for example its `git status`). Report unavailable roles and source
+   fallbacks accurately.
 9. **Prune test and stop-list**: every added or changed line, and every retained
    line inside authorized scope, passes the prune test in
    [claude-code-best-practices.md](../claude-code-best-practices.md): if Claude
@@ -104,6 +107,7 @@ Return exactly this shape as your final text:
 
 ```text
 VERIFICATION REPORT
+EVIDENCE: files read | supplied contents only
 PASS: count
 FAIL: count
 SKIP: count
