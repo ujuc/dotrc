@@ -2,7 +2,6 @@
 source_url: https://github.com/obra/superpowers/tree/main/skills/writing-skills
 source_commit: 2ce8aa15d05b  # tag v7.0.1
 last_upstream_check: 2026-11-01
-check_interval_days: 14
 ---
 
 # Testing guidance before it ships

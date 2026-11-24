@@ -112,7 +112,8 @@ to another skill-generation workflow.
 
 1. Run `upstream-check` and `superpowers-upstream check` and relay their lines.
    `upstream-check` also compares each cached reference's `source_sha256`
-   with its live pages; that comparison is the only freshness check.
+   with its live pages; for those references that comparison is the only
+   freshness check.
 2. Use [frontmatter-spec.md](references/frontmatter-spec.md) as cached. Fetch
    its `source_url` and `spec_url` only when step 1 reports it `source changed`
    or the user asks (**[SPEC]** rules exist only at `spec_url`; try the HTML
@@ -170,8 +171,10 @@ frontmatter, note `references/` and `scripts/`, and run
 7. **Model guidance**: keep a default profile and escalation trigger in the
    body; inheritance alone is not a recommendation.
 8. **Cached references**: a user request naming a reference with `source_url(s)`,
-   or asking to act on its drift report, selects cache maintenance: follow its
-   freshness note, fetch the sources, apply verified drift, then update its check date.
+   or asking to act on its drift or `no source_sha256 baseline` report, selects
+   cache maintenance: follow its freshness note, fetch the sources, apply
+   verified drift, then write its `source_sha256` (`upstream-check hashes
+   <file>`) and check date as in Step 0.3.
 
 Summarize the comparison, reuse any approved scope, and ask only about material open choices.
 
