@@ -253,10 +253,59 @@ does not apply to plugin skills and both are `ujuc` plugin skills. They became
 returned "Skill execution blocked by permission rules". Both descriptions still
 appear in the skill listing.
 
+## skill-improver follow-up (2026-11-24)
+
+`/ujuc:skill-improver generate-agent-docs generate-skills`, run headless, found
+no FAIL. It reported 4 WARN in generate-agent-docs and 5 in generate-skills, and
+left them for approval. Fixed in order:
+
+- GS-2, GS-3: regressions from the freshness redesign.
+  - U2.8 now writes `source_sha256` and handles `no source_sha256 baseline`.
+  - The unused `check_interval_days` was removed from guidance-testing.md.
+  - The "only freshness check" wording is narrowed.
+- GAD-2: the verifier no longer marks the split of this run's own `/init`
+  draft UNVERIFIED.
+- GAD-8: entry-router governance goes in AGENTS.md boundaries (CLAUDE.md
+  without one); plan mode stays a CLAUDE.md line; "ANY" emphasis removed.
+- GAD-1: the 32 KiB rule lets approval accept the text as is.
+- GAD-7: `$original` is defined.
+- GAD-3: check 8's no-edit half is UNVERIFIED without the skill tree's
+  before/after state.
+- GAD-4: the verifier report states its evidence level.
+- GAD-5: behavior-cases' C1–C7 are distinguished from context-engineering
+  C1–C4.
+- model-config.md is now tracked in model-prompting-guides.md. Its three cited
+  claims were checked against the live page, and its hash was recorded.
+- GS-4: `N/A` becomes `SKIP`.
+- GS-5: a "large change set" is more than about 15 lines or any behavior
+  change.
+- GS-9: Diet mode skips diet.md's "After the diet" step for the vendored
+  subtree.
+- GS-7: the link to a nonexistent `artifact-diagramming` skill is removed.
+- GS-8: the Fable claim cites the model-config quote. The Fable 5.1 citation
+  is correct as a finding measured on 5.1.
+
+Verification: `validate-skill`, link checks and `upstream-check` (all six
+references unchanged). Waza, 3 trials each:
+
+| Suite | Before | After |
+| --- | --- | --- |
+| generate-skills | 6/6 | 6/6 |
+| generate-agent-docs | 22/22 | 22/22 |
+
+Still open from that run:
+
+- GS-1, a wider description, needs approval because it moves the skill-diet
+  boundary.
+- Three generate-agent-docs probes (`tool-fallback`, `authorization`,
+  `size-labels`) pass even on a body without their guard text.
+- skill-improver's own example commands use `${...}`, which the permission
+  checker rejects.
+
 ## Open items
 
 - No session evidence yet for the new ownership policy. The skill-improver
   digests predate `f02ae37`.
 - Claims that these references source to pages outside their frontmatter
-  (Codex and omp source code; code.claude.com model-config and hooks) were not
+  (Codex and omp source code; the code.claude.com hooks page) were not
   re-checked in the baseline review.
