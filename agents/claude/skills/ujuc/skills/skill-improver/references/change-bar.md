@@ -43,7 +43,7 @@ When nothing clears the bar, propose nothing and say why for each finding. **No 
 
 State the behavioral rule and its owning surface in one sentence, then draft the smallest change that expresses it, replacing existing guidance rather than appending a paragraph.
 
-1. Write the full improved file to `$REPORT_DIR/proposed/<target>/<file>`.
+1. Write the full improved file to `<REPORT_DIR>/proposed/<target>/<file>`.
 2. Keep `diff -u <current> <proposed>` with the suggestion.
 3. Show the diff and apply only the accepted scope. A prior explicit acceptance stays valid; ask again only for a materially changed proposal.
 

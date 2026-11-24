@@ -4,7 +4,7 @@ Score every sampled session digest; only failed sessions can motivate a behavior
 
 ## Input
 
-`$REPORT_DIR/transcripts/<session-id>.txt` from `scripts/collect-sessions`, one event per line:
+`<REPORT_DIR>/transcripts/<session-id>.txt` from `scripts/collect-sessions`, one event per line:
 
 | Tag | Meaning |
 |-----|---------|

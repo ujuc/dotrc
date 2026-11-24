@@ -17,19 +17,18 @@ Audit skills and their role files: fix safe mechanical defects, and propose beha
 - **Review, don't run:** read definitions, scripts and existing evidence. Never execute a target's workflow to fill an evidence gap; report the gap and route an authorized isolated run to the owning authoring or evaluation workflow. The Waza guard (Phases 4–5) is the only eval run.
 - **Independent review:** an advisor or a separate reviewer context, handed the inputs, instructions and evidence explicitly; a different model alone is not independent, and neither is your own reasoning. Use it for a complex skill's cross-skill test coverage (Phase 2), an ambiguous mechanical-vs-manual call or a contested E.1 finding (Phase 4), and at most once after three iterations (Phase 5). When none is available, say so and leave unresolved behavioral proposals unapplied.
 - **Questions:** without a question tool, ask in ordinary text; never assume an answer. An unanswered material choice blocks only the writes that depend on it.
-- **Write scope:** target files, `REPORT_DIR`, Waza result JSON under the gitignored `~/.claude/data/waza/results/`, and a commit the user asked for. Never scaffold or edit `claude/evals/`; suite authoring belongs to `generate-skills` through the `waza` skill.
+- **Write scope:** target files, `<REPORT_DIR>`, Waza result JSON under the gitignored `~/.claude/data/waza/results/`, and a commit the user asked for. Never scaffold or edit `claude/evals/`; suite authoring belongs to `generate-skills` through the `waza` skill.
 
 ## Phase 0 — Pre-flight
 
 If step 1 or 2 fails, report an actionable fix and stop before Phase 1.
 
 1. **Toolchain:** `cargo` (`validate-skill` is a Rust launcher with no `.sh` suffix, and its first call may compile; fix: https://rustup.rs) and `jq` (needed by `scripts/collect-sessions`).
-2. **Repository:** `repo_root=${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents` must hold `CLAUDE.md`, `claude/skills/ujuc/skills/`, and `claude/skills/ujuc/skills/generate-skills/scripts/validate-skill`. Run every scan and command against `repo_root`; the caller's CWD may be any project and stays untouched.
+2. **Repository:** resolve `repo_root` once: the output of `printenv DOTRCDIR`, or `<home>/.config/dotrc` when it is empty (`printenv HOME`), followed by `/agents`. It must hold `CLAUDE.md`, `claude/skills/ujuc/skills/`, and `claude/skills/ujuc/skills/generate-skills/scripts/validate-skill`. Run every scan and command against `repo_root`; the caller's CWD may be any project and stays untouched. Write the resolved absolute paths into each command, one command per call: Claude Code's permission checker rejects `${...}` expansions, `$(...)`, shell variables and chained operations it cannot check, so the `<repo_root>` and `<REPORT_DIR>` placeholders below are substituted, never set as variables.
 3. **Upstream freshness** (warn only): relay the lines from `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/upstream-check` and from `bash <repo_root>/claude/skills/ujuc/skills/generate-skills/scripts/superpowers-upstream check`. A `source changed` or `no source_sha256 baseline` line names the `/ujuc:generate-skills <skill> 업데이트` run that refreshes that cached reference; never refresh it here.
 4. **Waza** (non-blocking):
    ```bash
-   waza_run="<repo_root>/claude/skills/ujuc/skills/waza/scripts/waza-run.sh"
-   bash "$waza_run" status
+   bash <repo_root>/claude/skills/ujuc/skills/waza/scripts/waza-run.sh status
    ```
    Waza is usable only when the output has the line `- Usable: yes`. Otherwise the Waza guard is SKIP with the `- Usable: no (<reason>)` reason, never a Phase 0 failure. Call only this launcher, never the `waza` binary; the [`waza` skill](../waza/SKILL.md) owns every subcommand.
 
@@ -40,10 +39,10 @@ If step 1 or 2 fails, report an actionable fix and stop before Phase 1.
 3. **Per target:** parse the frontmatter (`name`, `description`, `model`, `allowed-tools`, optional fields), the procedure, constraints and prohibitions, referenced paths (`references/`, `scripts/`, role files), and the description's trigger keywords. Summarize its intent in one line.
 4. **Session evidence** (once per run):
    ```bash
-   REPORT_DIR=$(mktemp -d "${TMPDIR:-/tmp}/skill-improver-XXXXXXXX")
-   bash "<repo_root>/claude/skills/ujuc/skills/skill-improver/scripts/collect-sessions" --out "$REPORT_DIR"
+   mktemp -d /tmp/skill-improver-XXXXXXXX
+   bash <repo_root>/claude/skills/ujuc/skills/skill-improver/scripts/collect-sessions --out <REPORT_DIR>
    ```
-   Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded; narrow a manual run with `--since YYYY-MM-DD` or `--project PATH`. Start from `$REPORT_DIR/inventory.json`; Dimension E reads the digests in `$REPORT_DIR/transcripts/`. **Never read raw `.jsonl` history.** If collection fails (missing history can fail instead of giving an empty inventory) or samples no sessions, Dimension E is SKIP, never PASS or a structural FAIL, and A–C continue. Audit artifacts stay under `REPORT_DIR`, never in a user project. After touching `condense.jq` or `inventory.jq`, run `bash "<repo_root>/claude/skills/ujuc/skills/skill-improver/scripts/test-collect-sessions"`.
+   `<REPORT_DIR>` is the directory `mktemp` printed. Defaults: a 45-day window, the 12 newest qualifying sessions, sidechains excluded; narrow a manual run with `--since YYYY-MM-DD` or `--project PATH`. Start from `<REPORT_DIR>/inventory.json`; Dimension E reads the digests in `<REPORT_DIR>/transcripts/`. **Never read raw `.jsonl` history.** If collection fails (missing history can fail instead of giving an empty inventory) or samples no sessions, Dimension E is SKIP, never PASS or a structural FAIL, and A–C continue. Audit artifacts stay under `<REPORT_DIR>`, never in a user project. After touching `condense.jq` or `inventory.jq`, run `bash <repo_root>/claude/skills/ujuc/skills/skill-improver/scripts/test-collect-sessions`.
 
 ## Phase 2 — Tests
 
@@ -111,8 +110,7 @@ When fixability is ambiguous, ask for independent review; without one, report th
 When Waza is usable and `<repo_root>/claude/evals/<skill>/eval.yaml` exists, run a baseline before the target's first model-visible fix (frontmatter, description, body, or a reference path), even when that fix comes in a later iteration:
 
 ```bash
-eval_yaml="<repo_root>/claude/evals/<skill>/eval.yaml"
-[ -f "$eval_yaml" ] && bash "$waza_run" eval "$eval_yaml" --label improver-baseline --trials 3
+bash <repo_root>/claude/skills/ujuc/skills/waza/scripts/waza-run.sh eval <repo_root>/claude/evals/<skill>/eval.yaml --label improver-baseline --trials 3
 ```
 
 Use three trials; one run is noise. Budget about a minute per guard run on hosted Haiku, about 20 on local Ollama. Record the `- Result JSON: ...` path the report ends with as `waza_baseline[<skill>]`. Always pass the absolute `eval.yaml` path: a bare skill name scaffolds a new suite, outside this skill's write scope. No suite → guard SKIP; launcher exit 1 or no `- Result JSON:` line → no baseline, guard UNVERIFIED.
@@ -120,11 +118,10 @@ Use three trials; one run is noise. Budget about a minute per guard run on hoste
 ## Phase 5 — Re-verify (max 3 iterations)
 
 1. Rerun the target's full test matrix on the final bytes, including checks that passed before.
-2. **Regression guard:** a fix that causes a new failure is reverted and reclassified as Manual; an unapplied E-track draft is discarded from `$REPORT_DIR/proposed/`.
+2. **Regression guard:** a fix that causes a new failure is reverted and reclassified as Manual; an unapplied E-track draft is discarded from `<REPORT_DIR>/proposed/`.
 3. **Waza guard:** when `waza_baseline[<skill>]` exists and this iteration applied model-visible fixes:
    ```bash
-   bash "$waza_run" eval "$eval_yaml" --label improver-after --trials 3 \
-     --baseline-json "${waza_baseline[<skill>]}"
+   bash <repo_root>/claude/skills/ujuc/skills/waza/scripts/waza-run.sh eval <repo_root>/claude/evals/<skill>/eval.yaml --label improver-after --trials 3 --baseline-json <waza_baseline[<skill>] path>
    ```
    Classify in this order:
    - Launcher exit 1, no `- Result JSON:` line, or `⚠️ incomparable`, on the rerun or its confirmation: `UNVERIFIED`, never SKIP or PASS, and no revert on that alone. This wins over a reference-only note.
@@ -138,7 +135,7 @@ Use three trials; one run is noise. Budget about a minute per guard run on hoste
 
 ## Phase 6 — Report and commit
 
-Report each target's checks, iterations, status and changes, the evidence summary, and the `REPORT_DIR` location:
+Report each target's checks, iterations, status and changes, the evidence summary, and the `<REPORT_DIR>` location:
 
 ```
 ## skill-improver Results
