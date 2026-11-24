@@ -171,10 +171,27 @@ freshness check into the skill-update notification:
   hashes and `last_upstream_check`, after reviewing the content.
 - `check_interval_days` was removed from the six references this covers.
   `guidance-testing.md` stays commit-pinned under `superpowers-upstream`.
-- No hashes were recorded in this change, because recording one asserts that
-  the cache matches today's page and no content review was done. The first
-  `upstream-check` therefore reports `no source_sha256 baseline` for the six
-  references until their update runs.
+- The redesign commit recorded no hashes. Recording one asserts that the cache
+  matches today's page, and that needs a content review first.
+- Baseline review on 2026-11-24, one fresh reviewer per reference, each
+  checking every quote and sourced fact against the live pages it fetched:
+  - claude-code-best-practices.md: one quote made verbatim, one source tag
+    corrected to memory.md. memory.md's hash had changed since 2026-11-23.
+  - agents-md-best-practices.md: omp discovery now notes the walk through
+    enclosing workspace directories up to home.
+  - tdd-agent-loop.md: two quotes made verbatim (capital "At",
+    curly quotes).
+  - frontmatter-spec.md: `paths` adds that the primary working directory
+    holds after a `cd`, and one error message is joined onto a single line as
+    upstream prints it.
+  - context-engineering-claude5.md and model-prompting-guides.md: no drift.
+    The secondary page lists 9 model guides, all already tracked.
+  - No behavior-changing drift was found.
+  - Each reviewer's reported sha256 matched `upstream-check hashes`.
+  - `upstream-check` now prints `sources unchanged (cached 2026-11-24)` for
+    all six references.
+  - The agentskills.io HTML hash differed from a test fetch earlier the same
+    day, so that HTML page may raise false `source changed` lines.
 
 Verification: Waza baseline on the unchanged skills with the updated suites,
 then after the change (3 trials each).
@@ -240,6 +257,6 @@ appear in the skill listing.
 
 - No session evidence yet for the new ownership policy. The skill-improver
   digests predate `f02ae37`.
-- `source_sha256` baselines: run `/ujuc:generate-skills generate-agent-docs
-  업데이트` and `/ujuc:generate-skills generate-skills 업데이트` to review the six
-  cached references and record them.
+- Claims that these references source to pages outside their frontmatter
+  (Codex and omp source code; code.claude.com model-config and hooks) were not
+  re-checked in the baseline review.
