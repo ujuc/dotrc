@@ -84,13 +84,13 @@ set.
 | tasks/positive-trigger-1.yaml | pair-new |
 | tasks/positive-trigger-2.yaml | agents-beside |
 | tasks/cache-ownership.yaml | cache-default, cache-drift |
-| tasks/authorization.yaml | authorized-update |
-| tasks/tool-fallback.yaml | tools, no-interview |
+| tasks/authorization.yaml | authorized-update (listed removal), plus the `/init`-draft and hand-written-section approval rules |
+| tasks/tool-fallback.yaml | tools (deferred WebFetch through ToolSearch), no-interview (headless pending), independent review after a model switch |
 | tasks/verification-evidence.yaml | evidence (missing approval record), review-states (third FAIL) |
 | tasks/verification-partial.yaml | review-states (fast mode, short route, no delegation) |
 | tasks/policy-preservation.yaml | policy (requirements against pruning and rewrite rules) |
 | tasks/budget-precedence.yaml | policy (requirement against the local budget) |
-| tasks/size-labels.yaml | policy (separate size limits) |
+| tasks/size-labels.yaml | policy (separate size limits), summary-growth (write after the verifier's last pass) |
 | tasks/negative-trigger-1.yaml | anti-trigger |
 | tasks/stop-list.yaml | stop-context, stop-emphasis, stop-subagent-quality, stop-thinking, stop-persistence, stop-repo, stop-tools |
 | tasks/enforcement-fit.yaml | enforce-rule, enforce-preference |
