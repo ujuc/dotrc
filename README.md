@@ -221,12 +221,13 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 
 #### 공용 전역 지침 (AGENTS.global.md)
 
-공용 전역 지침 `agents/claude/AGENTS.global.md`는 `install.sh --agents`가 `~/.codex/AGENTS.md`, `~/.omp/agent/AGENTS.md`, `~/.pi/agent/AGENTS.md`로 링크하고, `~/.claude/CLAUDE.md`는 이 파일을 import한다.
+공용 전역 지침 `agents/claude/AGENTS.global.md`는 `install.sh --agents`가 `~/.codex/AGENTS.md`, `~/.omp/agent/AGENTS.md`, `~/.pi/agent/AGENTS.md`, `~/.config/amp/AGENTS.md`로 링크하고, `~/.claude/CLAUDE.md`는 이 파일을 import한다.
 
 ```sh
 ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.codex/AGENTS.md
 ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.omp/agent/AGENTS.md
 ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.pi/agent/AGENTS.md
+ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${XDG_CONFIG_HOME}/amp/AGENTS.md
 ```
 
 예전 버전으로 설치한 기기에는 `~/.codex`, `~/.config/amp`, `~/.pi`가 `agents/` 하위를 가리키는 심링크로 남아 있을 수 있다. `install.sh --agents`가 이 링크를 지우고 실제 디렉터리로 바꾼 뒤 `AGENTS.md` 링크를 만든다. 예전 링크 대상에 남은 런타임 상태(인증, 세션)는 새 디렉터리로 옮기며 지우지 않는다. 그 안에 손으로 둔 `AGENTS.md`가 있으면 `AGENTS.md.legacy`로 이름을 바꿔 둔다.

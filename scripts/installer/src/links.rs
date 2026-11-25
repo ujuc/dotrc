@@ -67,6 +67,10 @@ impl Layout {
                 self.shared_agents_md(),
                 self.home.join(".pi/agent/AGENTS.md"),
             ),
+            (
+                self.shared_agents_md(),
+                self.xdg_config.join("amp/AGENTS.md"),
+            ),
         ]
     }
 
@@ -278,14 +282,14 @@ mod tests {
     fn selected_links_follow_groups() {
         let f = fixture();
         assert!(f.layout.selected_links(Groups::default()).is_empty());
-        assert_eq!(f.layout.selected_links(AGENTS).len(), 4);
+        assert_eq!(f.layout.selected_links(AGENTS).len(), 5);
         let all = Groups {
             cli: true,
             apps: true,
             fonts: true,
             agents: true,
         };
-        assert_eq!(f.layout.selected_links(all).len(), 10);
+        assert_eq!(f.layout.selected_links(all).len(), 11);
     }
 
     #[test]
@@ -355,7 +359,12 @@ mod tests {
             fs::read_link(f.layout.home.join(".pi/agent/AGENTS.md")).unwrap(),
             f.layout.shared_agents_md()
         );
-        assert!(fs::symlink_metadata(f.layout.xdg_config.join("amp")).is_err());
+        let amp = f.layout.xdg_config.join("amp");
+        assert!(!fs::symlink_metadata(&amp).unwrap().file_type().is_symlink());
+        assert_eq!(
+            fs::read_link(amp.join("AGENTS.md")).unwrap(),
+            f.layout.shared_agents_md()
+        );
         assert!(!codex.exists());
 
         let mut again = Runner::new();
