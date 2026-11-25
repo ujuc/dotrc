@@ -551,12 +551,12 @@ brew install --cask font-nanum-square-round
 
 ## 기타
 
-### SnapScan
+### ScanSnap Home
+
+V3.6.0부터 Apple Silicon 네이티브라 Rosetta 2가 필요 없다.
 
 ```bash
-sudo softwareupdate --install-rosetta --agree-to-license
-
-brew install --cask fujitsu-scansnap-home
+brew install --cask scansnap-home
 ```
 
 ### Google
