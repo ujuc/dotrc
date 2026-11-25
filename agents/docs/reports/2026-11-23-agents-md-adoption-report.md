@@ -293,14 +293,64 @@ references unchanged). Waza, 3 trials each:
 | generate-skills | 6/6 | 6/6 |
 | generate-agent-docs | 22/22 | 22/22 |
 
-Still open from that run:
+Still open from that run: GS-1, a wider description, needs approval because it
+moves the skill-diet boundary. The other two items are resolved below.
 
-- GS-1, a wider description, needs approval because it moves the skill-diet
-  boundary.
-- Three generate-agent-docs probes (`tool-fallback`, `authorization`,
-  `size-labels`) pass even on a body without their guard text.
-- skill-improver's own example commands use `${...}`, which the permission
-  checker rejects.
+## Probe discrimination (2026-11-24, `6f3dcc6`)
+
+Three generate-agent-docs probes still passed with their guard text removed
+from the body, so they could not catch that text going missing. Each was
+rewritten to ask where a common-sense answer and the skill's rule differ.
+Controls ran on a `/tmp` copy of the skill with the guard statements removed,
+through `WAZA_WORKSPACE`; the live skill was not touched.
+
+| Probe | Now asks | Control (3 trials) | Current body |
+| --- | --- | --- | --- |
+| tool-fallback | Load a deferred WebFetch through ToolSearch; keep a write pending on an unstated fact in a headless run; a same-session model switch is not independent review | 1 failed | 3/3 |
+| authorization | Prune this run's `/init` draft without asking; confirm before removing a hand-written section that only looks redundant; do not re-ask a listed, approved removal | 1 failed | 3/3 |
+| size-labels | Adds: remove a repository summary written after the verifier's last pass | 2 failed | 3/3 |
+
+- **First attempts that failed:**
+  - tool-fallback's HTML-retry form passed 3/3 on the control.
+  - An authorization case about an `/init`-written CLAUDE.md that was already
+    committed failed 3/3 on the real body. Its expectation was wrong: the
+    lines were generated summaries, not a hand-written section.
+  - A relative path in a prompt made Waza error until it was reworded.
+- **Strength:** discrimination is weak. The controls failed one or two of
+  three trials, not all three. Control results are recorded in each task's
+  description.
+- **Full suite:** 21/22. One session-placement trial answered B
+  `report-only`, with correct reasoning, on an unchanged probe and body.
+
+## Shell expansions in skill commands (2026-11-24/25, `e876c41`, `3583335`)
+
+In skill-improver session transcripts, Claude Code's permission checker
+rejected commands containing `${...}`, `$(...)`, shell variables or chained
+operations. Each rejection caused a retry.
+
+- **Fix:** skill-improver, generate-skills, waza (with `waza-install.md`),
+  autoresearch and humanizer now resolve their roots once:
+  - `printenv DOTRCDIR` or `printenv XDG_STATE_HOME`;
+  - otherwise `printenv HOME` plus the default path.
+
+  The commands take the resulting absolute paths, which the docs show as
+  `<repo_root>`, `<GS>`, `<waza>`, `<state-dir>` or `<REPORT_DIR>`, and each
+  call runs one command.
+- **Other changes:**
+  - generate-skills' chained validation is now three commands.
+  - autoresearch's `echo … | claude -p "$(cat …)"` now writes a prompt
+    file with the Write tool and redirects it into `claude -p`.
+- **Left as is:** `$ARGUMENTS` and `${CLAUDE_*}`, which Claude Code
+  substitutes before the shell; a `${TMPDIR:-/tmp}` description of the
+  launcher; and an `export PATH` line meant for `~/.zshenv`.
+- **Waza, before → after, 3 trials each:**
+  - skill-improver 3/3 → 3/3
+  - autoresearch 2/2 → 2/2
+  - humanizer 6/6 → 6/6
+  - generate-skills 6/6 → 6/6
+  - waza has no suite.
+- **Not verified:** the probes do not run commands, so whether the rejections
+  stop is unverified until those skills next run in Claude Code.
 
 ## Open items
 
@@ -309,3 +359,7 @@ Still open from that run:
 - Claims that these references source to pages outside their frontmatter
   (Codex and omp source code; the code.claude.com hooks page) were not
   re-checked in the baseline review.
+- GS-1: widening the generate-skills description needs a decision about the
+  skill-diet boundary.
+- Whether the permission-checker rejections stop in the five skills changed
+  for shell expansions is unverified until their next Claude Code runs.
