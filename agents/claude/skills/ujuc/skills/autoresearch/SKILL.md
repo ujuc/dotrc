@@ -40,8 +40,8 @@ Skill("{skill-name}") with prompt {input} → capture transcript
 # Shell command (target is a script/config)
 bash -c "{cmd-using-target} < {input-file}" → capture stdout
 
-# CLI (target is a prompt template)
-echo "{input}" | claude -p --model <model-id> --effort <level> "$(cat {target})" → capture stdout
+# CLI (target is a prompt template): write {target}'s text followed by {input} to {run-dir}/prompt-{n}.txt with the Write tool first
+claude -p --model <model-id> --effort <level> < {run-dir}/prompt-{n}.txt → capture stdout
 ```
 
 **Self-target:** never let `{target}` appear inside its own `{exec}`. When the target is autoresearch's own `SKILL.md`, `Skill("ujuc:autoresearch")` recurses without end; use a static text rubric with new evals (`runs=1`), a synthetic transcript (`claude -p` with the SKILL.md as the prompt and sample user requests as input, scoring the plan), or a wet run of autoresearch on a small unrelated dummy target, scored against [evals.md](evals.md).
@@ -75,7 +75,7 @@ Scoring: `max_score = evals × runs`, `pass_rate = passes / max_score`. Compare 
 
 Run the target as-is first; this is experiment 0.
 
-1. Create `${XDG_STATE_HOME:-$HOME/.local/state}/agents/autoresearch/{target-name}/{YYYY-MM-DD-NNN}/` (`{target-name}` = `basename({target})` minus extension; NNN = the day's sequence). Run artifacts live here, not in the target's repository.
+1. Create `<state-dir>/agents/autoresearch/{target-name}/{YYYY-MM-DD-NNN}/`, where `<state-dir>` is the output of `printenv XDG_STATE_HOME`, or `<home>/.local/state` when it is empty (`printenv HOME`), written as an absolute path: the permission checker rejects `${...}` and `$(...)` in commands (`{target-name}` = `basename({target})` minus extension; NNN = the day's sequence). Run artifacts live here, not in the target's repository.
 2. Create `results.tsv` there with the header row.
 3. Copy the original to `{run-dir}/{filename}.baseline`. The improved target overwrites the original in place; this copy is the only backup.
 4. Run the target `{runs}` times with `{inputs}` and `{exec}`. Pin model and effort through the method's own options (`claude -p --model <model-id> --effort <level>` with a full ID such as `claude-opus-5-5`, not an alias). `Skill(...)` uses the target's `model`/`effort` frontmatter when set, else the session's.

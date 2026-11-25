@@ -15,7 +15,7 @@ on the dotrc `zshrc` path. Use 0.38.6 or later (`waza --version`); the BYOK
 provider path needs at least 0.35.
 
 With no release binary for the platform: `git clone https://github.com/microsoft/waza.git`,
-then `make install` in it (Go 1.21+, npm), and put `$(go env GOPATH)/bin` on PATH.
+then `make install` in it (Go 1.21+, npm), and put the `bin` directory under the path `go env GOPATH` prints on PATH.
 
 ## Launcher prerequisites
 
@@ -37,9 +37,12 @@ shells skip `~/.zshrc`. Put `export PATH="$HOME/bin:$PATH"` in `~/.zshenv`
 
 ## Uninstall
 
+Run `command -v waza`, then remove what it printed and the two data directories,
+writing the absolute paths (`<home>` from `printenv HOME`):
+
 ```bash
-rm -f "$(command -v waza)"
-rm -rf "$HOME/.claude/data/waza-workspace" "$HOME/.claude/data/waza"
+rm -f <path printed by command -v waza>
+rm -rf <home>/.claude/data/waza-workspace <home>/.claude/data/waza
 ```
 
 Both directories are gitignored, so this cannot be undone: it deletes every baseline JSON, the judge log and the hand-written `.waza.yaml`.

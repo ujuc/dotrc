@@ -43,16 +43,20 @@ Launch them by absolute path: this skill is global, so CWD-relative paths break
 outside the dotrc repo. The Rust launchers need `cargo`; the first run compiles. `skill-diet-eval` needs
 Node.js 18+.
 
+`<GS>` is `<dotrc>/agents/claude/skills/ujuc/skills/generate-skills/scripts`, with
+`<dotrc>` from `printenv DOTRCDIR`, or `<home>/.config/dotrc` when it is empty
+(`printenv HOME`; zshrc exports `DOTRCDIR` only in interactive shells). Write the
+absolute paths into each command, one command per call: the permission checker
+rejects `${...}`, `$(...)`, shell variables and chained commands.
+
 ```bash
-DOTRCDIR="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}"  # zshrc exports it only in interactive shells
-GS="${DOTRCDIR}/agents/claude/skills/ujuc/skills/generate-skills/scripts"
-bash "$GS/init-skill" <skill-name> --path <parent-dir> [--with-references] [--with-scripts] [--with-assets]
-bash "$GS/validate-skill" <skill-dir>
-bash "$GS/skill-diet-eval" check <skill-dir>   # SKILL.md bytes for the commit message; fails on a broken link or anchor
-bash "$GS/skill-diet-growth" <skill-dir>       # one line: within budget | diet-recommended | no diet baseline
-bash "$GS/upstream-check"                      # one advisory line per vendored skill and cached reference; `skill-diet-upstream pull <tag>` only when the user asks
-bash "$GS/upstream-check" hashes <reference.md> # fresh source_sha256 block, only after reviewing that reference's content
-bash "$GS/superpowers-upstream" check           # one advisory line for guidance-testing.md
+bash <GS>/init-skill <skill-name> --path <parent-dir> [--with-references] [--with-scripts] [--with-assets]
+bash <GS>/validate-skill <skill-dir>
+bash <GS>/skill-diet-eval check <skill-dir>   # SKILL.md bytes for the commit message; fails on a broken link or anchor
+bash <GS>/skill-diet-growth <skill-dir>       # one line: within budget | diet-recommended | no diet baseline
+bash <GS>/upstream-check                      # one advisory line per vendored skill and cached reference; `skill-diet-upstream pull <tag>` only when the user asks
+bash <GS>/upstream-check hashes <reference.md> # fresh source_sha256 block, only after reviewing that reference's content
+bash <GS>/superpowers-upstream check           # one advisory line for guidance-testing.md
 ```
 
 ## Authority and scope
@@ -203,11 +207,13 @@ path. Prefer delete-and-link over rephrasing.
 Fail the workflow if `name` or `description` is missing or empty;
 validator warnings do not override this. If `cargo` or `node` is missing, stop and report
 the draft as unvalidated: no completion claim. Otherwise, after the last edit and before the final report, run this on the
-changed skill with `GS` from [Scripts](#scripts), however small the edit or urgent
-the request, then fix and rerun until it passes:
+changed skill with `<GS>` from [Scripts](#scripts), however small the edit or urgent
+the request, then fix and rerun until all three pass:
 
 ```bash
-bash "$GS/validate-skill" <skill-dir> && bash "$GS/skill-diet-eval" check <skill-dir> && bash "$GS/skill-diet-growth" <skill-dir>
+bash <GS>/validate-skill <skill-dir>
+bash <GS>/skill-diet-eval check <skill-dir>
+bash <GS>/skill-diet-growth <skill-dir>
 ```
 
 **Size limits**: place each fact by [level](../../../skill-diet/skills/skill-diet/SKILL.md#levels);

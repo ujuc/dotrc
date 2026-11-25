@@ -56,7 +56,7 @@ humanizer v2.0 — {fast|strict|redo} 모드 / run_id: {YYYY-MM-DD-NNN} / 언어
 
 ## Run setup
 
-1. Create `${XDG_STATE_HOME:-$HOME/.local/state}/agents/humanizer/{run_id}/` (NNN = the day's sequence) and save the input as `01_input.txt`.
+1. Create `<state-dir>/agents/humanizer/{run_id}/` (NNN = the day's sequence) and save the input as `01_input.txt`. `<state-dir>` is the output of `printenv XDG_STATE_HOME`, or `<home>/.local/state` when it is empty (`printenv HOME`); write it as an absolute path, since the permission checker rejects `${...}` in commands.
 2. Detect language from prose only: drop fenced code, inline code and URLs, then count Hangul syllables and Latin letters. Hangul 70%+ → ko, Latin 70%+ → en, else mixed; nothing left → return the input unchanged. Korean prose whose only English is code, paths or identifiers is `ko`.
 3. Rename an existing `final.md` / `summary.md` with a `_prev` suffix before writing new ones.
 4. Take options only from the user; do not parse other files (project CLAUDE.md, etc.) to infer them.

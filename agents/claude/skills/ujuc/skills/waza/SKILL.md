@@ -25,13 +25,16 @@ For an isolated context in Claude Code, dispatch `Agent` with `subagent_type: "g
 
 ## How to invoke
 
+`<waza>` is `<dotrc>/agents/claude/skills/ujuc/skills/waza`, with `<dotrc>` from
+`printenv DOTRCDIR`, or `<home>/.config/dotrc` when it is empty (`printenv HOME`).
+Write the absolute paths into each command, one command per call: the permission
+checker rejects `${...}`, `$(...)`, shell variables and chained commands.
+
 ```bash
-WAZA_SKILL="${DOTRCDIR:-${XDG_CONFIG_HOME:-$HOME/.config}/dotrc}/agents/claude/skills/ujuc/skills/waza"
-bash "$WAZA_SKILL/scripts/waza-run.sh" status           # last line: - Usable: yes|no (<reason>)
-bash "$WAZA_SKILL/scripts/waza-run.sh" scaffold commit  # placeholder suite (positive×2 + negative×1)
-bash "$WAZA_SKILL/scripts/waza-run.sh" eval commit --label baseline
-bash "$WAZA_SKILL/scripts/waza-run.sh" eval /abs/path/evals/commit/eval.yaml --label after --trials 3 \
-  --baseline-json "$HOME/.claude/data/waza/results/commit-baseline-20260913-101500.json"
+bash <waza>/scripts/waza-run.sh status           # last line: - Usable: yes|no (<reason>)
+bash <waza>/scripts/waza-run.sh scaffold commit  # placeholder suite (positive×2 + negative×1)
+bash <waza>/scripts/waza-run.sh eval commit --label baseline
+bash <waza>/scripts/waza-run.sh eval /abs/path/evals/commit/eval.yaml --label after --trials 3 --baseline-json /abs/path/.claude/data/waza/results/commit-baseline-20260913-101500.json
 ```
 
 `eval` flags: `--label <x>=run`, `--prefix <y>=<skill>`, `--baseline-json <file>`,
