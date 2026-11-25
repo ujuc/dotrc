@@ -71,6 +71,10 @@ impl Layout {
                 self.shared_agents_md(),
                 self.xdg_config.join("amp/AGENTS.md"),
             ),
+            (
+                self.agents().join("pi-extensions/claude-skills.ts"),
+                self.home.join(".pi/agent/extensions/claude-skills.ts"),
+            ),
         ]
     }
 
@@ -261,6 +265,8 @@ mod tests {
         fs::create_dir_all(layout.agents().join("claude")).unwrap();
         fs::create_dir_all(&layout.xdg_config).unwrap();
         fs::write(layout.shared_agents_md(), "shared\n").unwrap();
+        fs::create_dir_all(layout.agents().join("pi-extensions")).unwrap();
+        fs::write(layout.agents().join("pi-extensions/claude-skills.ts"), "").unwrap();
         Fixture { root, layout }
     }
 
@@ -282,14 +288,14 @@ mod tests {
     fn selected_links_follow_groups() {
         let f = fixture();
         assert!(f.layout.selected_links(Groups::default()).is_empty());
-        assert_eq!(f.layout.selected_links(AGENTS).len(), 5);
+        assert_eq!(f.layout.selected_links(AGENTS).len(), 6);
         let all = Groups {
             cli: true,
             apps: true,
             fonts: true,
             agents: true,
         };
-        assert_eq!(f.layout.selected_links(all).len(), 11);
+        assert_eq!(f.layout.selected_links(all).len(), 12);
     }
 
     #[test]

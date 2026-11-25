@@ -246,6 +246,14 @@ const PLUGINS: [&str; 6] = [
     "typesafe@typesafe-ai",
 ];
 
+const OMP_SETTINGS: [(&str, &str); 2] = [
+    ("enabledProviders", r#"["claude","claude-plugins"]"#),
+    (
+        "skills.customDirectories",
+        r#"["~/.claude/skills/ujuc/skills","~/.claude/skills/egm/skills","~/.claude/skills/skill-diet/skills"]"#,
+    ),
+];
+
 pub fn install_agents(runner: &mut Runner, layout: &Layout) {
     if !runner.has("claude") {
         runner.run_shell(
@@ -315,6 +323,18 @@ pub fn install_agents(runner: &mut Runner, layout: &Layout) {
     layout.migrate_legacy_agent_dirs(runner);
     for (source, destination) in layout.agent_links() {
         safe_link(runner, &source, &destination);
+    }
+    // omp reads Claude skills itself once the user-level providers are on;
+    // the nested personal roots need explicit directories.
+    if runner.has("omp") {
+        for (key, value) in OMP_SETTINGS {
+            runner.run(
+                "agents",
+                &format!("Set omp {key}"),
+                "omp",
+                &["config", "set", key, value],
+            );
+        }
     }
     // settings.json is untracked on purpose; the README keeps the copy to paste.
     let settings = layout.agents().join("claude/settings.json");

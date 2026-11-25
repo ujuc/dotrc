@@ -133,7 +133,7 @@ brew install git
 
 ```sh
 git config --global user.email ""
-git config --global user.name ""
+git config --global user.name "sungjin.kang"
 ```
 
 - Core
@@ -197,31 +197,28 @@ curl https://mise.run | sh
 
 # Autocomplete
 mise use -g uv
-mise use -g node
+mise use -g node@lts
+mise use -g rust
+mise use -g duckdb
+mise use -g bun
+mise use -g python
 ```
 
-### [yq](https://github.com/mikefarah/yq)
+### [yq jq](https://github.com/mikefarah/yq)
 
-- YAML 파서. Claude 스킬 검증 스크립트에서 사용.
+- YAML, JSON 파서
 
 ```sh
-brew install yq
+brew install yq jq
 ```
 
 ## Agent
 
 에이전트 설정은 이 저장소의 `agents/` 디렉터리에서 함께 관리합니다.
 
-### [Claude](https://claude.ai/)
+### 공용
 
-```sh
-curl -fsSL https://claude.ai/install.sh | bash
-ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
-```
-
-#### 공용 전역 지침 (AGENTS.global.md)
-
-공용 전역 지침 `agents/claude/AGENTS.global.md`는 `install.sh --agents`가 `~/.codex/AGENTS.md`, `~/.omp/agent/AGENTS.md`, `~/.pi/agent/AGENTS.md`, `~/.config/amp/AGENTS.md`로 링크하고, `~/.claude/CLAUDE.md`는 이 파일을 import한다.
+#### 공용 전역 지침 ([AGENTS.global.md](http://AGENTS.global.md))
 
 ```sh
 ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.codex/AGENTS.md
@@ -230,7 +227,14 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.pi/agent/AGENTS.md
 ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${XDG_CONFIG_HOME}/amp/AGENTS.md
 ```
 
-예전 버전으로 설치한 기기에는 `~/.codex`, `~/.config/amp`, `~/.pi`가 `agents/` 하위를 가리키는 심링크로 남아 있을 수 있다. `install.sh --agents`가 이 링크를 지우고 실제 디렉터리로 바꾼 뒤 `AGENTS.md` 링크를 만든다. 예전 링크 대상에 남은 런타임 상태(인증, 세션)는 새 디렉터리로 옮기며 지우지 않는다. 그 안에 손으로 둔 `AGENTS.md`가 있으면 `AGENTS.md.legacy`로 이름을 바꿔 둔다.
+
+
+### [Claude](https://claude.ai/)
+
+```sh
+curl -fsSL https://claude.ai/install.sh | bash
+ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
+```
 
 #### Plugins
 
@@ -390,13 +394,7 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${XDG_CONFIG_HOME}/amp/AGENTS
 
 #### claude-hud
 
-설치 후 `/claude-hud:setup`을 실행하면 `statusLine`이 `~/.claude/settings.json`에 기록된다.
-`settings.json`은 추적하지 않으므로(위 `settings.json` 절) 커밋할 것은 없다.
-`statusLine.command`에 bun 경로(`mise/installs/bun/<버전>`)가 들어가므로 bun을 올리면 `/claude-hud:setup`을 다시 실행한다.
-플러그인 업데이트에는 재설정이 필요 없다(런처가 최신 설치본을 실행).
-
-표시 옵션은 `/claude-hud:configure`로 바꾸거나 `~/.claude/plugins/claude-hud/config.json`을 직접 고친다.
-`agents/.gitignore`가 `claude/plugins/*`를 제외하므로 이 파일은 추적되지 않는다. 새 환경에서는 아래 내용으로 만든다.
+설정파일을 공유하지 않아서 여기에 추가해둔다.
 
 ```json
 {
@@ -414,8 +412,6 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${XDG_CONFIG_HOME}/amp/AGENTS
   }
 }
 ```
-
-디렉터리별 덮어쓰기는 `~/.claude/claude-hud.json`(같은 구조, 값이 우선)에 직접 쓴다. 나머지 옵션은 claude-hud README 참고.
 
 #### 개인 스킬 (`ujuc` 플러그인)
 
@@ -477,20 +473,27 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${XDG_CONFIG_HOME}/amp/AGENTS
 - 스킬은 `~/.claude/skills`의 것을 그대로 쓰므로 따로 링크하지 않는다.
 - 업데이트는 백그라운드에서 자동으로 되고, 수동으로는 `amp update`를 쓴다.
 
-### [waza](https://github.com/microsoft/waza)
+### omp / pi 스킬 공유
 
-`agents/claude/evals/<skill>/`의 스킬 평가 스위트를 실행하는 CLI다. `scripts/install.sh --agents`가
-업스트림 설치 스크립트로 최신 릴리스 바이너리를 설치한다(`/usr/local/bin`이 쓰기 가능하면 그곳,
-아니면 `~/bin`; 둘 다 `zshrc`의 `path`에 있다).
+Claude Code의 개인 스킬과 설치된 플러그인 스킬을 omp와 pi에서도 쓴다. 원본은 `~/.claude` 하나다.
+
+```sh
+# omp: Claude 사용자 범위 provider를 켜고, 한 단계 안쪽의 개인 스킬 루트를 더한다
+omp config set enabledProviders '["claude","claude-plugins"]'
+omp config set skills.customDirectories '["~/.claude/skills/ujuc/skills","~/.claude/skills/egm/skills","~/.claude/skills/skill-diet/skills"]'
+
+# pi: installed_plugins.json의 설치 버전 경로와 개인 스킬 루트를 넘기는 확장
+mkdir -p ${HOME}/.pi/agent/extensions
+ln -sf ${DOTRC_AGENTS_DIR}/pi-extensions/claude-skills.ts ${HOME}/.pi/agent/extensions/claude-skills.ts
+```
+
+`install.sh --agents`가 pi 확장 링크를 만들고, `omp`가 있으면 위 설정을 넣는다. 공유되는 것은 스킬뿐이고 플러그인의 hooks, 에이전트, MCP 서버는 포함되지 않는다.
+
+### [waza](https://github.com/microsoft/waza)
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | bash
 ```
-
-바이너리만 설치되며 `~/.claude/data/waza-workspace/`는 만들지 않는다. 워크스페이스 준비는
-`agents/claude/skills/ujuc/skills/waza/references/waza-install.md`를 따른다. 평가 모델은 mise나 환경변수에
-`WAZA_ANTHROPIC_API_KEY`가 있으면 Claude Haiku 5.5, 없으면 로컬 Ollama를 쓴다.
-실행은 항상 `waza` 스킬의 `scripts/waza-run.sh`를 거치며, Claude Code에서는 격리 컨텍스트가 필요할 때 경량 워커가 같은 런처를 호출한다.
 
 ## Apps
 
