@@ -1,0 +1,17 @@
+[package]
+name = "dotrc-installer"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+description = "Installs dotrc command-line tools, apps, fonts and agent configuration."
+publish = false
+
+[[bin]]
+name = "dotrc-install"
+path = "src/main.rs"
+
+[dependencies]
+
+[profile.release]
+codegen-units = 1
+lto = "thin"
