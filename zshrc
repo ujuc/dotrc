@@ -115,7 +115,8 @@ function update_system() {
     # status line (Homebrew cmd/update.sh), which hides failures in a manual run.
     brew update
     brew upgrade --greedy -y
-    zimfw update && zimfw upgrade
+    # zimfw itself is upgraded by brew; the Homebrew build disables `zimfw upgrade`.
+    zimfw update
     brew cleanup
     mise self-update -y && mise up
     # gh ext upgrade --all
