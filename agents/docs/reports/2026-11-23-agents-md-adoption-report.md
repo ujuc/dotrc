@@ -293,8 +293,9 @@ references unchanged). Waza, 3 trials each:
 | generate-skills | 6/6 | 6/6 |
 | generate-agent-docs | 22/22 | 22/22 |
 
-Still open from that run: GS-1, a wider description, needs approval because it
-moves the skill-diet boundary. The other two items are resolved below.
+GS-1, a wider description, was left as is by the user's decision on 2026-11-25,
+because widening it moves the skill-diet boundary. The other two items are
+resolved below.
 
 ## Probe discrimination (2026-11-24, `6f3dcc6`)
 
@@ -349,8 +350,38 @@ operations. Each rejection caused a retry.
   - humanizer 6/6 → 6/6
   - generate-skills 6/6 → 6/6
   - waza has no suite.
-- **Not verified:** the probes do not run commands, so whether the rejections
-  stop is unverified until those skills next run in Claude Code.
+- **Verification on real runs (2026-11-25):** `/ujuc:skill-improver waza`
+  was run headless and each session log's tool errors were counted.
+
+  | Session | Expansion, variable or loop rejections | Chained-command rejections | "requires approval" |
+  | --- | --- | --- | --- |
+  | `0a87217c` (11-23, before) | 5 | 2 | 0 |
+  | `d95b18e2` (11-24, before) | 4 | 3 | 0 |
+  | `1c56e55a` (after `3583335`) | 0 | 1 | 4 |
+  | `b5230ef4` (after the allow rules, Dimension C and waza line 94) | 1 | 0 | 0 |
+
+  The first run after the change exposed two new blocks:
+  - `printenv DOTRCDIR`, the replacement the skills now prescribe, needed
+    approval.
+  - skill-improver's Dimension C told the agent to execute scripts by bare
+    path, but only `bash` and `uv` are allowed.
+
+  The fixes, with the user's approval:
+  - exact allow rules `Bash(printenv DOTRCDIR)`, `Bash(printenv HOME)` and
+    `Bash(printenv XDG_STATE_HOME)` in `settings.json` and the README block.
+    `printenv` with no argument stays unapproved because it would print
+    tokens.
+  - Dimension C now runs `bash <abs>` or `uv run --script <abs>`.
+  - waza's last relative `scripts/test-waza-run` was replaced. That run then
+    reported a `$DOTRCDIR` left in `waza-install.md`, fixed afterwards.
+
+  The remaining rejection in `b5230ef4` came from an ad-hoc `jq` command the
+  agent wrote, not from a skill's example.
+
+  Waza skill-improver: 3/3 → 3/3.
+- **Noted, not changed:** waza's `allowed-tools` (`Bash(bash:*), Read`) does
+  not cover the `uv run --script` call for `typesafe-judge`. The global
+  `Bash(uv:*)` allow rule covers it today.
 
 ## Open items
 
@@ -359,7 +390,5 @@ operations. Each rejection caused a retry.
 - Claims that these references source to pages outside their frontmatter
   (Codex and omp source code; the code.claude.com hooks page) were not
   re-checked in the baseline review.
-- GS-1: widening the generate-skills description needs a decision about the
-  skill-diet boundary.
-- Whether the permission-checker rejections stop in the five skills changed
-  for shell expansions is unverified until their next Claude Code runs.
+- Whether rejections stay at zero in autoresearch, humanizer and
+  generate-skills is unverified; only skill-improver runs were inspected.
