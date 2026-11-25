@@ -504,14 +504,6 @@ ln -sf ${DOTRCDIR}/zed/settings.json ${XDG_CONFIG_HOME}/zed/settings.json
 brew install --cask visual-studio-code
 ```
 
-### [ollama](https://ollama.com/)
-
-```sh
-brew install ollama
-ollama pull gemma3
-ollama pull qwen3
-```
-
 ## Terminal
 
 ### [Ghostty](https://ghostty.org)

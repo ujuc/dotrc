@@ -201,21 +201,6 @@ pub fn install_apps(runner: &mut Runner, layout: &Layout) {
     ] {
         install_cask(runner, "apps", cask);
     }
-    install_formula(runner, "apps", "ollama");
-    if runner.has("ollama") {
-        runner.run(
-            "apps",
-            "Pull ollama model gemma3",
-            "ollama",
-            &["pull", "gemma3"],
-        );
-        runner.run(
-            "apps",
-            "Pull ollama model qwen3",
-            "ollama",
-            &["pull", "qwen3"],
-        );
-    }
     for (source, destination) in layout.app_links() {
         safe_link(runner, &source, &destination);
     }
