@@ -91,6 +91,6 @@ grade: it reads the answer on stdin, asks TypeSafe (Jev) one Noul per `--ask`
 
 1. Unsure waza is usable → `status`. `Usable: no` means no score: relay the reason and continue the caller's work. `scaffold` and `eval` print a skip report for a missing binary or workspace.
 2. Changing a skill → `eval <skill> --label baseline` **before** editing, then `eval <skill> --label after --baseline-json <baseline>`, with the same `--trials`.
-3. Changed `scripts/waza-run.sh` → `bash scripts/test-waza-run` (synthetic; no install or Ollama).
+3. Changed `scripts/waza-run.sh` → `bash <waza>/scripts/test-waza-run` (synthetic; no install or Ollama).
 4. New subcommand or flag → read the current upstream README, add it to `scripts/waza-run.sh`, and document it here. Keep no CLI snapshot here.
 5. Install, update, version floor, workspace setup, `command not found`, uninstall → [references/waza-install.md](references/waza-install.md)

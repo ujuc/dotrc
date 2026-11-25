@@ -66,7 +66,7 @@ Trigger completeness, trigger overlap and model fitness belong to the skill-engi
 
 ### Dimension C — Type-specific
 
-- **Scripts:** read each executable in `scripts/`; one that ignores `--help` is UNVERIFIED, never run. Run the rest directly (`<abs>/scripts/<script> --help`) so its shebang applies (forcing `bash` breaks a `uv run` PEP 723 script) and expect exit 0; when it needs arguments, also run it bare and expect a clear usage error, not a crash. Data files such as `*.jq` are covered by their launcher's self-check.
+- **Scripts:** read each executable in `scripts/`; one that ignores `--help` is UNVERIFIED, never run. Run the rest with the interpreter its shebang names, written out so the permission checker allows it: `bash <abs>/scripts/<script> --help` for a bash script, `uv run --script <abs>/scripts/<script> --help` for a PEP 723 script (forcing `bash` on it breaks it); never execute the path bare. Expect exit 0; when it needs arguments, also run it without them and expect a clear usage error, not a crash. Data files such as `*.jq` are covered by their launcher's self-check.
 - **Pipelines:** every skill name the target references exists as a skill directory.
 
 ### Dimension E — Evidence

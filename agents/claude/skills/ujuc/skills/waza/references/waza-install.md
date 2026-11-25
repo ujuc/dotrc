@@ -4,7 +4,7 @@ When waza is missing, only the evaluation is skipped; the caller's work continue
 
 ## Install or update
 
-`$DOTRCDIR/scripts/install.sh --agents` runs this when `waza` is not on PATH:
+`<dotrc>/scripts/install.sh --agents` (`<dotrc>` as in SKILL.md's How to invoke) runs this when `waza` is not on PATH:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/microsoft/waza/main/install.sh | bash
