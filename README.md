@@ -218,7 +218,7 @@ brew install yq jq
 
 ### 공용
 
-#### 공용 전역 지침 ([AGENTS.global.md](http://AGENTS.global.md))
+#### 공용 전역 지침 (`AGENTS.global.md`)
 
 ```sh
 ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.codex/AGENTS.md
