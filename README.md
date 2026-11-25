@@ -514,6 +514,14 @@ mkdir -p ${XDG_CONFIG_HOME}/ghostty
 ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 ```
 
+### [Orca](https://orca.dev/)
+
+`homebrew/cask`의 `orca`는 다른 앱(plotly)이라 tap 경로까지 적는다.
+
+```sh
+brew install --cask stablyai/orca/orca
+```
+
 ## Font
 
 ```sh
