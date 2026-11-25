@@ -133,12 +133,62 @@ while [ "$#" -gt 0 ]; do
     shift
 done
 
+# Before 584a9dc these whole directories were links into agents/. Such a link is
+# replaced with a real directory so the AGENTS.md links can be created. Runtime
+# state left under the old target (auth, sessions) moves along; nothing is deleted.
+LEGACY_AGENT_DIRS=("$HOME/.codex|codex" "$XDG_CONFIG_HOME/amp|amp" "$HOME/.pi|pi")
+
+# legacy_agent_link <link> <name>: the exact old target, or a dangling link left
+# by a checkout that has since moved.
+legacy_agent_link() {
+    local link=$1 name=$2 target
+    [ -L "$link" ] || return 1
+    target=$(readlink "$link")
+    [ "$target" = "$DOTRC_AGENTS_DIR/$name" ] && return 0
+    [ ! -e "$link" ] && [[ "$target" == */agents/"$name" ]]
+}
+
+# inside_legacy_agent_link <path>: the path goes through a link that
+# migrate_legacy_agent_dirs replaces, so the preflight judges it after that.
+inside_legacy_agent_link() {
+    local entry
+    for entry in "${LEGACY_AGENT_DIRS[@]}"; do
+        if [[ "$1" == "${entry%%|*}"/* ]] && legacy_agent_link "${entry%%|*}" "${entry#*|}"; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+migrate_legacy_agent_dirs() {
+    local entry destination name legacy target
+    for entry in "${LEGACY_AGENT_DIRS[@]}"; do
+        destination=${entry%%|*}
+        name=${entry#*|}
+        legacy="$DOTRC_AGENTS_DIR/$name"
+        legacy_agent_link "$destination" "$name" || continue
+        target=$(readlink "$destination")
+        run_step links "Remove legacy link $destination" rm "$destination"
+        [ "$LAST_STEP_STATUS" -eq 0 ] || continue
+        if [ "$target" = "$legacy" ] && [ -d "$legacy" ]; then
+            run_step links "Move legacy $name state to $destination" mv "$legacy" "$destination"
+            if [ -f "$destination/AGENTS.md" ] && [ ! -L "$destination/AGENTS.md" ]; then
+                run_step links "Keep old $destination/AGENTS.md as AGENTS.md.legacy" mv "$destination/AGENTS.md" "$destination/AGENTS.md.legacy"
+            fi
+        fi
+    done
+}
+
 check_link_destination() {
     local source=$1 destination=$2 current_target
 
     if [ ! -e "$source" ]; then
         printf 'Link source missing: %s\n' "$source" >&2
         return 1
+    fi
+
+    if inside_legacy_agent_link "$destination"; then
+        return 0
     fi
 
     if [ -L "$destination" ]; then
@@ -331,6 +381,7 @@ install_fonts() {
 }
 
 install_agent_links() {
+    migrate_legacy_agent_dirs
     safe_link "$DOTRC_AGENTS_DIR/claude" "$HOME/.claude"
     safe_link "$DOTRC_AGENTS_DIR/claude/AGENTS.global.md" "$HOME/.codex/AGENTS.md"
     safe_link "$DOTRC_AGENTS_DIR/claude/AGENTS.global.md" "$HOME/.omp/agent/AGENTS.md"
