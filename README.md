@@ -465,6 +465,18 @@ git -C "$DOTRCDIR" status --short agents/claude/skills/egm
 
 - [egm](https://github.com/google/elephant-goldfish-model) (Apache-2.0, `v0.1.1`) — Elephant-Goldfish Model 설계 문서 작성·검토. `/egm:egm-brainstorm`, `/egm:egm-draft`, `/egm:egm-review`로 직접 호출한다(자동 호출 꺼짐). 리뷰어는 `egm:egm-*` 에이전트이며, 헤드리스 실행에는 `~/.claude/skills/egm/{agents,docs,resources,skills}/**` 읽기 권한이 필요하다
 
+### [Amp](https://ampcode.com/)
+
+```sh
+curl -fsSL https://ampcode.com/install.sh | bash
+mkdir -p ${XDG_CONFIG_HOME}/amp
+ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${XDG_CONFIG_HOME}/amp/AGENTS.md
+```
+
+- 전역 지침은 `~/.config/amp/AGENTS.md`로 읽는다. `install.sh --agents`가 위 링크를 만든다([AGENTS.md](https://ampcode.com/docs/customize/agents-md)).
+- 스킬은 `~/.claude/skills`의 것을 그대로 쓰므로 따로 링크하지 않는다.
+- 업데이트는 백그라운드에서 자동으로 되고, 수동으로는 `amp update`를 쓴다.
+
 ### [waza](https://github.com/microsoft/waza)
 
 `agents/claude/evals/<skill>/`의 스킬 평가 스위트를 실행하는 CLI다. `scripts/install.sh --agents`가
