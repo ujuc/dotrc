@@ -1,8 +1,4 @@
-# MyDotrc
-
-## 자동 설치
-
-저장소를 clone한 뒤 설치할 그룹의 옵션을 지정해 실행한다. 인자 없이 실행하면 도움말을 표시하며, 옵션은 조합할 수 있다. `--all`은 모든 그룹을 설치한다.
+# dotrc
 
 ```bash
 ./scripts/install.sh --help
@@ -15,19 +11,13 @@
 ./scripts/install.sh --all
 ```
 
-그룹별 설치의 독립적인 항목이 실패해도 가능한 나머지 작업은 계속 진행하며, 마지막에 실패 정보와 재실행 명령을 출력한다. 링크 원본이 없거나 기존 설정과 충돌하면 변경 전에 안전하게 중단하며, 기존 파일이나 링크를 덮어쓰지 않는다.
-
-`install.sh`는 `scripts/installer/`의 Rust 설치 프로그램을 빌드해 실행하는 얇은 런처다. `cargo`가 없으면 rustup으로 최소 Rust 툴체인을 `~/.cargo`에 설치하며, 첫 실행은 컴파일 때문에 시간이 걸린다. 컴파일에는 Xcode Command Line Tools가 필요한데, 저장소를 clone할 때 git과 함께 설치된다.
-
-## 설치전 작업
+## 기본 작업
 
 ### [Homebrew](https://brew.sh/)
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
-
-## Auth 환경 구성
 
 ### 1Password
 
@@ -37,14 +27,14 @@
 brew install --cask 1password 1password-cli
 ```
 
-### [GitHub CLI](https://cli.github.com/manual/)
+### GitHub CLI
 
 ```sh
 brew install gh
 gh auth login
 ```
 
-## Repo 환경 작업
+## 레포 clone
 
 ```sh
 gh repo clone ujuc/dotrc ${HOME}/.config/dotrc
@@ -85,6 +75,8 @@ brew install coreutils
 
 ### [bat](https://github.com/sharkdp/bat)
 
+- `cat` 명령어 rust 구현체
+
 ```sh
 brew install bat
 mkdir -p ${XDG_CONFIG_HOME}/bat
@@ -93,11 +85,15 @@ ln -sf ${DOTRCDIR}/batrc ${XDG_CONFIG_HOME}/bat/config
 
 ### [eza](https://github.com/eza-community/eza)
 
+- `ls` 명령어 rust 구현체
+
 ```sh
 brew install eza
 ```
 
 ### [zoxide](https://github.com/ajeetdsouza/zoxide)
+
+- `cd` 명령어를 좀 좋게 만든거
 
 ```sh
 brew install zoxide
@@ -105,14 +101,10 @@ brew install zoxide
 
 ### [fzf](https://github.com/junegunn/fzf)
 
+- 그냥 기본 값으로 설치
+
 ```sh
 brew install fzf
-```
-
-### [vim](https://www.vim.org/)
-
-```sh
-brew install vim
 ```
 
 ### [GitHub CLI- Extentions](https://github.com/topics/gh-extension)
@@ -133,7 +125,7 @@ brew install git
 
 ```sh
 git config --global user.email ""
-git config --global user.name "sungjin.kang"
+git config --global user.name ""
 ```
 
 - Core
@@ -169,6 +161,8 @@ git -C ${DOTRCDIR} config core.hooksPath .githooks
 
 ### [git-delta](https://github.com/dandavison/delta)
 
+- git diff 보기 좋게 만들어 줌
+
 ```sh
 brew install git-delta
 git config --global core.pager delta
@@ -182,6 +176,7 @@ git config --global delta.hyperlinks true
 
 ### [tig](https://jonas.github.io/tig/)
 
+- git tui 구현체
 - [한글 메뉴얼](https://ujuc.github.io/2016/02/10/tig-manual/)
 
 ```sh
@@ -191,6 +186,8 @@ ln -sf ${DOTRCDIR}/tigrc ${XDG_CONFIG_HOME}/tig/config
 ```
 
 ### [mise-en-place](https://mise.jdx.dev/)
+
+- 환경 설정, 패키지 설치... 뭐 많이 됨
 
 ```sh
 curl https://mise.run | sh
@@ -204,7 +201,7 @@ mise use -g bun
 mise use -g python
 ```
 
-### [yq jq](https://github.com/mikefarah/yq)
+### [yq](https://github.com/mikefarah/yq), [jq](https://jqlang.org/)
 
 - YAML, JSON 파서
 
@@ -226,8 +223,6 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.omp/agent/AGENTS.md
 ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${HOME}/.pi/agent/AGENTS.md
 ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${XDG_CONFIG_HOME}/amp/AGENTS.md
 ```
-
-
 
 ### [Claude](https://claude.ai/)
 
@@ -264,12 +259,6 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 
 #### settings.json
 
-`~/.claude/settings.json`은 추적하지 않는다(`agents/.gitignore`). `/ultra-config` 같은 mod와 `/config`가 수시로 고쳐 쓰는 파일이라
-커밋 노이즈만 늘었기 때문이다. 마지막으로 추적했던 전체 내용은 `git show a56ea6f:agents/claude/settings.json`으로 볼 수 있다.
-
-새 기기에서는 아래 내용을 `~/.claude/settings.json`에 그대로 넣는다. `enabledPlugins`·`extraKnownMarketplaces`는 위 `/plugin` 명령이,
-`statusLine`은 `/claude-hud:setup`이 써 주므로 뺐다. hooks·permissions·env·`pluginConfigs`를 바꿀 때는 이 블록도 함께 고친다.
-
 ```json
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
@@ -282,45 +271,6 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
   },
   "permissions": {
     "allow": [
-      "Bash(git:*)",
-      "Bash(git -C:*)",
-      "Bash(gh:*)",
-      "Bash(find:*)",
-      "Bash(ls:*)",
-      "Bash(wc:*)",
-      "Bash(echo:*)",
-      "Bash(grep:*)",
-      "Bash(which:*)",
-      "Bash(command -v:*)",
-      "Bash(printenv DOTRCDIR)",
-      "Bash(printenv HOME)",
-      "Bash(printenv XDG_STATE_HOME)",
-      "Bash(date:*)",
-      "Bash(uv:*)",
-      "Bash(brew bundle:*)",
-      "Bash(mise which:*)",
-      "Bash(ollama list:*)",
-      "Bash(waza:*)",
-      "Bash(yq:*)",
-      "Bash(mkdir:*)",
-      "Bash(ln:*)",
-      "Bash(cat:*)",
-      "Bash(jq:*)",
-      "Bash(mv:*)",
-      "Bash(rmdir:*)",
-      "Bash(cd:*)",
-      "WebFetch(domain:agents.md)",
-      "WebFetch(domain:github.com)",
-      "WebFetch(domain:github.blog)",
-      "WebFetch(domain:raw.githubusercontent.com)",
-      "WebSearch",
-      "mcp__acp__Write",
-      "mcp__acp__Edit",
-      "mcp__acp__Bash",
-      "Skill(commit)",
-      "Skill(commit:*)",
-      "Read(~/.claude/skills/egm/**)",
-      "Read(~/.config/dotrc/agents/claude/skills/egm/**)"
     ],
     "deny": [
       "Skill(superpowers:writing-skills)"
@@ -388,13 +338,8 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 }
 ```
 
-- `hooks`: 두지 않는다.
-- `ultracode`: 모든 세션을 ultracode(상시 워크플로 오케스트레이션)로 시작한다. `/effort`의 토글은 세션에만 적용되고 이 값을 저장하지 않는다.
-- `/ultra-config apply baseline`은 현재 쓰는 모델의 `modelSettings.<모델>.effortLevel`과 `useAutoModeDuringPlan` 같은 프로필 값을 다시 맞춘다. `advisorModel`은 건드리지 않으므로 이 블록에서 직접 관리한다.
-
 #### claude-hud
 
-설정파일을 공유하지 않아서 여기에 추가해둔다.
 
 ```json
 {
@@ -415,51 +360,18 @@ ln -sf ${DOTRC_AGENTS_DIR}/claude ${HOME}/.claude
 
 #### 개인 스킬 (`ujuc` 플러그인)
 
-직접 만든 스킬은 `agents/claude/skills/ujuc/skills/<name>/`에 둔다. `ujuc/.claude-plugin/plugin.json`
-덕분에 Claude Code가 이 디렉터리를 `ujuc@skills-dir` 플러그인으로 제자리 로드하므로(별도 설치·마켓플레이스
-없음), 각 스킬은 `/ujuc:commit`처럼 `ujuc:` 접두사로 호출된다. 같은 이름의 개인 스킬이 프로젝트
-`.claude/skills/` 스킬을 가리는 일을 막기 위한 구분이다. 외부에서 받아 오는 `skill-diet`·`dual-brain`(subtree),
-`ultra-config`(mod), `ego-browser`(심링크)는 `agents/claude/skills/` 바로 아래에 둔다.
+- 위치: `agents/claude/skills/ujuc/skills/<name>/`
+- 로드: `ujuc/.claude-plugin/plugin.json`으로 `ujuc@skills-dir` 플러그인이 제자리 로드된다(설치·마켓플레이스 없음).
+- 호출: `/ujuc:commit`처럼 `ujuc:` 접두사를 붙인다. 프로젝트 `.claude/skills/`의 같은 이름 스킬을 가리지 않기 위해서다.
 
-#### Mods ([claude-code-templates](https://github.com/davila7/claude-code-templates))
+#### 외부 스킬
 
-`--mod`는 현재 디렉터리의 `.claude/skills/<name>/`에 받는다. 상주시킬 mod는 홈에서 받아
-`agents/claude/skills/<name>/`에 그대로 커밋하고(업스트림 `plugin.json`의 author·license 유지),
-시험만 할 mod는 프로젝트 디렉터리에서 받아 저장소를 건드리지 않는다. 갱신은 같은 명령을 다시 실행한 뒤 diff를 리뷰한다.
+`agents/claude/skills/` 바로 아래에 추가로 설치되어 있다.
 
-```sh
-cd ~ && npx claude-code-templates@latest --mod productivity/ultra-config
-```
-
-- [ultra-config](https://github.com/davila7/claude-code-templates/tree/main/cli-tool/components/mods/productivity/ultra-config) — `/ultra-config`로 설정 프로필(Baseline, Token saver, Fast flow, Max quality, Guarded, Autopilot) 전환. `baseline`은 이 저장소에서 추가한 내 기준값(Opus 기본 모델, effort high, ultracode, auto 모드)으로, 다른 프로필을 써 보다 흐트러진 설정을 `/ultra-config apply baseline`으로 되돌린다. `~/.claude/settings.json`을 직접 고치므로 커밋 전 diff를 확인하고, 되돌릴 때는 `/ultra-config undo`
-
-#### Subtree 스킬
-
-업스트림 스킬 저장소를 `git subtree --squash`로 `agents/claude/skills/<name>/`에 넣는다. 본문은 원본 그대로 둔다.
-현재 버전은 squash 커밋의 `git-subtree-split:` 트레일러에 남는다. `generate-skills` Step 0과 `skill-improver` Phase 0이 `upstream-check`로 subtree·릴리스 플러그인의 새 릴리스 태그를 확인해 경고만 한다. 같은 스크립트가 원문 URL을 캐시한 참조 문서(`references/*.md`)의 `source_sha256`을 live 페이지와 비교해, 바뀐 원문이 있으면 `/ujuc:generate-skills <skill> 업데이트`를 안내한다. 스킬 실행 중에는 캐시만 쓰고, 사본과 해시·`last_upstream_check`는 그 업데이트 실행에서만 갱신한다.
-
-```sh
-agents/claude/skills/ujuc/skills/generate-skills/scripts/upstream-check                    # skill-diet·dual-brain·egm 새 태그와 캐시 참조 문서의 원문 변경 확인
-agents/claude/skills/ujuc/skills/generate-skills/scripts/upstream-check hashes <ref.md>    # 내용 검토를 마친 참조 문서의 새 source_sha256 블록 출력
-agents/claude/skills/ujuc/skills/generate-skills/scripts/skill-diet-upstream pull v0.2.0  # subtree pull --squash 후 링크·검증
-```
-
-- [skill-diet](https://github.com/nicobailon/skill-diet) (MIT, `v0.2.0`) — 스킬 편집 순서·크기 예산·before/after/none eval. `generate-skills` 다이어트 모드와 `skill-improver`의 `diet-recommended`가 사용한다. 플러그인(`skill-diet@skills-dir`)이라 `skill-diet:skill-diet`로 호출하며, 모델 간 성능 차이를 고치는 `/skill-diet:skill-model-gap`은 직접 호출만 된다
-- [dual-brain](https://github.com/sleeplesshan/dual-brain) (MIT, `v1.7.0`) — 설계(Right)·구현(Left) 두 관점 검토. `/dual-brain`으로 호출하며, 쓰기 작업이면 프로젝트 루트의 `.dual-brain/MEMORY.md`에 바뀐 결정을 남긴다
-
-#### 릴리스 플러그인
-
-업스트림이 Claude용 플러그인 zip을 릴리스 자산으로 배포하면, 검증한 zip을 `agents/claude/skills/<name>/`에 풀어 그대로 커밋한다.
-`.claude-plugin/plugin.json`이 있으므로 `<name>@skills-dir` 플러그인으로 로드된다. marketplace로 같은 플러그인을 설치해 두면 이름이 겹쳐 이 사본은 로드되지 않는다.
-
-```sh
-cd "$(mktemp -d)" && gh release download v0.1.1 -R google/elephant-goldfish-model -p 'egm-claude-*.zip' -p SHA256SUMS
-grep claude SHA256SUMS | shasum -a 256 -c - && gh attestation verify egm-claude-*.zip -R google/elephant-goldfish-model
-rm -rf "$DOTRCDIR/agents/claude/skills/egm" && unzip -q egm-claude-*.zip -d "$DOTRCDIR/agents/claude/skills/egm"
-git -C "$DOTRCDIR" status --short agents/claude/skills/egm
-```
-
-- [egm](https://github.com/google/elephant-goldfish-model) (Apache-2.0, `v0.1.1`) — Elephant-Goldfish Model 설계 문서 작성·검토. `/egm:egm-brainstorm`, `/egm:egm-draft`, `/egm:egm-review`로 직접 호출한다(자동 호출 꺼짐). 리뷰어는 `egm:egm-*` 에이전트이며, 헤드리스 실행에는 `~/.claude/skills/egm/{agents,docs,resources,skills}/**` 읽기 권한이 필요하다
+- [skill-diet](https://github.com/nicobailon/skill-diet) (subtree, `v0.2.0`) — 스킬 다이어트. `/skill-diet:skill-diet`
+- [dual-brain](https://github.com/sleeplesshan/dual-brain) (subtree, `v1.7.0`) — 설계·구현 두 관점 검토. `/dual-brain`
+- [egm](https://github.com/google/elephant-goldfish-model) (릴리스 zip, `v0.1.1`) — 설계 문서 작성·검토. `/egm:egm-review` 등
+- `ego-browser` (외부 심링크) — 브라우저 자동화
 
 ### [Amp](https://ampcode.com/)
 
@@ -469,25 +381,28 @@ mkdir -p ${XDG_CONFIG_HOME}/amp
 ln -sf ${DOTRC_AGENTS_DIR}/claude/AGENTS.global.md ${XDG_CONFIG_HOME}/amp/AGENTS.md
 ```
 
-- 전역 지침은 `~/.config/amp/AGENTS.md`로 읽는다. `install.sh --agents`가 위 링크를 만든다([AGENTS.md](https://ampcode.com/docs/customize/agents-md)).
-- 스킬은 `~/.claude/skills`의 것을 그대로 쓰므로 따로 링크하지 않는다.
-- 업데이트는 백그라운드에서 자동으로 되고, 수동으로는 `amp update`를 쓴다.
+- 스킬은 `~/.claude/skills`를 그대로 읽는다.
 
-### omp / pi 스킬 공유
-
-Claude Code의 개인 스킬과 설치된 플러그인 스킬을 omp와 pi에서도 쓴다. 원본은 `~/.claude` 하나다.
+### [omp](https://github.com/can1357/oh-my-pi)
 
 ```sh
-# omp: Claude 사용자 범위 provider를 켜고, 한 단계 안쪽의 개인 스킬 루트를 더한다
+mise use -g github:can1357/oh-my-pi
 omp config set enabledProviders '["claude","claude-plugins"]'
 omp config set skills.customDirectories '["~/.claude/skills/ujuc/skills","~/.claude/skills/egm/skills","~/.claude/skills/skill-diet/skills"]'
+```
 
-# pi: installed_plugins.json의 설치 버전 경로와 개인 스킬 루트를 넘기는 확장
+- `~/.claude`의 스킬을 그대로 쓴다. `install.sh --agents`가 mise로 omp·pi를 설치하고 위 설정을 넣으므로, mise가 없으면 `--cli`를 먼저 실행한다.
+
+### [pi](https://github.com/earendil-works/pi)
+
+```sh
+mise use -g npm:@earendil-works/pi-coding-agent
 mkdir -p ${HOME}/.pi/agent/extensions
 ln -sf ${DOTRC_AGENTS_DIR}/pi-extensions/claude-skills.ts ${HOME}/.pi/agent/extensions/claude-skills.ts
 ```
 
-`install.sh --agents`가 pi 확장 링크를 만들고, `omp`가 있으면 위 설정을 넣는다. 공유되는 것은 스킬뿐이고 플러그인의 hooks, 에이전트, MCP 서버는 포함되지 않는다.
+- 위 확장으로 `~/.claude`의 스킬을 쓴다. `install.sh --agents`가 링크를 만든다.
+- omp·pi 모두 스킬만 공유된다. 플러그인의 hooks·에이전트·MCP 서버는 빠진다.
 
 ### [waza](https://github.com/microsoft/waza)
 
@@ -507,11 +422,10 @@ brew install --cask raycast
 
 - [Zed config](https://zed.dev/docs/configuring-zed)
 - [Zed themes](https://zed-themes.com/)
+- [Delta](https://delta.dev/)
 
 ```sh
-brew install --cask zed
-
-ln -sf ${DOTRCDIR}/zed/settings.json ${XDG_CONFIG_HOME}/zed/settings.json
+brew install --cask zed zed-delta
 ```
 
 ### [Visual Studio Code](https://code.visualstudio.com/)
@@ -521,6 +435,10 @@ brew install --cask visual-studio-code
 ```
 
 ## Terminal
+
+### Rex
+
+- Open 되면 그걸로 바꿔야지.
 
 ### [Ghostty](https://ghostty.org)
 
@@ -532,8 +450,6 @@ ln -sf ${DOTRCDIR}/ghosttyrc ${XDG_CONFIG_HOME}/ghostty/config
 
 ### [Orca](https://orca.dev/)
 
-`homebrew/cask`의 `orca`는 다른 앱(plotly)이라 tap 경로까지 적는다.
-
 ```sh
 brew install --cask stablyai/orca/orca
 ```
@@ -542,29 +458,22 @@ brew install --cask stablyai/orca/orca
 
 ```sh
 # google sans
-brew install --cask font-google-sans-code
+brew install font-google-sans-code font-googlesanscode-nerd-font
 
 # MS cascdia code font https://github.com/microsoft/cascadia-code
-brew install --cask font-cascadia-code
-brew install --cask font-cascadia-code-nf
+brew install font-cascadia-code font-cascadia-code-nf
 
 # D2 coding
-brew install --cask font-d2coding-nerd-font
+brew install font-d2coding font-d2coding-nerd-font
 
 # ibm
-brew install --cask font-ibm-plex-sans-kr
-brew install --cask font-ibm-plex-serif
+brew install font-ibm-plex-sans-kr font-ibm-plex-serif font-ibm-plex-mono
 
 # noto
-brew install --cask font-noto-color-emoji
-brew install --cask font-noto-emoji
-brew install --cask font-noto-sans-cjk
-brew install --cask font-noto-serif-cjk
+brew install font-noto-sans-mono-cjk-kr
 
 # nanum
-brew install --cask font-nanum-square
-brew install --cask font-nanum-square-neo
-brew install --cask font-nanum-square-round
+brew install font-nanum-square font-nanum-square-neo font-nanum-square-round
 ```
 
 ## Config
