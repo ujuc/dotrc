@@ -73,11 +73,11 @@ pub fn install_cli(runner: &mut Runner, layout: &Layout) {
         "eza",
         "zoxide",
         "fzf",
-        "vim",
         "git",
         "git-delta",
         "tig",
         "yq",
+        "jq",
     ] {
         install_formula(runner, "cli", formula);
     }
@@ -85,17 +85,12 @@ pub fn install_cli(runner: &mut Runner, layout: &Layout) {
         runner.run_shell("cli", "Install mise", "curl https://mise.run | sh");
         runner.prepend_path(layout.home.join(".local/bin"));
     }
-    if runner.has("mise") {
-        runner.run("cli", "Install uv with mise", "mise", &["use", "-g", "uv"]);
-        runner.run(
-            "cli",
-            "Install node with mise",
-            "mise",
-            &["use", "-g", "node"],
-        );
-    } else {
-        runner.record("cli", "Find mise after installation", 1, "command -v mise");
-    }
+    mise_use(
+        runner,
+        layout,
+        "cli",
+        &["uv", "node@lts", "rust", "duckdb", "bun", "python"],
+    );
     configure_git(runner, layout);
     let authenticated = runner
         .command("gh")
@@ -108,6 +103,24 @@ pub fn install_cli(runner: &mut Runner, layout: &Layout) {
     for (source, destination) in layout.cli_links() {
         safe_link(runner, &source, &destination);
     }
+}
+
+/// `mise use -g <tool>` for each tool, then puts the mise shims on the runner's `PATH`.
+fn mise_use(runner: &mut Runner, layout: &Layout, group: &str, tools: &[&str]) {
+    if !runner.has("mise") {
+        runner.record(group, "Find mise (install.sh --cli)", 1, "command -v mise");
+        return;
+    }
+    for tool in tools {
+        runner.run(
+            group,
+            &format!("Install {tool} with mise"),
+            "mise",
+            &["use", "-g", tool],
+        );
+    }
+    // shortcut: assumes the default MISE_DATA_DIR, set it here if that ever moves.
+    runner.prepend_path(layout.home.join(".local/share/mise/shims"));
 }
 
 fn configure_git(runner: &mut Runner, layout: &Layout) {
@@ -176,26 +189,14 @@ fn configure_git_identity(runner: &mut Runner, key: &str, prompt: &str) {
 }
 
 pub fn install_apps(runner: &mut Runner, layout: &Layout) {
-    let apple_silicon = cfg!(target_os = "macos") && std::env::consts::ARCH == "aarch64";
-    if apple_silicon
-        && !runner.succeeds(
-            "pkgutil",
-            &["--pkg-info", "com.apple.pkg.RosettaUpdateAuto"],
-        )
-    {
-        runner.run(
-            "apps",
-            "Install Rosetta",
-            "sudo",
-            &["softwareupdate", "--install-rosetta", "--agree-to-license"],
-        );
-    }
     for cask in [
         "raycast",
         "zed",
+        "zed-delta",
         "visual-studio-code",
         "ghostty",
-        "fujitsu-scansnap-home",
+        "stablyai/orca/orca",
+        "scansnap-home",
         "google-drive",
         "adobe-creative-cloud",
     ] {
@@ -209,15 +210,15 @@ pub fn install_apps(runner: &mut Runner, layout: &Layout) {
 pub fn install_fonts(runner: &mut Runner) {
     for cask in [
         "font-google-sans-code",
+        "font-googlesanscode-nerd-font",
         "font-cascadia-code",
         "font-cascadia-code-nf",
+        "font-d2coding",
         "font-d2coding-nerd-font",
         "font-ibm-plex-sans-kr",
         "font-ibm-plex-serif",
-        "font-noto-color-emoji",
-        "font-noto-emoji",
-        "font-noto-sans-cjk",
-        "font-noto-serif-cjk",
+        "font-ibm-plex-mono",
+        "font-noto-sans-mono-cjk-kr",
         "font-nanum-square",
         "font-nanum-square-neo",
         "font-nanum-square-round",
@@ -263,6 +264,22 @@ pub fn install_agents(runner: &mut Runner, layout: &Layout) {
         );
         runner.prepend_path(layout.home.join(".local/bin"));
     }
+    if !runner.has("amp") {
+        runner.run_shell(
+            "agents",
+            "Install Amp",
+            "curl -fsSL https://ampcode.com/install.sh | bash",
+        );
+    }
+    mise_use(
+        runner,
+        layout,
+        "agents",
+        &[
+            "github:can1357/oh-my-pi",
+            "npm:@earendil-works/pi-coding-agent",
+        ],
+    );
     if !runner.has("waza") {
         runner.run_shell(
             "agents",

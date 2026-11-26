@@ -109,6 +109,8 @@ fn main() -> ExitCode {
     }
 
     let mut runner = Runner::new();
+    // mise, Claude and Amp install into ~/.local/bin, which zshrc adds only after it is linked.
+    runner.prepend_path(layout.home.join(".local/bin"));
     if (groups.cli || groups.apps || groups.fonts) && install::ensure_homebrew(&mut runner).is_err()
     {
         runner.summary();

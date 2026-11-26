@@ -43,16 +43,10 @@ impl Layout {
     }
 
     pub fn app_links(&self) -> Vec<(PathBuf, PathBuf)> {
-        vec![
-            (
-                self.dotrc.join("zed/settings.json"),
-                self.xdg_config.join("zed/settings.json"),
-            ),
-            (
-                self.dotrc.join("ghosttyrc"),
-                self.xdg_config.join("ghostty/config"),
-            ),
-        ]
+        vec![(
+            self.dotrc.join("ghosttyrc"),
+            self.xdg_config.join("ghostty/config"),
+        )]
     }
 
     pub fn agent_links(&self) -> Vec<(PathBuf, PathBuf)> {
@@ -295,7 +289,7 @@ mod tests {
             fonts: true,
             agents: true,
         };
-        assert_eq!(f.layout.selected_links(all).len(), 12);
+        assert_eq!(f.layout.selected_links(all).len(), 11);
     }
 
     #[test]
